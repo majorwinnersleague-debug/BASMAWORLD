@@ -47,12 +47,22 @@ export default function HopesChance() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-black text-white pt-20 pb-12 px-4">
+      <main className="min-h-screen bg-black text-white pt-24 pb-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-green-400 mb-2 mt-8">🤝 Hopes Chance</h1>
-          <p className="text-gray-300 text-lg mb-8">Find free resources for housing, jobs, mental health & more.<br/>
-            <span className="text-green-400 font-medium">Confidential. No judgment. For ages 16–30.</span>
-          </p>
+          <div className="text-center mb-10">
+            <div className="text-5xl mb-4">&#129309;</div>
+            <h1 className="text-4xl font-bold text-green-400 mb-3">Hopes Chance</h1>
+            <p className="text-gray-300 text-lg mb-2">
+              Free resources for housing, jobs, mental health &amp; more.
+            </p>
+            <p className="text-green-400 font-semibold">Confidential. No judgment. For ages 16-30.</p>
+            <p className="text-gray-500 text-sm mt-2">Las Vegas, Nevada &middot; Youth Resource Navigator</p>
+          </div>
+
+          <div className="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-8 text-center">
+            <p className="text-red-300 font-semibold">In crisis? Call <a href="tel:211" className="underline text-white">211</a> or text HOME to 741741 &mdash; free, 24/7</p>
+          </div>
+
           <h2 className="text-lg font-semibold mb-4 text-gray-200">What do you need help with?</h2>
           <div className="flex flex-wrap gap-3 mb-8">
             {CATEGORIES.map(cat => (
@@ -76,22 +86,24 @@ export default function HopesChance() {
 
           {error && (
             <div className="bg-yellow-900/30 border border-yellow-700 rounded-xl p-4 text-yellow-300">
-              ⚠️ {error}
+              {error}
             </div>
           )}
 
           {resources.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-200">{resources.length} resource{resources.length !== 1 ? 's' : ''} found for <span className="text-green-400">{selected}</span></h3>
+              <h3 className="text-lg font-semibold text-gray-200">
+                {resources.length} resource{resources.length !== 1 ? 's' : ''} found for <span className="text-green-400">{selected}</span>
+              </h3>
               {resources.map((r, i) => (
                 <div key={i} className="bg-green-900/20 border border-green-800 rounded-xl p-5">
                   <h4 className="font-bold text-white text-lg mb-1">{r.name}</h4>
-                  {r.address && <p className="text-gray-400 text-sm mb-1">📍 {r.address}</p>}
-                  {r.phone && <p className="text-gray-400 text-sm mb-1">📞 {r.phone}</p>}
-                  {r.howToAccess && <p className="text-gray-300 text-sm mb-3">ℹ️ {r.howToAccess}</p>}
+                  {r.address && <p className="text-gray-400 text-sm mb-1">&#128205; {r.address}</p>}
+                  {r.phone && <p className="text-gray-400 text-sm mb-1">&#128222; {r.phone}</p>}
+                  {r.howToAccess && <p className="text-gray-300 text-sm mb-3">&#8505;&#65039; {r.howToAccess}</p>}
                   <div className="flex gap-3 flex-wrap">
-                    {r.mapsLink && <a href={r.mapsLink} target="_blank" rel="noopener noreferrer" className="bg-green-700 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-full transition">📍 Get Directions</a>}
-                    {r.website && <a href={r.website} target="_blank" rel="noopener noreferrer" className="bg-gray-700 hover:bg-gray-600 text-white text-sm px-4 py-2 rounded-full transition">🌐 Website</a>}
+                    {r.mapsLink && <a href={r.mapsLink} target="_blank" rel="noopener noreferrer" className="bg-green-700 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-full transition">Get Directions</a>}
+                    {r.website && <a href={r.website} target="_blank" rel="noopener noreferrer" className="bg-gray-700 hover:bg-gray-600 text-white text-sm px-4 py-2 rounded-full transition">Website</a>}
                   </div>
                 </div>
               ))}
