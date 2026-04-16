@@ -1,123 +1,77 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import Link from 'next/link'
 
-export const metadata: Metadata = {
-  title: 'BASMA Academy — Gamified Music Lessons | BasmaWorld',
-  description: 'BASMA Academy — gamified music lessons, Skill Tree, XP system, and Echo your AI music mentor. Become a singer through the most engaging music school online.',
-  keywords: 'become a singer music academy, online singing lessons, gamified music lessons, music skill tree, vocal coach Las Vegas, online music academy, Echo AI music mentor',
-  openGraph: {
-    title: 'BASMA Academy — Gamified Music Lessons',
-    description: 'Level up your voice. Earn XP. Unlock your Skill Tree. Guided by Echo, your AI music mentor.',
-    url: 'https://basmaworld.com/basma/academy',
-    siteName: 'BasmaWorld',
-    type: 'website',
-  },
+export const metadata = {
+  title: 'BASMA — Become A Singer Music Academy | Online Singing Lessons',
+  description: 'Join Become A Singer Music Academy. Gamified music lessons, XP system, Skill Tree, and Echo AI mentor. Professional vocal coaching online with Basma.',
 }
-
-const paths = [
-  {
-    icon: '&#127928;',
-    title: 'Music Path',
-    desc: 'Core instrument & theory lessons. Master your craft from fundamentals to performance-ready.',
-    skills: ['Pitch & Intonation', 'Breath Control', 'Vocal Registers', 'Song Interpretation', 'Performance Confidence'],
-  },
-  {
-    icon: '&#127912;',
-    title: 'Branding Path',
-    desc: 'Music marketing, social media strategy & personal brand building for artists.',
-    skills: ['Artist Identity', 'Content Strategy', 'TikTok for Musicians', 'Audience Building', 'Music Promotion'],
-  },
-  {
-    icon: '&#128154;',
-    title: 'Health Path',
-    desc: 'Artist wellness, vocal health, performance mindset & the mental game of a music career.',
-    skills: ['Vocal Warm-Ups', 'Stress & Performance', 'Nutrition for Singers', 'Sleep & Recovery', 'Mental Resilience'],
-  },
-]
 
 export default function Academy() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-black text-white pt-24 pb-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
-            <Link href="/" className="hover:text-gray-300 transition">BasmaWorld</Link>
-            <span>/</span>
-            <Link href="/basma" className="hover:text-purple-400 transition">BASMA</Link>
-            <span>/</span>
-            <span className="text-purple-400">Academy</span>
-          </div>
+      <main className="min-h-screen bg-black text-white pt-16">
 
-          <div className="text-center mb-16">
-            <div className="text-6xl mb-4">&#127918;</div>
-            <h1 className="text-5xl font-bold text-purple-400 mb-4">BASMA Academy</h1>
-            <p className="text-gray-300 text-xl max-w-2xl mx-auto">Level up your music. Earn XP. Unlock your Skill Tree. Guided by <span className="text-purple-400 font-semibold">Echo</span>, your AI music mentor.</p>
+        {/* Hero with photo */}
+        <section className="relative h-[70vh] flex items-center px-4">
+          <div className="absolute inset-0">
+            <img src="/images/basma-academy.jpg" alt="BASMA music academy professional singing lessons"
+              className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
           </div>
-
-          <div className="bg-purple-900/30 border border-purple-600 rounded-2xl p-6 mb-12 flex flex-wrap gap-6 justify-around text-center">
-            <div>
-              <div className="text-4xl font-bold text-purple-400">XP</div>
-              <p className="text-gray-400 text-sm mt-1">Earn points for every lesson</p>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-purple-400">Tree</div>
-              <p className="text-gray-400 text-sm mt-1">Unlock skills in order</p>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-purple-400">Badges</div>
-              <p className="text-gray-400 text-sm mt-1">Celebrate every milestone</p>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-purple-400">Echo</div>
-              <p className="text-gray-400 text-sm mt-1">AI mentor tracks your growth</p>
-            </div>
+          <div className="relative z-10 max-w-2xl">
+            <p className="text-purple-400 font-bold uppercase tracking-widest text-sm mb-3">Become A Singer Music Academy</p>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">Learn Music.<br/>Earn XP.<br/>Unlock Your Potential.</h1>
+            <p className="text-gray-300 text-lg mb-8">Guided by Echo, your personal AI music mentor. Three paths — Music, Branding & Health.</p>
+            <Link href="/basma/lessons" className="bg-purple-600 hover:bg-purple-500 px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-purple-500/30">
+              🎓 Start Your Journey
+            </Link>
           </div>
+        </section>
 
-          <h2 className="text-3xl font-bold text-white mb-6">Learning Paths</h2>
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            {paths.map(path => (
-              <div key={path.title} className="bg-purple-900/20 border border-purple-800 hover:border-purple-600 rounded-2xl p-6 transition">
-                <div className="text-4xl mb-4" dangerouslySetInnerHTML={{__html: path.icon}} />
-                <h2 className="text-xl font-bold text-white mb-2">{path.title}</h2>
-                <p className="text-gray-400 text-sm leading-relaxed mb-4">{path.desc}</p>
-                <ul className="space-y-1">
-                  {path.skills.map(skill => (
-                    <li key={skill} className="flex items-center gap-2 text-sm text-gray-300">
-                      <span className="text-purple-400">&#9658;</span> {skill}
-                    </li>
-                  ))}
-                </ul>
+        {/* Learning paths */}
+        <section className="max-w-5xl mx-auto px-4 py-20">
+          <h2 className="text-3xl font-bold text-center mb-12">Choose Your Path</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: '🎸', title: 'Music Path', desc: 'Core instrument & vocal technique, music theory, performance skills', color: 'purple' },
+              { icon: '🎨', title: 'Branding Path', desc: 'Music marketing, social media strategy, personal brand building for artists', color: 'pink' },
+              { icon: '💚', title: 'Health Path', desc: 'Artist wellness, performance mindset, vocal health & longevity', color: 'green' },
+            ].map(p => (
+              <div key={p.title} className="bg-purple-900/20 border border-purple-800 rounded-2xl p-6 hover:border-purple-600 transition hover:bg-purple-900/30">
+                <div className="text-4xl mb-4">{p.icon}</div>
+                <h3 className="text-xl font-bold text-white mb-2">{p.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{p.desc}</p>
               </div>
             ))}
           </div>
+        </section>
 
-          <div className="bg-gradient-to-r from-purple-900/40 to-black border border-purple-700 rounded-2xl p-8 text-center mb-12">
-            <div className="text-6xl mb-4">&#129302;</div>
-            <h2 className="text-3xl font-bold text-purple-400 mb-3">Meet Echo</h2>
-            <p className="text-gray-300 text-lg mb-2">Your personal AI music mentor</p>
-            <p className="text-gray-400 max-w-xl mx-auto mb-6">Echo tracks your progress, recommends your next lesson, celebrates your wins, and adjusts your learning path as you grow. Like a vocal coach in your pocket — available 24/7.</p>
-            <div className="inline-block bg-purple-700/40 border border-purple-600 rounded-xl px-6 py-3 text-purple-300 text-sm">
-              Full Academy with Echo launching soon — join the waitlist below
+        {/* Echo AI mentor */}
+        <section className="bg-gradient-to-r from-purple-900/20 to-black border-y border-purple-800/30 py-16">
+          <div className="max-w-4xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <p className="text-purple-400 font-bold uppercase tracking-widest text-sm mb-3">Your AI Mentor</p>
+              <h2 className="text-4xl font-bold mb-4">Meet Echo 🤖</h2>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                Echo is your personal AI music guide. She tracks your XP, recommends your next quest, 
+                celebrates every win, and helps you unlock new levels on your Skill Tree.
+              </p>
+              <p className="text-gray-400 text-sm">Available 24/7. No judgment. Pure encouragement.</p>
+            </div>
+            <div className="bg-purple-900/30 border border-purple-700 rounded-2xl p-6 font-mono text-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 rounded-full bg-purple-400 animate-pulse"></div>
+                <span className="text-purple-400 font-sans font-semibold">Echo</span>
+              </div>
+              <p className="text-gray-300 mb-3">"Hey! You just earned <span className="text-yellow-400 font-bold">+50 XP</span> for completing Lesson 3! 🎉"</p>
+              <p className="text-gray-300 mb-3">"Your next quest: <span className="text-purple-400">Chest Voice Resonance</span>. Ready?"</p>
+              <p className="text-gray-400">"You're 120 XP away from unlocking the <span className="text-yellow-400">Performance Stage</span> node 🌟"</p>
             </div>
           </div>
+        </section>
 
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-white mb-4">Ready to Start?</h2>
-            <p className="text-gray-400 mb-6">Check out free content now, or book a professional lesson while the full academy launches.</p>
-            <div className="flex gap-4 justify-center flex-wrap">
-              <Link href="/basma/lessons" className="bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-full transition">
-                Book a Lesson
-              </Link>
-              <a href="https://www.tiktok.com/@basmateachme" target="_blank" rel="noopener noreferrer"
-                className="bg-transparent border border-purple-600 hover:border-purple-400 text-purple-400 font-semibold px-6 py-3 rounded-full transition">
-                Free Lessons on TikTok
-              </a>
-            </div>
-          </div>
-        </div>
       </main>
       <Footer />
     </>
