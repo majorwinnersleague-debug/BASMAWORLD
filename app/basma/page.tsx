@@ -1,120 +1,84 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import Link from 'next/link'
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'BASMA — Become A Singer Music Academy | BasmaWorld',
-  description: 'BASMA — Become A Singer Music Academy. Gamified music lessons, Skill Tree, XP system, Echo AI mentor, professional vocal coaching in Las Vegas and online.',
-  keywords: 'become a singer music academy, professional singing lessons, vocal coach Las Vegas, online singing lessons, music academy Las Vegas, BASMA music, singing lessons online',
-  openGraph: {
-    title: 'BASMA — Become A Singer Music Academy',
-    description: 'Gamified music academy. Skill Tree. XP. Echo AI mentor. Professional vocal coaching in Las Vegas & online.',
-    url: 'https://basmaworld.com/basma',
-    siteName: 'BasmaWorld',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'BASMA Music Academy',
-    description: 'Become A Singer Music Academy — gamified lessons, Skill Tree, XP & Echo AI.',
-    creator: '@basma_singer',
-  },
+  description: 'BASMA — Become A Singer Music Academy. Gamified music lessons, professional vocal coaching, and Basma as a professional singer-songwriter and artist.',
 }
 
 export default function BASMA() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-black text-white pt-24 pb-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="text-6xl mb-4">&#127925;</div>
-            <h1 className="text-5xl font-bold text-purple-400 mb-3">BASMA</h1>
-            <p className="text-2xl text-gray-300 mb-4 font-semibold">Become A Singer Music Academy</p>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">Gamified music lessons. Skill Tree. XP. Echo AI mentor. Professional vocal coaching in Las Vegas &amp; online. Your journey from student to artist starts here.</p>
+      <main className="min-h-screen bg-black text-white pt-16">
+
+        {/* Hero */}
+        <section className="relative h-[80vh] flex items-end pb-20 px-4">
+          <div className="absolute inset-0">
+            <img src="/images/basma-singer.jpg" alt="BASMA Become A Singer Music Academy"
+              className="w-full h-full object-cover object-top" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
           </div>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            <Link href="/basma/academy" className="group bg-gradient-to-br from-purple-900/40 to-black border border-purple-700/50 hover:border-purple-400 rounded-2xl p-7 text-center transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20">
-              <div className="text-5xl mb-4">&#127918;</div>
-              <h2 className="text-xl font-bold text-purple-400 mb-2">Academy</h2>
-              <p className="text-gray-400 text-sm leading-relaxed mb-4">Gamified lessons, Skill Tree, XP system, and Echo your AI music mentor. Level up your voice.</p>
-              <span className="text-purple-400 text-sm font-semibold group-hover:underline">Start Learning →</span>
-            </Link>
-
-            <Link href="/basma/lessons" className="group bg-gradient-to-br from-purple-900/40 to-black border border-purple-700/50 hover:border-purple-400 rounded-2xl p-7 text-center transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20">
-              <div className="text-5xl mb-4">&#128249;</div>
-              <h2 className="text-xl font-bold text-purple-400 mb-2">Lessons</h2>
-              <p className="text-gray-400 text-sm leading-relaxed mb-4">Professional 1-on-1 video lessons with Basma. Real techniques. Real results. Las Vegas &amp; online.</p>
-              <span className="text-purple-400 text-sm font-semibold group-hover:underline">View Lessons →</span>
-            </Link>
-
-            <Link href="/basma/artist" className="group bg-gradient-to-br from-purple-900/40 to-black border border-purple-700/50 hover:border-purple-400 rounded-2xl p-7 text-center transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20">
-              <div className="text-5xl mb-4">&#127775;</div>
-              <h2 className="text-xl font-bold text-purple-400 mb-2">Basma Artist</h2>
-              <p className="text-gray-400 text-sm leading-relaxed mb-4">Basma as a professional singer-songwriter. Vevo, Instagram, TikTok — experience the music.</p>
-              <span className="text-purple-400 text-sm font-semibold group-hover:underline">Listen Now →</span>
-            </Link>
-          </div>
-
-          <div className="bg-purple-900/20 border border-purple-700/50 rounded-2xl p-8 mb-12">
-            <h2 className="text-3xl font-bold text-white mb-2">Free Content</h2>
-            <p className="text-gray-400 mb-8">Start learning for free. Basma&apos;s TikToks cover real vocal techniques, music tips, and behind-the-scenes of being an artist.</p>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-black/40 border border-purple-800/50 rounded-xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-2xl">&#127925;</span>
-                  <div>
-                    <h3 className="font-bold text-white">@basma_singer</h3>
-                    <p className="text-purple-400 text-sm">270,000+ followers</p>
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm mb-4">Original songs, artist life, and music that moves you. See what is possible when you commit to your craft.</p>
-                <a href="https://www.tiktok.com/@basma_singer" target="_blank" rel="noopener noreferrer"
-                  className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-4 py-2 rounded-full text-sm transition inline-block">
-                  Follow on TikTok →
-                </a>
-              </div>
-              <div className="bg-black/40 border border-purple-800/50 rounded-xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-2xl">&#127891;</span>
-                  <div>
-                    <h3 className="font-bold text-white">@basmateachme</h3>
-                    <p className="text-purple-400 text-sm">BasmaTeachMe &middot; Free Lessons</p>
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm mb-4">Free vocal lessons, technique breakdowns, and music education. Learn from a working professional.</p>
-                <a href="https://www.tiktok.com/@basmateachme" target="_blank" rel="noopener noreferrer"
-                  className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-4 py-2 rounded-full text-sm transition inline-block">
-                  Follow on TikTok →
-                </a>
-              </div>
+          <div className="relative z-10 max-w-3xl mx-auto text-center w-full">
+            <p className="text-purple-400 font-bold uppercase tracking-widest text-sm mb-3">Become A Singer Music Academy</p>
+            <h1 className="text-6xl font-bold text-white mb-4">BASMA</h1>
+            <p className="text-gray-300 text-xl mb-10">Learn. Perform. Become.</p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link href="/basma/academy" className="bg-purple-600 hover:bg-purple-500 px-7 py-3 rounded-full font-bold transition hover:scale-105">🎓 Join the Academy</Link>
+              <Link href="/basma/artist" className="bg-white/10 hover:bg-white/20 border border-white/30 px-7 py-3 rounded-full font-bold transition">🎤 Basma The Artist</Link>
+              <Link href="/basma/lessons" className="bg-yellow-500 hover:bg-yellow-400 text-black px-7 py-3 rounded-full font-bold transition">💼 Pro Lessons</Link>
             </div>
           </div>
+        </section>
 
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-6 text-gray-200">Follow Basma</h2>
-            <div className="flex flex-wrap gap-4 justify-center">
+        {/* 3 sections */}
+        <section className="max-w-5xl mx-auto px-4 py-20 grid md:grid-cols-3 gap-6">
+          <Link href="/basma/academy" className="group relative rounded-2xl overflow-hidden">
+            <img src="/images/basma-academy.jpg" alt="BASMA music academy" className="w-full h-56 object-cover group-hover:scale-105 transition duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+            <div className="absolute bottom-0 p-5">
+              <h2 className="text-lg font-bold text-white">🎓 The Academy</h2>
+              <p className="text-gray-400 text-xs mt-1">Gamified lessons, XP & Skill Tree</p>
+            </div>
+          </Link>
+          <Link href="/basma/artist" className="group relative rounded-2xl overflow-hidden">
+            <img src="/images/basma-artist.jpg" alt="Basma professional singer artist" className="w-full h-56 object-cover group-hover:scale-105 transition duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+            <div className="absolute bottom-0 p-5">
+              <h2 className="text-lg font-bold text-white">🎤 The Artist</h2>
+              <p className="text-gray-400 text-xs mt-1">Singer, songwriter & performer</p>
+            </div>
+          </Link>
+          <Link href="/basma/lessons" className="group relative rounded-2xl overflow-hidden">
+            <img src="/images/basma-hero.jpg" alt="Professional singing lessons with Basma" className="w-full h-56 object-cover group-hover:scale-105 transition duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+            <div className="absolute bottom-0 p-5">
+              <h2 className="text-lg font-bold text-white">💼 Pro Lessons</h2>
+              <p className="text-gray-400 text-xs mt-1">1-on-1 professional coaching</p>
+            </div>
+          </Link>
+        </section>
+
+        {/* TikTok marketing strip */}
+        <section className="border-t border-white/10 py-12">
+          <div className="max-w-3xl mx-auto px-4 text-center">
+            <p className="text-purple-400 font-bold uppercase tracking-widest text-sm mb-3">Free Content</p>
+            <h2 className="text-2xl font-bold mb-4">Learn Music For Free on TikTok</h2>
+            <p className="text-gray-400 mb-6">270k+ students already learning with Basma. Join the community for free music tips, lessons, and behind-the-scenes content.</p>
+            <div className="flex gap-4 justify-center flex-wrap">
               <a href="https://www.tiktok.com/@basma_singer" target="_blank" rel="noopener noreferrer"
-                className="bg-purple-900/30 border border-purple-700 hover:border-purple-400 text-purple-300 px-5 py-2.5 rounded-full text-sm font-medium transition">
-                TikTok @basma_singer (270k+)
+                className="bg-white text-black hover:bg-gray-100 px-6 py-3 rounded-full font-bold transition">
+                🎵 @basma_singer — 270k+
               </a>
               <a href="https://www.tiktok.com/@basmateachme" target="_blank" rel="noopener noreferrer"
-                className="bg-purple-900/30 border border-purple-700 hover:border-purple-400 text-purple-300 px-5 py-2.5 rounded-full text-sm font-medium transition">
-                TikTok @basmateachme
-              </a>
-              <a href="https://www.instagram.com/basma.tea" target="_blank" rel="noopener noreferrer"
-                className="bg-purple-900/30 border border-purple-700 hover:border-purple-400 text-purple-300 px-5 py-2.5 rounded-full text-sm font-medium transition">
-                Instagram @basma.tea
-              </a>
-              <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer"
-                className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-5 py-2.5 rounded-full text-sm transition">
-                All Links
+                className="bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-3 rounded-full font-bold transition">
+                🎭 @basmateachme
               </a>
             </div>
           </div>
-        </div>
+        </section>
+
       </main>
       <Footer />
     </>
