@@ -1,77 +1,58 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import Link from 'next/link'
 
-export const metadata: Metadata = {
-  title: 'Major Winners League | BasmaWorld',
-  description: 'Major Winners League — community events, motivational speaking, spoken poetry, and social impact in Las Vegas, Nevada.',
-  keywords: 'Las Vegas community events, motivational speaker Las Vegas, nonprofit interviews Nevada, spoken poetry Las Vegas, social impact Nevada, Major Winners League',
-  openGraph: {
-    title: 'Major Winners League | BasmaWorld',
-    description: 'Community, social impact, motivational content, and the Mildly Interesting podcast.',
-    url: 'https://basmaworld.com/mwl',
-    siteName: 'BasmaWorld',
-    type: 'website',
-  },
+export const metadata = {
+  title: 'Major Winners League — Community Events & Social Impact | Las Vegas',
+  description: 'Major Winners League covers Las Vegas community events, interviews with businesses and nonprofits, motivational talks, and social impact through Historic Westside and Nevada Partners.',
 }
 
 export default function MWL() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-black text-white pt-24 pb-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="text-6xl mb-4">&#127942;</div>
-            <h1 className="text-5xl font-bold text-yellow-400 mb-4">Major Winners League</h1>
-            <p className="text-gray-300 text-xl max-w-2xl mx-auto">Community. Social Impact. Motivation. Where winners lift each other up — Las Vegas &amp; beyond.</p>
+      <main className="min-h-screen bg-black text-white pt-16">
+
+        {/* Hero with photo */}
+        <section className="relative h-[70vh] flex items-end pb-16 px-4">
+          <div className="absolute inset-0">
+            <img src="/images/basma-mwl.jpg" alt="Major Winners League community events Las Vegas"
+              className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
           </div>
-
-          <div className="grid md:grid-cols-2 gap-6 mb-16">
-            <Link href="/mwl/i-am-positive" className="group bg-gradient-to-br from-yellow-900/30 to-black border border-yellow-700/50 hover:border-yellow-400 rounded-2xl p-7 transition-all hover:scale-105 hover:shadow-xl hover:shadow-yellow-500/20">
-              <div className="text-4xl mb-3">&#10027;</div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">I Am Positive</h2>
-              <p className="text-gray-400 leading-relaxed">Motivational talks, spoken word poetry, and stories of resilience. Shift your mindset. Claim your power.</p>
-              <span className="mt-4 inline-block text-yellow-400 text-sm font-semibold group-hover:underline">Explore →</span>
-            </Link>
-
-            <Link href="/mwl/podcast" className="group bg-gradient-to-br from-yellow-900/30 to-black border border-yellow-700/50 hover:border-yellow-400 rounded-2xl p-7 transition-all hover:scale-105 hover:shadow-xl hover:shadow-yellow-500/20">
-              <div className="text-4xl mb-3">&#127897;</div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2">Mildly Interesting</h2>
-              <p className="text-gray-400 leading-relaxed">The podcast with Wesley. Real conversations about community, creativity, and what it means to win in life.</p>
-              <span className="mt-4 inline-block text-yellow-400 text-sm font-semibold group-hover:underline">Listen →</span>
-            </Link>
-
-            <Link href="/hopes" className="group bg-gradient-to-br from-green-900/30 to-black border border-green-700/50 hover:border-green-400 rounded-2xl p-7 transition-all hover:scale-105 hover:shadow-xl hover:shadow-green-500/20">
-              <div className="text-4xl mb-3">&#129309;</div>
-              <h2 className="text-2xl font-bold text-green-400 mb-2">Hopes Chance</h2>
-              <p className="text-gray-400 leading-relaxed">Youth resource navigator for ages 16–30. Find free help for housing, mental health, jobs &amp; more. No judgment.</p>
-              <span className="mt-4 inline-block text-green-400 text-sm font-semibold group-hover:underline">Find Resources →</span>
-            </Link>
-
-            <Link href="/vegan-survivors" className="group bg-gradient-to-br from-orange-900/30 to-black border border-orange-700/50 hover:border-orange-400 rounded-2xl p-7 transition-all hover:scale-105 hover:shadow-xl hover:shadow-orange-500/20">
-              <div className="text-4xl mb-3">&#127807;</div>
-              <h2 className="text-2xl font-bold text-orange-400 mb-2">Vegan Survivors</h2>
-              <p className="text-gray-400 leading-relaxed">Vegan recipes, plant-based health tips, and a community for thriving on a plant-based lifestyle.</p>
-              <span className="mt-4 inline-block text-orange-400 text-sm font-semibold group-hover:underline">Explore →</span>
-            </Link>
+          <div className="relative z-10 max-w-3xl mx-auto text-center w-full">
+            <p className="text-yellow-400 font-bold uppercase tracking-widest text-sm mb-3">Community • Impact • Motivation</p>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">Major Winners League</h1>
+            <p className="text-gray-300 text-lg">Covering Las Vegas from Historic Westside to Nevada Partners — one community at a time.</p>
           </div>
+        </section>
 
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-6 text-gray-200">Connect with MWL</h2>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <a href="https://www.instagram.com/basma.tea" target="_blank" rel="noopener noreferrer"
-                className="bg-yellow-900/30 border border-yellow-700 hover:border-yellow-400 text-yellow-300 px-5 py-2.5 rounded-full text-sm font-medium transition">
-                Instagram @basma.tea
-              </a>
-              <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer"
-                className="bg-yellow-900/30 border border-yellow-700 hover:border-yellow-400 text-yellow-300 px-5 py-2.5 rounded-full text-sm font-medium transition">
-                All Links (Linktree)
-              </a>
-            </div>
-          </div>
-        </div>
+        {/* 4 sub-section cards */}
+        <section className="max-w-5xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-6">
+          {[
+            { href: '/mwl/i-am-positive', icon: '💛', title: 'I Am Positive', desc: 'Motivational talks, spoken word poetry, and inspiration for the community.', color: 'yellow' },
+            { href: '/mwl/podcast', icon: '🎙️', title: 'Mildly Interesting', desc: 'The podcast with Wesley. Real conversations, real topics. Posted on BasmaWorld YouTube.', color: 'yellow' },
+            { href: '/hopes', icon: '🤝', title: 'Hopes Chance', desc: 'Free resource navigator connecting youth 16-30 to housing, jobs, and mental health services.', color: 'green' },
+            { href: '/vegan-survivors', icon: '🥦', title: 'Vegan Survivors', desc: 'Plant-based recipes, health tips, and wellness content for the whole community.', color: 'orange' },
+          ].map(s => (
+            <Link key={s.href} href={s.href}
+              className="bg-gray-900/50 border border-white/10 hover:border-yellow-500/50 rounded-2xl p-6 flex gap-4 items-start transition group hover:bg-yellow-900/10">
+              <div className="text-4xl">{s.icon}</div>
+              <div>
+                <h2 className="text-xl font-bold text-white group-hover:text-yellow-400 transition mb-2">{s.title}</h2>
+                <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
+              </div>
+            </Link>
+          ))}
+        </section>
+
+        {/* Community photo strip */}
+        <section className="max-w-5xl mx-auto px-4 pb-20 grid grid-cols-2 md:grid-cols-3 gap-4">
+          <img src="/images/basma-community.jpg" alt="Basma in the community" className="rounded-xl w-full h-48 object-cover" />
+          <img src="/images/basma-mwl.jpg" alt="MWL community event" className="rounded-xl w-full h-48 object-cover" />
+          <img src="/images/basma-about.jpg" alt="Basma Awada community leader" className="rounded-xl w-full h-48 object-cover md:block hidden" />
+        </section>
+
       </main>
       <Footer />
     </>
