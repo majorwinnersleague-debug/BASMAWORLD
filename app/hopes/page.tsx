@@ -3,6 +3,7 @@ import { useState } from 'react'
 import posthog from 'posthog-js'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import BillyChat from '@/components/BillyChat'
 
 const CATEGORIES = [
   { label: '🏠 Housing', value: 'Housing' },
@@ -171,6 +172,7 @@ export default function HopesChance() {
         </div>
       </main>
       <Footer />
+      <BillyChat page="hopes" />
     </>
   )
 }
