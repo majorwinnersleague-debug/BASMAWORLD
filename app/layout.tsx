@@ -3,22 +3,13 @@ import './globals.css'
 import { PostHogProvider } from '@/components/PostHogProvider'
 
 export const metadata: Metadata = {
-  title: 'BasmaWorld — Music. Community. Opportunity.',
-  description: 'BASMA Become A Singer Music Academy, Major Winners League community & Hopes Chance youth resources — unified on one platform.',
-  keywords: 'BasmaWorld, become a singer music academy, professional singing lessons, vocal coach Las Vegas, online singing lessons, Las Vegas community events, motivational speaker Las Vegas, youth resources Las Vegas',
-  openGraph: {
-    title: 'BasmaWorld — Music. Community. Opportunity.',
-    description: 'Gamified music academy, community impact platform & youth resource navigator — all in one.',
-    url: 'https://basmaworld.com',
-    siteName: 'BasmaWorld',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'BasmaWorld',
-    description: 'Music. Community. Opportunity.',
-    creator: '@basma_singer',
-  },
+  metadataBase: new URL('https://basmaworld.com'),
+  title: { default: 'BasmaWorld — Music Academy, Community & Youth Resources | Las Vegas', template: '%s | BasmaWorld' },
+  description: 'BasmaWorld is home to BASMA Music Academy, Major Winners League community content, and Hopes Chance youth resources. Las Vegas based. Learn music, find community, get support.',
+  keywords: ['music academy', 'Las Vegas', 'youth resources', 'Billy the Puppet', 'BasmaTeach Me', 'Hopes Chance', 'Major Winners League', 'singing lessons', 'piano lessons', 'guitar lessons'],
+  openGraph: { type: 'website', locale: 'en_US', url: 'https://basmaworld.com', siteName: 'BasmaWorld', images: [{ url: '/og-image.jpg', width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', creator: '@basma_singer' },
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
