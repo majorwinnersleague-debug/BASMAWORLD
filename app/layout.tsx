@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { PostHogProvider } from '@/components/PostHogProvider'
 
 export const metadata: Metadata = {
   title: 'BasmaWorld — Music. Community. Opportunity.',
@@ -23,7 +24,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white antialiased">{children}</body>
+      <body className="bg-black text-white antialiased">
+        <PostHogProvider>{children}</PostHogProvider>
+      </body>
     </html>
   )
 }
