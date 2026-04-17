@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import posthog from 'posthog-js'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
@@ -45,16 +46,34 @@ export default function HopesChance() {
     setLoading(true)
     setError(null)
     setResources([])
+
+    // Track category search
+    posthog.capture('hopes_chance_search', { category: value, category_label: label })
+
     try {
       const res = await fetch(`/api/resources?category=${encodeURIComponent(value)}`)
       const data = await res.json()
       if (data.resources?.length) {
         setResources(data.resources)
+        posthog.capture('hopes_chance_search_results', {
+          category: value,
+          category_label: label,
+          result_count: data.resources.length,
+        })
       } else {
         setError('No resources found for this category right now. Call 211 for immediate help.')
+        // Track no-results event for Viktor alerting
+        posthog.capture('hopes_chance_search_no_results', {
+          category: value,
+          category_label: label,
+        })
       }
     } catch {
       setError('Unable to load resources. Please call 211 for immediate assistance.')
+      posthog.capture('hopes_chance_search_error', {
+        category: value,
+        category_label: label,
+      })
     } finally {
       setLoading(false)
     }
