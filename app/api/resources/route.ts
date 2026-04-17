@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const ALLOWED_CATEGORIES = [
-  'Housing', 'Food Support', 'Mental Health', 'Job Training',
-  'Healthcare', 'Legal', 'Education', 'Transportation',
-  'Financial', 'Childcare', 'Employment', 'Crisis Intervention',
-  'Domestic Violence', 'Disability Services', 'Immigration Services',
-  'Veteran Services', 'Youth Programs', 'Senior Services', 'Other'
+  'Housing', 'Shelter/Housing', 'Food Support', 'Food Assistance',
+  'Mental Health', 'Job Training', 'Healthcare', 'Legal Assistance',
+  'Education', 'Transportation', 'Financial', 'Childcare',
+  'Employment', 'Crisis Intervention', 'Domestic Violence',
+  'Disability Services', 'Immigration Services', 'Veteran Services',
+  'Youth Programs', 'Senior Services', 'Family Support',
+  'Substance Use', 'Other'
 ]
 
 export async function GET(req: NextRequest) {
@@ -29,7 +31,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ resources: [], error: 'Service temporarily unavailable' }, { status: 503 })
     }
 
-    const formula = encodeURIComponent(`FIND("${category}", {Category})>0`)
+    const formula = encodeURIComponent(`FIND("${category}", ARRAYJOIN({Service Type}))>0`)
     const res = await fetch(
       `https://api.airtable.com/v0/${base}/Services?filterByFormula=${formula}&maxRecords=10`,
       { headers: { Authorization: `Bearer ${token}` }, next: { revalidate: 300 } }
@@ -44,12 +46,15 @@ export async function GET(req: NextRequest) {
 
     const resources = (data.records || []).map((r: any) => ({
       name: r.fields['Organization Name'] || 'Unknown Organization',
-      address: r.fields['Address'] || null,
+      description: r.fields['Service Description'] || null,
+      address: r.fields['Address']
+        ? `${r.fields['Address']}, ${r.fields['City'] || ''}, ${r.fields['State'] || ''} ${r.fields['ZIP Code'] || ''}`.trim()
+        : null,
       phone: r.fields['Phone'] || null,
       website: r.fields['Website'] || null,
       howToAccess: r.fields['How to Access'] || null,
       mapsLink: r.fields['Address']
-        ? `https://maps.google.com/?q=${encodeURIComponent(r.fields['Address'])}`
+        ? `https://maps.google.com/?q=${encodeURIComponent(`${r.fields['Address']}, ${r.fields['City'] || ''}, ${r.fields['State'] || ''}`)}`
         : null,
     }))
 
