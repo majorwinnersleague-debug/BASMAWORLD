@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import BillyChat from '@/components/BillyChat'
 import Link from 'next/link'
 
 export const metadata = {
@@ -74,6 +75,7 @@ export default function Academy() {
 
       </main>
       <Footer />
+      <BillyChat page="academy" />
     </>
   )
 }
