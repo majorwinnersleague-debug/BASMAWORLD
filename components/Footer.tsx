@@ -47,6 +47,10 @@ export default function Footer() {
             <Link href="/mwl" className="hover:text-yellow-400 transition">MWL</Link>
             <span className="text-white/20">·</span>
             <span className="text-white/30">Powered by BasmaWorld</span>
+            <span className="text-white/20">·</span>
+            <Link href="/privacy" className="hover:text-white/40 transition">Privacy</Link>
+            <span className="text-white/20">·</span>
+            <Link href="/contact" className="hover:text-white/40 transition">Contact</Link>
           </div>
         </div>
       </div>
