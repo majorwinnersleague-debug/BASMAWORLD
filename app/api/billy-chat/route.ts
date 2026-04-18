@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getClientIp, sanitizeString } from '@/lib/rate-limit'
 
 const BILLY_SYSTEM_PROMPT = `You are Billy the Puppet — a hilarious, sassy, kid-friendly, quirky puppet character from BasmaWorld and the BasmaTeach Me series! You have a high-pitched, enthusiastic voice and you LOVE music, learning, and making kids laugh.
 
@@ -31,6 +32,16 @@ IMPORTANT RULES:
 Ready? Let's goooo! 🎵`
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 20 messages per IP per minute
+  const ip = getClientIp(req)
+  const { allowed } = checkRateLimit(`billy-chat:${ip}`, 20, 60 * 1000)
+  if (!allowed) {
+    return NextResponse.json(
+      { reply: "Whoa slow down rockstar! 😅 Billy needs a little breather — try again in a minute! 🎵" },
+      { status: 429, headers: { 'Retry-After': '60' } }
+    )
+  }
+
   try {
     const { messages, page } = await req.json()
 
@@ -38,15 +49,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
 
+    // Validate message array — only allow user/assistant roles, no system injection
+    const MAX_MESSAGE_LENGTH = 2000
+    const validatedMessages = messages
+      .filter((m: unknown) => {
+        if (typeof m !== 'object' || m === null) return false
+        const msg = m as Record<string, unknown>
+        // Only allow user/assistant roles — reject any system role from client
+        if (!['user', 'assistant'].includes(String(msg.role))) return false
+        if (typeof msg.content !== 'string') return false
+        return true
+      })
+      .slice(-10) // Keep last 10 messages
+      .map((m: Record<string, unknown>) => ({
+        role: m.role as 'user' | 'assistant',
+        // Sanitize content and enforce max length
+        content: sanitizeString(String(m.content), MAX_MESSAGE_LENGTH),
+      }))
+
     const apiKey = process.env.OPENROUTER_API_KEY
     if (!apiKey) {
       return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
     }
 
+    // Whitelist allowed page context values
+    const ALLOWED_PAGES = ['hopes', 'academy', 'home', 'mwl']
+    const safePage = ALLOWED_PAGES.includes(String(page)) ? String(page) : ''
+
     // Add page context to system prompt
-    const pageContext = page === 'hopes'
+    const pageContext = safePage === 'hopes'
       ? '\n\nNOTE: You are on the Hopes Chance page. Be gentler and more supportive. Less silly, more warm.'
-      : page === 'academy'
+      : safePage === 'academy'
       ? '\n\nNOTE: You are on the Music Academy page. Focus on instruments and lessons!'
       : ''
 
@@ -62,7 +95,7 @@ export async function POST(req: NextRequest) {
         model: 'anthropic/claude-3-haiku',
         messages: [
           { role: 'system', content: BILLY_SYSTEM_PROMPT + pageContext },
-          ...messages.slice(-10), // keep last 10 messages for context
+          ...validatedMessages,
         ],
         max_tokens: 200,
         temperature: 0.85,
@@ -71,7 +104,7 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       console.error('OpenRouter error:', response.status)
-      return NextResponse.json({ error: 'Billy is taking a nap 😴 Try again!' }, { status: 500 })
+      return NextResponse.json({ reply: "Billy is taking a nap 😴 Try again!" }, { status: 500 })
     }
 
     const data = await response.json()
@@ -82,13 +115,20 @@ export async function POST(req: NextRequest) {
     const leadMatch = reply.match(/\[LEAD_CAPTURED: name=(.+?), email=(.+?), interest=(.+?)\]/)
     if (leadMatch) {
       const [, name, email, interest] = leadMatch
-      const source = `Billy Chat${interest.trim() ? ` — ${interest.trim()}` : ''}`
-      // Fire-and-forget — don't block the chat response
-      fetch(`${req.nextUrl.origin}/api/billy-lead`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), source }),
-      }).catch((e) => console.error('billy-lead delegate error:', e))
+      // Validate email format before delegating — don't trust AI-extracted data blindly
+      const cleanEmail = email.trim()
+      const cleanName = sanitizeString(name.trim(), 100)
+      const cleanInterest = sanitizeString(interest.trim(), 100)
+
+      if (cleanEmail.includes('@') && cleanEmail.includes('.') && cleanName.length > 0) {
+        const source = `Billy Chat${cleanInterest ? ` — ${cleanInterest}` : ''}`
+        // Fire-and-forget — don't block the chat response
+        fetch(`${req.nextUrl.origin}/api/billy-lead`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: cleanName, email: cleanEmail, source }),
+        }).catch((e) => console.error('billy-lead delegate error:', e))
+      }
     }
 
     // Clean the tag from the visible reply

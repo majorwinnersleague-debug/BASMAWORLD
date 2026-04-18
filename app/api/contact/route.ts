@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getClientIp, isValidEmail, sanitizeString } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 contact form submissions per IP per 10 minutes
+  const ip = getClientIp(req)
+  const { allowed } = checkRateLimit(`contact:${ip}`, 5, 10 * 60 * 1000)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': '600' } }
+    )
+  }
+
   try {
     const body = await req.json()
     const { name, email, company, message } = body
@@ -9,15 +20,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'name, email and message required' }, { status: 400 })
     }
 
+    // Validate email format
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    }
+
+    // Sanitize all inputs
+    const safeName = sanitizeString(String(name), 100)
+    const safeEmail = email.trim().toLowerCase().slice(0, 254)
+    const safeCompany = company ? sanitizeString(String(company), 200) : ''
+    const safeMessage = sanitizeString(String(message), 2000)
+
     // Post to Slack #basma-world-ops
     const slackToken = process.env.SLACK_BOT_TOKEN
-    if (slackToken) {
+    const slackChannel = process.env.SLACK_CHANNEL_OPS
+    if (slackToken && slackChannel) {
       await fetch('https://slack.com/api/chat.postMessage', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${slackToken}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          channel: 'C0ATLUAGUU9',
-          text: `🏆 *New MWL Lead!*\n*Name:* ${name}\n*Email:* ${email}\n*Company:* ${company || 'N/A'}\n*Message:* ${message}`
+          channel: slackChannel,
+          text: `🏆 *New MWL Lead!*\n*Name:* ${safeName}\n*Email:* ${safeEmail}\n*Company:* ${safeCompany || 'N/A'}\n*Message:* ${safeMessage}`
         })
       })
     }
@@ -30,11 +53,11 @@ export async function POST(req: NextRequest) {
         headers: { 'Authorization': `Bearer ${hubspotKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           properties: {
-            firstname: name.split(' ')[0],
-            lastname: name.split(' ').slice(1).join(' ') || '',
-            email,
-            company: company || '',
-            message,
+            firstname: safeName.split(' ')[0],
+            lastname: safeName.split(' ').slice(1).join(' ') || '',
+            email: safeEmail,
+            company: safeCompany,
+            message: safeMessage,
             hs_lead_status: 'NEW'
           }
         })

@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import { sendEmail } from '@/lib/send-email'
 import { getFunnelForSource, getEmail1ForFunnel } from '@/lib/email-sequences'
+import { checkRateLimit, getClientIp, isValidEmail, sanitizeString } from '@/lib/rate-limit'
 
 // Set SLACK_BOT_TOKEN and SLACK_CHANNEL_OPS in your .env.local / deployment env vars
 const SLACK_TOKEN = process.env.SLACK_BOT_TOKEN || ''
-const SLACK_CHANNEL = process.env.SLACK_CHANNEL_OPS || 'C0ATLUAGUU9'
+const SLACK_CHANNEL = process.env.SLACK_CHANNEL_OPS || ''
 const LEADS_FILE = '/tmp/billy-leads.json'
 
 // ── Save lead to JSON log ─────────────────────────────────────────────────────
@@ -62,7 +63,7 @@ async function saveLeadToAirtable(name: string, email: string, source: string) {
     if (!res.ok) {
       console.error('Airtable save failed:', data)
     } else {
-      console.log(`Airtable lead saved: ${name} <${email}> from ${source}`)
+      console.log(`Airtable lead saved: ${name.slice(0, 2)}*** from ${source}`)
     }
   } catch (err) {
     console.error('Airtable save error:', err)
@@ -71,7 +72,12 @@ async function saveLeadToAirtable(name: string, email: string, source: string) {
 
 // ── Post to Slack ─────────────────────────────────────────────────────────────
 async function postSlackNotification(name: string, email: string, source: string) {
-  const text = `:tada: New BillyChat lead! *${name}* (${email}) from ${source}`
+  if (!SLACK_TOKEN || !SLACK_CHANNEL) {
+    console.warn('postSlackNotification: SLACK_BOT_TOKEN or SLACK_CHANNEL_OPS not set — skipping')
+    return
+  }
+
+  const text = `:tada: New BillyChat lead! *${name}* from ${source}`
 
   const res = await fetch('https://slack.com/api/chat.postMessage', {
     method: 'POST',
@@ -88,8 +94,6 @@ async function postSlackNotification(name: string, email: string, source: string
   const data = await res.json()
   if (!data.ok) {
     console.error('Slack notification failed:', data.error)
-  } else {
-    console.log(`Slack notified for lead: ${name} <${email}>`)
   }
 }
 
@@ -111,9 +115,9 @@ async function sendWelcomeEmail(name: string, email: string, source: string) {
     })
 
     if (result.success) {
-      console.log(`Welcome email sent: funnel=${funnel} to=${email} id=${result.id}`)
+      console.log(`Welcome email sent: funnel=${funnel} id=${result.id}`)
     } else {
-      console.error(`Welcome email failed: funnel=${funnel} to=${email} error=${result.error}`)
+      console.error(`Welcome email failed: funnel=${funnel} error=${result.error}`)
     }
   } catch (err) {
     console.error('sendWelcomeEmail error:', err)
@@ -122,6 +126,16 @@ async function sendWelcomeEmail(name: string, email: string, source: string) {
 
 // ── Route handler ─────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 lead submissions per IP per 10 minutes
+  const ip = getClientIp(req)
+  const { allowed, remaining } = checkRateLimit(`billy-lead:${ip}`, 5, 10 * 60 * 1000)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': '600' } }
+    )
+  }
+
   try {
     const body = await req.json()
     const { name, email, source } = body
@@ -130,17 +144,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'name and email are required' }, { status: 400 })
     }
 
-    const sourcePage = source || 'unknown'
+    // Validate email format
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    }
+
+    // Sanitize inputs
+    const safeName = sanitizeString(String(name), 100)
+    const safeEmail = email.trim().toLowerCase().slice(0, 254)
+    const sourcePage = sanitizeString(String(source || 'unknown'), 100)
 
     // Run all operations in parallel — don't let one block the response
     await Promise.allSettled([
-      saveLeadToFile(name.trim(), email.trim(), sourcePage),
-      saveLeadToAirtable(name.trim(), email.trim(), sourcePage),
-      postSlackNotification(name.trim(), email.trim(), sourcePage),
-      sendWelcomeEmail(name.trim(), email.trim(), sourcePage),
+      saveLeadToFile(safeName, safeEmail, sourcePage),
+      saveLeadToAirtable(safeName, safeEmail, sourcePage),
+      postSlackNotification(safeName, safeEmail, sourcePage),
+      sendWelcomeEmail(safeName, safeEmail, sourcePage),
     ])
-
-    console.log(`BillyChat lead captured: ${name} <${email}> from ${sourcePage}`)
 
     return NextResponse.json({ success: true })
   } catch (err) {

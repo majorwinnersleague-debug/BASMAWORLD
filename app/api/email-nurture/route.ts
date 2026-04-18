@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getClientIp, isValidEmail } from '@/lib/rate-limit'
 
 // Resend email nurture — triggered by /api/billy-lead or scheduled cron
 // Requires RESEND_API_KEY environment variable
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
 const FROM_EMAIL = process.env.EMAIL_FROM || 'BillyChat <billy@basmaworld.com>'
+
+// Internal secret for server-to-server calls — protects this endpoint from public abuse
+const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || ''
 
 interface SendEmailParams {
   to: string
@@ -41,19 +45,52 @@ async function sendViaResend({ to, subject, html, text }: SendEmailParams): Prom
     return false
   }
 
-  console.log(`Email sent via Resend: ${subject} → ${to}`)
+  console.log(`Email sent via Resend: ${subject}`)
   return true
+}
+
+/**
+ * Verify internal API secret header.
+ * Server-to-server calls must include: x-internal-secret: <INTERNAL_API_SECRET>
+ */
+function verifyInternalSecret(req: NextRequest): boolean {
+  if (!INTERNAL_SECRET) {
+    // If no secret is configured, only allow in development
+    return process.env.NODE_ENV === 'development'
+  }
+  return req.headers.get('x-internal-secret') === INTERNAL_SECRET
 }
 
 // POST /api/email-nurture
 // Body: { email: string, name: string, emailIndex: number }
+// Requires x-internal-secret header (server-to-server only)
 export async function POST(req: NextRequest) {
+  // Verify this is an internal server-to-server call
+  if (!verifyInternalSecret(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Rate limit: 10 email sends per origin IP per minute
+  const ip = getClientIp(req)
+  const { allowed } = checkRateLimit(`email-nurture:${ip}`, 10, 60 * 1000)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded' },
+      { status: 429, headers: { 'Retry-After': '60' } }
+    )
+  }
+
   try {
     const body = await req.json()
     const { email, name, emailIndex } = body
 
     if (!email || emailIndex === undefined) {
       return NextResponse.json({ error: 'email and emailIndex are required' }, { status: 400 })
+    }
+
+    // Validate email format
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 
     // Dynamic import of templates
@@ -84,16 +121,26 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/email-nurture?email=x&name=y&index=0
-// Convenience endpoint for testing
+// GET /api/email-nurture — disabled in production, only for local dev preview
 export async function GET(req: NextRequest) {
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+
+  // Rate limit even in dev
+  const ip = getClientIp(req)
+  const { allowed } = checkRateLimit(`email-nurture-get:${ip}`, 5, 60 * 1000)
+  if (!allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
+  }
+
   const { searchParams } = new URL(req.url)
   const email = searchParams.get('email')
   const name = searchParams.get('name') || 'there'
   const index = parseInt(searchParams.get('index') || '0', 10)
 
-  if (!email) {
-    return NextResponse.json({ error: 'email param required' }, { status: 400 })
+  if (!email || !isValidEmail(email)) {
+    return NextResponse.json({ error: 'valid email param required' }, { status: 400 })
   }
 
   const { buildNurtureSequence } = await import('@/lib/email/nurture-sequence')
