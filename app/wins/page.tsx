@@ -113,6 +113,20 @@ export default function WinsPage() {
           ))}
         </div>
 
+        {/* Related reading */}
+        <div className="mb-8">
+          <p className="text-white/20 text-xs uppercase tracking-widest mb-4 text-center">Keep reading</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Link href="/blog/how-to-sing-better" className="bg-white/[0.02] border border-white/10 hover:border-[#8B5CF6]/30 rounded-xl p-4 transition group">
+              <p className="text-[#8B5CF6] text-xs font-semibold mb-1">Vocal Tips</p>
+              <p className="text-white font-medium text-sm group-hover:text-[#8B5CF6] transition">5 Things Every Beginner Singer Needs to Know →</p>
+            </Link>
+            <Link href="/blog/vocal-warmup" className="bg-white/[0.02] border border-white/10 hover:border-[#8B5CF6]/30 rounded-xl p-4 transition group">
+              <p className="text-[#8B5CF6] text-xs font-semibold mb-1">Vocal Tips</p>
+              <p className="text-white font-medium text-sm group-hover:text-[#8B5CF6] transition">The 10-Minute Warmup Routine →</p>
+            </Link>
+          </div>
+        </div>
         {/* CTA */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Your win starts with one lesson</h2>
