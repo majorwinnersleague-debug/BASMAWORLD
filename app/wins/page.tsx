@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Student Wins | BasmaWorld Music Academy Testimonials | Las Vegas',
-  description: 'Real results from BasmaWorld Academy students. From beginners to performers — see what's possible in 90 days with Basma Awada.',
+  description: "Real results from BasmaWorld Academy students. From beginners to performers — see what's possible in 90 days with Basma Awada.",
 }
 
 export default function WinsPage() {

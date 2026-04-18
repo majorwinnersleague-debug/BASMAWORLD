@@ -13,7 +13,7 @@ const posts = [
   {
     slug: 'how-to-sing-better',
     title: '5 Things Every Beginner Singer Needs to Know',
-    excerpt: 'Before you can sound good, you need to understand these five fundamentals. Most teachers skip them. We don't.',
+    excerpt: "Before you can sound good, you need to understand these five fundamentals. Most teachers skip them. We don't.",
     category: 'Vocal Tips',
     color: 'text-[#8B5CF6]',
     emoji: '🎤',
@@ -22,7 +22,7 @@ const posts = [
   {
     slug: 'breath-control',
     title: 'Why Breath Control Is the Foundation of Everything',
-    excerpt: 'Your voice is only as strong as your breath support. Here's the simple exercise that changes everything in week one.',
+    excerpt: "Your voice is only as strong as your breath support. Here's the simple exercise that changes everything in week one.",
     category: 'Technique',
     color: 'text-[#F59E0B]',
     emoji: '🌬️',
@@ -30,7 +30,7 @@ const posts = [
   },
   {
     slug: 'stage-fright',
-    title: 'Stage Fright Is a Liar — Here's the Proof',
+    title: "Stage Fright Is a Liar — Here's the Proof",
     excerpt: 'Every performer feels it. The ones who succeed have learned one reframe that turns terror into energy.',
     category: 'Mindset',
     color: 'text-[#EC4899]',
@@ -40,7 +40,7 @@ const posts = [
   {
     slug: 'kids-music-lessons',
     title: 'When Should Your Child Start Music Lessons?',
-    excerpt: 'The answer isn't "as early as possible." Here's what the research actually says — and what to look for.',
+    excerpt: "The answer isn't as early as possible. Here's what the research actually says — and what to look for.",
     category: 'For Parents',
     color: 'text-[#22C55E]',
     emoji: '👨‍👧',
@@ -49,7 +49,7 @@ const posts = [
   {
     slug: 'vocal-warmup',
     title: 'The 10-Minute Warmup Basma Does Before Every Performance',
-    excerpt: 'This exact routine has been tested on hundreds of students. It works whether you're 8 or 58.',
+    excerpt: "This exact routine has been tested on hundreds of students. It works whether you're 8 or 58.",
     category: 'Vocal Tips',
     color: 'text-[#8B5CF6]',
     emoji: '🔥',
@@ -58,7 +58,7 @@ const posts = [
   {
     slug: 'las-vegas-music-scene',
     title: 'Breaking Into the Las Vegas Music Scene in 2026',
-    excerpt: 'Las Vegas is one of the most competitive — and most opportunity-rich — music markets in the world. Here's how to navigate it.',
+    excerpt: "Las Vegas is one of the most competitive — and most opportunity-rich — music markets in the world. Here's how to navigate it.",
     category: 'Music Business',
     color: 'text-[#F59E0B]',
     emoji: '🎰',
@@ -70,8 +70,6 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <section className="max-w-5xl mx-auto px-4 pt-20 pb-16">
-
-        {/* Header */}
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-2 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20
                           text-[#8B5CF6] text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-widest">
@@ -88,7 +86,6 @@ export default function BlogPage() {
           </p>
         </div>
 
-        {/* Posts grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
           {posts.map((post) => (
             <Link
@@ -112,7 +109,6 @@ export default function BlogPage() {
           ))}
         </div>
 
-        {/* CTA */}
         <div className="text-center bg-white/[0.02] border border-white/10 rounded-2xl p-8">
           <h2 className="text-xl font-bold text-white mb-3">Ready to go beyond reading?</h2>
           <p className="text-white/40 text-sm mb-6">Book a trial lesson and put these tips into practice with Basma directly.</p>
@@ -121,7 +117,6 @@ export default function BlogPage() {
             🎵 Book $29 Trial Lesson
           </Link>
         </div>
-
       </section>
     </div>
   )

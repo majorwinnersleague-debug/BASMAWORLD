@@ -47,7 +47,7 @@ export default function BasmaTeachMePage() {
         <h2 className="text-2xl font-bold text-white text-center mb-8">Who is Billy? 🤔</h2>
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { emoji: '😂', title: 'Hilarious', desc: 'Billy's jokes are terrible. Kids love them anyway. Parents groan. Everyone learns.' },
+            { emoji: '😂', title: 'Hilarious', desc: "Billy's jokes are terrible. Kids love them anyway. Parents groan. Everyone learns." },
             { emoji: '🎓', title: 'Educational', desc: 'Sneaks in real music theory, instrument techniques, and practice tips without anyone noticing.' },
             { emoji: '💚', title: 'Kid-Friendly', desc: 'Ages 5-14 love Billy. Safe, positive, encouraging. Never mean — just playfully sassy.' },
           ].map((item) => (
