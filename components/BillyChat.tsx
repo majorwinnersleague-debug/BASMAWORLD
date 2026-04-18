@@ -15,6 +15,24 @@ interface BillyChatProps {
   page?: PageProp;
 }
 
+// ─── Lead capture state ───────────────────────────────────────────────────────
+
+type LeadStep = 'idle' | 'asked' | 'awaitingInput' | 'done';
+
+// Simple regex helpers
+const EMAIL_RE = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/;
+const NAME_RE  = /^[a-zA-ZÀ-ÿ' \-]{2,40}$/;
+
+/** Try to pull a name + email out of a single free-form string, e.g. "Sarah sarah@gmail.com" */
+function parseNameEmail(text: string): { name: string; email: string } | null {
+  const emailMatch = text.match(EMAIL_RE);
+  if (!emailMatch) return null;
+  const email = emailMatch[0];
+  const rest = text.replace(email, '').trim().replace(/[,;]+/g, '').trim();
+  if (NAME_RE.test(rest)) return { name: rest, email };
+  return null;
+}
+
 // ─── Typing Indicator ─────────────────────────────────────────────────────────
 
 function TypingIndicator() {
@@ -91,32 +109,98 @@ function SuccessBanner() {
   );
 }
 
+// ─── Lead Input Form ──────────────────────────────────────────────────────────
+
+interface LeadFormProps {
+  onSubmit: (name: string, email: string) => void;
+}
+
+function LeadForm({ onSubmit }: LeadFormProps) {
+  const [name, setName]   = useState('');
+  const [email, setEmail] = useState('');
+  const nameRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    nameRef.current?.focus();
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name.trim() && EMAIL_RE.test(email.trim())) {
+      onSubmit(name.trim(), email.trim());
+    }
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="mx-3 mb-3 p-3 rounded-xl bg-[#111111] border border-[#BF5FFF]/40 flex flex-col gap-2"
+    >
+      <input
+        ref={nameRef}
+        type="text"
+        placeholder="Your name 🎭"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+        className="bg-black border border-[#39FF14]/30 rounded-lg px-3 py-2 text-sm text-white
+                   placeholder-gray-500 focus:outline-none focus:border-[#39FF14] focus:ring-1
+                   focus:ring-[#39FF14]/50 transition-colors"
+      />
+      <input
+        type="email"
+        placeholder="Email address 📧"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        className="bg-black border border-[#39FF14]/30 rounded-lg px-3 py-2 text-sm text-white
+                   placeholder-gray-500 focus:outline-none focus:border-[#39FF14] focus:ring-1
+                   focus:ring-[#39FF14]/50 transition-colors"
+      />
+      <button
+        type="submit"
+        disabled={!name.trim() || !EMAIL_RE.test(email.trim())}
+        className="bg-[#39FF14] text-black font-bold text-sm rounded-lg py-2
+                   hover:brightness-110 active:scale-95 transition-all
+                   disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        Send it! 🎸
+      </button>
+    </form>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function BillyChat({ page = 'general' }: BillyChatProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isOpen, setIsOpen]               = useState(false);
+  const [isMinimized, setIsMinimized]     = useState(false);
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [messages, setMessages]           = useState<Message[]>([]);
+  const [inputValue, setInputValue]       = useState('');
+  const [isTyping, setIsTyping]           = useState(false);
+  const [showSuccess, setShowSuccess]     = useState(false);
+  const [isVisible, setIsVisible]         = useState(false);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  // ── Lead capture state ───────────────────────────────────────────────────
+  const [leadStep, setLeadStep]           = useState<LeadStep>('idle');
+  const leadAskedRef                      = useRef(false);   // prevents double-fire
+  const leadCapturedRef                   = useRef(false);   // prevents double-post
+
+  const messagesEndRef   = useRef<HTMLDivElement>(null);
+  const inputRef         = useRef<HTMLInputElement>(null);
   const hasFetchedGreeting = useRef(false);
 
-  // ── Scroll to bottom whenever messages change ───────────────────────────────
+  // ── Scroll to bottom whenever messages change ────────────────────────────
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isTyping, scrollToBottom]);
+  }, [messages, isTyping, leadStep, scrollToBottom]);
 
-  // ── Auto-send greeting on mount ────────────────────────────────────────────
+  // ── Auto-send greeting on mount ──────────────────────────────────────────
   useEffect(() => {
     if (hasFetchedGreeting.current) return;
     hasFetchedGreeting.current = true;
@@ -149,14 +233,14 @@ export default function BillyChat({ page = 'general' }: BillyChatProps) {
     fetchGreeting();
   }, [page]);
 
-  // ── Focus input when chat opens ─────────────────────────────────────────────
+  // ── Focus input when chat opens ──────────────────────────────────────────
   useEffect(() => {
     if (isOpen && !isMinimized) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
   }, [isOpen, isMinimized]);
 
-  // ── Open / close animation ──────────────────────────────────────────────────
+  // ── Open / close animation ───────────────────────────────────────────────
   useEffect(() => {
     if (isOpen) {
       requestAnimationFrame(() => setIsVisible(true));
@@ -165,20 +249,20 @@ export default function BillyChat({ page = 'general' }: BillyChatProps) {
     }
   }, [isOpen]);
 
-  // ── Open chat ───────────────────────────────────────────────────────────────
+  // ── Open chat ────────────────────────────────────────────────────────────
   const openChat = () => {
     setIsOpen(true);
     setIsMinimized(false);
     if (!hasBeenOpened) setHasBeenOpened(true);
   };
 
-  // ── Close chat ──────────────────────────────────────────────────────────────
+  // ── Close chat ───────────────────────────────────────────────────────────
   const closeChat = () => {
     setIsVisible(false);
     setTimeout(() => setIsOpen(false), 280);
   };
 
-  // ── Detect name+email capture in Billy's response ───────────────────────────
+  // ── Detect name+email capture in Billy's AI response (legacy Airtable path)
   const detectSuccess = useCallback((text: string) => {
     const lower = text.toLowerCase();
     const hasNameCapture =
@@ -195,7 +279,40 @@ export default function BillyChat({ page = 'general' }: BillyChatProps) {
     return hasNameCapture && hasEmailCapture;
   }, []);
 
-  // ── Send message ────────────────────────────────────────────────────────────
+  // ── Post lead to /api/billy-lead ─────────────────────────────────────────
+  const submitLead = useCallback(
+    async (name: string, email: string) => {
+      if (leadCapturedRef.current) return;
+      leadCapturedRef.current = true;
+
+      // Immediately show confirmation in chat
+      const confirmMsg = `Awesome ${name}! I'll send you some cool stuff 🎸`;
+      setMessages((prev) => [...prev, { role: 'assistant', content: confirmMsg }]);
+      setLeadStep('done');
+      setShowSuccess(true);
+
+      try {
+        await fetch('/api/billy-lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, source: page }),
+        });
+      } catch (err) {
+        console.error('Lead submission failed:', err);
+      }
+    },
+    [page],
+  );
+
+  // ── Handle lead form submission (dedicated form) ─────────────────────────
+  const handleLeadFormSubmit = useCallback(
+    (name: string, email: string) => {
+      submitLead(name, email);
+    },
+    [submitLead],
+  );
+
+  // ── Send message ─────────────────────────────────────────────────────────
   const sendMessage = useCallback(
     async (text: string) => {
       if (!text.trim() || isTyping) return;
@@ -218,8 +335,27 @@ export default function BillyChat({ page = 'general' }: BillyChatProps) {
           data?.message ?? data?.content ?? data?.reply ?? "I'm having a little trouble right now. Please try again!";
 
         const assistantMessage: Message = { role: 'assistant', content };
-        setMessages((prev) => [...prev, assistantMessage]);
+        const nextMessages = [...updatedMessages, assistantMessage];
+        setMessages(nextMessages);
 
+        // ── Lead capture trigger: after 2 full exchanges (4 messages), prompt once
+        const userTurns = nextMessages.filter((m) => m.role === 'user').length;
+        if (userTurns >= 2 && leadStep === 'idle' && !leadAskedRef.current) {
+          leadAskedRef.current = true;
+          // Small delay so Billy's reply lands first, then the prompt appears
+          setTimeout(() => {
+            setMessages((prev) => [
+              ...prev,
+              {
+                role: 'assistant',
+                content: "Hey, want me to send you some fun resources? Drop your name and email! 🎭",
+              },
+            ]);
+            setLeadStep('awaitingInput');
+          }, 800);
+        }
+
+        // Legacy Airtable success detection
         if (!showSuccess && detectSuccess(content)) {
           setShowSuccess(true);
         }
@@ -235,10 +371,10 @@ export default function BillyChat({ page = 'general' }: BillyChatProps) {
         setIsTyping(false);
       }
     },
-    [messages, isTyping, page, showSuccess, detectSuccess],
+    [messages, isTyping, page, showSuccess, detectSuccess, leadStep],
   );
 
-  // ── Handle Enter key ────────────────────────────────────────────────────────
+  // ── Handle Enter key ─────────────────────────────────────────────────────
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -246,9 +382,9 @@ export default function BillyChat({ page = 'general' }: BillyChatProps) {
     }
   };
 
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
   // Render
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
     <>
@@ -326,6 +462,11 @@ export default function BillyChat({ page = 'general' }: BillyChatProps) {
                 {isTyping && <TypingIndicator />}
                 <div ref={messagesEndRef} />
               </div>
+
+              {/* ── Lead capture form (shown after Billy's prompt) ─────────── */}
+              {leadStep === 'awaitingInput' && (
+                <LeadForm onSubmit={handleLeadFormSubmit} />
+              )}
 
               {/* ── Success Banner ─────────────────────────────────────────── */}
               {showSuccess && <SuccessBanner />}
