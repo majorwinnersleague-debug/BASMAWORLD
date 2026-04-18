@@ -7,6 +7,7 @@ import BillyChat from '@/components/BillyChat'
 import StripeCheckoutButton from '@/components/StripeCheckoutButton'
 import HowItWorks from '@/components/HowItWorks'
 import TikTokBanner from '@/components/TikTokBanner'
+import PricingSection from '@/components/PricingSection'
 import TestimonialsSection from '@/components/TestimonialsSection'
 import FAQSection from '@/components/FAQSection'
 import Link from 'next/link'
@@ -226,6 +227,7 @@ export default function AcademyPage() {
         </section>
 
       </main>
+      <PricingSection />
       <TestimonialsSection />
       <FAQSection />
       <Footer />
