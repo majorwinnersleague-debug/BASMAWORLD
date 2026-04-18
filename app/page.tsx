@@ -203,6 +203,16 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Social Proof Strip */}
+        <section className="border-t border-white/10 py-8 bg-white/[0.01]">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <p className="text-white/20 text-xs uppercase tracking-widest mb-4">What students are saying</p>
+            <blockquote className="text-white/60 text-lg italic max-w-2xl mx-auto mb-3">
+              &ldquo;My daughter went from never singing to performing at her school recital in 3 months. Basma changed her life.&rdquo;
+            </blockquote>
+            <p className="text-white/30 text-sm">— Maria L., Las Vegas parent · <a href="/wins" className="text-[#8B5CF6] hover:text-[#A78BFA] transition">See all student wins →</a></p>
+          </div>
+        </section>
         <NewsletterCTA />
         {/* SEO footer text */}
         <section className="border-t border-white/10 py-12">

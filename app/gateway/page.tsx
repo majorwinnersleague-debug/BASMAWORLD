@@ -3,6 +3,7 @@ export const revalidate = 3600
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import FestivalCountdown from '@/components/FestivalCountdown'
 
 export const metadata: Metadata = {
   title: 'Gateway Festival 2026 — October 24 | Historic Westside School Las Vegas',
@@ -37,19 +38,9 @@ export default function GatewayFestivalPage() {
           📍 Historic Westside School · Las Vegas, NV · October 24, 2026
         </p>
 
-        {/* Countdown display */}
-        <div className="grid grid-cols-4 gap-3 max-w-sm mx-auto mb-10">
-          {[
-            { num: '188', label: 'Days' },
-            { num: '—', label: 'Hours' },
-            { num: '—', label: 'Min' },
-            { num: '—', label: 'Sec' },
-          ].map((item) => (
-            <div key={item.label} className="bg-white/[0.05] border border-white/10 rounded-xl p-3 text-center">
-              <p className="text-2xl font-bold text-[#F59E0B]">{item.num}</p>
-              <p className="text-white/30 text-xs">{item.label}</p>
-            </div>
-          ))}
+        {/* Live Countdown */}
+        <div className="mb-10">
+          <FestivalCountdown />
         </div>
 
         <div className="flex flex-wrap justify-center gap-3">
