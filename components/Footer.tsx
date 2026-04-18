@@ -37,7 +37,17 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-white/10 pt-6 text-center text-gray-600 text-sm">
-          <p>2024 BASMA LLC &middot; Las Vegas, NV &middot; <Link href="/hopes" className="hover:text-green-400 transition">Hopes Chance</Link> &middot; <Link href="/vegan-survivors" className="hover:text-orange-400 transition">Vegan Survivors</Link></p>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            <span>© 2026 BASMA LLC · Las Vegas, NV</span>
+            <span className="text-white/20">·</span>
+            <Link href="/academy" className="hover:text-purple-400 transition">Academy</Link>
+            <span className="text-white/20">·</span>
+            <Link href="/hopes" className="hover:text-green-400 transition">Hopes Chance</Link>
+            <span className="text-white/20">·</span>
+            <Link href="/mwl" className="hover:text-yellow-400 transition">MWL</Link>
+            <span className="text-white/20">·</span>
+            <span className="text-white/30">Powered by BasmaWorld</span>
+          </div>
         </div>
       </div>
     </footer>
