@@ -1,90 +1,128 @@
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+export const dynamic = 'force-static'
+export const revalidate = 86400
 
-export const metadata = {
-  title: 'Basma — Professional Singer, Songwriter & Vocal Coach | BasmaWorld',
-  description: 'Basma is a professional singer-songwriter, multi-instrumentalist and vocal coach based in Las Vegas. Follow her music on Instagram, TikTok and Vevo.',
+import type { Metadata } from 'next'
+import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Basma Awada — Las Vegas Singer, Vocal Coach & Artist | BasmaWorld',
+  description: 'Basma Awada is a Las Vegas-based singer, songwriter, and vocal coach with 270K+ TikTok followers. Founder of BasmaWorld and Become A Singer Music Academy.',
 }
 
-export default function BASMAArtist() {
+export default function ArtistPage() {
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen bg-black text-white pt-16">
+    <div className="min-h-screen bg-[#0a0a0a]">
 
-        {/* Hero — full bleed artist photo */}
-        <section className="relative h-screen flex items-end pb-20 px-4">
-          <div className="absolute inset-0">
-            <img src="/images/basma-artist.jpg" alt="Basma — professional singer songwriter Las Vegas"
-              className="w-full h-full object-cover object-top" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20" />
-          </div>
-          <div className="relative z-10 max-w-3xl mx-auto text-center w-full">
-            <p className="text-purple-400 font-bold uppercase tracking-widest text-sm mb-3">Singer • Songwriter • Performer</p>
-            <h1 className="text-6xl md:text-8xl font-bold text-white mb-4">BASMA</h1>
-            <p className="text-gray-300 text-xl mb-8">Multi-instrumentalist. MPA. Vocal Coach. Las Vegas.</p>
-            <div className="flex gap-4 justify-center flex-wrap">
-              <a href="https://www.instagram.com/basma.tea" target="_blank" rel="noopener noreferrer"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 px-6 py-3 rounded-full font-semibold transition">
-                📸 @basma.tea on Instagram
-              </a>
-              <a href="https://www.tiktok.com/@basma_singer" target="_blank" rel="noopener noreferrer"
-                className="bg-white text-black hover:bg-gray-100 px-6 py-3 rounded-full font-semibold transition">
-                🎵 @basma_singer on TikTok
-              </a>
-            </div>
-          </div>
-        </section>
+      {/* Hero */}
+      <section className="max-w-4xl mx-auto px-4 pt-20 pb-16 text-center">
+        <div className="inline-flex items-center gap-2 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 text-[#8B5CF6] text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-widest">
+          ✦ Las Vegas Artist
+        </div>
+        <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+          Basma{' '}
+          <span className="bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] bg-clip-text text-transparent">
+            Awada
+          </span>
+        </h1>
+        <p className="text-white/50 text-xl max-w-2xl mx-auto leading-relaxed">
+          Singer. Songwriter. Vocal Coach. Founder. Las Vegas native building a world where music education meets community.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3 mt-8">
+          <a
+            href="https://www.tiktok.com/@basma_singer"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 bg-black border border-white/20 hover:border-white/40 text-white px-5 py-2.5 rounded-xl font-medium transition text-sm"
+          >
+            🎵 @basma_singer · 270K+
+          </a>
+          <a
+            href="https://www.instagram.com/basma.tea"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 bg-gradient-to-r from-[#833ab4]/20 to-[#fd1d1d]/20 border border-[#833ab4]/30 hover:border-[#833ab4]/60 text-white px-5 py-2.5 rounded-xl font-medium transition text-sm"
+          >
+            📸 @basma.tea
+          </a>
+        </div>
+      </section>
 
-        {/* Bio Section */}
-        <section className="max-w-5xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <img src="/images/basma-community.jpg" alt="Basma performing and connecting with community"
-              className="rounded-2xl w-full object-cover shadow-2xl" style={{maxHeight: '450px', objectFit: 'cover'}} />
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold mb-6">The Artist Behind the Movement</h2>
-            <p className="text-gray-300 leading-relaxed mb-4">
-              With a Master of Performing Arts and over 300k students learning music through her content, 
-              Basma is one of Las Vegas's most dynamic musical voices. She blends soulful original music 
-              with a passion for teaching and community building.
+      {/* Bio */}
+      <section className="max-w-3xl mx-auto px-4 pb-16">
+        <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 md:p-12">
+          <h2 className="text-2xl font-bold text-white mb-6">About Basma</h2>
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              Basma Awada is a Las Vegas-based singer, songwriter, and vocal coach who has spent 8+ years transforming the way people experience music education. With over <strong className="text-white">270,000 TikTok followers</strong>, she has built one of the most engaged music education communities online — proving that learning can be entertaining, accessible, and deeply human.
             </p>
-            <p className="text-gray-300 leading-relaxed mb-6">
-              As a professional singer-songwriter, she performs original compositions across genres — 
-              bringing raw emotion, technical precision, and authentic storytelling to every performance.
+            <p>
+              As the founder of <strong className="text-white">BasmaWorld</strong> and <strong className="text-white">Become A Singer Music Academy</strong>, Basma has created a gamified learning ecosystem where students earn XP, unlock skills, and work toward real performances. Her students range from 5-year-olds picking up their first instrument to adults who always believed it was &quot;too late&quot; to sing.
             </p>
-            <div className="grid grid-cols-3 gap-4 text-center mb-6">
-              <div className="bg-purple-900/30 border border-purple-800 rounded-xl p-4">
-                <div className="text-2xl font-bold text-purple-400">300k+</div>
-                <div className="text-xs text-gray-400 mt-1">Students</div>
-              </div>
-              <div className="bg-purple-900/30 border border-purple-800 rounded-xl p-4">
-                <div className="text-2xl font-bold text-purple-400">MPA</div>
-                <div className="text-xs text-gray-400 mt-1">Degree</div>
-              </div>
-              <div className="bg-purple-900/30 border border-purple-800 rounded-xl p-4">
-                <div className="text-2xl font-bold text-purple-400">270k+</div>
-                <div className="text-xs text-gray-400 mt-1">TikTok</div>
-              </div>
-            </div>
+            <p>
+              As an artist, Basma draws from jazz, commercial pop, and theatrical influences — a sound shaped by Las Vegas itself. Her upcoming album <strong className="text-[#EC4899]">Masqued</strong> explores identity, performance, and the courage it takes to remove the masks we wear for the world.
+            </p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Vevo Coming Soon */}
-        <section className="bg-gradient-to-r from-purple-900/20 to-black border-y border-purple-800/30 py-16">
-          <div className="max-w-3xl mx-auto px-4 text-center">
-            <div className="text-5xl mb-4">🎬</div>
-            <h2 className="text-3xl font-bold mb-3">Vevo — Coming Soon</h2>
-            <p className="text-gray-400 text-lg">Official music videos dropping on Vevo. Follow on Instagram & TikTok to be the first to know.</p>
-            <a href="https://www.instagram.com/basma.tea" target="_blank" rel="noopener noreferrer"
-              className="inline-block mt-6 bg-purple-600 hover:bg-purple-500 px-8 py-3 rounded-full font-semibold transition">
-              Follow @basma.tea for Updates
+      {/* Masqued Album Teaser */}
+      <section className="max-w-4xl mx-auto px-4 pb-16">
+        <div className="relative bg-gradient-to-br from-[#EC4899]/10 to-[#8B5CF6]/10 border border-[#EC4899]/20 rounded-2xl p-8 md:p-12 text-center overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#EC4899]/5 to-transparent pointer-events-none" />
+          <div className="relative">
+            <div className="text-4xl mb-4">🎭</div>
+            <div className="inline-flex items-center gap-2 bg-[#EC4899]/10 border border-[#EC4899]/20 text-[#EC4899] text-xs font-semibold px-3 py-1.5 rounded-full mb-4 uppercase tracking-widest">
+              Coming Soon
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              <span className="bg-gradient-to-r from-[#EC4899] to-[#8B5CF6] bg-clip-text text-transparent">
+                Masqued
+              </span>
+            </h2>
+            <p className="text-white/50 max-w-xl mx-auto mb-6 leading-relaxed">
+              A cinematic album about identity, performance, and the courage to be truly seen. Theatrical jazz meets modern pop — a sonic unmasking.
+            </p>
+            <a
+              href="https://www.tiktok.com/@basma_singer"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#EC4899] to-[#8B5CF6] text-white px-6 py-3 rounded-xl font-semibold transition hover:opacity-90"
+            >
+              Follow for Updates →
             </a>
           </div>
-        </section>
+        </div>
+      </section>
 
-      </main>
-      <Footer />
-    </>
+      {/* Stats */}
+      <section className="max-w-4xl mx-auto px-4 pb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { stat: '270K+', label: 'TikTok Followers' },
+            { stat: '8+', label: 'Years Teaching' },
+            { stat: '100+', label: 'Students Taught' },
+            { stat: 'Las Vegas', label: 'Home Base' },
+          ].map((item) => (
+            <div key={item.label} className="bg-white/[0.03] border border-white/10 rounded-xl p-6 text-center">
+              <p className="text-2xl font-bold text-[#8B5CF6]">{item.stat}</p>
+              <p className="text-white/40 text-sm mt-1">{item.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-2xl mx-auto px-4 pb-20 text-center">
+        <h2 className="text-2xl font-bold text-white mb-4">Learn from Basma directly</h2>
+        <p className="text-white/40 mb-6">Book a $29 trial lesson at Become A Singer Music Academy</p>
+        <Link
+          href="/academy"
+          className="inline-flex items-center gap-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white px-8 py-4 rounded-xl font-bold text-lg transition shadow-lg shadow-purple-900/30"
+        >
+          🎵 Book Trial Lesson — $29
+        </Link>
+      </section>
+
+    </div>
   )
 }
