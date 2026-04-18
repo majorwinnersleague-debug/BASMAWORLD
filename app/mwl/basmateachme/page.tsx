@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import BillyChat from '@/components/BillyChat'
+import BillyChatButton from '@/components/BillyChatButton'
 
 export const metadata: Metadata = {
   title: 'Billy the Puppet | BasmaTeach Me',
@@ -204,17 +205,7 @@ export default function BasmaTeachMe() {
               Billy is literally RIGHT HERE. Hit that button. Go on. He won&apos;t bite. Probably.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button
-                onClick={() => {
-                  // The BillyChat floating button is already on the page
-                  const btn = document.querySelector<HTMLButtonElement>('[aria-label="Open Billy Chat"]')
-                  btn?.click()
-                }}
-                className="font-bold px-8 py-4 rounded-full text-black transition hover:brightness-110 hover:scale-105 text-lg"
-                style={{ background: '#39FF14' }}
-              >
-                🪆 Chat with Billy Now!
-              </button>
+              <BillyChatButton />
               <Link
                 href="/mwl"
                 className="border font-semibold px-6 py-3 rounded-full transition hover:border-green-400"
