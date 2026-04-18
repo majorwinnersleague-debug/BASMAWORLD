@@ -2,6 +2,8 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import BillyChat from '@/components/BillyChat'
 import StripeCheckoutButton from '@/components/StripeCheckoutButton'
+import TestimonialsSection from '@/components/TestimonialsSection'
+import FAQSection from '@/components/FAQSection'
 import Link from 'next/link'
 
 export const metadata = {
@@ -39,12 +41,87 @@ const musicSchoolSchema = {
   priceRange: '$29+',
 }
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How much do music lessons cost?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Your first trial lesson is just $29. After your trial you can choose from our flexible monthly lesson packages.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What ages do you teach?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'All ages welcome! Kids as young as 5 up to adults of any age.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What instruments and skills do you offer?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Voice/singing, piano, guitar, violin, drums, and music theory.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are lessons in-person or online?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Both! In-person in Las Vegas and online worldwide.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How long is each lesson?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: '30 or 60 minute sessions are available.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need experience to start?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No experience needed at all! We start from the very beginning.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What makes BasmaWorld different?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Gamified learning with XP points, skill trees, and an AI music mentor — learning feels like a game.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where are you located?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: '9205 W Russell Rd Building 3, Las Vegas, NV 89148.',
+      },
+    },
+  ],
+}
+
 export default function AcademyPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(musicSchoolSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <Navbar />
       <main className="min-h-screen bg-black text-white pt-16">
@@ -142,6 +219,8 @@ export default function AcademyPage() {
         </section>
 
       </main>
+      <TestimonialsSection />
+      <FAQSection />
       <Footer />
       <BillyChat page="academy" />
     </>

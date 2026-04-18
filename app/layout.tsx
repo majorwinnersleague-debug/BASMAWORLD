@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { PostHogProvider } from '@/components/PostHogProvider'
+import AnnouncementBar from '@/components/AnnouncementBar'
+import WhatsAppButton from '@/components/WhatsAppButton'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://basmaworld.com'),
@@ -45,7 +47,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-black text-white antialiased">
-        <PostHogProvider>{children}</PostHogProvider>
+        <PostHogProvider>
+          <AnnouncementBar />
+          {children}
+          <WhatsAppButton />
+        </PostHogProvider>
       </body>
     </html>
   )

@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import BillyChat from '@/components/BillyChat'
 import HopesContent from '@/components/HopesContent'
+import ShareButtons from '@/components/ShareButtons'
 
 export const metadata = {
   title: 'Hopes Chance — Free Youth Resources | Las Vegas, NV',
@@ -56,6 +57,7 @@ export default function HopesChancePage() {
       <Navbar />
       <main className="min-h-screen bg-black text-white pt-24 pb-16 px-4">
         <HopesContent />
+        <ShareButtons />
       </main>
       <Footer />
       <BillyChat page="hopes" />
