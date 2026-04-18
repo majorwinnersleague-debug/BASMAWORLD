@@ -19,6 +19,15 @@ const organizationSchema = {
   url: 'https://basmaworld.com',
   logo: 'https://basmaworld.com/og-image.jpg',
   description: 'BasmaWorld is home to BASMA Music Academy, Major Winners League community content, and Hopes Chance youth resources. Las Vegas based.',
+  telephone: '+1-702-788-7369',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '9205 W Russell Rd Building 3',
+    addressLocality: 'Las Vegas',
+    addressRegion: 'NV',
+    postalCode: '89148',
+    addressCountry: 'US',
+  },
   sameAs: [
     'https://www.tiktok.com/@basma_singer',
     'https://www.tiktok.com/@basmateachme',
@@ -41,3 +50,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+

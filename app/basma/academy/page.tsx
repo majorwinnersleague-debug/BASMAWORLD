@@ -19,6 +19,15 @@ const musicSchoolSchema = {
     name: 'BASMA LLC',
     url: 'https://basmaworld.com',
   },
+  telephone: '+1-702-788-7369',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '9205 W Russell Rd Building 3',
+    addressLocality: 'Las Vegas',
+    addressRegion: 'NV',
+    postalCode: '89148',
+    addressCountry: 'US',
+  },
   areaServed: 'Worldwide',
   teaches: ['Singing', 'Vocal Technique', 'Music Theory', 'Performance Skills'],
   image: 'https://basmaworld.com/images/basma-academy.jpg',
@@ -99,3 +108,4 @@ export default function Academy() {
     </>
   )
 }
+

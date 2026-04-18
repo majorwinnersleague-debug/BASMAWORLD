@@ -15,10 +15,13 @@ const localBusinessSchema = {
   url: 'https://basmaworld.com/mwl',
   description: 'Major Winners League covers Las Vegas community events, interviews with businesses and nonprofits, motivational talks, and social impact.',
   image: 'https://basmaworld.com/images/basma-mwl.jpg',
+  telephone: '+1-702-788-7369',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: '9205 W Russell Rd Building 3',
     addressLocality: 'Las Vegas',
     addressRegion: 'NV',
+    postalCode: '89148',
     addressCountry: 'US',
   },
   parentOrganization: {
@@ -91,3 +94,4 @@ export default function MWL() {
     </>
   )
 }
+

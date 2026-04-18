@@ -51,6 +51,15 @@ const ngoSchema = {
     name: 'BASMA LLC',
     url: 'https://basmaworld.com',
   },
+  telephone: '+1-702-788-7369',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '9205 W Russell Rd Building 3',
+    addressLocality: 'Las Vegas',
+    addressRegion: 'NV',
+    postalCode: '89148',
+    addressCountry: 'US',
+  },
   knowsAbout: ['Housing', 'Food Support', 'Mental Health', 'Job Training', 'Healthcare', 'Youth Programs'],
 }
 
@@ -200,3 +209,4 @@ export default function HopesChance() {
     </>
   )
 }
+
