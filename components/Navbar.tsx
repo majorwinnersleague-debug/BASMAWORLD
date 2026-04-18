@@ -94,6 +94,7 @@ export default function Navbar() {
           <Link href="/basma" className="text-gray-300 hover:text-purple-400 transition">BASMA</Link>
           <Link href="/academy" className="text-gray-300 hover:text-blue-400 transition">Academy</Link>
           <Link href="/hopes" className="text-gray-300 hover:text-green-400 transition">Hopes Chance</Link>
+          <Link href="/gateway" className="text-gray-300 hover:text-yellow-400 transition font-semibold">🎭 Festival</Link>
           <Link href="/vegan-survivors" className="text-gray-300 hover:text-orange-400 transition">Vegan Survivors</Link>
           <a
             href="https://linktr.ee/BASMATea"
@@ -155,6 +156,7 @@ export default function Navbar() {
           <Link href="/basma" onClick={() => setOpen(false)} className="text-purple-400 py-2">BASMA</Link>
           <Link href="/academy" onClick={() => setOpen(false)} className="text-blue-400 py-2">Academy</Link>
           <Link href="/hopes" onClick={() => setOpen(false)} className="text-green-400 py-2">Hopes Chance</Link>
+          <Link href="/gateway" onClick={() => setOpen(false)} className="text-yellow-400 py-2 font-semibold">🎭 Gateway Festival</Link>
           <Link href="/vegan-survivors" onClick={() => setOpen(false)} className="text-orange-400 py-2">Vegan Survivors</Link>
           <a
             href="https://linktr.ee/BASMATea"
