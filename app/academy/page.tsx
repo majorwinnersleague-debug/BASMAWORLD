@@ -227,6 +227,23 @@ export default function AcademyPage() {
         </section>
 
       </main>
+      {/* Blog teaser */}
+      <section className="max-w-4xl mx-auto px-4 pb-8">
+        <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
+          <p className="text-white/30 text-xs uppercase tracking-widest mb-4">Free Resources</p>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {[
+              { href: '/blog/how-to-sing-better', label: '5 Things Every Beginner Needs to Know' },
+              { href: '/blog/vocal-warmup', label: 'The 10-Minute Warmup Routine' },
+              { href: '/blog/kids-music-lessons', label: 'When Should Kids Start Lessons?' },
+            ].map((item) => (
+              <a key={item.href} href={item.href} className="text-[#8B5CF6] hover:text-[#A78BFA] text-sm font-medium transition">
+                📖 {item.label} →
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
       <PricingSection />
       <TestimonialsSection />
       <FAQSection />

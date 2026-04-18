@@ -199,6 +199,8 @@ export default function Home() {
               <Link href="/mwl/podcast" className="bg-purple-900/40 hover:bg-purple-800/60 border border-purple-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎙️ Podcast</Link>
               <Link href="/gateway" className="bg-yellow-900/40 hover:bg-yellow-800/60 border border-yellow-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎭 Gateway Festival</Link>
               <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">🌍 All Links</a>
+              <Link href="/blog" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">📖 Music Blog</Link>
+              <Link href="/wins" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">🏆 Student Wins</Link>
             </div>
           </div>
         </section>
