@@ -8,9 +8,38 @@ export const metadata = {
   description: 'Major Winners League covers Las Vegas community events, interviews with businesses and nonprofits, motivational talks, and social impact through Historic Westside and Nevada Partners.',
 }
 
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'Major Winners League',
+  url: 'https://basmaworld.com/mwl',
+  description: 'Major Winners League covers Las Vegas community events, interviews with businesses and nonprofits, motivational talks, and social impact.',
+  image: 'https://basmaworld.com/images/basma-mwl.jpg',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Las Vegas',
+    addressRegion: 'NV',
+    addressCountry: 'US',
+  },
+  parentOrganization: {
+    '@type': 'Organization',
+    name: 'BASMA LLC',
+    url: 'https://basmaworld.com',
+  },
+  sameAs: [
+    'https://www.tiktok.com/@basma_singer',
+    'https://www.tiktok.com/@basmateachme',
+    'https://www.instagram.com/basma.tea',
+  ],
+}
+
 export default function MWL() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
       <Navbar />
       <main className="min-h-screen bg-black text-white pt-16">
 

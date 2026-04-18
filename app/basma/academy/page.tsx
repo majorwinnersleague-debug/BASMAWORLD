@@ -8,9 +8,29 @@ export const metadata = {
   description: 'Join Become A Singer Music Academy. Gamified music lessons, XP system, Skill Tree, and Echo AI mentor. Professional vocal coaching online with Basma.',
 }
 
+const musicSchoolSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'MusicSchool' as const,
+  name: 'BASMA — Become A Singer Music Academy',
+  url: 'https://basmaworld.com/basma/academy',
+  description: 'Gamified online music lessons with XP system, Skill Tree, and Echo AI mentor. Professional vocal coaching with Basma.',
+  provider: {
+    '@type': 'Organization',
+    name: 'BASMA LLC',
+    url: 'https://basmaworld.com',
+  },
+  areaServed: 'Worldwide',
+  teaches: ['Singing', 'Vocal Technique', 'Music Theory', 'Performance Skills'],
+  image: 'https://basmaworld.com/images/basma-academy.jpg',
+}
+
 export default function Academy() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(musicSchoolSchema) }}
+      />
       <Navbar />
       <main className="min-h-screen bg-black text-white pt-16">
 

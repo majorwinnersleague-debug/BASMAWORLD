@@ -12,9 +12,29 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 }
 
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'BASMA LLC',
+  url: 'https://basmaworld.com',
+  logo: 'https://basmaworld.com/og-image.jpg',
+  description: 'BasmaWorld is home to BASMA Music Academy, Major Winners League community content, and Hopes Chance youth resources. Las Vegas based.',
+  sameAs: [
+    'https://www.tiktok.com/@basma_singer',
+    'https://www.tiktok.com/@basmateachme',
+    'https://www.instagram.com/basma.tea',
+  ],
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </head>
       <body className="bg-black text-white antialiased">
         <PostHogProvider>{children}</PostHogProvider>
       </body>

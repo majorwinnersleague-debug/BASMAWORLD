@@ -34,6 +34,26 @@ type Resource = {
   mapsLink?: string
 }
 
+const ngoSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'NGO',
+  name: 'Hopes Chance',
+  url: 'https://basmaworld.com/hopes',
+  description: 'Free resource navigator connecting youth ages 16–30 to housing, jobs, mental health services, and more in Las Vegas, Nevada.',
+  areaServed: {
+    '@type': 'City',
+    name: 'Las Vegas',
+    addressRegion: 'NV',
+    addressCountry: 'US',
+  },
+  parentOrganization: {
+    '@type': 'Organization',
+    name: 'BASMA LLC',
+    url: 'https://basmaworld.com',
+  },
+  knowsAbout: ['Housing', 'Food Support', 'Mental Health', 'Job Training', 'Healthcare', 'Youth Programs'],
+}
+
 export default function HopesChance() {
   const [selected, setSelected] = useState<string | null>(null)
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null)
@@ -82,6 +102,10 @@ export default function HopesChance() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ngoSchema) }}
+      />
       <Navbar />
       <main className="min-h-screen bg-black text-white pt-24 pb-16 px-4">
         <div className="max-w-3xl mx-auto">
