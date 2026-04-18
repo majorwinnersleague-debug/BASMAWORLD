@@ -77,11 +77,18 @@ export async function POST(req: NextRequest) {
     const data = await response.json()
     const reply = data.choices?.[0]?.message?.content || "Uhhh... I forgot what I was saying! 🤪 Try again!"
 
-    // Check if lead was captured and save to Airtable
+    // Check if lead was captured — delegate to the unified /api/billy-lead pipeline
+    // (handles Airtable + Slack + JSON log + welcome email in one place)
     const leadMatch = reply.match(/\[LEAD_CAPTURED: name=(.+?), email=(.+?), interest=(.+?)\]/)
     if (leadMatch) {
       const [, name, email, interest] = leadMatch
-      await saveLead(name.trim(), email.trim(), interest.trim())
+      const source = `Billy Chat${interest.trim() ? ` — ${interest.trim()}` : ''}`
+      // Fire-and-forget — don't block the chat response
+      fetch(`${req.nextUrl.origin}/api/billy-lead`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), source }),
+      }).catch((e) => console.error('billy-lead delegate error:', e))
     }
 
     // Clean the tag from the visible reply
@@ -91,35 +98,5 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error('Billy chat error:', err)
     return NextResponse.json({ reply: "Oops! I tripped over my strings! 🪆 Try again!" })
-  }
-}
-
-async function saveLead(name: string, email: string, interest: string) {
-  try {
-    const base = process.env.AIRTABLE_ACADEMY_BASE
-    const token = process.env.AIRTABLE_PAT
-    if (!base || !token) return
-
-    await fetch(`https://api.airtable.com/v0/${base}/Leads`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        records: [{
-          fields: {
-            'Name': name,
-            'Email': email,
-            'Interest': interest,
-            'Source': 'Billy Chat',
-            'Date': new Date().toISOString().split('T')[0],
-          }
-        }]
-      }),
-    })
-    console.log(`Billy Chat lead captured: ${name} - ${email} - ${interest}`)
-  } catch (e) {
-    console.error('Lead save error:', e)
   }
 }
