@@ -1,21 +1,7 @@
+'use client'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
-import NewsletterCTA from '@/components/NewsletterCTA'
 import Footer from '@/components/Footer'
-
-export const metadata = {
-  title: 'BasmaWorld — Music Academy, Community & Youth Resources | Las Vegas, NV',
-  description: 'BasmaWorld is home to BASMA Become A Singer Music Academy, Major Winners League community content, and Hopes Chance youth resources. Music lessons in Las Vegas, NV. Singing lessons, piano, guitar, vocal coaching.',
-  keywords: ['music lessons las vegas', 'singing lessons las vegas', 'kids music academy', 'basma music school', 'vocal coach las vegas', 'piano lessons las vegas', 'guitar lessons las vegas', 'las vegas music academy', 'become a singer', 'basmaworld'],
-  openGraph: {
-    title: 'BasmaWorld — Music Academy, Community & Youth Resources | Las Vegas, NV',
-    description: 'BASMA Music Academy, Major Winners League & Hopes Chance — changing lives through music, community, and opportunity in Las Vegas, NV.',
-    url: 'https://basmaworld.com',
-    siteName: 'BasmaWorld',
-    type: 'website',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'BasmaWorld — Music Academy Las Vegas' }],
-  },
-}
 
 export default function Home() {
   return (
@@ -44,23 +30,9 @@ export default function Home() {
             <p className="text-xl md:text-2xl text-gray-200 mb-3 font-light">
               Music Academy · Community · Youth Resources
             </p>
-            <p className="text-gray-400 mb-6 text-base max-w-xl mx-auto">
+            <p className="text-gray-400 mb-10 text-base max-w-xl mx-auto">
               One platform connecting the BASMA Music Academy, Major Winners League, and Hopes Chance — changing lives through music, community, and opportunity.
             </p>
-            {/* Stats bar */}
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10 text-sm">
-              {[
-                { stat: '270K+', label: 'TikTok Followers' },
-                { stat: '8+', label: 'Years Teaching' },
-                { stat: '100+', label: 'Students' },
-                { stat: 'Las Vegas', label: 'Home Base' },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center gap-1.5 text-white/60">
-                  <span className="text-[#F59E0B] font-bold">{item.stat}</span>
-                  <span>{item.label}</span>
-                </div>
-              ))}
-            </div>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/mwl" className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-yellow-500/20">
                 🏆 Major Winners League
@@ -71,6 +43,47 @@ export default function Home() {
               <Link href="/hopes" className="bg-green-700 hover:bg-green-600 px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-green-500/20">
                 🤝 Hopes Chance
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ★ JOIN BASMA — PROMOTIONAL BANNER ★ */}
+        <section className="relative overflow-hidden py-16 bg-gradient-to-r from-purple-900/50 via-black to-purple-900/50 border-y border-purple-500/20">
+          <div className="absolute inset-0">
+            <img
+              src="/images/marketing/basma-banner.jpg"
+              alt="BASMA Academy — Become A Singer Music Academy in Las Vegas"
+              className="w-full h-full object-cover opacity-30"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black" />
+          </div>
+          <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+            <span className="inline-block bg-green-500/20 border border-green-500/40 text-green-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4 animate-pulse">
+              🔥 Now Accepting Students
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+              Your Voice <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Matters</span>
+            </h2>
+            <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+              Join 300K+ community members. Sign up for FREE vocal coaching, music lessons, business services, and community resources.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <a
+                href="https://basma-leads-988fbd84.viktor.space"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-10 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-purple-500/30"
+              >
+                ✨ Sign Up FREE
+              </a>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSdfRnjiJkjR4VN4_WgRRh5dtticSW2ly5czJeAAoLv2VJn3Lw/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition"
+              >
+                📝 Quick Form
+              </a>
             </div>
           </div>
         </section>
@@ -111,7 +124,7 @@ export default function Home() {
 
             {/* Pillar 2 — Academy (Purple) */}
             <div className="relative rounded-2xl overflow-hidden group border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 bg-gradient-to-b from-purple-950/30 to-black">
-              <img src="/images/basma-singer.jpg" alt="BASMA Become A Singer Music Academy Las Vegas"
+              <img src="/images/marketing/basma-ig-academy.jpg" alt="BASMA Become A Singer Music Academy Las Vegas"
                 className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80" />
               <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
               <div className="p-6">
@@ -135,6 +148,7 @@ export default function Home() {
             <div className="relative rounded-2xl overflow-hidden group border border-green-500/20 hover:border-green-500/50 transition-all duration-300 bg-gradient-to-b from-green-950/30 to-black">
               <img src="/images/hopes-chance.jpg" alt="Hopes Chance youth resources Las Vegas"
                 className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80"
+                onError={(e) => { (e.target as HTMLImageElement).src = '/images/basma-about.jpg' }}
               />
               <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
               <div className="p-6">
@@ -154,6 +168,65 @@ export default function Home() {
               </div>
             </div>
 
+          </div>
+        </section>
+
+        {/* ★ SERVICES SHOWCASE — Business + Academy Graphics ★ */}
+        <section className="py-20 bg-gradient-to-b from-black via-gray-950 to-black border-t border-white/5">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-14">
+              <p className="text-purple-400 font-semibold uppercase tracking-widest text-sm mb-3">What We Offer</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">Everything You Need to Grow</h2>
+              <p className="text-gray-400 mt-4 text-lg max-w-2xl mx-auto">
+                From vocal coaching to business marketing — BASMA has you covered.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Academy Card */}
+              <div className="relative rounded-2xl overflow-hidden group">
+                <img
+                  src="/images/marketing/basma-tiktok-story.jpg"
+                  alt="BASMA Academy vocal coaching and music lessons"
+                  className="w-full h-80 object-cover group-hover:scale-105 transition duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">For Musicians</span>
+                  <h3 className="text-2xl font-bold text-white mt-2 mb-2">Vocal Coaching & Music Lessons</h3>
+                  <p className="text-gray-300 text-sm mb-4">Gamified learning, expert coaching, and artist development for all ages and skill levels.</p>
+                  <a
+                    href="https://basma-leads-988fbd84.viktor.space"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-purple-600 hover:bg-purple-500 px-6 py-2.5 rounded-full text-sm font-bold transition"
+                  >
+                    Sign Up Free →
+                  </a>
+                </div>
+              </div>
+              {/* Business Card */}
+              <div className="relative rounded-2xl overflow-hidden group">
+                <img
+                  src="/images/marketing/basma-business.jpg"
+                  alt="Major Winners League business marketing and tech services"
+                  className="w-full h-80 object-cover group-hover:scale-105 transition duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest">For Businesses</span>
+                  <h3 className="text-2xl font-bold text-white mt-2 mb-2">Marketing, Tech & Video Production</h3>
+                  <p className="text-gray-300 text-sm mb-4">Digital marketing, website development, SEO, brand strategy, and video production for Las Vegas businesses.</p>
+                  <a
+                    href="https://basma-leads-988fbd84.viktor.space"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-full text-sm font-bold transition"
+                  >
+                    Get Started →
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -197,25 +270,29 @@ export default function Home() {
               <Link href="/vegan-survivors" className="bg-orange-900/40 hover:bg-orange-800/60 border border-orange-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🥦 Vegan Survivors</Link>
               <Link href="/mwl/gaming" className="bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎮 Gaming</Link>
               <Link href="/mwl/podcast" className="bg-purple-900/40 hover:bg-purple-800/60 border border-purple-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎙️ Podcast</Link>
-              <Link href="/gateway" className="bg-yellow-900/40 hover:bg-yellow-800/60 border border-yellow-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎭 Gateway Festival</Link>
               <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">🌍 All Links</a>
-              <Link href="/blog" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">📖 Music Blog</Link>
-              <Link href="/wins" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">🏆 Student Wins</Link>
             </div>
           </div>
         </section>
 
-        {/* Social Proof Strip */}
-        <section className="border-t border-white/10 py-8 bg-white/[0.01]">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <p className="text-white/20 text-xs uppercase tracking-widest mb-4">What students are saying</p>
-            <blockquote className="text-white/60 text-lg italic max-w-2xl mx-auto mb-3">
-              &ldquo;My daughter went from never singing to performing at her school recital in 3 months. Basma changed her life.&rdquo;
-            </blockquote>
-            <p className="text-white/30 text-sm">— Maria L., Las Vegas parent · <a href="/wins" className="text-[#8B5CF6] hover:text-[#A78BFA] transition">See all student wins →</a></p>
+        {/* ★ BOTTOM CTA — Final lead capture push ★ */}
+        <section className="py-20 bg-gradient-to-b from-black to-purple-950/30 border-t border-white/10">
+          <div className="max-w-3xl mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Join the Movement?</h2>
+            <p className="text-gray-400 text-lg mb-8">
+              300K+ people already have. Sign up free and get access to vocal coaching, music lessons, business services, and community resources.
+            </p>
+            <a
+              href="https://basma-leads-988fbd84.viktor.space"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-12 py-5 rounded-full font-bold text-xl transition hover:scale-105 shadow-lg shadow-purple-500/30"
+            >
+              ✨ Sign Up FREE — Join BASMA
+            </a>
           </div>
         </section>
-        <NewsletterCTA />
+
         {/* SEO footer text */}
         <section className="border-t border-white/10 py-12">
           <div className="max-w-4xl mx-auto px-4 text-center">
