@@ -28,13 +28,15 @@ export default function MWL() {
           </div>
         </section>
 
-        {/* 4 sub-section cards */}
+        {/* Sub-section cards */}
         <section className="max-w-5xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-6">
           {[
+            { href: '/mwl/basmateachme', icon: '🪆', title: 'BasmaTeach Me', desc: 'Billy the Puppet and Basma make learning sassy, funny, and genuinely fun for kids on TikTok.', color: 'yellow' },
             { href: '/mwl/i-am-positive', icon: '💛', title: 'I Am Positive', desc: 'Motivational talks, spoken word poetry, and inspiration for the community.', color: 'yellow' },
             { href: '/mwl/podcast', icon: '🎙️', title: 'Mildly Interesting', desc: 'The podcast with Wesley. Real conversations, real topics. Posted on BasmaWorld YouTube.', color: 'yellow' },
-            { href: '/hopes', icon: '🤝', title: 'Hopes Chance', desc: 'Free resource navigator connecting youth 16-30 to housing, jobs, and mental health services.', color: 'green' },
-            { href: '/vegan-survivors', icon: '🥦', title: 'Vegan Survivors', desc: 'Plant-based recipes, health tips, and wellness content for the whole community.', color: 'orange' },
+            { href: '/mwl/gaming', icon: '🎮', title: 'Gaming', desc: 'Youth gaming community — streams, challenges, tips, and culture from MWL.', color: 'purple' },
+            { href: '/mwl/hopes-chance', icon: '🤝', title: 'Hopes Chance', desc: 'Free resource navigator connecting youth 16-30 to housing, jobs, and mental health services.', color: 'green' },
+            { href: '/mwl/vegan-survivors', icon: '🥦', title: 'Vegan Survivors', desc: 'Plant-based recipes, health tips, and wellness content for the whole community.', color: 'orange' },
           ].map(s => (
             <Link key={s.href} href={s.href}
               className="bg-gray-900/50 border border-white/10 hover:border-yellow-500/50 rounded-2xl p-6 flex gap-4 items-start transition group hover:bg-yellow-900/10">
