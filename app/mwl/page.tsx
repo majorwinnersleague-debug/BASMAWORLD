@@ -1,11 +1,21 @@
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import BillyChat from '@/components/BillyChat'
+import MWLContactForm from '@/components/MWLContactForm'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Major Winners League — Community Events & Social Impact | Las Vegas',
-  description: 'Major Winners League covers Las Vegas community events, interviews with businesses and nonprofits, motivational talks, and social impact through Historic Westside and Nevada Partners.',
+  title: 'Major Winners League — Community Events & Social Impact | Las Vegas, NV',
+  description: 'Major Winners League by BasmaWorld — covering Las Vegas community events, business interviews, youth programs, and social impact initiatives. Music lessons las vegas, vocal coach las vegas.',
+  keywords: ['major winners league', 'las vegas community', 'basmaworld mwl', 'music lessons las vegas', 'singing lessons las vegas', 'kids music academy', 'basma music school', 'vocal coach las vegas', 'las vegas youth programs'],
+  openGraph: {
+    title: 'Major Winners League — Community Events & Social Impact | Las Vegas, NV',
+    description: 'Covering Las Vegas community events, interviews, and social impact through music, education, and youth programming.',
+    url: 'https://basmaworld.com/mwl',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    images: [{ url: '/images/basma-mwl.jpg', width: 1200, height: 630, alt: 'Major Winners League Las Vegas' }],
+  },
 }
 
 const localBusinessSchema = {
@@ -56,19 +66,22 @@ export default function MWL() {
           <div className="relative z-10 max-w-3xl mx-auto text-center w-full">
             <p className="text-yellow-400 font-bold uppercase tracking-widest text-sm mb-3">Community • Impact • Motivation</p>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">Major Winners League</h1>
-            <p className="text-gray-300 text-lg">Covering Las Vegas from Historic Westside to Nevada Partners — one community at a time.</p>
+            <p className="text-gray-300 text-lg mb-6">Covering Las Vegas from Historic Westside to Nevada Partners — one community at a time.</p>
+            <a href="#contact" className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-full transition hover:scale-105 text-sm">
+              🏆 Get In Touch
+            </a>
           </div>
         </section>
 
         {/* Sub-section cards */}
         <section className="max-w-5xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-6">
           {[
-            { href: '/mwl/basmateachme', icon: '🪆', title: 'BasmaTeach Me', desc: 'Billy the Puppet and Basma make learning sassy, funny, and genuinely fun for kids on TikTok.', color: 'yellow' },
-            { href: '/mwl/i-am-positive', icon: '💛', title: 'I Am Positive', desc: 'Motivational talks, spoken word poetry, and inspiration for the community.', color: 'yellow' },
-            { href: '/mwl/podcast', icon: '🎙️', title: 'Mildly Interesting', desc: 'The podcast with Wesley. Real conversations, real topics. Posted on BasmaWorld YouTube.', color: 'yellow' },
-            { href: '/mwl/gaming', icon: '🎮', title: 'Gaming', desc: 'Youth gaming community — streams, challenges, tips, and culture from MWL.', color: 'purple' },
-            { href: '/mwl/hopes-chance', icon: '🤝', title: 'Hopes Chance', desc: 'Free resource navigator connecting youth 16-30 to housing, jobs, and mental health services.', color: 'green' },
-            { href: '/mwl/vegan-survivors', icon: '🥦', title: 'Vegan Survivors', desc: 'Plant-based recipes, health tips, and wellness content for the whole community.', color: 'orange' },
+            { href: '/mwl/basmateachme', icon: '🪆', title: 'BasmaTeach Me', desc: 'Billy the Puppet and Basma make learning sassy, funny, and genuinely fun for kids on TikTok.' },
+            { href: '/mwl/i-am-positive', icon: '💛', title: 'I Am Positive', desc: 'Motivational talks, spoken word poetry, and inspiration for the community.' },
+            { href: '/mwl/podcast', icon: '🎙️', title: 'Mildly Interesting', desc: 'The podcast with Wesley. Real conversations, real topics. Posted on BasmaWorld YouTube.' },
+            { href: '/mwl/gaming', icon: '🎮', title: 'Gaming', desc: 'Youth gaming community — streams, challenges, tips, and culture from MWL.' },
+            { href: '/mwl/hopes-chance', icon: '🤝', title: 'Hopes Chance', desc: 'Free resource navigator connecting youth 16-30 to housing, jobs, and mental health services.' },
+            { href: '/mwl/vegan-survivors', icon: '🥦', title: 'Vegan Survivors', desc: 'Plant-based recipes, health tips, and wellness content for the whole community.' },
           ].map(s => (
             <Link key={s.href} href={s.href}
               className="bg-gray-900/50 border border-white/10 hover:border-yellow-500/50 rounded-2xl p-6 flex gap-4 items-start transition group hover:bg-yellow-900/10">
@@ -88,10 +101,12 @@ export default function MWL() {
           <img src="/images/basma-about.jpg" alt="Basma Awada community leader" className="rounded-xl w-full h-48 object-cover md:block hidden" />
         </section>
 
+        {/* Contact Form — client component */}
+        <MWLContactForm />
+
       </main>
       <Footer />
       <BillyChat page="basmateachme" />
     </>
   )
 }
-

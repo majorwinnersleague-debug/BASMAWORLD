@@ -1,7 +1,20 @@
-'use client'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+
+export const metadata = {
+  title: 'BasmaWorld — Music Academy, Community & Youth Resources | Las Vegas, NV',
+  description: 'BasmaWorld is home to BASMA Become A Singer Music Academy, Major Winners League community content, and Hopes Chance youth resources. Music lessons in Las Vegas, NV. Singing lessons, piano, guitar, vocal coaching.',
+  keywords: ['music lessons las vegas', 'singing lessons las vegas', 'kids music academy', 'basma music school', 'vocal coach las vegas', 'piano lessons las vegas', 'guitar lessons las vegas', 'las vegas music academy', 'become a singer', 'basmaworld'],
+  openGraph: {
+    title: 'BasmaWorld — Music Academy, Community & Youth Resources | Las Vegas, NV',
+    description: 'BASMA Music Academy, Major Winners League & Hopes Chance — changing lives through music, community, and opportunity in Las Vegas, NV.',
+    url: 'https://basmaworld.com',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'BasmaWorld — Music Academy Las Vegas' }],
+  },
+}
 
 export default function Home() {
   return (
@@ -107,7 +120,6 @@ export default function Home() {
             <div className="relative rounded-2xl overflow-hidden group border border-green-500/20 hover:border-green-500/50 transition-all duration-300 bg-gradient-to-b from-green-950/30 to-black">
               <img src="/images/hopes-chance.jpg" alt="Hopes Chance youth resources Las Vegas"
                 className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80"
-                onError={(e) => { (e.target as HTMLImageElement).src = '/images/basma-about.jpg' }}
               />
               <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
               <div className="p-6">

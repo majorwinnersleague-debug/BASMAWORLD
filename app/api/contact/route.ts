@@ -31,6 +31,40 @@ export async function POST(req: NextRequest) {
     const safeCompany = company ? sanitizeString(String(company), 200) : ''
     const safeMessage = sanitizeString(String(message), 2000)
 
+    // Save to Airtable — MWL Inquiries table
+    const airtableBase = process.env.AIRTABLE_ACADEMY_BASE
+    const airtableToken = process.env.AIRTABLE_PAT
+    if (airtableBase && airtableToken) {
+      try {
+        const airtableRes = await fetch(`https://api.airtable.com/v0/${airtableBase}/MWL%20Inquiries`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${airtableToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            records: [{
+              fields: {
+                'Name': safeName,
+                'Email': safeEmail,
+                'Company': safeCompany || '',
+                'Message': safeMessage,
+                'Date': new Date().toISOString().split('T')[0],
+              },
+            }],
+          }),
+        })
+        if (!airtableRes.ok) {
+          const errData = await airtableRes.json()
+          console.error('Airtable contact save failed:', errData)
+        } else {
+          console.log(`MWL Inquiry saved to Airtable: ${safeName.slice(0, 2)}***`)
+        }
+      } catch (airtableErr) {
+        console.error('Airtable contact error:', airtableErr)
+      }
+    }
+
     // Post to Slack #basma-world-ops
     const slackToken = process.env.SLACK_BOT_TOKEN
     const slackChannel = process.env.SLACK_CHANNEL_OPS
