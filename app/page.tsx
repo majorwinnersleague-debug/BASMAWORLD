@@ -43,9 +43,23 @@ export default function Home() {
             <p className="text-xl md:text-2xl text-gray-200 mb-3 font-light">
               Music Academy · Community · Youth Resources
             </p>
-            <p className="text-gray-400 mb-10 text-base max-w-xl mx-auto">
+            <p className="text-gray-400 mb-6 text-base max-w-xl mx-auto">
               One platform connecting the BASMA Music Academy, Major Winners League, and Hopes Chance — changing lives through music, community, and opportunity.
             </p>
+            {/* Stats bar */}
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10 text-sm">
+              {[
+                { stat: '270K+', label: 'TikTok Followers' },
+                { stat: '8+', label: 'Years Teaching' },
+                { stat: '100+', label: 'Students' },
+                { stat: 'Las Vegas', label: 'Home Base' },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-1.5 text-white/60">
+                  <span className="text-[#F59E0B] font-bold">{item.stat}</span>
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/mwl" className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-yellow-500/20">
                 🏆 Major Winners League

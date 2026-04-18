@@ -1,61 +1,43 @@
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+export const dynamic = 'force-static'
+export const revalidate = 86400
 
-export const metadata = {
-  title: 'Vegan Survivors — Plant-Based Recipes & Health Tips | BasmaWorld',
-  description: 'Vegan Survivors — plant-based recipes, health tips, exercises and wellness content. Vegan lifestyle by Basma in Las Vegas.',
+import type { Metadata } from 'next'
+import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Vegan Survivors | MWL Gaming & Community | BasmaWorld',
+  description: 'Vegan Survivors — a Major Winners League gaming community initiative. Fun, food, and community under the MWL banner.',
 }
 
-export default function VeganSurvivors() {
+export default function VeganSurvivorsPage() {
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen bg-black text-white pt-16">
-
-        {/* Hero */}
-        <section className="relative h-[60vh] flex items-end pb-16 px-4">
-          <div className="absolute inset-0">
-            <img src="/images/basma-vegan.jpg" alt="Vegan Survivors plant-based lifestyle Las Vegas"
-              className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-          </div>
-          <div className="relative z-10 max-w-3xl mx-auto text-center w-full">
-            <p className="text-orange-400 font-bold uppercase tracking-widest text-sm mb-3">Plant-Based Living</p>
-            <h1 className="text-5xl font-bold text-white mb-3">🥦 Vegan Survivors</h1>
-            <p className="text-gray-300 text-lg">Real recipes. Real health. No compromise.</p>
-          </div>
-        </section>
-
-        {/* Content grid */}
-        <section className="max-w-5xl mx-auto px-4 py-20">
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            {[
-              { icon: '🥗', title: 'Recipes', desc: 'Delicious plant-based meals that actually taste amazing. Quick, easy, and nutritious.' },
-              { icon: '💪', title: 'Health Tips', desc: 'Evidence-based wellness advice for living your best plant-powered life.' },
-              { icon: '🏃', title: 'Exercise', desc: 'Fitness routines and movement practices to complement your healthy lifestyle.' },
-            ].map(c => (
-              <div key={c.title} className="bg-orange-900/20 border border-orange-800 rounded-2xl p-6 hover:bg-orange-900/30 transition">
-                <div className="text-4xl mb-4">{c.icon}</div>
-                <h2 className="text-xl font-bold text-white mb-2">{c.title}</h2>
-                <p className="text-gray-400 text-sm leading-relaxed">{c.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* YouTube CTA */}
-          <div className="bg-orange-900/20 border border-orange-700 rounded-2xl p-8 text-center">
-            <div className="text-5xl mb-4">▶️</div>
-            <h2 className="text-2xl font-bold mb-3">Watch on YouTube</h2>
-            <p className="text-gray-400 mb-6">Full recipe videos, health deep-dives, and more on the Vegan Survivors YouTube channel.</p>
-            <a href="https://www.youtube.com/@VeganSurvivors" target="_blank" rel="noopener noreferrer"
-              className="bg-orange-600 hover:bg-orange-500 px-8 py-3 rounded-full font-bold transition inline-block">
-              🥦 Visit Vegan Survivors on YouTube
-            </a>
-          </div>
-        </section>
-
-      </main>
-      <Footer />
-    </>
+    <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4 text-center">
+      <div className="text-6xl mb-6">🥦</div>
+      <div className="inline-flex items-center gap-2 bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B] text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-widest">
+        ✦ MWL · Gaming & Community
+      </div>
+      <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+        Vegan <span className="text-[#22C55E]">Survivors</span>
+      </h1>
+      <p className="text-white/40 max-w-md mb-8 leading-relaxed">
+        A Major Winners League community gaming initiative. More details coming soon — follow @basma_singer on TikTok for updates!
+      </p>
+      <div className="flex flex-wrap gap-3 justify-center">
+        <a
+          href="https://www.tiktok.com/@basma_singer"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#22C55E] hover:bg-[#16A34A] text-white px-6 py-3 rounded-xl font-semibold transition"
+        >
+          Follow @basma_singer
+        </a>
+        <Link
+          href="/mwl"
+          className="border border-white/20 hover:border-white/40 text-white/60 hover:text-white px-6 py-3 rounded-xl font-semibold transition"
+        >
+          ← Back to MWL
+        </Link>
+      </div>
+    </div>
   )
 }
