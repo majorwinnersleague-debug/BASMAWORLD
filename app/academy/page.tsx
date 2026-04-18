@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import BillyChat from '@/components/BillyChat'
 import StripeCheckoutButton from '@/components/StripeCheckoutButton'
+import HowItWorks from '@/components/HowItWorks'
 import TestimonialsSection from '@/components/TestimonialsSection'
 import FAQSection from '@/components/FAQSection'
 import Link from 'next/link'
@@ -157,6 +158,7 @@ export default function AcademyPage() {
           </div>
         </section>
 
+        <HowItWorks />
         {/* Learning paths */}
         <section className="max-w-5xl mx-auto px-4 py-20">
           <h2 className="text-3xl font-bold text-center mb-4">What We Teach</h2>
