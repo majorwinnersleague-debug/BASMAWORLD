@@ -1,7 +1,6 @@
+// Server-side redirect — handled by next.config.js redirects
+// This file exists as a fallback
 import { redirect } from 'next/navigation'
-
-// Server-side permanent redirect — avoids the 404 on custom domains
-// that a client-side useRouter().replace() can produce before hydration.
 export default function HopesChanceRedirect() {
   redirect('/hopes')
 }

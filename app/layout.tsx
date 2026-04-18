@@ -3,6 +3,8 @@ import './globals.css'
 import { PostHogProvider } from '@/components/PostHogProvider'
 import AnnouncementBar from '@/components/AnnouncementBar'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import BackToTop from '@/components/BackToTop'
+import CookieBanner from '@/components/CookieBanner'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://basmaworld.com'),
@@ -51,6 +53,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AnnouncementBar />
           {children}
           <WhatsAppButton />
+          <BackToTop />
+          <CookieBanner />
         </PostHogProvider>
       </body>
     </html>
