@@ -24,6 +24,8 @@ export default function Footer() {
               <Link href="/basma/academy" className="hover:text-purple-400 transition">Academy</Link>
               <Link href="/basma/lessons" className="hover:text-purple-400 transition">Lessons</Link>
               <Link href="/basma/artist" className="hover:text-purple-400 transition">Basma Artist</Link>
+              <Link href="/wins" className="hover:text-purple-400 transition">Student Wins</Link>
+              <Link href="/gateway" className="hover:text-yellow-400 transition">Gateway Festival</Link>
             </div>
           </div>
           <div>
