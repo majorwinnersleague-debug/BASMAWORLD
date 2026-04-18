@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+import NewsletterCTA from '@/components/NewsletterCTA'
 import Footer from '@/components/Footer'
 
 export const metadata = {
@@ -196,11 +197,13 @@ export default function Home() {
               <Link href="/vegan-survivors" className="bg-orange-900/40 hover:bg-orange-800/60 border border-orange-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🥦 Vegan Survivors</Link>
               <Link href="/mwl/gaming" className="bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎮 Gaming</Link>
               <Link href="/mwl/podcast" className="bg-purple-900/40 hover:bg-purple-800/60 border border-purple-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎙️ Podcast</Link>
+              <Link href="/gateway" className="bg-yellow-900/40 hover:bg-yellow-800/60 border border-yellow-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎭 Gateway Festival</Link>
               <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">🌍 All Links</a>
             </div>
           </div>
         </section>
 
+        <NewsletterCTA />
         {/* SEO footer text */}
         <section className="border-t border-white/10 py-12">
           <div className="max-w-4xl mx-auto px-4 text-center">

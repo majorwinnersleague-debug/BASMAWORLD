@@ -1,3 +1,6 @@
+export const dynamic = 'force-static'
+export const revalidate = 86400
+
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import BillyChat from '@/components/BillyChat'

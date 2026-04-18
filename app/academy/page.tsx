@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 import BillyChat from '@/components/BillyChat'
 import StripeCheckoutButton from '@/components/StripeCheckoutButton'
 import HowItWorks from '@/components/HowItWorks'
+import TikTokBanner from '@/components/TikTokBanner'
 import TestimonialsSection from '@/components/TestimonialsSection'
 import FAQSection from '@/components/FAQSection'
 import Link from 'next/link'
@@ -145,6 +146,7 @@ export default function AcademyPage() {
           </div>
         </section>
 
+        <TikTokBanner />
         {/* Trial CTA Banner */}
         <section className="bg-gradient-to-r from-purple-900/40 to-black border-y border-purple-700/40 py-12">
           <div className="max-w-4xl mx-auto px-4 text-center">

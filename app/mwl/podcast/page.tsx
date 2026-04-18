@@ -1,3 +1,6 @@
+export const dynamic = 'force-static'
+export const revalidate = 86400
+
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
