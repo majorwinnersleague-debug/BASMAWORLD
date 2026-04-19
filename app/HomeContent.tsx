@@ -226,6 +226,28 @@ export default function HomeContent() {
           </ExpandableSection>
         </section>
 
+        {/* ── Billy + Basma Photo Teaser ───────────────────── */}
+        <section className="max-w-5xl mx-auto px-4 pb-8 relative z-10">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+            {[
+              { src: '/images/billy/billy-closeup-smile.jpg', label: 'Meet Billy! 🧡' },
+              { src: '/images/basma/basma-performing-stage-2.jpg', label: 'Live in Las Vegas 🎤' },
+              { src: '/images/studio/studio-setup-3.jpg', label: 'The Studio 🎸' },
+              { src: '/images/basma/basma-with-billy.jpg', label: 'Basma & Billy 💜' },
+              { src: '/images/basma/basma-orchestra.jpg', label: 'Full Orchestra 🎼' },
+              { src: '/images/studio/studio-whiteboard-notes.jpg', label: 'Learning in action 📝' },
+            ].map((item) => (
+              <div key={item.src} className="relative rounded-2xl overflow-hidden group aspect-square">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.src} alt={item.label} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
+                  <span className="text-white text-xs font-bold">{item.label}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ── CTA ── */}
         <section className="max-w-3xl mx-auto px-4 pb-20 text-center relative z-10">
           <div

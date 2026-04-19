@@ -9,7 +9,7 @@ export default function BasmaContent() {
   return (
     <>
       
-      <main className="min-h-screen bg-[#0a0a0a] text-white pt-16">
+      <main className="min-h-screen text-white pt-16">
 
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="max-w-4xl mx-auto px-4 pt-12 pb-16 text-center">
@@ -22,10 +22,10 @@ export default function BasmaContent() {
               Music Academy
             </span>
           </h1>
-          <p className="text-white/50 text-xl max-w-2xl mx-auto leading-relaxed mb-4">
-            Professional music lessons in Las Vegas. Singing, piano, guitar &amp; more. Gamified learning with XP. <strong className="text-white">$29 trial lesson.</strong>
+          <p className="text-white/70 text-xl max-w-2xl mx-auto leading-relaxed mb-4">
+            Professional music lessons in Las Vegas. Singing, piano, guitar &amp; more. Gamified learning with XP. <strong className="text-purple-300">$29 trial lesson.</strong>
           </p>
-          <p className="text-white/30 text-sm mb-10">
+          <p className="text-white/55 text-sm mb-10">
             Founded by Basma Awada · 300K+ TikTok · 100+ students taught · In-person &amp; online
           </p>
           <div className="flex flex-wrap justify-center gap-4">
@@ -56,9 +56,84 @@ export default function BasmaContent() {
                 <div key={p.title} className="bg-white/[0.03] border border-purple-500/10 rounded-xl p-4 hover:border-purple-400/30 transition">
                   <span className="text-2xl">{p.icon}</span>
                   <h3 className="text-sm font-bold text-white mt-2">{p.title}</h3>
-                  <p className="text-white/40 text-xs mt-1 leading-relaxed">{p.desc}</p>
+                  <p className="text-white/65 text-xs mt-1 leading-relaxed">{p.desc}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Real Photo Galleries ──────────────────────────── */}
+
+        {/* Performance Gallery */}
+        <section className="max-w-5xl mx-auto px-4 pb-8">
+          <h2 className="text-2xl font-black text-white text-center mb-2">
+            Basma Live 🎤
+          </h2>
+          <p className="text-white/55 text-center text-sm mb-6">From intimate clubs to full orchestras</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { src: '/images/basma/basma-performing-stage-2.jpg', alt: 'Basma singing with red jacket at club stage' },
+              { src: '/images/basma/basma-orchestra.jpg', alt: 'Basma performing with full orchestra' },
+              { src: '/images/basma/basma-performing-stage-3.jpg', alt: 'Basma on stage with wide audience' },
+              { src: '/images/basma/basma-performing-stage-4.jpg', alt: 'Basma singing, speakers backdrop' },
+            ].map((img) => (
+              <div key={img.src} className="relative aspect-square rounded-2xl overflow-hidden group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Studio + Billy Gallery */}
+        <section className="max-w-5xl mx-auto px-4 pb-8">
+          <h2 className="text-2xl font-black text-white text-center mb-2">
+            Inside the Studio 🎸
+          </h2>
+          <p className="text-white/55 text-center text-sm mb-6">Where the magic happens — and Billy hangs out</p>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+            {/* Studio wide shots */}
+            <div className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/studio/studio-setup-3.jpg"
+                alt="Music studio with guitars, keyboards and instruments"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
+            {/* Billy photos */}
+            <div className="relative rounded-2xl overflow-hidden group aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/billy/billy-closeup-smile.jpg" alt="Billy the puppet smiling" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            </div>
+            <div className="relative rounded-2xl overflow-hidden group aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/billy/billy-solo-scarf.jpg" alt="Billy puppet with scarf" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            </div>
+            <div className="col-span-2 relative rounded-2xl overflow-hidden group aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/basma/basma-with-billy.jpg" alt="Basma with Billy the puppet" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm rounded-xl px-3 py-1.5 text-xs font-bold text-white">Basma & Billy 🧡</div>
+            </div>
+            {/* More studio */}
+            <div className="relative rounded-2xl overflow-hidden group aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/studio/studio-whiteboard-notes.jpg" alt="Music notes on whiteboard" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            </div>
+            <div className="relative rounded-2xl overflow-hidden group aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/studio/studio-setup-1.jpg" alt="Studio setup with orange chairs" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            </div>
+            <div className="col-span-2 relative rounded-2xl overflow-hidden group aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/basma/basma-with-student.jpg" alt="Basma with student at Broadway Kids Academy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm rounded-xl px-3 py-1.5 text-xs font-bold text-white">Real students. Real results. 🌟</div>
             </div>
           </div>
         </section>
@@ -89,7 +164,7 @@ export default function BasmaContent() {
                 ].map((item) => (
                   <div key={item.label} className="bg-white/[0.05] rounded-xl p-3 text-center">
                     <p className="text-lg font-bold text-purple-400">{item.stat}</p>
-                    <p className="text-white/30 text-xs">{item.label}</p>
+                    <p className="text-white/55 text-xs">{item.label}</p>
                   </div>
                 ))}
               </div>
@@ -127,7 +202,7 @@ export default function BasmaContent() {
                   <div key={s.step} className="bg-white/[0.03] border border-white/10 rounded-xl p-5 text-center">
                     <span className="text-3xl font-bold" style={{ color: s.color }}>{s.step}</span>
                     <h4 className="text-sm font-bold text-white mt-2">{s.title}</h4>
-                    <p className="text-white/40 text-xs mt-1">{s.desc}</p>
+                    <p className="text-white/65 text-xs mt-1">{s.desc}</p>
                   </div>
                 ))}
               </div>
@@ -154,21 +229,21 @@ export default function BasmaContent() {
                 <div className="bg-white/[0.03] border border-green-500/20 rounded-xl p-5 text-center">
                   <h4 className="text-sm font-bold text-white">Trial Lesson</h4>
                   <p className="text-3xl font-bold text-green-400 mt-2">$29</p>
-                  <p className="text-white/30 text-xs mt-1">One 30-min lesson · Any instrument</p>
+                  <p className="text-white/55 text-xs mt-1">One 30-min lesson · Any instrument</p>
                 </div>
                 <div className="bg-green-500/5 border-2 border-green-500/30 rounded-xl p-5 text-center">
                   <span className="inline-block bg-green-500 text-black text-xs font-bold px-2 py-0.5 rounded-full mb-2">Popular</span>
                   <h4 className="text-sm font-bold text-white">Monthly (4 lessons)</h4>
                   <p className="text-3xl font-bold text-green-400 mt-2">$120</p>
-                  <p className="text-white/30 text-xs mt-1">4 × 30-min lessons · $30/lesson</p>
+                  <p className="text-white/55 text-xs mt-1">4 × 30-min lessons · $30/lesson</p>
                 </div>
                 <div className="bg-white/[0.03] border border-green-500/20 rounded-xl p-5 text-center">
                   <h4 className="text-sm font-bold text-white">Monthly (4 lessons)</h4>
                   <p className="text-3xl font-bold text-green-400 mt-2">$220</p>
-                  <p className="text-white/30 text-xs mt-1">4 × 60-min lessons · $55/lesson</p>
+                  <p className="text-white/55 text-xs mt-1">4 × 60-min lessons · $55/lesson</p>
                 </div>
               </div>
-              <p className="text-center text-white/30 text-xs">✓ In-person (Las Vegas) or online · ✓ All ages · ✓ No experience needed</p>
+              <p className="text-center text-white/55 text-xs">✓ In-person (Las Vegas) or online · ✓ All ages · ✓ No experience needed</p>
               <div className="text-center pt-2">
                 <StripeCheckoutButton />
               </div>
@@ -191,7 +266,7 @@ export default function BasmaContent() {
                 <div key={w.name} className="bg-white/[0.03] border border-yellow-500/10 rounded-xl p-4">
                   <p className="text-white/60 text-sm italic mb-3">&ldquo;{w.quote}&rdquo;</p>
                   <p className="text-white font-semibold text-xs">{w.name}</p>
-                  <p className="text-white/30 text-xs">{w.role}</p>
+                  <p className="text-white/55 text-xs">{w.role}</p>
                   <span className="inline-block mt-2 bg-green-500/10 border border-green-500/20 text-green-400 text-xs px-2 py-1 rounded-full">
                     ✓ {w.result}
                   </span>
@@ -239,7 +314,7 @@ export default function BasmaContent() {
                   <h4 className="text-sm font-bold text-white mb-2">{article.title}</h4>
                   <ul className="space-y-1">
                     {article.tips.map((tip, i) => (
-                      <li key={i} className="text-white/40 text-xs flex items-start gap-2">
+                      <li key={i} className="text-white/65 text-xs flex items-start gap-2">
                         <span className="text-purple-400 shrink-0">✓</span>
                         <span>{tip}</span>
                       </li>
@@ -305,10 +380,10 @@ export default function BasmaContent() {
 
         {/* ── Location + CTA ──────────────────────────────────── */}
         <section className="max-w-3xl mx-auto px-4 pb-20 text-center">
-          <p className="text-white/30 text-sm mb-2">📍 9205 W Russell Rd Bldg 3, Las Vegas NV 89148</p>
-          <p className="text-white/30 text-sm mb-6">📞 (702) 788-7369 · In-person &amp; online</p>
+          <p className="text-white/55 text-sm mb-2">📍 9205 W Russell Rd Bldg 3, Las Vegas NV 89148</p>
+          <p className="text-white/55 text-sm mb-6">📞 (702) 788-7369 · In-person &amp; online</p>
           <h2 className="text-2xl font-bold text-white mb-3">Your music journey starts here</h2>
-          <p className="text-white/40 mb-6">$29 trial · No experience needed · All ages welcome</p>
+          <p className="text-white/65 mb-6">$29 trial · No experience needed · All ages welcome</p>
           <StripeCheckoutButton />
         </section>
 
