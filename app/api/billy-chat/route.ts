@@ -142,10 +142,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ reply: cleanReply })
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)
-    const errStack = err instanceof Error ? err.stack?.slice(0, 300) : ''
-    console.error('Billy chat error:', errMsg, errStack)
+    console.error('Billy chat error:', errMsg)
     return NextResponse.json(
-      { reply: "Oops! I tripped over my strings! 🪆 Try again!", debug: errMsg },
+      { reply: "Oops! I tripped over my strings! 🪆 Try again!" },
       { status: 500 }
     )
   }
