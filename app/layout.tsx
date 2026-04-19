@@ -1,5 +1,10 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { PostHogProvider } from '@/components/PostHogProvider'
+import AnnouncementBar from '@/components/AnnouncementBar'
+import WhatsAppButton from '@/components/WhatsAppButton'
+import BackToTop from '@/components/BackToTop'
+import CookieBanner from '@/components/CookieBanner'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://basmaworld.com'),
@@ -10,7 +15,6 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', site: '@basma_singer', creator: '@basma_singer' },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 } },
   verification: {
-    // Add these when you have the verification codes:
     // google: 'your-google-verification-code',
     // yandex: 'your-yandex-code',
   },
@@ -62,18 +66,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        {/* Google Fonts — Inter + Space Grotesk for friendly modern feel */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;800;900&display=swap"
           rel="stylesheet"
         />
+        <link rel="canonical" href="https://basmaworld.com" />
+        <meta name="geo.region" content="US-NV" />
+        <meta name="geo.placename" content="Las Vegas" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
       </head>
+      {/* Bright warm deep purple/blue gradient — much friendlier than pure black */}
       <body
-        className="antialiased"
-        style={{ background: 'linear-gradient(160deg, #0f0320 0%, #1a0533 40%, #0d1a2e 100%)', minHeight: '100vh' }}
+        className="text-white antialiased"
+        style={{ background: 'linear-gradient(160deg, #0f0225 0%, #1a053a 35%, #0d1a2e 100%)', minHeight: '100vh' }}
       >
-        {children}
+        <PostHogProvider>
+          <AnnouncementBar />
+          {children}
+          <WhatsAppButton />
+          <BackToTop />
+          <CookieBanner />
+        </PostHogProvider>
       </body>
     </html>
   )

@@ -14,10 +14,10 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <nav className="fixed left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10" style={{ top: 'var(--ann-bar-height, 0px)' }}>
+    <nav className="fixed left-0 right-0 z-50 backdrop-blur-md border-b border-purple-500/20" style={{ top: 'var(--ann-bar-height, 0px)', background: 'rgba(15, 2, 37, 0.92)' }}>
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-white hover:text-yellow-400 transition">
-          BasmaWorld
+        <Link href="/" className="text-xl font-black hover:opacity-90 transition" style={{ background: 'linear-gradient(90deg, #fbbf24, #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+          BasmaWorld ✨
         </Link>
 
         {/* Desktop nav */}

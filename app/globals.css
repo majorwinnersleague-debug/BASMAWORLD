@@ -4,28 +4,36 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ─── Typography ─────────────────────────────────────────── */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #0f0320;
+  /* Base background — warm deep purple/navy instead of pitch black */
+  background: linear-gradient(160deg, #0f0225 0%, #1a053a 35%, #0d1a2e 100%);
+  min-height: 100vh;
 }
 
-/* Smooth scrolling */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Space Grotesk', 'Inter', -apple-system, sans-serif;
+}
+
+/* ─── Smooth scroll ──────────────────────────────────────── */
 html { scroll-behavior: smooth; }
 
-/* Gradient text utility */
+/* ─── Gradient text ──────────────────────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #c084fc, #fbbf24, #34d399);
+  background: linear-gradient(135deg, #c084fc 0%, #fbbf24 50%, #34d399 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Glow effects */
+/* ─── Glow effects ───────────────────────────────────────── */
 .glow-purple { box-shadow: 0 0 30px rgba(168, 85, 247, 0.4); }
 .glow-gold   { box-shadow: 0 0 30px rgba(251, 191, 36, 0.4); }
 .glow-green  { box-shadow: 0 0 30px rgba(52, 211, 153, 0.4); }
+.glow-pink   { box-shadow: 0 0 30px rgba(236, 72, 153, 0.4); }
 
-/* Card hover lift */
+/* ─── Card lift on hover ─────────────────────────────────── */
 .card-hover {
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
@@ -33,24 +41,31 @@ html { scroll-behavior: smooth; }
   transform: translateY(-4px);
 }
 
-/* Pulse animation for CTA */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
-  50%       { box-shadow: 0 0 40px rgba(251, 191, 36, 0.7); }
-}
-.pulse-cta { animation: pulse-glow 3s ease-in-out infinite; }
-
-/* Floating animation */
+/* ─── Floating animation ─────────────────────────────────── */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-8px); }
 }
 .float { animation: float 4s ease-in-out infinite; }
 
-/* Star shimmer */
+/* ─── Shimmer / pulse ────────────────────────────────────── */
 @keyframes shimmer {
-  0%   { opacity: 0.4; }
+  0%   { opacity: 0.5; }
   50%  { opacity: 1; }
-  100% { opacity: 0.4; }
+  100% { opacity: 0.5; }
 }
 .shimmer { animation: shimmer 2.5s ease-in-out infinite; }
+
+/* ─── Pulsing CTA glow ───────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+  50%       { box-shadow: 0 0 40px rgba(251, 191, 36, 0.7); }
+}
+.pulse-cta { animation: pulse-glow 3s ease-in-out infinite; }
+
+/* ─── Override raw bg-black pages — keep warmth ─────────── */
+.bg-black,
+main.bg-\[\#0a0a0a\],
+main.bg-black {
+  background: transparent !important;
+}
