@@ -7,6 +7,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Music Lessons Las Vegas | Voice, Piano, Guitar & More | BasmaWorld',
   description: 'Private music lessons in Las Vegas with Basma Awada. Voice, piano, guitar, violin, drums. In-person & online. Book your $29 trial lesson today.',
+  keywords: ['music lessons las vegas', 'private music lessons', 'voice lessons las vegas', 'piano lessons las vegas', 'guitar lessons las vegas', 'violin lessons las vegas', 'drums lessons las vegas', 'in person music lessons near me'],
+  openGraph: {
+    title: 'Music Lessons Las Vegas | Voice, Piano, Guitar & More',
+    description: 'Private music lessons with Basma Awada. Voice, piano, guitar, violin, drums. $29 trial.',
+    url: 'https://basmaworld.com/basma/lessons',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-academy.jpg', width: 1200, height: 630, alt: 'Music lessons in Las Vegas — voice, piano, guitar, violin and drums' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Music Lessons Las Vegas — Voice, Piano, Guitar',
+    description: 'Private lessons with Basma Awada. In-person & online. $29 trial.',
+    images: ['/images/basma-academy.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/basma/lessons',
+  },
 }
 
 export default function LessonsPage() {

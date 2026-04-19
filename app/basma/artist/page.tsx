@@ -7,6 +7,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Basma Awada — Las Vegas Singer, Vocal Coach & Artist | BasmaWorld',
   description: 'Basma Awada is a Las Vegas-based singer, songwriter, and vocal coach with 270K+ TikTok followers. Founder of BasmaWorld and Become A Singer Music Academy.',
+  keywords: ['basma awada', 'las vegas singer', 'vocal coach las vegas', 'basma singer tiktok', 'basmaworld founder', 'las vegas songwriter', 'basma music teacher'],
+  openGraph: {
+    title: 'Basma Awada — Las Vegas Singer, Vocal Coach & Artist',
+    description: 'Las Vegas singer, songwriter & vocal coach. 270K+ TikTok followers. Founder of BasmaWorld.',
+    url: 'https://basmaworld.com/basma/artist',
+    siteName: 'BasmaWorld',
+    type: 'profile',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-artist.jpg', width: 1200, height: 630, alt: 'Basma Awada — singer, vocal coach and artist in Las Vegas' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Basma Awada — Las Vegas Singer & Vocal Coach',
+    description: '270K+ TikTok followers. Singer, songwriter & vocal coach. Founder of BasmaWorld.',
+    images: ['/images/basma-artist.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/basma/artist',
+  },
 }
 
 export default function ArtistPage() {

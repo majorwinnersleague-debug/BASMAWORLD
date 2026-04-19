@@ -1,310 +1,109 @@
-'use client'
-import Link from 'next/link'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import type { Metadata } from 'next'
+import HomeContent from './HomeContent'
+
+export const metadata: Metadata = {
+  title: 'BasmaWorld — Music Lessons Las Vegas | Singing, Piano & Guitar Academy',
+  description: 'Las Vegas music academy offering singing, piano, guitar & vocal lessons for kids and adults. $29 trial lesson. Founded by Basma Awada with 300K+ community. Book today!',
+  keywords: ['music lessons las vegas', 'singing lessons las vegas', 'piano lessons las vegas', 'guitar lessons las vegas', 'vocal coach las vegas', 'kids music lessons las vegas', 'music academy las vegas', 'voice lessons near me', 'basma awada', 'become a singer academy', 'las vegas music teacher', 'online singing lessons'],
+  openGraph: {
+    title: 'BasmaWorld — Music Lessons Las Vegas | Singing, Piano & Guitar',
+    description: 'Las Vegas music academy — singing, piano, guitar & vocal coaching for kids & adults. $29 trial. 300K+ community.',
+    url: 'https://basmaworld.com',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-hero.jpg', width: 1200, height: 630, alt: 'BasmaWorld Music Academy — Singing, Piano & Guitar Lessons in Las Vegas NV' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'BasmaWorld — Music Lessons Las Vegas',
+    description: 'Singing, piano, guitar & vocal coaching in Las Vegas. $29 trial. 300K+ community.',
+    images: ['/images/basma-hero.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com',
+  },
+}
+
+const homeJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MusicSchool',
+    '@id': 'https://basmaworld.com/#musicschool',
+    name: 'BASMA Music Academy — Become A Singer',
+    alternateName: 'BasmaWorld',
+    url: 'https://basmaworld.com',
+    logo: 'https://basmaworld.com/og-image.jpg',
+    image: 'https://basmaworld.com/images/basma-academy.jpg',
+    description: 'Professional singing, piano, guitar & vocal coaching for kids and adults in Las Vegas. Gamified learning with XP system. Trial lesson $29.',
+    telephone: '+1-702-788-7369',
+    priceRange: '$$',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '9205 W Russell Rd Building 3',
+      addressLocality: 'Las Vegas',
+      addressRegion: 'NV',
+      postalCode: '89148',
+      addressCountry: 'US',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 36.0738,
+      longitude: -115.2642,
+    },
+    openingHoursSpecification: [
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '09:00', closes: '20:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '10:00', closes: '16:00' },
+    ],
+    sameAs: [
+      'https://www.tiktok.com/@basma_singer',
+      'https://www.tiktok.com/@basmateachme',
+      'https://www.instagram.com/basma.tea',
+      'https://linktr.ee/BASMATea',
+    ],
+    founder: {
+      '@type': 'Person',
+      name: 'Basma Awada',
+      jobTitle: 'Vocal Coach & Music Educator',
+      url: 'https://basmaworld.com/basma/artist',
+    },
+    areaServed: {
+      '@type': 'City',
+      name: 'Las Vegas',
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Music Lessons',
+      itemListElement: [
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Singing Lessons' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Piano Lessons' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Guitar Lessons' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Vocal Coaching' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Violin Lessons' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Drums Lessons' } },
+      ],
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://basmaworld.com/#website',
+    name: 'BasmaWorld',
+    url: 'https://basmaworld.com',
+    publisher: { '@id': 'https://basmaworld.com/#musicschool' },
+  },
+]
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen bg-black text-white">
-
-        {/* HERO — full bleed photo with Las Vegas mention */}
-        <section className="relative min-h-screen flex items-end pb-20 px-4">
-          <div className="absolute inset-0 overflow-hidden">
-            <img
-              src="/images/basma-hero.jpg"
-              alt="Basma — artist, educator, community leader based in Las Vegas"
-              className="w-full h-full object-cover object-top"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-          </div>
-          <div className="relative z-10 max-w-4xl mx-auto text-center w-full">
-            {/* Las Vegas badge */}
-            <span className="inline-block bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-              📍 Las Vegas, NV
-            </span>
-            <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-white to-purple-400 bg-clip-text text-transparent drop-shadow-lg">
-              BasmaWorld
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-200 mb-3 font-light">
-              Music Academy · Community · Youth Resources
-            </p>
-            <p className="text-gray-400 mb-10 text-base max-w-xl mx-auto">
-              One platform connecting the BASMA Music Academy, Major Winners League, and Hopes Chance — changing lives through music, community, and opportunity.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/mwl" className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-yellow-500/20">
-                🏆 Major Winners League
-              </Link>
-              <Link href="/basma/academy" className="bg-purple-600 hover:bg-purple-500 px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-purple-500/20">
-                🎵 BASMA Academy
-              </Link>
-              <Link href="/hopes" className="bg-green-700 hover:bg-green-600 px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-green-500/20">
-                🤝 Hopes Chance
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ★ JOIN BASMA — PROMOTIONAL BANNER ★ */}
-        <section className="relative overflow-hidden py-16 bg-gradient-to-r from-purple-900/50 via-black to-purple-900/50 border-y border-purple-500/20">
-          <div className="absolute inset-0">
-            <img
-              src="/images/marketing/basma-banner.jpg"
-              alt="BASMA Academy — Become A Singer Music Academy in Las Vegas"
-              className="w-full h-full object-cover opacity-30"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black" />
-          </div>
-          <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-            <span className="inline-block bg-green-500/20 border border-green-500/40 text-green-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4 animate-pulse">
-              🔥 Now Accepting Students
-            </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Your Voice <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Matters</span>
-            </h2>
-            <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-              Join 300K+ community members. Sign up for FREE vocal coaching, music lessons, business services, and community resources.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <a
-                href="https://basma-leads-988fbd84.viktor.space"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-10 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-purple-500/30"
-              >
-                ✨ Sign Up FREE
-              </a>
-              <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSdfRnjiJkjR4VN4_WgRRh5dtticSW2ly5czJeAAoLv2VJn3Lw/viewform"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition"
-              >
-                📝 Quick Form
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* THREE PILLARS */}
-        <section className="max-w-6xl mx-auto px-4 py-20">
-          <div className="text-center mb-14">
-            <p className="text-yellow-400 font-semibold uppercase tracking-widest text-sm mb-3">What Is BasmaWorld?</p>
-            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">Three Worlds. One Mission.</h2>
-            <p className="text-gray-400 mt-4 text-lg max-w-2xl mx-auto">
-              Built in Las Vegas, reaching the world — BasmaWorld unites music education, community impact, and youth support under one roof.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-
-            {/* Pillar 1 — MWL (Gold) */}
-            <div className="relative rounded-2xl overflow-hidden group border border-yellow-500/20 hover:border-yellow-500/50 transition-all duration-300 bg-gradient-to-b from-yellow-950/30 to-black">
-              <img src="/images/basma-mwl.jpg" alt="Major Winners League community events Las Vegas"
-                className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80" />
-              <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
-              <div className="p-6">
-                <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest">Community & Social Impact</span>
-                <h3 className="text-2xl font-bold text-white mt-2 mb-3">Major Winners League</h3>
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                  Events, interviews, motivation, gaming, BasmaTeach Me, and social impact initiatives — all under the MWL banner.
-                </p>
-                <ul className="text-gray-500 text-xs space-y-1 mb-5">
-                  <li className="flex items-center gap-2"><span className="text-yellow-500">→</span> BasmaTeach Me</li>
-                  <li className="flex items-center gap-2"><span className="text-yellow-500">→</span> I Am Positive</li>
-                  <li className="flex items-center gap-2"><span className="text-yellow-500">→</span> Gaming & Podcast</li>
-                </ul>
-                <Link href="/mwl" className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-5 py-2.5 rounded-full text-sm transition">
-                  Explore MWL →
-                </Link>
-              </div>
-            </div>
-
-            {/* Pillar 2 — Academy (Purple) */}
-            <div className="relative rounded-2xl overflow-hidden group border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 bg-gradient-to-b from-purple-950/30 to-black">
-              <img src="/images/marketing/basma-ig-academy.jpg" alt="BASMA Become A Singer Music Academy Las Vegas"
-                className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80" />
-              <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
-              <div className="p-6">
-                <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">Music Academy & Artist</span>
-                <h3 className="text-2xl font-bold text-white mt-2 mb-3">BASMA Music Academy</h3>
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                  Become A Singer — gamified music lessons, live vocal coaching, piano, guitar, and artist mentorship in Las Vegas and online.
-                </p>
-                <ul className="text-gray-500 text-xs space-y-1 mb-5">
-                  <li className="flex items-center gap-2"><span className="text-purple-500">→</span> Singing Lessons</li>
-                  <li className="flex items-center gap-2"><span className="text-purple-500">→</span> Piano & Guitar</li>
-                  <li className="flex items-center gap-2"><span className="text-purple-500">→</span> Live Coaching</li>
-                </ul>
-                <Link href="/basma/academy" className="inline-block bg-purple-600 hover:bg-purple-500 font-bold px-5 py-2.5 rounded-full text-sm transition">
-                  Explore Academy →
-                </Link>
-              </div>
-            </div>
-
-            {/* Pillar 3 — Hopes Chance (Green) */}
-            <div className="relative rounded-2xl overflow-hidden group border border-green-500/20 hover:border-green-500/50 transition-all duration-300 bg-gradient-to-b from-green-950/30 to-black">
-              <img src="/images/hopes-chance.jpg" alt="Hopes Chance youth resources Las Vegas"
-                className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80"
-                onError={(e) => { (e.target as HTMLImageElement).src = '/images/basma-about.jpg' }}
-              />
-              <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
-              <div className="p-6">
-                <span className="text-green-400 text-xs font-bold uppercase tracking-widest">Youth Resources</span>
-                <h3 className="text-2xl font-bold text-white mt-2 mb-3">Hopes Chance</h3>
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                  Connecting youth and families in Las Vegas to resources, support systems, and community programs that create real opportunity.
-                </p>
-                <ul className="text-gray-500 text-xs space-y-1 mb-5">
-                  <li className="flex items-center gap-2"><span className="text-green-500">→</span> Youth Support</li>
-                  <li className="flex items-center gap-2"><span className="text-green-500">→</span> Community Resources</li>
-                  <li className="flex items-center gap-2"><span className="text-green-500">→</span> Las Vegas Outreach</li>
-                </ul>
-                <Link href="/hopes" className="inline-block bg-green-700 hover:bg-green-600 font-bold px-5 py-2.5 rounded-full text-sm transition">
-                  Explore Hopes →
-                </Link>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* ★ SERVICES SHOWCASE — Business + Academy Graphics ★ */}
-        <section className="py-20 bg-gradient-to-b from-black via-gray-950 to-black border-t border-white/5">
-          <div className="max-w-6xl mx-auto px-4">
-            <div className="text-center mb-14">
-              <p className="text-purple-400 font-semibold uppercase tracking-widest text-sm mb-3">What We Offer</p>
-              <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">Everything You Need to Grow</h2>
-              <p className="text-gray-400 mt-4 text-lg max-w-2xl mx-auto">
-                From vocal coaching to business marketing — BASMA has you covered.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Academy Card */}
-              <div className="relative rounded-2xl overflow-hidden group">
-                <img
-                  src="/images/marketing/basma-tiktok-story.jpg"
-                  alt="BASMA Academy vocal coaching and music lessons"
-                  className="w-full h-80 object-cover group-hover:scale-105 transition duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">For Musicians</span>
-                  <h3 className="text-2xl font-bold text-white mt-2 mb-2">Vocal Coaching & Music Lessons</h3>
-                  <p className="text-gray-300 text-sm mb-4">Gamified learning, expert coaching, and artist development for all ages and skill levels.</p>
-                  <a
-                    href="https://basma-leads-988fbd84.viktor.space"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-purple-600 hover:bg-purple-500 px-6 py-2.5 rounded-full text-sm font-bold transition"
-                  >
-                    Sign Up Free →
-                  </a>
-                </div>
-              </div>
-              {/* Business Card */}
-              <div className="relative rounded-2xl overflow-hidden group">
-                <img
-                  src="/images/marketing/basma-business.jpg"
-                  alt="Major Winners League business marketing and tech services"
-                  className="w-full h-80 object-cover group-hover:scale-105 transition duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest">For Businesses</span>
-                  <h3 className="text-2xl font-bold text-white mt-2 mb-2">Marketing, Tech & Video Production</h3>
-                  <p className="text-gray-300 text-sm mb-4">Digital marketing, website development, SEO, brand strategy, and video production for Las Vegas businesses.</p>
-                  <a
-                    href="https://basma-leads-988fbd84.viktor.space"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-full text-sm font-bold transition"
-                  >
-                    Get Started →
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ABOUT BASMA — photo + text */}
-        <section className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-12 items-center border-t border-white/10">
-          <div className="relative">
-            <img
-              src="/images/basma-about.jpg"
-              alt="Basma Awada — Music educator and community leader in Las Vegas"
-              className="rounded-2xl w-full object-cover shadow-2xl shadow-purple-900/30"
-              style={{maxHeight: '500px', objectFit: 'cover'}}
-            />
-            <div className="absolute -bottom-4 -right-4 bg-yellow-500 text-black font-bold px-4 py-2 rounded-xl text-sm shadow-lg">
-              300k+ Students Worldwide 🌍
-            </div>
-          </div>
-          <div>
-            <p className="text-yellow-400 font-semibold uppercase tracking-widest text-sm mb-3">Meet Basma</p>
-            <h2 className="text-4xl font-bold text-white mb-6 leading-tight">Singer. Educator.<br/>Community Leader.</h2>
-            <p className="text-gray-300 text-lg leading-relaxed mb-4">
-              Basma is a multi-instrumentalist, MPA, professional vocal coach, and community activist based in <strong className="text-white">Las Vegas, Nevada</strong>.
-            </p>
-            <p className="text-gray-400 leading-relaxed mb-6">
-              With 300k+ students learning music through her content, she brings artistry, education, and social impact together under one roof — <span className="text-white font-semibold">BasmaWorld</span>.
-            </p>
-            <div className="flex gap-4 flex-wrap">
-              <Link href="/basma/artist" className="bg-purple-700 hover:bg-purple-600 px-6 py-3 rounded-full text-sm font-semibold transition">🎤 Basma The Artist</Link>
-              <Link href="/mwl" className="bg-yellow-600 hover:bg-yellow-500 text-black px-6 py-3 rounded-full text-sm font-semibold transition">🏆 Community Work</Link>
-            </div>
-          </div>
-        </section>
-
-        {/* QUICK LINKS ROW */}
-        <section className="border-t border-white/10 py-12 bg-white/[0.02]">
-          <div className="max-w-5xl mx-auto px-4">
-            <p className="text-center text-gray-500 text-xs uppercase tracking-widest mb-6">Explore BasmaWorld</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/mwl/basmateachme" className="bg-yellow-900/30 hover:bg-yellow-800/50 border border-yellow-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎓 BasmaTeach Me</Link>
-              <Link href="/mwl/i-am-positive" className="bg-yellow-900/30 hover:bg-yellow-800/50 border border-yellow-700/40 px-5 py-3 rounded-full text-sm font-medium transition">✨ I Am Positive</Link>
-              <Link href="/hopes" className="bg-green-900/40 hover:bg-green-800/60 border border-green-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🤝 Hopes Chance</Link>
-              <Link href="/vegan-survivors" className="bg-orange-900/40 hover:bg-orange-800/60 border border-orange-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🥦 Vegan Survivors</Link>
-              <Link href="/mwl/gaming" className="bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎮 Gaming</Link>
-              <Link href="/mwl/podcast" className="bg-purple-900/40 hover:bg-purple-800/60 border border-purple-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎙️ Podcast</Link>
-              <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">🌍 All Links</a>
-            </div>
-          </div>
-        </section>
-
-        {/* ★ BOTTOM CTA — Final lead capture push ★ */}
-        <section className="py-20 bg-gradient-to-b from-black to-purple-950/30 border-t border-white/10">
-          <div className="max-w-3xl mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Join the Movement?</h2>
-            <p className="text-gray-400 text-lg mb-8">
-              300K+ people already have. Sign up free and get access to vocal coaching, music lessons, business services, and community resources.
-            </p>
-            <a
-              href="https://basma-leads-988fbd84.viktor.space"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-12 py-5 rounded-full font-bold text-xl transition hover:scale-105 shadow-lg shadow-purple-500/30"
-            >
-              ✨ Sign Up FREE — Join BASMA
-            </a>
-          </div>
-        </section>
-
-        {/* SEO footer text */}
-        <section className="border-t border-white/10 py-12">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <h2 className="text-2xl font-bold text-white mb-4">Las Vegas Music Academy &amp; Community Hub</h2>
-            <p className="text-gray-500 leading-relaxed text-sm max-w-2xl mx-auto">
-              BasmaWorld brings together BASMA Music Academy — offering singing, piano, and guitar lessons in Las Vegas and online — the Major Winners League community platform, and Hopes Chance youth resources. Founded by Basma Awada, educator, singer, and community leader in Las Vegas, NV.
-            </p>
-          </div>
-        </section>
-
-      </main>
-      <Footer />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
+      />
+      <HomeContent />
     </>
   )
 }

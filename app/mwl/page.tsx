@@ -7,17 +7,31 @@ import BillyChat from '@/components/BillyChat'
 import MWLContactForm from '@/components/MWLContactForm'
 import Link from 'next/link'
 
-export const metadata = {
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
   title: 'Major Winners League — Community Events & Social Impact | Las Vegas, NV',
-  description: 'Major Winners League by BasmaWorld — covering Las Vegas community events, business interviews, youth programs, and social impact initiatives. Music lessons las vegas, vocal coach las vegas.',
-  keywords: ['major winners league', 'las vegas community', 'basmaworld mwl', 'music lessons las vegas', 'singing lessons las vegas', 'kids music academy', 'basma music school', 'vocal coach las vegas', 'las vegas youth programs'],
+  description: 'Major Winners League by BasmaWorld — Las Vegas community events, business interviews, youth programs, and social impact. Gaming, podcast, BasmaTeach Me & more.',
+  keywords: ['major winners league', 'las vegas community events', 'basmaworld mwl', 'las vegas youth programs', 'social impact las vegas', 'community content las vegas', 'basma singer community'],
   openGraph: {
-    title: 'Major Winners League — Community Events & Social Impact | Las Vegas, NV',
-    description: 'Covering Las Vegas community events, interviews, and social impact through music, education, and youth programming.',
+    title: 'Major Winners League — Community Events & Social Impact | Las Vegas',
+    description: 'Las Vegas community events, interviews & social impact. Gaming, podcast, BasmaTeach Me & more.',
     url: 'https://basmaworld.com/mwl',
     siteName: 'BasmaWorld',
     type: 'website',
-    images: [{ url: '/images/basma-mwl.jpg', width: 1200, height: 630, alt: 'Major Winners League Las Vegas' }],
+    locale: 'en_US',
+    images: [{ url: '/images/basma-mwl.jpg', width: 1200, height: 630, alt: 'Major Winners League — community events and social impact in Las Vegas' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Major Winners League — Las Vegas Community',
+    description: 'Events, interviews, gaming, podcast & social impact from BasmaWorld.',
+    images: ['/images/basma-mwl.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/mwl',
   },
 }
 

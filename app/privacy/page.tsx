@@ -6,6 +6,20 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Privacy Policy | BasmaWorld',
   description: 'Privacy policy for BasmaWorld, Become A Singer Music Academy, and Hopes Chance. BASMA LLC, Las Vegas NV.',
+  openGraph: {
+    title: 'Privacy Policy | BasmaWorld',
+    description: 'Privacy policy for BasmaWorld, BASMA Music Academy & Hopes Chance.',
+    url: 'https://basmaworld.com/privacy',
+    siteName: 'BasmaWorld',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/privacy',
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
 }
 
 export default function PrivacyPage() {

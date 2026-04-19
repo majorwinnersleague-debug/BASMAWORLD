@@ -7,7 +7,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'The 10-Minute Vocal Warmup Basma Does Before Every Performance | BasmaWorld',
   description: 'The exact vocal warmup routine from vocal coach Basma Awada. 10 minutes, tested on hundreds of students. Works for all ages and skill levels.',
-  keywords: 'vocal warmup routine, singing warmup, vocal exercises, voice warmup before singing, las vegas vocal coach',
+  keywords: 'vocal warmup routine, singing warmup, vocal exercises, voice warmup before singing, las vegas vocal coach, vocal warmup for beginners',
+  openGraph: {
+    title: 'The 10-Minute Vocal Warmup Before Every Performance',
+    description: 'Basma Awada\'s exact vocal warmup routine. 10 minutes, all ages. Tested on hundreds of students.',
+    url: 'https://basmaworld.com/blog/vocal-warmup',
+    siteName: 'BasmaWorld',
+    type: 'article',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-singer.jpg', width: 1200, height: 630, alt: '10-minute vocal warmup routine from vocal coach Basma Awada' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: '10-Minute Vocal Warmup by Basma Awada',
+    description: 'The exact warmup routine tested on hundreds of students.',
+    images: ['/images/basma-singer.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/blog/vocal-warmup',
+  },
 }
 
 export default function VocalWarmupPost() {

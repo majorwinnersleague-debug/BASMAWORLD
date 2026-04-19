@@ -8,6 +8,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Contact BasmaWorld | Book Music Lessons Las Vegas | Get In Touch',
   description: 'Contact Basma Awada and BasmaWorld. Book music lessons, inquire about the Gateway Festival, partnerships, and more. Las Vegas, NV.',
+  keywords: ['contact basmaworld', 'book music lessons las vegas', 'basma awada contact', 'music lessons inquiry', 'gateway festival contact'],
+  openGraph: {
+    title: 'Contact BasmaWorld | Book Music Lessons Las Vegas',
+    description: 'Book music lessons, inquire about events, partnerships & more. Las Vegas, NV.',
+    url: 'https://basmaworld.com/contact',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-about.jpg', width: 1200, height: 630, alt: 'Contact BasmaWorld — book music lessons in Las Vegas' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Contact BasmaWorld — Las Vegas',
+    description: 'Book music lessons, inquire about events & partnerships.',
+    images: ['/images/basma-about.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/contact',
+  },
 }
 
 export default function ContactPage() {

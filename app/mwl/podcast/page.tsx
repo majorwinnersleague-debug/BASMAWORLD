@@ -16,6 +16,19 @@ export const metadata: Metadata = {
     url: 'https://basmaworld.com/mwl/podcast',
     siteName: 'BasmaWorld',
     type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-community.jpg', width: 1200, height: 630, alt: 'Mildly Interesting Podcast — real conversations from Major Winners League' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Mildly Interesting Podcast | MWL',
+    description: 'Real conversations about community, creativity & winning in life.',
+    images: ['/images/basma-community.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/mwl/podcast',
   },
 }
 

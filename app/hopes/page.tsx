@@ -7,17 +7,31 @@ import BillyChat from '@/components/BillyChat'
 import HopesContent from '@/components/HopesContent'
 import ShareButtons from '@/components/ShareButtons'
 
-export const metadata = {
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
   title: 'Hopes Chance — Free Youth Resources | Las Vegas, NV',
   description: 'Hopes Chance by BasmaWorld — free resource navigator connecting youth ages 16-30 in Las Vegas to housing, jobs, mental health, food, and more. No judgment, confidential.',
-  keywords: ['youth resources las vegas', 'hopes chance', 'free resources las vegas', 'music lessons las vegas', 'singing lessons las vegas', 'kids music academy', 'basma music school', 'vocal coach las vegas', 'las vegas youth programs', 'housing help las vegas'],
+  keywords: ['youth resources las vegas', 'hopes chance', 'free resources las vegas', 'las vegas youth programs', 'housing help las vegas', 'mental health resources las vegas', 'job help las vegas youth', 'food assistance las vegas', 'free community resources nevada'],
   openGraph: {
     title: 'Hopes Chance — Free Youth Resources | Las Vegas, NV',
-    description: 'Free resource navigator for youth ages 16-30 in Las Vegas. Housing, jobs, mental health, food, and more. Confidential. No judgment.',
+    description: 'Free resource navigator for youth ages 16-30 in Las Vegas. Housing, jobs, mental health, food & more.',
     url: 'https://basmaworld.com/hopes',
     siteName: 'BasmaWorld',
     type: 'website',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Hopes Chance Youth Resources Las Vegas' }],
+    locale: 'en_US',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Hopes Chance — free youth resources navigator in Las Vegas NV' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Hopes Chance — Free Youth Resources Las Vegas',
+    description: 'Housing, jobs, mental health, food & more for youth ages 16-30.',
+    images: ['/og-image.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/hopes',
   },
 }
 
