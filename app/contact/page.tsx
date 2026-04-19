@@ -2,28 +2,30 @@ export const dynamic = 'force-static'
 export const revalidate = 86400
 
 import type { Metadata } from 'next'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import MWLContactForm from '@/components/MWLContactForm'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Contact BasmaWorld | Book Music Lessons Las Vegas | Get In Touch',
-  description: 'Contact Basma Awada and BasmaWorld. Book music lessons, inquire about the Gateway Festival, partnerships, and more. Las Vegas, NV.',
-  keywords: ['contact basmaworld', 'book music lessons las vegas', 'basma awada contact', 'music lessons inquiry', 'gateway festival contact'],
+  title: 'Contact BasmaWorld | Marketing, Music & Community | Las Vegas',
+  description: 'Contact BasmaWorld. Book music lessons, get a marketing consultation, or connect with Major Winners League. Las Vegas, NV.',
+  keywords: ['contact basmaworld', 'book music lessons las vegas', 'social media marketing contact', 'basma awada contact'],
   openGraph: {
-    title: 'Contact BasmaWorld | Book Music Lessons Las Vegas',
-    description: 'Book music lessons, inquire about events, partnerships & more. Las Vegas, NV.',
+    title: 'Contact BasmaWorld | Las Vegas',
+    description: 'Book lessons, get a marketing consultation, or just say hi.',
     url: 'https://basmaworld.com/contact',
     siteName: 'BasmaWorld',
     type: 'website',
     locale: 'en_US',
-    images: [{ url: '/images/basma-about.jpg', width: 1200, height: 630, alt: 'Contact BasmaWorld — book music lessons in Las Vegas' }],
+    images: [{ url: '/images/basma-about.jpg', width: 1200, height: 630, alt: 'Contact BasmaWorld' }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@basma_singer',
     creator: '@basma_singer',
-    title: 'Contact BasmaWorld — Las Vegas',
-    description: 'Book music lessons, inquire about events & partnerships.',
+    title: 'Contact BasmaWorld',
+    description: 'Book lessons, marketing consultations & more. Las Vegas.',
     images: ['/images/basma-about.jpg'],
   },
   alternates: {
@@ -33,95 +35,86 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      <section className="max-w-5xl mx-auto px-4 pt-20 pb-16">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-[#0a0a0a] pt-16">
+        <section className="max-w-5xl mx-auto px-4 pt-12 pb-16">
 
-        {/* Header */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20
-                          text-[#8B5CF6] text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-widest">
-            ✦ Get In Touch
+          {/* Header */}
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/60 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-widest">
+              ✦ Get In Touch
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Contact{' '}
+              <span className="bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+                BasmaWorld
+              </span>
+            </h1>
+            <p className="text-white/40 max-w-md mx-auto">
+              Marketing help, music lessons, community partnerships — we&apos;d love to hear from you.
+            </p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Contact{' '}
-            <span className="bg-gradient-to-r from-[#8B5CF6] to-[#F59E0B] bg-clip-text text-transparent">
-              BasmaWorld
-            </span>
-          </h1>
-          <p className="text-white/40 max-w-md mx-auto">
-            Book a lesson, ask about the Gateway Festival, or just say hi.
-          </p>
-        </div>
 
-        <div className="grid md:grid-cols-2 gap-10">
+          <div className="grid md:grid-cols-2 gap-10">
 
-          {/* Left — quick options */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold text-white mb-6">Quick Options</h2>
+            {/* Left — quick options */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-white mb-4">How can we help?</h2>
 
-            {[
-              { emoji: '🎵', title: 'Book a Trial Lesson', desc: '$29 — voice, piano, guitar & more', href: '/academy', color: 'border-[#8B5CF6]/30 hover:border-[#8B5CF6]' },
-              { emoji: '🎭', title: 'Gateway Festival', desc: 'Oct 24 · Historic Westside School', href: '/gateway', color: 'border-[#F59E0B]/30 hover:border-[#F59E0B]' },
-              { emoji: '🤝', title: 'Hopes Chance', desc: 'Free youth resources Las Vegas', href: '/hopes', color: 'border-[#22C55E]/30 hover:border-[#22C55E]' },
-              { emoji: '💬', title: 'Chat with Billy', desc: 'Ask our AI assistant anything', href: '/#billy', color: 'border-white/10 hover:border-white/30' },
-            ].map((item) => (
-              <Link key={item.href} href={item.href}
-                className={`flex items-center gap-4 bg-white/[0.02] border ${item.color} rounded-xl p-4 transition group`}>
-                <span className="text-2xl">{item.emoji}</span>
-                <div>
-                  <p className="font-semibold text-white text-sm group-hover:text-[#8B5CF6] transition">{item.title}</p>
-                  <p className="text-white/30 text-xs">{item.desc}</p>
-                </div>
-                <span className="ml-auto text-white/20 group-hover:text-white/60 transition">→</span>
-              </Link>
-            ))}
+              {[
+                { emoji: '📱', title: 'Marketing Consultation', desc: 'Free — grow your brand with MWM', href: '/mwm', color: 'border-blue-500/30 hover:border-blue-400' },
+                { emoji: '🎵', title: 'Book a Music Lesson', desc: '$29 trial — voice, piano, guitar & more', href: '/basma', color: 'border-purple-500/30 hover:border-purple-400' },
+                { emoji: '🏆', title: 'Community Partnership', desc: 'Work with Major Winners League', href: '/mwl', color: 'border-yellow-500/30 hover:border-yellow-400' },
+                { emoji: '🤝', title: 'Youth Resources', desc: 'Hopes Chance — free help for ages 16-30', href: '/mwl', color: 'border-green-500/30 hover:border-green-400' },
+              ].map((item) => (
+                <Link key={item.title} href={item.href}
+                  className={`flex items-center gap-4 bg-white/[0.02] border ${item.color} rounded-xl p-4 transition group`}>
+                  <span className="text-2xl">{item.emoji}</span>
+                  <div>
+                    <p className="font-semibold text-white text-sm group-hover:opacity-80 transition">{item.title}</p>
+                    <p className="text-white/30 text-xs">{item.desc}</p>
+                  </div>
+                  <span className="ml-auto text-white/20 group-hover:text-white/60 transition">→</span>
+                </Link>
+              ))}
 
-            {/* Direct contact */}
-            <div className="bg-white/[0.02] border border-white/10 rounded-xl p-4 mt-4">
-              <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Direct Contact</p>
-              <div className="space-y-2 text-sm text-white/60">
-                <p>📞 (702) 788-7369</p>
-                <p>📍 9205 W Russell Rd Bldg 3, Las Vegas NV</p>
-                <div className="flex flex-wrap gap-3 pt-2">
-                  <a href="https://www.tiktok.com/@basma_singer" target="_blank" rel="noopener noreferrer"
-                    className="text-[#8B5CF6] hover:text-[#A78BFA] transition text-xs">🎵 @basma_singer</a>
-                  <a href="https://www.tiktok.com/@basmateachme" target="_blank" rel="noopener noreferrer"
-                    className="text-[#8B5CF6] hover:text-[#A78BFA] transition text-xs">🪆 @basmateachme</a>
-                  <a href="https://www.instagram.com/basma.tea" target="_blank" rel="noopener noreferrer"
-                    className="text-[#EC4899] hover:text-pink-400 transition text-xs">📸 @basma.tea</a>
-                  <a href="https://www.youtube.com/channel/UChszcJ6HQ4u1NoTs4-06H3w?sub_confirmation=1" target="_blank" rel="noopener noreferrer"
-                    className="text-red-400 hover:text-red-300 transition text-xs">📺 YouTube</a>
-                  <a href="https://open.spotify.com/artist/1PA6WUf27E53oaHmWPVNBt" target="_blank" rel="noopener noreferrer"
-                    className="text-green-400 hover:text-green-300 transition text-xs">🎧 Spotify</a>
-                  <a href="https://itunes.apple.com/us/artist/1543777421" target="_blank" rel="noopener noreferrer"
-                    className="text-pink-300 hover:text-pink-200 transition text-xs">🍎 Apple Music</a>
-                  <a href="https://discord.gg/4nzX2Wb5HW" target="_blank" rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 transition text-xs">💬 Discord</a>
-                  <a href="https://m.twitch.tv/basmasinger" target="_blank" rel="noopener noreferrer"
-                    className="text-purple-400 hover:text-purple-300 transition text-xs">🎮 Twitch</a>
-                  <a href="https://www.facebook.com/share/y5V8Jm2dKTpCGbc4/" target="_blank" rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 transition text-xs">📘 Facebook</a>
-                  <a href="https://twitter.com/BASMA_music" target="_blank" rel="noopener noreferrer"
-                    className="text-sky-400 hover:text-sky-300 transition text-xs">🐦 Twitter/X</a>
-                  <a href="https://v.lemon8-app.com/al/OgQQshrUcv" target="_blank" rel="noopener noreferrer"
-                    className="text-yellow-400 hover:text-yellow-300 transition text-xs">🍋 Lemon8</a>
-                  <a href="https://open.spotify.com/show/0i0tC040EavARkiFoDIR5j" target="_blank" rel="noopener noreferrer"
-                    className="text-green-400 hover:text-green-300 transition text-xs">🎙️ R.O.F.L. Podcast</a>
-                  <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer"
-                    className="text-emerald-400 hover:text-emerald-300 transition text-xs">🌍 Linktree</a>
+              {/* Direct contact */}
+              <div className="bg-white/[0.02] border border-white/10 rounded-xl p-4 mt-4">
+                <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Direct Contact</p>
+                <div className="space-y-2 text-sm text-white/60">
+                  <p>📞 (702) 788-7369</p>
+                  <p>📍 9205 W Russell Rd Bldg 3, Las Vegas NV 89148</p>
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {[
+                      { href: 'https://www.tiktok.com/@basma_singer', label: '🎵 TikTok' },
+                      { href: 'https://www.instagram.com/basma.tea', label: '📸 Instagram' },
+                      { href: 'https://www.youtube.com/channel/UChszcJ6HQ4u1NoTs4-06H3w', label: '📺 YouTube' },
+                      { href: 'https://discord.gg/4nzX2Wb5HW', label: '💬 Discord' },
+                      { href: 'https://twitter.com/BASMA_music', label: '🐦 Twitter/X' },
+                      { href: 'https://www.facebook.com/share/y5V8Jm2dKTpCGbc4/', label: '📘 Facebook' },
+                      { href: 'https://linktr.ee/BASMATea', label: '🌍 All Links' },
+                    ].map((link) => (
+                      <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer"
+                        className="bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-full text-xs transition">
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Right — contact form */}
-          <div>
-            <h2 className="text-lg font-bold text-white mb-6">Send a Message</h2>
-            <MWLContactForm />
-          </div>
+            {/* Right — contact form */}
+            <div>
+              <h2 className="text-lg font-bold text-white mb-4">Send a Message</h2>
+              <MWLContactForm />
+            </div>
 
-        </div>
-      </section>
-    </div>
+          </div>
+        </section>
+      </div>
+      <Footer />
+    </>
   )
 }

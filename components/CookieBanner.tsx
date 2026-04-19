@@ -23,7 +23,7 @@ export default function CookieBanner() {
                     items-center justify-between gap-3">
       <p className="text-white/50 text-sm text-center sm:text-left max-w-xl">
         We use cookies to improve your experience. By using BasmaWorld you agree to our use of analytics.
-        <Link href="/hopes" className="text-[#8B5CF6] hover:text-[#A78BFA] ml-1 transition">Learn more</Link>
+        <Link href="/mwl" className="text-[#8B5CF6] hover:text-[#A78BFA] ml-1 transition">Learn more</Link>
       </p>
       <button
         onClick={accept}

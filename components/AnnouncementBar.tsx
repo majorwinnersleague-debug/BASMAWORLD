@@ -49,7 +49,7 @@ export default function AnnouncementBar() {
           <span className="text-purple-300 font-bold">FREE</span> Trial Music Lesson Today!
         </span>
         <Link
-          href="/academy"
+          href="/basma"
           className="flex-shrink-0 bg-purple-600 hover:bg-purple-500 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full transition-colors duration-200 whitespace-nowrap"
           style={{ boxShadow: '0 0 8px rgba(139, 92, 246, 0.5)' }}
         >

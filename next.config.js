@@ -3,15 +3,32 @@ const nextConfig = {
   // ── Redirects ──────────────────────────────────────────────────────────────
   async redirects() {
     return [
-      { source: '/mwl/hopes-chance', destination: '/hopes', permanent: true },
-      // Page consolidation redirects
-      { source: '/basma/academy', destination: '/academy', permanent: true },
-      { source: '/basma/lessons', destination: '/academy', permanent: true },
+      // Phase 5: Consolidate to 5 pages — all old pages 301 redirect
+      // Academy, wins, blog → /basma
+      { source: '/academy', destination: '/basma', permanent: true },
+      { source: '/wins', destination: '/basma', permanent: true },
+      { source: '/blog', destination: '/basma', permanent: true },
+      { source: '/blog/how-to-sing-better', destination: '/basma', permanent: true },
+      { source: '/blog/kids-music-lessons', destination: '/basma', permanent: true },
+      { source: '/blog/vocal-warmup', destination: '/basma', permanent: true },
+
+      // Gateway → home
+      { source: '/gateway', destination: '/', permanent: true },
+
+      // Hopes, MWL subpages → /mwl
+      { source: '/hopes', destination: '/mwl', permanent: true },
+      { source: '/mwl/hopes-chance', destination: '/mwl', permanent: true },
+      { source: '/mwl/basmateachme', destination: '/mwl', permanent: true },
+      { source: '/mwl/podcast', destination: '/mwl', permanent: true },
+
+      // Legacy redirects from Phase 2
+      { source: '/basma/academy', destination: '/basma', permanent: true },
+      { source: '/basma/lessons', destination: '/basma', permanent: true },
       { source: '/basma/artist', destination: '/basma', permanent: true },
-      { source: '/vegan-survivors', destination: '/mwl#vegan', permanent: true },
-      { source: '/mwl/vegan-survivors', destination: '/mwl#vegan', permanent: true },
-      { source: '/mwl/gaming', destination: '/mwl#gaming', permanent: true },
-      { source: '/mwl/i-am-positive', destination: '/mwl#positive', permanent: true },
+      { source: '/vegan-survivors', destination: '/mwl', permanent: true },
+      { source: '/mwl/vegan-survivors', destination: '/mwl', permanent: true },
+      { source: '/mwl/gaming', destination: '/mwl', permanent: true },
+      { source: '/mwl/i-am-positive', destination: '/mwl', permanent: true },
     ]
   },
 

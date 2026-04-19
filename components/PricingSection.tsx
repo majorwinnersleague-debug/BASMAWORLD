@@ -93,7 +93,7 @@ export default function PricingSection() {
               <StripeCheckoutButton />
             ) : (
               <Link
-                href="/academy"
+                href="/basma"
                 className={`w-full text-center py-3 rounded-xl font-semibold text-sm transition
                   ${plan.name === 'Intensive' 
                     ? 'bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 border border-[#F59E0B]/30 text-[#F59E0B]' 

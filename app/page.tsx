@@ -1,25 +1,27 @@
 import type { Metadata } from 'next'
 import HomeContent from './HomeContent'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'BasmaWorld — Music Lessons Las Vegas | Singing, Piano & Guitar Academy',
-  description: 'Las Vegas music academy offering singing, piano, guitar & vocal lessons for kids and adults. $29 trial lesson. Founded by Basma Awada with 300K+ community. Book today!',
-  keywords: ['music lessons las vegas', 'singing lessons las vegas', 'piano lessons las vegas', 'guitar lessons las vegas', 'vocal coach las vegas', 'kids music lessons las vegas', 'music academy las vegas', 'voice lessons near me', 'basma awada', 'become a singer academy', 'las vegas music teacher', 'online singing lessons'],
+  title: 'BasmaWorld — Marketing, Music & Community | Las Vegas',
+  description: 'BasmaWorld: Major Winners Marketing (social media services), BASMA Music Academy (singing, piano, guitar lessons), and Major Winners League (community & youth resources). Las Vegas, NV.',
+  keywords: ['basmaworld', 'social media marketing las vegas', 'music lessons las vegas', 'singing lessons', 'piano lessons', 'community events las vegas', 'basma awada', 'major winners league', 'major winners marketing', 'youth resources las vegas'],
   openGraph: {
-    title: 'BasmaWorld — Music Lessons Las Vegas | Singing, Piano & Guitar',
-    description: 'Las Vegas music academy — singing, piano, guitar & vocal coaching for kids & adults. $29 trial. 300K+ community.',
+    title: 'BasmaWorld — Marketing, Music & Community | Las Vegas',
+    description: 'Grow your brand. Learn music. Build community. Powered by real people and AI.',
     url: 'https://basmaworld.com',
     siteName: 'BasmaWorld',
     type: 'website',
     locale: 'en_US',
-    images: [{ url: '/images/basma-hero.jpg', width: 1200, height: 630, alt: 'BasmaWorld Music Academy — Singing, Piano & Guitar Lessons in Las Vegas NV' }],
+    images: [{ url: '/images/basma-hero.jpg', width: 1200, height: 630, alt: 'BasmaWorld — Marketing, Music & Community in Las Vegas' }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@basma_singer',
     creator: '@basma_singer',
-    title: 'BasmaWorld — Music Lessons Las Vegas',
-    description: 'Singing, piano, guitar & vocal coaching in Las Vegas. $29 trial. 300K+ community.',
+    title: 'BasmaWorld — Marketing, Music & Community',
+    description: 'Grow your brand. Learn music. Build community. Las Vegas, NV.',
     images: ['/images/basma-hero.jpg'],
   },
   alternates: {
@@ -30,16 +32,14 @@ export const metadata: Metadata = {
 const homeJsonLd = [
   {
     '@context': 'https://schema.org',
-    '@type': 'MusicSchool',
-    '@id': 'https://basmaworld.com/#musicschool',
-    name: 'BASMA Music Academy — Become A Singer',
-    alternateName: 'BasmaWorld',
+    '@type': 'Organization',
+    '@id': 'https://basmaworld.com/#org',
+    name: 'BasmaWorld',
+    alternateName: 'BASMA LLC',
     url: 'https://basmaworld.com',
     logo: 'https://basmaworld.com/og-image.jpg',
-    image: 'https://basmaworld.com/images/basma-academy.jpg',
-    description: 'Professional singing, piano, guitar & vocal coaching for kids and adults in Las Vegas. Gamified learning with XP system. Trial lesson $29.',
+    description: 'BasmaWorld is home to Major Winners Marketing, BASMA Music Academy, and Major Winners League. Las Vegas based.',
     telephone: '+1-702-788-7369',
-    priceRange: '$$',
     address: {
       '@type': 'PostalAddress',
       streetAddress: '9205 W Russell Rd Building 3',
@@ -48,42 +48,19 @@ const homeJsonLd = [
       postalCode: '89148',
       addressCountry: 'US',
     },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 36.0738,
-      longitude: -115.2642,
-    },
-    openingHoursSpecification: [
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '09:00', closes: '20:00' },
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '10:00', closes: '16:00' },
-    ],
     sameAs: [
       'https://www.tiktok.com/@basma_singer',
-      'https://www.tiktok.com/@basmateachme',
       'https://www.instagram.com/basma.tea',
       'https://linktr.ee/BASMATea',
+      'https://www.youtube.com/channel/UChszcJ6HQ4u1NoTs4-06H3w',
+      'https://open.spotify.com/artist/1PA6WUf27E53oaHmWPVNBt',
+      'https://discord.gg/4nzX2Wb5HW',
+      'https://twitter.com/BASMA_music',
     ],
     founder: {
       '@type': 'Person',
       name: 'Basma Awada',
-      jobTitle: 'Vocal Coach & Music Educator',
       url: 'https://basmaworld.com/basma',
-    },
-    areaServed: {
-      '@type': 'City',
-      name: 'Las Vegas',
-    },
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: 'Music Lessons',
-      itemListElement: [
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Singing Lessons' } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Piano Lessons' } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Guitar Lessons' } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Vocal Coaching' } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Violin Lessons' } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Drums Lessons' } },
-      ],
     },
   },
   {
@@ -92,7 +69,7 @@ const homeJsonLd = [
     '@id': 'https://basmaworld.com/#website',
     name: 'BasmaWorld',
     url: 'https://basmaworld.com',
-    publisher: { '@id': 'https://basmaworld.com/#musicschool' },
+    publisher: { '@id': 'https://basmaworld.com/#org' },
   },
 ]
 
@@ -103,7 +80,9 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
       />
+      <Navbar />
       <HomeContent />
+      <Footer />
     </>
   )
 }
