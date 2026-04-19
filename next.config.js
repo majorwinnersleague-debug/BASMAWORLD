@@ -4,6 +4,14 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/mwl/hopes-chance', destination: '/hopes', permanent: true },
+      // Page consolidation redirects
+      { source: '/basma/academy', destination: '/academy', permanent: true },
+      { source: '/basma/lessons', destination: '/academy', permanent: true },
+      { source: '/basma/artist', destination: '/basma', permanent: true },
+      { source: '/vegan-survivors', destination: '/mwl#vegan', permanent: true },
+      { source: '/mwl/vegan-survivors', destination: '/mwl#vegan', permanent: true },
+      { source: '/mwl/gaming', destination: '/mwl#gaming', permanent: true },
+      { source: '/mwl/i-am-positive', destination: '/mwl#positive', permanent: true },
     ]
   },
 
@@ -40,10 +48,9 @@ const nextConfig = {
   },
 
   // ── Cost & Performance Optimizations ──────────────────────────────────────
-  compress: true,           // Gzip/Brotli compression — reduces bandwidth costs
-  poweredByHeader: false,   // Remove X-Powered-By header
+  compress: true,
+  poweredByHeader: false,
 
-  // Image optimization — limit variants to reduce Vercel image costs
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'basmaworld.com' },
@@ -51,10 +58,9 @@ const nextConfig = {
     ],
     deviceSizes: [640, 750, 828, 1080, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
-    formats: ['image/webp'], // Skip AVIF — saves CPU time and cost
+    formats: ['image/webp'],
   },
 
-  // Remove console.logs in production — cleaner + slightly faster
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
