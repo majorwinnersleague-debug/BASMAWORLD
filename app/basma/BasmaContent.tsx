@@ -88,6 +88,22 @@ export default function BasmaContent() {
             </div>
           </div>
 
+          {/* Recital performance — full width */}
+          <div className="relative rounded-3xl overflow-hidden mb-4 group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/basma/students-recital-performance.jpg"
+              alt="Students performing on stage at recital — Basma's students"
+              className="w-full object-cover max-h-[400px] object-top transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">🎤 Student Recital</p>
+              <p className="text-white text-xl font-black">From the classroom to the stage</p>
+              <p className="text-white/65 text-sm mt-1">Every student deserves a moment to shine ✨</p>
+            </div>
+          </div>
+
           {/* 2-photo classroom row */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="relative rounded-2xl overflow-hidden group aspect-video">
