@@ -51,21 +51,42 @@ export default function MWLContent() {
           </div>
         </section>
 
-        {/* ── Community Photo ─────────────────────────────── */}
+        {/* ── Community Photos ────────────────────────────────── */}
         <section className="max-w-4xl mx-auto px-4 pb-8">
-          <div className="relative rounded-3xl overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/basma/music-video-crew.jpg"
-              alt="Music video crew rooftop shoot — Las Vegas community"
-              className="w-full object-cover max-h-[500px]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">🎬 The Community</p>
-              <p className="text-white text-xl font-black">&ldquo;Music video today was amazing! Much love to all of you fr&rdquo;</p>
-              <p className="text-white/60 text-sm mt-1">Las Vegas · Major Winners League crew 💛</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {/* Rooftop music video crew */}
+            <div className="relative rounded-3xl overflow-hidden group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/basma/music-video-crew.jpg"
+                alt="Music video crew rooftop shoot — Las Vegas community"
+                className="w-full object-cover h-72 transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">🎬 Music Video Shoot</p>
+                <p className="text-white text-lg font-black">&ldquo;Much love to all of you fr&rdquo;</p>
+                <p className="text-white/60 text-xs mt-1">Rooftop · Las Vegas 💛</p>
+              </div>
             </div>
+
+            {/* Dance crew at gym */}
+            <div className="relative rounded-3xl overflow-hidden group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/basma/basma-dance-crew-gym.jpg"
+                alt="Basma with dance crew in school gymnasium"
+                className="w-full object-cover h-72 transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">🕺 Community Performance</p>
+                <p className="text-white text-lg font-black">We Started Z Spirit in &apos;93</p>
+                <p className="text-white/60 text-xs mt-1">School Gym · Las Vegas 💛</p>
+              </div>
+            </div>
+
           </div>
         </section>
 
