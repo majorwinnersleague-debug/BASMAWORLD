@@ -7,7 +7,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'When Should Your Child Start Music Lessons? | BasmaWorld Las Vegas',
   description: 'The right age to start music lessons for kids — what the research says, what to look for in a teacher, and how to know your child is ready. From Basma Awada.',
-  keywords: 'kids music lessons las vegas, when to start music lessons, children singing lessons, music lessons for kids las vegas, best age to start piano',
+  keywords: 'kids music lessons las vegas, when to start music lessons, children singing lessons, music lessons for kids las vegas, best age to start piano, kids vocal lessons',
+  openGraph: {
+    title: 'When Should Your Child Start Music Lessons?',
+    description: 'The right age to start music lessons for kids — research-backed guide from vocal coach Basma Awada.',
+    url: 'https://basmaworld.com/blog/kids-music-lessons',
+    siteName: 'BasmaWorld',
+    type: 'article',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-academy.jpg', width: 1200, height: 630, alt: 'Kids music lessons — when to start and what to look for' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'When Should Your Child Start Music Lessons?',
+    description: 'Research-backed guide on the right age for kids music lessons.',
+    images: ['/images/basma-academy.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/blog/kids-music-lessons',
+  },
 }
 
 export default function KidsMusicLessonsPost() {

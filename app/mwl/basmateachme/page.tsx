@@ -9,7 +9,27 @@ import BillyChatButton from '@/components/BillyChatButton'
 export const metadata: Metadata = {
   title: 'BasmaTeach Me | Billy the Puppet — Kids Music Education on TikTok',
   description: 'Meet Billy the Puppet! Funny, sassy, kid-friendly music education on TikTok @basmateachme. Learn instruments, music theory, and more with Billy and Basma.',
-  keywords: 'Billy the Puppet, BasmaTeach Me, kids music lessons, TikTok music education, learn to sing kids',
+  keywords: 'Billy the Puppet, BasmaTeach Me, kids music lessons, TikTok music education, learn to sing kids, basmateachme tiktok, music education for children',
+  openGraph: {
+    title: 'BasmaTeach Me | Billy the Puppet — Kids Music on TikTok',
+    description: 'Billy the Puppet teaches kids music on TikTok! Funny, sassy, kid-friendly. @basmateachme.',
+    url: 'https://basmaworld.com/mwl/basmateachme',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-mwl.jpg', width: 1200, height: 630, alt: 'BasmaTeach Me — Billy the Puppet kids music education on TikTok' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basmateachme',
+    creator: '@basma_singer',
+    title: 'BasmaTeach Me — Billy the Puppet',
+    description: 'Kids music education on TikTok with Billy the Puppet!',
+    images: ['/images/basma-mwl.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/mwl/basmateachme',
+  },
 }
 
 export default function BasmaTeachMePage() {

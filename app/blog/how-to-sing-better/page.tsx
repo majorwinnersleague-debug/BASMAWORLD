@@ -7,7 +7,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: '5 Things Every Beginner Singer Needs to Know | BasmaWorld Blog',
   description: 'Before you can sound good, you need these five vocal fundamentals. From breath support to resonance — the complete beginner guide from vocal coach Basma Awada.',
-  keywords: 'how to sing better, beginner singing tips, vocal coach las vegas, learn to sing, singing fundamentals',
+  keywords: 'how to sing better, beginner singing tips, vocal coach las vegas, learn to sing, singing fundamentals, voice training for beginners',
+  openGraph: {
+    title: '5 Things Every Beginner Singer Needs to Know',
+    description: 'The five vocal fundamentals every beginner needs. From breath support to resonance — by vocal coach Basma Awada.',
+    url: 'https://basmaworld.com/blog/how-to-sing-better',
+    siteName: 'BasmaWorld',
+    type: 'article',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-singer.jpg', width: 1200, height: 630, alt: 'How to sing better — beginner singing tips from Basma Awada' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: '5 Things Every Beginner Singer Needs to Know',
+    description: 'Vocal fundamentals from breath support to resonance — by Basma Awada.',
+    images: ['/images/basma-singer.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/blog/how-to-sing-better',
+  },
 }
 
 export default function HowToSingBetterPost() {

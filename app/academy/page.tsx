@@ -12,17 +12,31 @@ import TestimonialsSection from '@/components/TestimonialsSection'
 import FAQSection from '@/components/FAQSection'
 import Link from 'next/link'
 
-export const metadata = {
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
   title: 'BASMA Music Academy — Singing & Instrument Lessons | Las Vegas, NV',
-  description: 'Join Become A Singer Music Academy in Las Vegas. Trial lesson for just $29. Professional singing, piano, guitar & vocal coaching with Basma. Kids & adults welcome.',
-  keywords: ['music lessons las vegas', 'singing lessons las vegas', 'kids music academy', 'basma music school', 'vocal coach las vegas', 'piano lessons las vegas', 'guitar lessons las vegas', 'become a singer academy'],
+  description: 'Join Become A Singer Music Academy in Las Vegas. Trial lesson for just $29. Professional singing, piano, guitar & vocal coaching with Basma. Kids & adults welcome. Gamified XP system.',
+  keywords: ['music lessons las vegas', 'singing lessons las vegas', 'kids music academy', 'basma music school', 'vocal coach las vegas', 'piano lessons las vegas', 'guitar lessons las vegas', 'become a singer academy', 'voice lessons las vegas', 'music teacher las vegas', 'vocal lessons for kids', 'adult singing lessons las vegas'],
   openGraph: {
     title: 'BASMA Music Academy — Singing & Instrument Lessons | Las Vegas, NV',
     description: 'Trial music lesson for $29. Singing, piano, guitar & vocal coaching with Basma — Become A Singer Music Academy, Las Vegas.',
     url: 'https://basmaworld.com/academy',
     siteName: 'BasmaWorld',
     type: 'website',
-    images: [{ url: '/images/basma-academy.jpg', width: 1200, height: 630, alt: 'BASMA Music Academy Las Vegas' }],
+    locale: 'en_US',
+    images: [{ url: '/images/basma-academy.jpg', width: 1200, height: 630, alt: 'BASMA Music Academy — professional singing and instrument lessons in Las Vegas NV' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'BASMA Music Academy — Las Vegas Music Lessons',
+    description: 'Trial lesson $29. Singing, piano, guitar & vocal coaching. Kids & adults.',
+    images: ['/images/basma-academy.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/academy',
   },
 }
 
@@ -119,6 +133,38 @@ const faqSchema = {
 }
 
 export default function AcademyPage() {
+  
+const academyJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'BASMA Music Academy — Become A Singer',
+  description: 'Professional singing, piano, guitar & vocal coaching for kids and adults. Gamified learning with XP system, Skill Tree, and Echo AI mentor.',
+  provider: {
+    '@type': 'MusicSchool',
+    name: 'BASMA Music Academy',
+    url: 'https://basmaworld.com/academy',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '9205 W Russell Rd Building 3',
+      addressLocality: 'Las Vegas',
+      addressRegion: 'NV',
+      postalCode: '89148',
+      addressCountry: 'US',
+    },
+  },
+  offers: {
+    '@type': 'Offer',
+    price: '29',
+    priceCurrency: 'USD',
+    name: 'Trial Lesson',
+    url: 'https://basmaworld.com/academy',
+  },
+  hasCourseInstance: [
+    { '@type': 'CourseInstance', courseMode: 'onsite', name: 'In-Person Lessons — Las Vegas' },
+    { '@type': 'CourseInstance', courseMode: 'online', name: 'Online Lessons' },
+  ],
+}
+
   return (
     <>
       <script
@@ -129,6 +175,7 @@ export default function AcademyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(academyJsonLd) }} />
       <Navbar />
       <main className="min-h-screen bg-black text-white pt-16">
 

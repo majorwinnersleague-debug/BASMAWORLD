@@ -6,9 +6,32 @@ import Footer from '@/components/Footer'
 import BillyChat from '@/components/BillyChat'
 import Link from 'next/link'
 
-export const metadata = {
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
   title: 'BASMA — Become A Singer Music Academy | Online Singing Lessons',
   description: 'Join Become A Singer Music Academy. Gamified music lessons, XP system, Skill Tree, and Echo AI mentor. Professional vocal coaching online with Basma.',
+  keywords: ['online singing lessons', 'become a singer', 'gamified music lessons', 'xp music academy', 'vocal coaching online', 'basma music academy', 'learn to sing online'],
+  openGraph: {
+    title: 'BASMA — Become A Singer Music Academy | Online Singing Lessons',
+    description: 'Gamified music lessons with XP system, Skill Tree & AI mentor. Professional vocal coaching online.',
+    url: 'https://basmaworld.com/basma/academy',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-academy.jpg', width: 1200, height: 630, alt: 'Become A Singer Music Academy — gamified online music lessons' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'BASMA — Become A Singer Music Academy',
+    description: 'Gamified music lessons with XP, Skill Tree & AI mentor.',
+    images: ['/images/basma-academy.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/basma/academy',
+  },
 }
 
 const musicSchoolSchema = {

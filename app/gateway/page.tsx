@@ -8,10 +8,26 @@ import FestivalCountdown from '@/components/FestivalCountdown'
 export const metadata: Metadata = {
   title: 'Gateway Festival 2026 — October 24 | Historic Westside School Las Vegas',
   description: 'Gateway Festival — October 24, 2026 at the Historic Westside School in Las Vegas. Live music, community, and culture. Produced by Basma Awada / BasmaWorld.',
+  keywords: ['gateway festival las vegas', 'gateway festival 2026', 'las vegas music festival', 'historic westside school event', 'basma awada festival', 'las vegas community events', 'live music las vegas'],
   openGraph: {
-    title: 'Gateway Festival 2026 — Las Vegas',
-    description: 'October 24, 2026 · Historic Westside School · Las Vegas, NV',
+    title: 'Gateway Festival 2026 — October 24, Las Vegas',
+    description: 'October 24, 2026 · Historic Westside School · Live music, community & culture.',
     url: 'https://basmaworld.com/gateway',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-community.jpg', width: 1200, height: 630, alt: 'Gateway Festival 2026 — live music event at Historic Westside School Las Vegas' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Gateway Festival 2026 — Las Vegas',
+    description: 'October 24 · Historic Westside School · Live music & community.',
+    images: ['/images/basma-community.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/gateway',
   },
 }
 

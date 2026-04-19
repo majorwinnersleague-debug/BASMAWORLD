@@ -13,6 +13,19 @@ export const metadata: Metadata = {
     url: 'https://basmaworld.com/mwl/i-am-positive',
     siteName: 'BasmaWorld',
     type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-community.jpg', width: 1200, height: 630, alt: 'I Am Positive — motivational talks and stories from Major Winners League' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'I Am Positive | Major Winners League',
+    description: 'Motivational talks, spoken poetry & stories of resilience.',
+    images: ['/images/basma-community.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/mwl/i-am-positive',
   },
 }
 

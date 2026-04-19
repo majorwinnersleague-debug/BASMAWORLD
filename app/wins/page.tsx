@@ -7,6 +7,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Student Wins | BasmaWorld Music Academy Testimonials | Las Vegas',
   description: "Real results from BasmaWorld Academy students. From beginners to performers — see what's possible in 90 days with Basma Awada.",
+  keywords: ['music academy testimonials', 'basma awada students', 'singing lesson results', 'music lesson reviews las vegas', 'basmaworld student wins'],
+  openGraph: {
+    title: 'Student Wins | BasmaWorld Music Academy Testimonials',
+    description: "Real results from BasmaWorld students. Beginners to performers in 90 days.",
+    url: 'https://basmaworld.com/wins',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-academy.jpg', width: 1200, height: 630, alt: 'BasmaWorld Music Academy student wins and testimonials' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Student Wins — BasmaWorld Academy',
+    description: "From beginners to performers in 90 days. Real student results.",
+    images: ['/images/basma-academy.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/wins',
+  },
 }
 
 export default function WinsPage() {

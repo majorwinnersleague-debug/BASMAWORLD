@@ -7,6 +7,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Music Tips & Blog | BasmaWorld | Las Vegas Vocal Coach Basma Awada',
   description: 'Free music tips, singing advice, and vocal coaching insights from Basma Awada. Learn how to sing, improve your voice, and grow as an artist.',
+  keywords: ['music blog', 'singing tips', 'vocal coaching advice', 'how to sing better', 'music lessons blog', 'basma awada blog', 'vocal warmup', 'kids music lessons tips'],
+  openGraph: {
+    title: 'Music Tips & Blog | BasmaWorld',
+    description: 'Free singing tips, vocal coaching insights & music advice from Basma Awada.',
+    url: 'https://basmaworld.com/blog',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-about.jpg', width: 1200, height: 630, alt: 'BasmaWorld Music Blog — singing tips and vocal coaching advice' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Music Tips & Blog | BasmaWorld',
+    description: 'Free singing tips & vocal coaching insights from Basma Awada.',
+    images: ['/images/basma-about.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/blog',
+  },
 }
 
 const posts = [

@@ -14,6 +14,19 @@ export const metadata: Metadata = {
     url: 'https://basmaworld.com/mwl/gaming',
     siteName: 'BasmaWorld',
     type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-mwl.jpg', width: 1200, height: 630, alt: 'Major Winners League Gaming — youth gaming community in Las Vegas' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Gaming | Major Winners League',
+    description: 'Youth gaming content, streams & community challenges.',
+    images: ['/images/basma-mwl.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/mwl/gaming',
   },
 }
 

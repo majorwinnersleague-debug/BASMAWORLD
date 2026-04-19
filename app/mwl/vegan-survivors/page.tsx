@@ -7,6 +7,27 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Vegan Survivors | MWL Gaming & Community | BasmaWorld',
   description: 'Vegan Survivors — a Major Winners League gaming community initiative. Fun, food, and community under the MWL banner.',
+  keywords: ['vegan survivors', 'mwl gaming community', 'basmaworld vegan', 'major winners league gaming', 'las vegas vegan community'],
+  openGraph: {
+    title: 'Vegan Survivors | MWL Gaming & Community',
+    description: 'A Major Winners League gaming community initiative. Fun, food & community.',
+    url: 'https://basmaworld.com/mwl/vegan-survivors',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-vegan.jpg', width: 1200, height: 630, alt: 'Vegan Survivors — MWL gaming and community initiative' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'Vegan Survivors | MWL Community',
+    description: 'Gaming community initiative — fun, food & community.',
+    images: ['/images/basma-vegan.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com/mwl/vegan-survivors',
+  },
 }
 
 export default function VeganSurvivorsPage() {
