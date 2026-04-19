@@ -114,6 +114,23 @@ export default function BasmaContent() {
             Inside the Studio 🎸
           </h2>
           <p className="text-white/55 text-center text-sm mb-6">Where the magic happens — and Billy hangs out</p>
+
+          {/* Featured pianist hero */}
+          <div className="relative rounded-3xl overflow-hidden mb-4 group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/studio/pianist-spotlight.jpg"
+              alt="Pianist performing on grand piano under stage spotlight"
+              className="w-full object-cover max-h-[380px] object-center transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <p className="text-purple-300 text-xs font-bold uppercase tracking-widest mb-1">🎹 Piano & Keys</p>
+              <p className="text-white text-xl font-black">From first chord to concert stage</p>
+              <p className="text-white/60 text-sm mt-1">Classical · Contemporary · All levels</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
             {/* Studio wide shots */}
             <div className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group aspect-square">
