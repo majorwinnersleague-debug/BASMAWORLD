@@ -69,6 +69,7 @@ export async function POST(req: NextRequest) {
 
     const apiKey = process.env.OPENROUTER_API_KEY
     if (!apiKey) {
+      console.error('Billy chat: OPENROUTER_API_KEY not set')
       return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
     }
 
@@ -83,27 +84,31 @@ export async function POST(req: NextRequest) {
       ? '\n\nNOTE: You are on the Music Academy page. Focus on instruments and lessons!'
       : ''
 
+    const requestBody = {
+      model: 'anthropic/claude-3-haiku',
+      messages: [
+        { role: 'system', content: BILLY_SYSTEM_PROMPT + pageContext },
+        ...validatedMessages,
+      ],
+      max_tokens: 200,
+      temperature: 0.85,
+    }
+
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${apiKey.trim()}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://basmaworld.com',
-        'X-Title': 'BasmaWorld — Billy Chat',
+        'X-Title': 'BasmaWorld Billy Chat',
       },
-      body: JSON.stringify({
-        model: 'anthropic/claude-3-haiku',
-        messages: [
-          { role: 'system', content: BILLY_SYSTEM_PROMPT + pageContext },
-          ...validatedMessages,
-        ],
-        max_tokens: 200,
-        temperature: 0.85,
-      }),
+      body: JSON.stringify(requestBody),
+      cache: 'no-store',
     })
 
     if (!response.ok) {
-      console.error('OpenRouter error:', response.status)
+      const errBody = await response.text().catch(() => 'unreadable')
+      console.error(`OpenRouter error: ${response.status} — ${errBody.slice(0, 200)}`)
       return NextResponse.json({ reply: "Billy is taking a nap 😴 Try again!" }, { status: 500 })
     }
 
@@ -136,7 +141,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ reply: cleanReply })
   } catch (err) {
-    console.error('Billy chat error:', err)
-    return NextResponse.json({ reply: "Oops! I tripped over my strings! 🪆 Try again!" })
+    const errMsg = err instanceof Error ? err.message : String(err)
+    const errStack = err instanceof Error ? err.stack?.slice(0, 300) : ''
+    console.error('Billy chat error:', errMsg, errStack)
+    return NextResponse.json(
+      { reply: "Oops! I tripped over my strings! 🪆 Try again!", debug: errMsg },
+      { status: 500 }
+    )
   }
 }
