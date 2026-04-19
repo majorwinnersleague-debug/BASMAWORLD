@@ -8,7 +8,7 @@ export default function MWLContent() {
   return (
     <>
       
-      <main className="min-h-screen bg-black text-white pt-16">
+      <main className="min-h-screen text-white pt-16">
 
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="max-w-4xl mx-auto px-4 pt-12 pb-16 text-center">
@@ -48,6 +48,24 @@ export default function MWLContent() {
             <p className="text-white/50 max-w-2xl mx-auto leading-relaxed">
               Major Winners League is the community arm of BasmaWorld. We cover Las Vegas from the Historic Westside to Nevada Partners — connecting youth to resources, hosting gaming events, creating motivational content, and producing real conversations through our podcasts. <strong className="text-yellow-400">Everyone deserves a chance to win.</strong>
             </p>
+          </div>
+        </section>
+
+        {/* ── Community Photo ─────────────────────────────── */}
+        <section className="max-w-4xl mx-auto px-4 pb-8">
+          <div className="relative rounded-3xl overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/basma/music-video-crew.jpg"
+              alt="Music video crew rooftop shoot — Las Vegas community"
+              className="w-full object-cover max-h-[500px]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">🎬 The Community</p>
+              <p className="text-white text-xl font-black">&ldquo;Music video today was amazing! Much love to all of you fr&rdquo;</p>
+              <p className="text-white/60 text-sm mt-1">Las Vegas · Major Winners League crew 💛</p>
+            </div>
           </div>
         </section>
 
