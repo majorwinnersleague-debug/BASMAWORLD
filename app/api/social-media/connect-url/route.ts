@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Look up the client's Upload-Post username from Airtable using the Stripe session ID
-    const baseId = process.env.AIRTABLE_BASE_ID
-    const airtableKey = process.env.AIRTABLE_API_KEY
+    const baseId = process.env.AIRTABLE_SOCIAL_BASE
+    const airtableKey = process.env.AIRTABLE_PAT
     let uploadPostUsername = sessionId // fallback
 
     if (baseId && airtableKey) {

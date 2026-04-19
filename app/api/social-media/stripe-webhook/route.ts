@@ -5,8 +5,8 @@ export const dynamic = 'force-dynamic'
 
 // Airtable helpers
 async function createAirtableRecord(data: Record<string, unknown>) {
-  const baseId = process.env.AIRTABLE_BASE_ID
-  const apiKey = process.env.AIRTABLE_API_KEY
+  const baseId = process.env.AIRTABLE_SOCIAL_BASE
+  const apiKey = process.env.AIRTABLE_PAT
   if (!baseId || !apiKey) return null
 
   const res = await fetch(`https://api.airtable.com/v0/${baseId}/Social%20Media%20Clients`, {
@@ -85,8 +85,8 @@ export async function POST(req: NextRequest) {
       if (recordId) {
         await createUploadPostProfile(recordId)
         // Store the Upload-Post user ID back to Airtable
-        const baseId = process.env.AIRTABLE_BASE_ID
-        const apiKey = process.env.AIRTABLE_API_KEY
+        const baseId = process.env.AIRTABLE_SOCIAL_BASE
+        const apiKey = process.env.AIRTABLE_PAT
         if (baseId && apiKey) {
           await fetch(`https://api.airtable.com/v0/${baseId}/Social%20Media%20Clients/${recordId}`, {
             method: 'PATCH',

@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
     const videoUrl = `https://basmaworld.com/uploads/${filename}`
 
     // Store video URL in Airtable
-    const baseId = process.env.AIRTABLE_BASE_ID
-    const apiKey = process.env.AIRTABLE_API_KEY
+    const baseId = process.env.AIRTABLE_SOCIAL_BASE
+    const apiKey = process.env.AIRTABLE_PAT
     if (baseId && apiKey) {
       const searchRes = await fetch(
         `https://api.airtable.com/v0/${baseId}/Social%20Media%20Clients?filterByFormula=${encodeURIComponent(`{Stripe Session ID}="${sessionId}"`)}`,

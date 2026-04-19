@@ -16,8 +16,8 @@ interface ClientRecord {
 // ─── Airtable ─────────────────────────────────────────────────────────────────
 
 async function getClientBySessionId(sessionId: string): Promise<ClientRecord | null> {
-  const baseId = process.env.AIRTABLE_BASE_ID
-  const apiKey = process.env.AIRTABLE_API_KEY
+  const baseId = process.env.AIRTABLE_SOCIAL_BASE
+  const apiKey = process.env.AIRTABLE_PAT
   if (!baseId || !apiKey) return null
 
   const res = await fetch(
@@ -42,8 +42,8 @@ async function getClientBySessionId(sessionId: string): Promise<ClientRecord | n
 }
 
 async function updateAirtableRecord(recordId: string, fields: Record<string, unknown>) {
-  const baseId = process.env.AIRTABLE_BASE_ID
-  const apiKey = process.env.AIRTABLE_API_KEY
+  const baseId = process.env.AIRTABLE_SOCIAL_BASE
+  const apiKey = process.env.AIRTABLE_PAT
   if (!baseId || !apiKey) return
 
   await fetch(`https://api.airtable.com/v0/${baseId}/Social%20Media%20Clients/${recordId}`, {

@@ -15,8 +15,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Look up client by Opus project ID
-    const baseId = process.env.AIRTABLE_BASE_ID
-    const apiKey = process.env.AIRTABLE_API_KEY
+    const baseId = process.env.AIRTABLE_SOCIAL_BASE
+    const apiKey = process.env.AIRTABLE_PAT
     if (!baseId || !apiKey) return NextResponse.json({ received: true })
 
     const searchRes = await fetch(
