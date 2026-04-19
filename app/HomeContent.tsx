@@ -261,7 +261,7 @@ export default function HomeContent() {
               { src: '/images/studio/studio-setup-3.jpg', label: 'The Studio 🎸' },
               { src: '/images/basma/basma-with-billy.jpg', label: 'Basma & Billy 💜' },
               { src: '/images/basma/basma-orchestra.jpg', label: 'Full Orchestra 🎼' },
-              { src: '/images/studio/studio-whiteboard-notes.jpg', label: 'Learning in action 📝' },
+              { src: '/images/basma/basma-teaching-classroom.jpg', label: 'In the classroom 📚' },
             ].map((item) => (
               <div key={item.src} className="relative rounded-2xl overflow-hidden group aspect-square">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -166,8 +166,8 @@ export default function BasmaContent() {
             </div>
             <div className="col-span-2 relative rounded-2xl overflow-hidden group aspect-square">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/basma/basma-with-student.jpg" alt="Basma with student at Broadway Kids Academy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm rounded-xl px-3 py-1.5 text-xs font-bold text-white">Real students. Real results. 🌟</div>
+              <img src="/images/basma/basma-teaching-classroom.jpg" alt="Basma teaching music in modern classroom with virtual piano" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm rounded-xl px-3 py-1.5 text-xs font-bold text-white">Teaching the next generation 🎹</div>
             </div>
           </div>
         </section>
