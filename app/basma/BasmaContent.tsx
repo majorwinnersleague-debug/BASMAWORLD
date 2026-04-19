@@ -71,6 +71,23 @@ export default function BasmaContent() {
             Basma Live 🎤
           </h2>
           <p className="text-white/55 text-center text-sm mb-6">From intimate clubs to full orchestras</p>
+
+          {/* Featured student moment */}
+          <div className="relative rounded-3xl overflow-hidden mb-4 group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/basma/basma-broadway-kids-academy.jpg"
+              alt="Basma with student outside Broadway Kids Academy"
+              className="w-full object-cover max-h-[420px] object-top transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <p className="text-purple-300 text-xs font-bold uppercase tracking-widest mb-1">🌟 Real Students. Real Results.</p>
+              <p className="text-white text-xl font-black">Broadway Kids Academy — Annie cast night 🎭</p>
+              <p className="text-white/65 text-sm mt-1">Musical Theater · Singing · Dance · Las Vegas</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { src: '/images/basma/basma-performing-stage-2.jpg', alt: 'Basma singing with red jacket at club stage' },
