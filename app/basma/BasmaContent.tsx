@@ -90,7 +90,7 @@ export default function BasmaContent() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { src: '/images/basma/basma-performing-stage-2.jpg', alt: 'Basma singing with red jacket at club stage' },
+              { src: '/images/basma/basma-live-music-stage.jpg', alt: 'Basma singing live with Live Music neon sign' },
               { src: '/images/basma/basma-orchestra.jpg', alt: 'Basma performing with full orchestra' },
               { src: '/images/basma/basma-performing-stage-3.jpg', alt: 'Basma on stage with wide audience' },
               { src: '/images/basma/basma-performing-stage-4.jpg', alt: 'Basma singing, speakers backdrop' },

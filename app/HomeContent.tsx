@@ -78,6 +78,32 @@ export default function HomeContent() {
           </div>
         </section>
 
+        {/* ── Hero Stage Photo ─────────────────────────────── */}
+        <section className="max-w-5xl mx-auto px-4 pb-6 relative z-10">
+          <div className="relative rounded-3xl overflow-hidden group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/basma/basma-live-music-stage.jpg"
+              alt="Basma singing live on stage with Live Music neon sign"
+              className="w-full object-cover max-h-[460px] object-center transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-7 flex items-end justify-between">
+              <div>
+                <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">🎤 Live in Las Vegas</p>
+                <p className="text-white text-2xl font-black leading-tight">Basma Awada — Live on Stage</p>
+                <p className="text-white/65 text-sm mt-1">Singer · Songwriter · Vocal Coach · Founder</p>
+              </div>
+              <a
+                href="/basma"
+                className="shrink-0 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white font-bold px-5 py-3 rounded-2xl text-sm transition-all hover:scale-105 hidden sm:block"
+              >
+                🎵 Learn with Basma →
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* ── What We Offer ── */}
         <section className="max-w-5xl mx-auto px-4 py-20 relative z-10">
           <div className="text-center mb-12">
