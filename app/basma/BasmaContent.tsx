@@ -88,6 +88,22 @@ export default function BasmaContent() {
             </div>
           </div>
 
+          {/* 2-photo classroom row */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="relative rounded-2xl overflow-hidden group aspect-video">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/basma/basma-teaching-classroom.jpg" alt="Basma teaching music with virtual piano on screen" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm rounded-xl px-3 py-1.5 text-xs font-bold text-white">🎹 Virtual Piano Lessons</div>
+            </div>
+            <div className="relative rounded-2xl overflow-hidden group aspect-video">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/basma/basma-teaching-classroom-2.jpg" alt="Students engaged in music class, hand raised" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm rounded-xl px-3 py-1.5 text-xs font-bold text-white">🙋 Students love it</div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { src: '/images/basma/basma-live-music-stage.jpg', alt: 'Basma singing live with Live Music neon sign' },
