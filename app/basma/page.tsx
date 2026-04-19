@@ -102,7 +102,6 @@ export default function BasmaPage() {
               className="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-full text-sm transition">🍋 Lemon8</a>
             <a href="https://open.spotify.com/show/0i0tC040EavARkiFoDIR5j" target="_blank" rel="noopener noreferrer"
               className="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-full text-sm transition">🎙️ R.O.F.L. Podcast</a>
-            </a>
           </div>
         </section>
 
