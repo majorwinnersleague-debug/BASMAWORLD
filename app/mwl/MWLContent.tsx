@@ -53,7 +53,7 @@ export default function MWLContent() {
 
         {/* ── Community Photos ────────────────────────────────── */}
         <section className="max-w-4xl mx-auto px-4 pb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
             {/* Rooftop music video crew */}
             <div className="relative rounded-3xl overflow-hidden group">
@@ -84,6 +84,22 @@ export default function MWLContent() {
                 <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">🕺 Community Performance</p>
                 <p className="text-white text-lg font-black">We Started Z Spirit in &apos;93</p>
                 <p className="text-white/60 text-xs mt-1">School Gym · Las Vegas 💛</p>
+              </div>
+            </div>
+
+            {/* Community outdoor event */}
+            <div className="relative rounded-3xl overflow-hidden group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/basma/basma-community-event.jpg"
+                alt="BasmaWorld community outdoor event — 18 people group photo"
+                className="w-full object-cover h-72 transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">🌍 The Community</p>
+                <p className="text-white text-lg font-black">Everyone deserves a chance to win</p>
+                <p className="text-white/60 text-xs mt-1">Las Vegas · BasmaWorld Family 💛</p>
               </div>
             </div>
 
