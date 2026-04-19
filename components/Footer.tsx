@@ -1,1 +1,72 @@
-aW1wb3J0IExpbmsgZnJvbSAnbmV4dC9saW5rJwoKZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRm9vdGVyKCkgewogIHJldHVybiAoCiAgICA8Zm9vdGVyIGNsYXNzTmFtZT0iYm9yZGVyLXQgYm9yZGVyLXdoaXRlLzEwIHB5LTEwIG10LTE2IGJnLWJsYWNrIj4KICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTZ4bCBteC1hdXRvIHB4LTQiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIG1kOmdyaWQtY29scy00IGdhcC04IG1iLTgiPgogICAgICAgICAgPGRpdj4KICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0idGV4dC13aGl0ZSBmb250LWJvbGQgbWItMyI+QmFzbWFXb3JsZDwvaDM+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1ncmF5LTUwMCB0ZXh0LXNtIj5NdXNpYy4gQ29tbXVuaXR5LiBPcHBvcnR1bml0eS4gTGFzIFZlZ2FzLCBOVjwvcD4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdj4KICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0idGV4dC15ZWxsb3ctNDAwIGZvbnQtc2VtaWJvbGQgbWItMyI+TVdMPC9oMz4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZmxleC1jb2wgZ2FwLTIgdGV4dC1zbSB0ZXh0LWdyYXktNDAwIj4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvbXdsIiBjbGFzc05hbWU9ImhvdmVyOnRleHQteWVsbG93LTQwMCB0cmFuc2l0aW9uIj5NYWpvciBXaW5uZXJzIExlYWd1ZTwvTGluaz4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvbXdsI3Bvc2l0aXZlIiBjbGFzc05hbWU9ImhvdmVyOnRleHQteWVsbG93LTQwMCB0cmFuc2l0aW9uIj5JIEFtIFBvc2l0aXZlPC9MaW5rPgogICAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9td2wvcG9kY2FzdCIgY2xhc3NOYW1lPSJob3Zlcjp0ZXh0LXllbGxvdy00MDAgdHJhbnNpdGlvbiI+UG9kY2FzdDwvTGluaz4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9InRleHQtcHVycGxlLTQwMCBmb250LXNlbWlib2xkIG1iLTMiPkJBU01BPC9oMz4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZmxleC1jb2wgZ2FwLTIgdGV4dC1zbSB0ZXh0LWdyYXktNDAwIj4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvYmFzbWEiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC1wdXJwbGUtNDAwIHRyYW5zaXRpb24iPk11c2ljIEFjYWRlbXk8L0xpbms+CiAgICAgICAgICAgICAgPExpbmsgaHJlZj0iL2FjYWRlbXkiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC1wdXJwbGUtNDAwIHRyYW5zaXRpb24iPkFjYWRlbXk8L0xpbms+CiAgICAgICAgICAgICAgPExpbmsgaHJlZj0iL2FjYWRlbXkiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC1wdXJwbGUtNDAwIHRyYW5zaXRpb24iPkJvb2sgYSBMZXNzb248L0xpbms+CiAgICAgICAgICAgICAgPExpbmsgaHJlZj0iL2Jhc21hIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtcHVycGxlLTQwMCB0cmFuc2l0aW9uIj5NZWV0IEJhc21hPC9MaW5rPgogICAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii93aW5zIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtcHVycGxlLTQwMCB0cmFuc2l0aW9uIj5TdHVkZW50IFdpbnM8L0xpbms+CiAgICAgICAgICAgICAgPExpbmsgaHJlZj0iL2Jsb2ciIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC1wdXJwbGUtNDAwIHRyYW5zaXRpb24iPk11c2ljIEJsb2c8L0xpbms+CiAgICAgICAgICAgICAgPExpbmsgaHJlZj0iL2dhdGV3YXkiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC15ZWxsb3ctNDAwIHRyYW5zaXRpb24iPkdhdGV3YXkgRmVzdGl2YWw8L0xpbms+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8ZGl2PgogICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJ0ZXh0LWdyYXktMzAwIGZvbnQtc2VtaWJvbGQgbWItMyI+Q29ubmVjdDwvaDM+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIGdhcC0yIHRleHQtc20gdGV4dC1ncmF5LTQwMCI+CiAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cHM6Ly93d3cudGlrdG9rLmNvbS9AYmFzbWFfc2luZ2VyIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUgdHJhbnNpdGlvbiI+8J+OtSBUaWtUb2sgQGJhc21hX3NpbmdlciAoMzAwSyspPC9hPgogICAgICAgICAgICAgIDxhIGhyZWY9Imh0dHBzOi8vd3d3LnRpa3Rvay5jb20vQGJhc21hdGVhY2htZSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIgbm9yZWZlcnJlciIgY2xhc3NOYW1lPSJob3Zlcjp0ZXh0LXdoaXRlIHRyYW5zaXRpb24iPvCfqoYgVGlrVG9rIEBiYXNtYXRlYWNobWU8L2E+CiAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cHM6Ly93d3cuaW5zdGFncmFtLmNvbS9iYXNtYS50ZWEiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC13aGl0ZSB0cmFuc2l0aW9uIj7wn5O4IEluc3RhZ3JhbTwvYT4KICAgICAgICAgICAgICA8YSBocmVmPSJodHRwczovL3d3dy55b3V0dWJlLmNvbS9jaGFubmVsL1VDaHN6Y0o2SFE0dTFOb1RzNC0wNkgzdz9zdWJfY29uZmlybWF0aW9uPTEiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC13aGl0ZSB0cmFuc2l0aW9uIj7wn5O6IFlvdVR1YmU8L2E+CiAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cHM6Ly93d3cueW91dHViZS5jb20vY2hhbm5lbC9VQzdPa3Jzdzk2LXMwYkhnOXdFUGt2dVE/c3ViX2NvbmZpcm1hdGlvbj0xIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUgdHJhbnNpdGlvbiI+8J+OrCBCQVNNQVNJTkdFUjwvYT4KICAgICAgICAgICAgICA8YSBocmVmPSJodHRwczovL29wZW4uc3BvdGlmeS5jb20vYXJ0aXN0LzFQQTZXVWYyN0U1M29hSG1XUFZOQnQiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC13aGl0ZSB0cmFuc2l0aW9uIj7wn46nIFNwb3RpZnk8L2E+CiAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cHM6Ly9pdHVuZXMuYXBwbGUuY29tL3VzL2FydGlzdC8xNTQzNzc3NDIxIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUgdHJhbnNpdGlvbiI+8J+NjiBBcHBsZSBNdXNpYzwvYT4KICAgICAgICAgICAgICA8YSBocmVmPSJodHRwczovL2Rpc2NvcmQuZ2cvNG56WDJXYjVIVyIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIgbm9yZWZlcnJlciIgY2xhc3NOYW1lPSJob3Zlcjp0ZXh0LXdoaXRlIHRyYW5zaXRpb24iPvCfkqwgRGlzY29yZDwvYT4KICAgICAgICAgICAgICA8YSBocmVmPSJodHRwczovL20udHdpdGNoLnR2L2Jhc21hc2luZ2VyIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUgdHJhbnNpdGlvbiI+8J+OriBUd2l0Y2g8L2E+CiAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cHM6Ly93d3cuZmFjZWJvb2suY29tL3NoYXJlL3k1VjhKbTJkS1RwQ0diYzQvIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUgdHJhbnNpdGlvbiI+8J+TmCBGYWNlYm9vazwvYT4KICAgICAgICAgICAgICA8YSBocmVmPSJodHRwczovL3R3aXR0ZXIuY29tL0JBU01BX211c2ljIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUgdHJhbnNpdGlvbiI+8J+QpiBUd2l0dGVyL1g8L2E+CiAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cHM6Ly92LmxlbW9uOC1hcHAuY29tL2FsL09nUVFzaHJVY3YiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC13aGl0ZSB0cmFuc2l0aW9uIj7wn42LIExlbW9uODwvYT4KICAgICAgICAgICAgICA8YSBocmVmPSJodHRwczovL29wZW4uc3BvdGlmeS5jb20vc2hvdy8waTB0QzA0MEVhdkFSa2lGb0RJUjVqIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUgdHJhbnNpdGlvbiI+8J+Ome+4jyBSLk8uRi5MLiBQb2RjYXN0PC9hPgogICAgICAgICAgICAgIDxhIGhyZWY9Imh0dHBzOi8vbGlua3RyLmVlL0JBU01BVGVhIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUgdHJhbnNpdGlvbiI+8J+MjSBBbGwgTGlua3MgKExpbmt0cmVlKTwvYT4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYm9yZGVyLXQgYm9yZGVyLXdoaXRlLzEwIHB0LTYgdGV4dC1jZW50ZXIgdGV4dC1ncmF5LTYwMCB0ZXh0LXNtIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtd3JhcCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgZ2FwLXgtMyBnYXAteS0xIj4KICAgICAgICAgICAgPHNwYW4+wqkgMjAyNiBCQVNNQSBMTEMgwrcgTGFzIFZlZ2FzLCBOVjwvc3Bhbj4KICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXdoaXRlLzIwIj7Ctzwvc3Bhbj4KICAgICAgICAgICAgPExpbmsgaHJlZj0iL2FjYWRlbXkiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC1wdXJwbGUtNDAwIHRyYW5zaXRpb24iPkFjYWRlbXk8L0xpbms+CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC13aGl0ZS8yMCI+wrc8L3NwYW4+CiAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9ob3BlcyIgY2xhc3NOYW1lPSJob3Zlcjp0ZXh0LWdyZWVuLTQwMCB0cmFuc2l0aW9uIj5Ib3BlcyBDaGFuY2U8L0xpbms+CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC13aGl0ZS8yMCI+wrc8L3NwYW4+CiAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9td2wiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC15ZWxsb3ctNDAwIHRyYW5zaXRpb24iPk1XTDwvTGluaz4KICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXdoaXRlLzIwIj7Ctzwvc3Bhbj4KICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXdoaXRlLzMwIj5Qb3dlcmVkIGJ5IEJhc21hV29ybGQ8L3NwYW4+CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC13aGl0ZS8yMCI+wrc8L3NwYW4+CiAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9wcml2YWN5IiBjbGFzc05hbWU9ImhvdmVyOnRleHQtd2hpdGUvNDAgdHJhbnNpdGlvbiI+UHJpdmFjeTwvTGluaz4KICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXdoaXRlLzIwIj7Ctzwvc3Bhbj4KICAgICAgICAgICAgPExpbmsgaHJlZj0iL2NvbnRhY3QiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC13aGl0ZS80MCB0cmFuc2l0aW9uIj5Db250YWN0PC9MaW5rPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9mb290ZXI+CiAgKQp9Cg==
+import Link from 'next/link'
+
+export default function Footer() {
+  return (
+    <footer className="border-t border-white/10 py-10 mt-16 bg-black">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <h3 className="text-white font-bold mb-3">BasmaWorld</h3>
+            <p className="text-gray-500 text-sm">Music. Community. Opportunity. Las Vegas, NV</p>
+          </div>
+          <div>
+            <h3 className="text-yellow-400 font-semibold mb-3">MWL</h3>
+            <div className="flex flex-col gap-2 text-sm text-gray-400">
+              <Link href="/mwl" className="hover:text-yellow-400 transition">Major Winners League</Link>
+              <Link href="/mwl#positive" className="hover:text-yellow-400 transition">I Am Positive</Link>
+              <Link href="/mwl/podcast" className="hover:text-yellow-400 transition">Podcast</Link>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-purple-400 font-semibold mb-3">BASMA</h3>
+            <div className="flex flex-col gap-2 text-sm text-gray-400">
+              <Link href="/basma" className="hover:text-purple-400 transition">Music Academy</Link>
+              <Link href="/academy" className="hover:text-purple-400 transition">Academy</Link>
+              <Link href="/academy" className="hover:text-purple-400 transition">Book a Lesson</Link>
+              <Link href="/basma" className="hover:text-purple-400 transition">Meet Basma</Link>
+              <Link href="/wins" className="hover:text-purple-400 transition">Student Wins</Link>
+              <Link href="/blog" className="hover:text-purple-400 transition">Music Blog</Link>
+              <Link href="/gateway" className="hover:text-yellow-400 transition">Gateway Festival</Link>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-gray-300 font-semibold mb-3">Connect</h3>
+            <div className="flex flex-col gap-2 text-sm text-gray-400">
+              <a href="https://www.tiktok.com/@basma_singer" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🎵 TikTok @basma_singer (300K+)</a>
+              <a href="https://www.tiktok.com/@basmateachme" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🪆 TikTok @basmateachme</a>
+              <a href="https://www.instagram.com/basma.tea" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">📸 Instagram</a>
+              <a href="https://www.youtube.com/channel/UChszcJ6HQ4u1NoTs4-06H3w?sub_confirmation=1" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">📺 YouTube</a>
+              <a href="https://www.youtube.com/channel/UC7Okrsw96-s0bHg9wEPkvuQ?sub_confirmation=1" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🎬 BASMASINGER</a>
+              <a href="https://open.spotify.com/artist/1PA6WUf27E53oaHmWPVNBt" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🎧 Spotify</a>
+              <a href="https://itunes.apple.com/us/artist/1543777421" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🍎 Apple Music</a>
+              <a href="https://discord.gg/4nzX2Wb5HW" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">💬 Discord</a>
+              <a href="https://m.twitch.tv/basmasinger" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🎮 Twitch</a>
+              <a href="https://www.facebook.com/share/y5V8Jm2dKTpCGbc4/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">📘 Facebook</a>
+              <a href="https://twitter.com/BASMA_music" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🐦 Twitter/X</a>
+              <a href="https://v.lemon8-app.com/al/OgQQshrUcv" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🍋 Lemon8</a>
+              <a href="https://open.spotify.com/show/0i0tC040EavARkiFoDIR5j" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🎙️ R.O.F.L. Podcast</a>
+              <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">🌍 All Links (Linktree)</a>
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-white/10 pt-6 text-center text-gray-600 text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            <span>© 2026 BASMA LLC · Las Vegas, NV</span>
+            <span className="text-white/20">·</span>
+            <Link href="/academy" className="hover:text-purple-400 transition">Academy</Link>
+            <span className="text-white/20">·</span>
+            <Link href="/hopes" className="hover:text-green-400 transition">Hopes Chance</Link>
+            <span className="text-white/20">·</span>
+            <Link href="/mwl" className="hover:text-yellow-400 transition">MWL</Link>
+            <span className="text-white/20">·</span>
+            <span className="text-white/30">Powered by BasmaWorld</span>
+            <span className="text-white/20">·</span>
+            <Link href="/privacy" className="hover:text-white/40 transition">Privacy</Link>
+            <span className="text-white/20">·</span>
+            <Link href="/contact" className="hover:text-white/40 transition">Contact</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}

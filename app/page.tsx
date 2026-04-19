@@ -1,1 +1,109 @@
-aW1wb3J0IHR5cGUgeyBNZXRhZGF0YSB9IGZyb20gJ25leHQnCmltcG9ydCBIb21lQ29udGVudCBmcm9tICcuL0hvbWVDb250ZW50JwoKZXhwb3J0IGNvbnN0IG1ldGFkYXRhOiBNZXRhZGF0YSA9IHsKICB0aXRsZTogJ0Jhc21hV29ybGQg4oCUIE11c2ljIExlc3NvbnMgTGFzIFZlZ2FzIHwgU2luZ2luZywgUGlhbm8gJiBHdWl0YXIgQWNhZGVteScsCiAgZGVzY3JpcHRpb246ICdMYXMgVmVnYXMgbXVzaWMgYWNhZGVteSBvZmZlcmluZyBzaW5naW5nLCBwaWFubywgZ3VpdGFyICYgdm9jYWwgbGVzc29ucyBmb3Iga2lkcyBhbmQgYWR1bHRzLiAkMjkgdHJpYWwgbGVzc29uLiBGb3VuZGVkIGJ5IEJhc21hIEF3YWRhIHdpdGggMzAwSysgY29tbXVuaXR5LiBCb29rIHRvZGF5IScsCiAga2V5d29yZHM6IFsnbXVzaWMgbGVzc29ucyBsYXMgdmVnYXMnLCAnc2luZ2luZyBsZXNzb25zIGxhcyB2ZWdhcycsICdwaWFubyBsZXNzb25zIGxhcyB2ZWdhcycsICdndWl0YXIgbGVzc29ucyBsYXMgdmVnYXMnLCAndm9jYWwgY29hY2ggbGFzIHZlZ2FzJywgJ2tpZHMgbXVzaWMgbGVzc29ucyBsYXMgdmVnYXMnLCAnbXVzaWMgYWNhZGVteSBsYXMgdmVnYXMnLCAndm9pY2UgbGVzc29ucyBuZWFyIG1lJywgJ2Jhc21hIGF3YWRhJywgJ2JlY29tZSBhIHNpbmdlciBhY2FkZW15JywgJ2xhcyB2ZWdhcyBtdXNpYyB0ZWFjaGVyJywgJ29ubGluZSBzaW5naW5nIGxlc3NvbnMnXSwKICBvcGVuR3JhcGg6IHsKICAgIHRpdGxlOiAnQmFzbWFXb3JsZCDigJQgTXVzaWMgTGVzc29ucyBMYXMgVmVnYXMgfCBTaW5naW5nLCBQaWFubyAmIEd1aXRhcicsCiAgICBkZXNjcmlwdGlvbjogJ0xhcyBWZWdhcyBtdXNpYyBhY2FkZW15IOKAlCBzaW5naW5nLCBwaWFubywgZ3VpdGFyICYgdm9jYWwgY29hY2hpbmcgZm9yIGtpZHMgJiBhZHVsdHMuICQyOSB0cmlhbC4gMzAwSysgY29tbXVuaXR5LicsCiAgICB1cmw6ICdodHRwczovL2Jhc21hd29ybGQuY29tJywKICAgIHNpdGVOYW1lOiAnQmFzbWFXb3JsZCcsCiAgICB0eXBlOiAnd2Vic2l0ZScsCiAgICBsb2NhbGU6ICdlbl9VUycsCiAgICBpbWFnZXM6IFt7IHVybDogJy9pbWFnZXMvYmFzbWEtaGVyby5qcGcnLCB3aWR0aDogMTIwMCwgaGVpZ2h0OiA2MzAsIGFsdDogJ0Jhc21hV29ybGQgTXVzaWMgQWNhZGVteSDigJQgU2luZ2luZywgUGlhbm8gJiBHdWl0YXIgTGVzc29ucyBpbiBMYXMgVmVnYXMgTlYnIH1dLAogIH0sCiAgdHdpdHRlcjogewogICAgY2FyZDogJ3N1bW1hcnlfbGFyZ2VfaW1hZ2UnLAogICAgc2l0ZTogJ0BiYXNtYV9zaW5nZXInLAogICAgY3JlYXRvcjogJ0BiYXNtYV9zaW5nZXInLAogICAgdGl0bGU6ICdCYXNtYVdvcmxkIOKAlCBNdXNpYyBMZXNzb25zIExhcyBWZWdhcycsCiAgICBkZXNjcmlwdGlvbjogJ1NpbmdpbmcsIHBpYW5vLCBndWl0YXIgJiB2b2NhbCBjb2FjaGluZyBpbiBMYXMgVmVnYXMuICQyOSB0cmlhbC4gMzAwSysgY29tbXVuaXR5LicsCiAgICBpbWFnZXM6IFsnL2ltYWdlcy9iYXNtYS1oZXJvLmpwZyddLAogIH0sCiAgYWx0ZXJuYXRlczogewogICAgY2Fub25pY2FsOiAnaHR0cHM6Ly9iYXNtYXdvcmxkLmNvbScsCiAgfSwKfQoKY29uc3QgaG9tZUpzb25MZCA9IFsKICB7CiAgICAnQGNvbnRleHQnOiAnaHR0cHM6Ly9zY2hlbWEub3JnJywKICAgICdAdHlwZSc6ICdNdXNpY1NjaG9vbCcsCiAgICAnQGlkJzogJ2h0dHBzOi8vYmFzbWF3b3JsZC5jb20vI211c2ljc2Nob29sJywKICAgIG5hbWU6ICdCQVNNQSBNdXNpYyBBY2FkZW15IOKAlCBCZWNvbWUgQSBTaW5nZXInLAogICAgYWx0ZXJuYXRlTmFtZTogJ0Jhc21hV29ybGQnLAogICAgdXJsOiAnaHR0cHM6Ly9iYXNtYXdvcmxkLmNvbScsCiAgICBsb2dvOiAnaHR0cHM6Ly9iYXNtYXdvcmxkLmNvbS9vZy1pbWFnZS5qcGcnLAogICAgaW1hZ2U6ICdodHRwczovL2Jhc21hd29ybGQuY29tL2ltYWdlcy9iYXNtYS1hY2FkZW15LmpwZycsCiAgICBkZXNjcmlwdGlvbjogJ1Byb2Zlc3Npb25hbCBzaW5naW5nLCBwaWFubywgZ3VpdGFyICYgdm9jYWwgY29hY2hpbmcgZm9yIGtpZHMgYW5kIGFkdWx0cyBpbiBMYXMgVmVnYXMuIEdhbWlmaWVkIGxlYXJuaW5nIHdpdGggWFAgc3lzdGVtLiBUcmlhbCBsZXNzb24gJDI5LicsCiAgICB0ZWxlcGhvbmU6ICcrMS03MDItNzg4LTczNjknLAogICAgcHJpY2VSYW5nZTogJyQkJywKICAgIGFkZHJlc3M6IHsKICAgICAgJ0B0eXBlJzogJ1Bvc3RhbEFkZHJlc3MnLAogICAgICBzdHJlZXRBZGRyZXNzOiAnOTIwNSBXIFJ1c3NlbGwgUmQgQnVpbGRpbmcgMycsCiAgICAgIGFkZHJlc3NMb2NhbGl0eTogJ0xhcyBWZWdhcycsCiAgICAgIGFkZHJlc3NSZWdpb246ICdOVicsCiAgICAgIHBvc3RhbENvZGU6ICc4OTE0OCcsCiAgICAgIGFkZHJlc3NDb3VudHJ5OiAnVVMnLAogICAgfSwKICAgIGdlbzogewogICAgICAnQHR5cGUnOiAnR2VvQ29vcmRpbmF0ZXMnLAogICAgICBsYXRpdHVkZTogMzYuMDczOCwKICAgICAgbG9uZ2l0dWRlOiAtMTE1LjI2NDIsCiAgICB9LAogICAgb3BlbmluZ0hvdXJzU3BlY2lmaWNhdGlvbjogWwogICAgICB7ICdAdHlwZSc6ICdPcGVuaW5nSG91cnNTcGVjaWZpY2F0aW9uJywgZGF5T2ZXZWVrOiBbJ01vbmRheScsJ1R1ZXNkYXknLCdXZWRuZXNkYXknLCdUaHVyc2RheScsJ0ZyaWRheSddLCBvcGVuczogJzA5OjAwJywgY2xvc2VzOiAnMjA6MDAnIH0sCiAgICAgIHsgJ0B0eXBlJzogJ09wZW5pbmdIb3Vyc1NwZWNpZmljYXRpb24nLCBkYXlPZldlZWs6ICdTYXR1cmRheScsIG9wZW5zOiAnMTA6MDAnLCBjbG9zZXM6ICcxNjowMCcgfSwKICAgIF0sCiAgICBzYW1lQXM6IFsKICAgICAgJ2h0dHBzOi8vd3d3LnRpa3Rvay5jb20vQGJhc21hX3NpbmdlcicsCiAgICAgICdodHRwczovL3d3dy50aWt0b2suY29tL0BiYXNtYXRlYWNobWUnLAogICAgICAnaHR0cHM6Ly93d3cuaW5zdGFncmFtLmNvbS9iYXNtYS50ZWEnLAogICAgICAnaHR0cHM6Ly9saW5rdHIuZWUvQkFTTUFUZWEnLAogICAgXSwKICAgIGZvdW5kZXI6IHsKICAgICAgJ0B0eXBlJzogJ1BlcnNvbicsCiAgICAgIG5hbWU6ICdCYXNtYSBBd2FkYScsCiAgICAgIGpvYlRpdGxlOiAnVm9jYWwgQ29hY2ggJiBNdXNpYyBFZHVjYXRvcicsCiAgICAgIHVybDogJ2h0dHBzOi8vYmFzbWF3b3JsZC5jb20vYmFzbWEnLAogICAgfSwKICAgIGFyZWFTZXJ2ZWQ6IHsKICAgICAgJ0B0eXBlJzogJ0NpdHknLAogICAgICBuYW1lOiAnTGFzIFZlZ2FzJywKICAgIH0sCiAgICBoYXNPZmZlckNhdGFsb2c6IHsKICAgICAgJ0B0eXBlJzogJ09mZmVyQ2F0YWxvZycsCiAgICAgIG5hbWU6ICdNdXNpYyBMZXNzb25zJywKICAgICAgaXRlbUxpc3RFbGVtZW50OiBbCiAgICAgICAgeyAnQHR5cGUnOiAnT2ZmZXInLCBpdGVtT2ZmZXJlZDogeyAnQHR5cGUnOiAnU2VydmljZScsIG5hbWU6ICdTaW5naW5nIExlc3NvbnMnIH0gfSwKICAgICAgICB7ICdAdHlwZSc6ICdPZmZlcicsIGl0ZW1PZmZlcmVkOiB7ICdAdHlwZSc6ICdTZXJ2aWNlJywgbmFtZTogJ1BpYW5vIExlc3NvbnMnIH0gfSwKICAgICAgICB7ICdAdHlwZSc6ICdPZmZlcicsIGl0ZW1PZmZlcmVkOiB7ICdAdHlwZSc6ICdTZXJ2aWNlJywgbmFtZTogJ0d1aXRhciBMZXNzb25zJyB9IH0sCiAgICAgICAgeyAnQHR5cGUnOiAnT2ZmZXInLCBpdGVtT2ZmZXJlZDogeyAnQHR5cGUnOiAnU2VydmljZScsIG5hbWU6ICdWb2NhbCBDb2FjaGluZycgfSB9LAogICAgICAgIHsgJ0B0eXBlJzogJ09mZmVyJywgaXRlbU9mZmVyZWQ6IHsgJ0B0eXBlJzogJ1NlcnZpY2UnLCBuYW1lOiAnVmlvbGluIExlc3NvbnMnIH0gfSwKICAgICAgICB7ICdAdHlwZSc6ICdPZmZlcicsIGl0ZW1PZmZlcmVkOiB7ICdAdHlwZSc6ICdTZXJ2aWNlJywgbmFtZTogJ0RydW1zIExlc3NvbnMnIH0gfSwKICAgICAgXSwKICAgIH0sCiAgfSwKICB7CiAgICAnQGNvbnRleHQnOiAnaHR0cHM6Ly9zY2hlbWEub3JnJywKICAgICdAdHlwZSc6ICdXZWJTaXRlJywKICAgICdAaWQnOiAnaHR0cHM6Ly9iYXNtYXdvcmxkLmNvbS8jd2Vic2l0ZScsCiAgICBuYW1lOiAnQmFzbWFXb3JsZCcsCiAgICB1cmw6ICdodHRwczovL2Jhc21hd29ybGQuY29tJywKICAgIHB1Ymxpc2hlcjogeyAnQGlkJzogJ2h0dHBzOi8vYmFzbWF3b3JsZC5jb20vI211c2ljc2Nob29sJyB9LAogIH0sCl0KCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEhvbWUoKSB7CiAgcmV0dXJuICgKICAgIDw+CiAgICAgIDxzY3JpcHQKICAgICAgICB0eXBlPSJhcHBsaWNhdGlvbi9sZCtqc29uIgogICAgICAgIGRhbmdlcm91c2x5U2V0SW5uZXJIVE1MPXt7IF9faHRtbDogSlNPTi5zdHJpbmdpZnkoaG9tZUpzb25MZCkgfX0KICAgICAgLz4KICAgICAgPEhvbWVDb250ZW50IC8+CiAgICA8Lz4KICApCn0K
+import type { Metadata } from 'next'
+import HomeContent from './HomeContent'
+
+export const metadata: Metadata = {
+  title: 'BasmaWorld — Music Lessons Las Vegas | Singing, Piano & Guitar Academy',
+  description: 'Las Vegas music academy offering singing, piano, guitar & vocal lessons for kids and adults. $29 trial lesson. Founded by Basma Awada with 300K+ community. Book today!',
+  keywords: ['music lessons las vegas', 'singing lessons las vegas', 'piano lessons las vegas', 'guitar lessons las vegas', 'vocal coach las vegas', 'kids music lessons las vegas', 'music academy las vegas', 'voice lessons near me', 'basma awada', 'become a singer academy', 'las vegas music teacher', 'online singing lessons'],
+  openGraph: {
+    title: 'BasmaWorld — Music Lessons Las Vegas | Singing, Piano & Guitar',
+    description: 'Las Vegas music academy — singing, piano, guitar & vocal coaching for kids & adults. $29 trial. 300K+ community.',
+    url: 'https://basmaworld.com',
+    siteName: 'BasmaWorld',
+    type: 'website',
+    locale: 'en_US',
+    images: [{ url: '/images/basma-hero.jpg', width: 1200, height: 630, alt: 'BasmaWorld Music Academy — Singing, Piano & Guitar Lessons in Las Vegas NV' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@basma_singer',
+    creator: '@basma_singer',
+    title: 'BasmaWorld — Music Lessons Las Vegas',
+    description: 'Singing, piano, guitar & vocal coaching in Las Vegas. $29 trial. 300K+ community.',
+    images: ['/images/basma-hero.jpg'],
+  },
+  alternates: {
+    canonical: 'https://basmaworld.com',
+  },
+}
+
+const homeJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MusicSchool',
+    '@id': 'https://basmaworld.com/#musicschool',
+    name: 'BASMA Music Academy — Become A Singer',
+    alternateName: 'BasmaWorld',
+    url: 'https://basmaworld.com',
+    logo: 'https://basmaworld.com/og-image.jpg',
+    image: 'https://basmaworld.com/images/basma-academy.jpg',
+    description: 'Professional singing, piano, guitar & vocal coaching for kids and adults in Las Vegas. Gamified learning with XP system. Trial lesson $29.',
+    telephone: '+1-702-788-7369',
+    priceRange: '$$',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '9205 W Russell Rd Building 3',
+      addressLocality: 'Las Vegas',
+      addressRegion: 'NV',
+      postalCode: '89148',
+      addressCountry: 'US',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 36.0738,
+      longitude: -115.2642,
+    },
+    openingHoursSpecification: [
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '09:00', closes: '20:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '10:00', closes: '16:00' },
+    ],
+    sameAs: [
+      'https://www.tiktok.com/@basma_singer',
+      'https://www.tiktok.com/@basmateachme',
+      'https://www.instagram.com/basma.tea',
+      'https://linktr.ee/BASMATea',
+    ],
+    founder: {
+      '@type': 'Person',
+      name: 'Basma Awada',
+      jobTitle: 'Vocal Coach & Music Educator',
+      url: 'https://basmaworld.com/basma',
+    },
+    areaServed: {
+      '@type': 'City',
+      name: 'Las Vegas',
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Music Lessons',
+      itemListElement: [
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Singing Lessons' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Piano Lessons' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Guitar Lessons' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Vocal Coaching' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Violin Lessons' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Drums Lessons' } },
+      ],
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://basmaworld.com/#website',
+    name: 'BasmaWorld',
+    url: 'https://basmaworld.com',
+    publisher: { '@id': 'https://basmaworld.com/#musicschool' },
+  },
+]
+
+export default function Home() {
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
+      />
+      <HomeContent />
+    </>
+  )
+}

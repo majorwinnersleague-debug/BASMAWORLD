@@ -1,1 +1,310 @@
-J3VzZSBjbGllbnQnCmltcG9ydCBMaW5rIGZyb20gJ25leHQvbGluaycKaW1wb3J0IE5hdmJhciBmcm9tICdAL2NvbXBvbmVudHMvTmF2YmFyJwppbXBvcnQgRm9vdGVyIGZyb20gJ0AvY29tcG9uZW50cy9Gb290ZXInCgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBIb21lQ29udGVudCgpIHsKICByZXR1cm4gKAogICAgPD4KICAgICAgPE5hdmJhciAvPgogICAgICA8bWFpbiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiBiZy1ibGFjayB0ZXh0LXdoaXRlIj4KCiAgICAgICAgey8qIEhFUk8g4oCUIGZ1bGwgYmxlZWQgcGhvdG8gd2l0aCBMYXMgVmVnYXMgbWVudGlvbiAqL30KICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9InJlbGF0aXZlIG1pbi1oLXNjcmVlbiBmbGV4IGl0ZW1zLWVuZCBwYi0yMCBweC00Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhYnNvbHV0ZSBpbnNldC0wIG92ZXJmbG93LWhpZGRlbiI+CiAgICAgICAgICAgIDxpbWcKICAgICAgICAgICAgICBzcmM9Ii9pbWFnZXMvYmFzbWEtaGVyby5qcGciCiAgICAgICAgICAgICAgYWx0PSJCYXNtYSDigJQgYXJ0aXN0LCBlZHVjYXRvciwgY29tbXVuaXR5IGxlYWRlciBiYXNlZCBpbiBMYXMgVmVnYXMiCiAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgaC1mdWxsIG9iamVjdC1jb3ZlciBvYmplY3QtdG9wIgogICAgICAgICAgICAvPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYWJzb2x1dGUgaW5zZXQtMCBiZy1ncmFkaWVudC10by10IGZyb20tYmxhY2sgdmlhLWJsYWNrLzYwIHRvLXRyYW5zcGFyZW50IiAvPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0icmVsYXRpdmUgei0xMCBtYXgtdy00eGwgbXgtYXV0byB0ZXh0LWNlbnRlciB3LWZ1bGwiPgogICAgICAgICAgICB7LyogTGFzIFZlZ2FzIGJhZGdlICovfQogICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImlubGluZS1ibG9jayBiZy15ZWxsb3ctNTAwLzIwIGJvcmRlciBib3JkZXIteWVsbG93LTUwMC80MCB0ZXh0LXllbGxvdy0zMDAgdGV4dC14cyBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCBweC00IHB5LTEuNSByb3VuZGVkLWZ1bGwgbWItNiI+CiAgICAgICAgICAgICAg8J+TjSBMYXMgVmVnYXMsIE5WCiAgICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC01eGwgbWQ6dGV4dC03eGwgZm9udC1ib2xkIG1iLTQgYmctZ3JhZGllbnQtdG8tciBmcm9tLXllbGxvdy00MDAgdmlhLXdoaXRlIHRvLXB1cnBsZS00MDAgYmctY2xpcC10ZXh0IHRleHQtdHJhbnNwYXJlbnQgZHJvcC1zaGFkb3ctbGciPgogICAgICAgICAgICAgIEJhc21hV29ybGQKICAgICAgICAgICAgPC9oMT4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhsIG1kOnRleHQtMnhsIHRleHQtZ3JheS0yMDAgbWItMyBmb250LWxpZ2h0Ij4KICAgICAgICAgICAgICBNdXNpYyBBY2FkZW15IMK3IENvbW11bml0eSDCtyBZb3V0aCBSZXNvdXJjZXMKICAgICAgICAgICAgPC9wPgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtZ3JheS00MDAgbWItMTAgdGV4dC1iYXNlIG1heC13LXhsIG14LWF1dG8iPgogICAgICAgICAgICAgIE9uZSBwbGF0Zm9ybSBjb25uZWN0aW5nIHRoZSBCQVNNQSBNdXNpYyBBY2FkZW15LCBNYWpvciBXaW5uZXJzIExlYWd1ZSwgYW5kIEhvcGVzIENoYW5jZSDigJQgY2hhbmdpbmcgbGl2ZXMgdGhyb3VnaCBtdXNpYywgY29tbXVuaXR5LCBhbmQgb3Bwb3J0dW5pdHkuCiAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZmxleC13cmFwIGdhcC00IGp1c3RpZnktY2VudGVyIj4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvbXdsIiBjbGFzc05hbWU9ImJnLXllbGxvdy01MDAgaG92ZXI6YmcteWVsbG93LTQwMCB0ZXh0LWJsYWNrIHB4LTggcHktNCByb3VuZGVkLWZ1bGwgZm9udC1ib2xkIHRleHQtbGcgdHJhbnNpdGlvbiBob3ZlcjpzY2FsZS0xMDUgc2hhZG93LWxnIHNoYWRvdy15ZWxsb3ctNTAwLzIwIj4KICAgICAgICAgICAgICAgIPCfj4YgTWFqb3IgV2lubmVycyBMZWFndWUKICAgICAgICAgICAgICA8L0xpbms+CiAgICAgICAgICAgICAgPExpbmsgaHJlZj0iL2FjYWRlbXkiIGNsYXNzTmFtZT0iYmctcHVycGxlLTYwMCBob3ZlcjpiZy1wdXJwbGUtNTAwIHB4LTggcHktNCByb3VuZGVkLWZ1bGwgZm9udC1ib2xkIHRleHQtbGcgdHJhbnNpdGlvbiBob3ZlcjpzY2FsZS0xMDUgc2hhZG93LWxnIHNoYWRvdy1wdXJwbGUtNTAwLzIwIj4KICAgICAgICAgICAgICAgIPCfjrUgQkFTTUEgQWNhZGVteQogICAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvaG9wZXMiIGNsYXNzTmFtZT0iYmctZ3JlZW4tNzAwIGhvdmVyOmJnLWdyZWVuLTYwMCBweC04IHB5LTQgcm91bmRlZC1mdWxsIGZvbnQtYm9sZCB0ZXh0LWxnIHRyYW5zaXRpb24gaG92ZXI6c2NhbGUtMTA1IHNoYWRvdy1sZyBzaGFkb3ctZ3JlZW4tNTAwLzIwIj4KICAgICAgICAgICAgICAgIPCfpJ0gSG9wZXMgQ2hhbmNlCiAgICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgey8qIOKYhSBKT0lOIEJBU01BIOKAlCBQUk9NT1RJT05BTCBCQU5ORVIg4piFICovfQogICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT0icmVsYXRpdmUgb3ZlcmZsb3ctaGlkZGVuIHB5LTE2IGJnLWdyYWRpZW50LXRvLXIgZnJvbS1wdXJwbGUtOTAwLzUwIHZpYS1ibGFjayB0by1wdXJwbGUtOTAwLzUwIGJvcmRlci15IGJvcmRlci1wdXJwbGUtNTAwLzIwIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhYnNvbHV0ZSBpbnNldC0wIj4KICAgICAgICAgICAgPGltZwogICAgICAgICAgICAgIHNyYz0iL2ltYWdlcy9tYXJrZXRpbmcvYmFzbWEtYmFubmVyLmpwZyIKICAgICAgICAgICAgICBhbHQ9IkJBU01BIEFjYWRlbXkg4oCUIEJlY29tZSBBIFNpbmdlciBNdXNpYyBBY2FkZW15IGluIExhcyBWZWdhcyIKICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBoLWZ1bGwgb2JqZWN0LWNvdmVyIG9wYWNpdHktMzAiCiAgICAgICAgICAgIC8+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhYnNvbHV0ZSBpbnNldC0wIGJnLWdyYWRpZW50LXRvLXIgZnJvbS1ibGFjayB2aWEtdHJhbnNwYXJlbnQgdG8tYmxhY2siIC8+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyZWxhdGl2ZSB6LTEwIG1heC13LTR4bCBteC1hdXRvIHB4LTQgdGV4dC1jZW50ZXIiPgogICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImlubGluZS1ibG9jayBiZy1ncmVlbi01MDAvMjAgYm9yZGVyIGJvcmRlci1ncmVlbi01MDAvNDAgdGV4dC1ncmVlbi0zMDAgdGV4dC14cyBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCBweC00IHB5LTEuNSByb3VuZGVkLWZ1bGwgbWItNCBhbmltYXRlLXB1bHNlIj4KICAgICAgICAgICAgICDwn5SlIE5vdyBBY2NlcHRpbmcgU3R1ZGVudHMKICAgICAgICAgICAgPC9zcGFuPgogICAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJ0ZXh0LTN4bCBtZDp0ZXh0LTV4bCBmb250LWJvbGQgdGV4dC13aGl0ZSBtYi00Ij4KICAgICAgICAgICAgICBZb3VyIFZvaWNlIDxzcGFuIGNsYXNzTmFtZT0iYmctZ3JhZGllbnQtdG8tciBmcm9tLXB1cnBsZS00MDAgdG8tcGluay00MDAgYmctY2xpcC10ZXh0IHRleHQtdHJhbnNwYXJlbnQiPk1hdHRlcnM8L3NwYW4+CiAgICAgICAgICAgIDwvaDI+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1ncmF5LTMwMCB0ZXh0LWxnIG1iLTggbWF4LXctMnhsIG14LWF1dG8iPgogICAgICAgICAgICAgIEpvaW4gMzAwSysgY29tbXVuaXR5IG1lbWJlcnMuIFNpZ24gdXAgZm9yIEZSRUUgdm9jYWwgY29hY2hpbmcsIG11c2ljIGxlc3NvbnMsIGJ1c2luZXNzIHNlcnZpY2VzLCBhbmQgY29tbXVuaXR5IHJlc291cmNlcy4KICAgICAgICAgICAgPC9wPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LXdyYXAgZ2FwLTQganVzdGlmeS1jZW50ZXIiPgogICAgICAgICAgICAgIDxhCiAgICAgICAgICAgICAgICBocmVmPSJodHRwczovL2Jhc21hLWxlYWRzLTk4OGZiZDg0LnZpa3Rvci5zcGFjZSIKICAgICAgICAgICAgICAgIHRhcmdldD0iX2JsYW5rIgogICAgICAgICAgICAgICAgcmVsPSJub29wZW5lciBub3JlZmVycmVyIgogICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJiZy1ncmFkaWVudC10by1yIGZyb20tcHVycGxlLTYwMCB0by1waW5rLTYwMCBob3Zlcjpmcm9tLXB1cnBsZS01MDAgaG92ZXI6dG8tcGluay01MDAgcHgtMTAgcHktNCByb3VuZGVkLWZ1bGwgZm9udC1ib2xkIHRleHQtbGcgdHJhbnNpdGlvbiBob3ZlcjpzY2FsZS0xMDUgc2hhZG93LWxnIHNoYWRvdy1wdXJwbGUtNTAwLzMwIgogICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgIOKcqCBTaWduIFVwIEZSRUUKICAgICAgICAgICAgICA8L2E+CiAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgIGhyZWY9Imh0dHBzOi8vZG9jcy5nb29nbGUuY29tL2Zvcm1zL2QvZS8xRkFJcFFMU2RmUm5qaUpralI0Vk40X1dnUlJoNWR0dGljU1cybHk1Y3pKZUFBb0x2MlZKbjNMdy92aWV3Zm9ybSIKICAgICAgICAgICAgICAgIHRhcmdldD0iX2JsYW5rIgogICAgICAgICAgICAgICAgcmVsPSJub29wZW5lciBub3JlZmVycmVyIgogICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJiZy13aGl0ZS8xMCBob3ZlcjpiZy13aGl0ZS8yMCBib3JkZXIgYm9yZGVyLXdoaXRlLzMwIHB4LTggcHktNCByb3VuZGVkLWZ1bGwgZm9udC1ib2xkIHRleHQtbGcgdHJhbnNpdGlvbiIKICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICDwn5OdIFF1aWNrIEZvcm0KICAgICAgICAgICAgICA8L2E+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICB7LyogVEhSRUUgUElMTEFSUyAqL30KICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9Im1heC13LTZ4bCBteC1hdXRvIHB4LTQgcHktMjAiPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtY2VudGVyIG1iLTE0Ij4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXllbGxvdy00MDAgZm9udC1zZW1pYm9sZCB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IHRleHQtc20gbWItMyI+V2hhdCBJcyBCYXNtYVdvcmxkPzwvcD4KICAgICAgICAgICAgPGgyIGNsYXNzTmFtZT0idGV4dC00eGwgbWQ6dGV4dC01eGwgZm9udC1ib2xkIHRleHQtd2hpdGUgbGVhZGluZy10aWdodCI+VGhyZWUgV29ybGRzLiBPbmUgTWlzc2lvbi48L2gyPgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtZ3JheS00MDAgbXQtNCB0ZXh0LWxnIG1heC13LTJ4bCBteC1hdXRvIj4KICAgICAgICAgICAgICBCdWlsdCBpbiBMYXMgVmVnYXMsIHJlYWNoaW5nIHRoZSB3b3JsZCDigJQgQmFzbWFXb3JsZCB1bml0ZXMgbXVzaWMgZWR1Y2F0aW9uLCBjb21tdW5pdHkgaW1wYWN0LCBhbmQgeW91dGggc3VwcG9ydCB1bmRlciBvbmUgcm9vZi4KICAgICAgICAgICAgPC9wPgogICAgICAgICAgPC9kaXY+CgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgbWQ6Z3JpZC1jb2xzLTMgZ2FwLTgiPgoKICAgICAgICAgICAgey8qIFBpbGxhciAxIOKAlCBNV0wgKEdvbGQpICovfQogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0icmVsYXRpdmUgcm91bmRlZC0yeGwgb3ZlcmZsb3ctaGlkZGVuIGdyb3VwIGJvcmRlciBib3JkZXIteWVsbG93LTUwMC8yMCBob3Zlcjpib3JkZXIteWVsbG93LTUwMC81MCB0cmFuc2l0aW9uLWFsbCBkdXJhdGlvbi0zMDAgYmctZ3JhZGllbnQtdG8tYiBmcm9tLXllbGxvdy05NTAvMzAgdG8tYmxhY2siPgogICAgICAgICAgICAgIDxpbWcgc3JjPSIvaW1hZ2VzL2Jhc21hLW13bC5qcGciIGFsdD0iTWFqb3IgV2lubmVycyBMZWFndWUgY29tbXVuaXR5IGV2ZW50cyBMYXMgVmVnYXMiCiAgICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBoLTUyIG9iamVjdC1jb3ZlciBncm91cC1ob3ZlcjpzY2FsZS0xMDUgdHJhbnNpdGlvbiBkdXJhdGlvbi01MDAgb3BhY2l0eS04MCIgLz4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYWJzb2x1dGUgdG9wLTAgbGVmdC0wIHJpZ2h0LTAgaC01MiBiZy1ncmFkaWVudC10by1iIGZyb20tdHJhbnNwYXJlbnQgdG8tYmxhY2svODAiIC8+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InAtNiI+CiAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQteWVsbG93LTQwMCB0ZXh0LXhzIGZvbnQtYm9sZCB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0Ij5Db21tdW5pdHkgJiBTb2NpYWwgSW1wYWN0PC9zcGFuPgogICAgICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIHRleHQtd2hpdGUgbXQtMiBtYi0zIj5NYWpvciBXaW5uZXJzIExlYWd1ZTwvaDM+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtZ3JheS00MDAgdGV4dC1zbSBtYi00IGxlYWRpbmctcmVsYXhlZCI+CiAgICAgICAgICAgICAgICAgIEV2ZW50cywgaW50ZXJ2aWV3cywgbW90aXZhdGlvbiwgZ2FtaW5nLCBCYXNtYVRlYWNoIE1lLCBhbmQgc29jaWFsIGltcGFjdCBpbml0aWF0aXZlcyDigJQgYWxsIHVuZGVyIHRoZSBNV0wgYmFubmVyLgogICAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICAgICAgPHVsIGNsYXNzTmFtZT0idGV4dC1ncmF5LTUwMCB0ZXh0LXhzIHNwYWNlLXktMSBtYi01Ij4KICAgICAgICAgICAgICAgICAgPGxpIGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPjxzcGFuIGNsYXNzTmFtZT0idGV4dC15ZWxsb3ctNTAwIj7ihpI8L3NwYW4+IEJhc21hVGVhY2ggTWU8L2xpPgogICAgICAgICAgICAgICAgICA8bGkgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+PHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXllbGxvdy01MDAiPuKGkjwvc3Bhbj4gSSBBbSBQb3NpdGl2ZTwvbGk+CiAgICAgICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj48c3BhbiBjbGFzc05hbWU9InRleHQteWVsbG93LTUwMCI+4oaSPC9zcGFuPiBHYW1pbmcgJiBQb2RjYXN0PC9saT4KICAgICAgICAgICAgICAgIDwvdWw+CiAgICAgICAgICAgICAgICA8TGluayBocmVmPSIvbXdsIiBjbGFzc05hbWU9ImlubGluZS1ibG9jayBiZy15ZWxsb3ctNTAwIGhvdmVyOmJnLXllbGxvdy00MDAgdGV4dC1ibGFjayBmb250LWJvbGQgcHgtNSBweS0yLjUgcm91bmRlZC1mdWxsIHRleHQtc20gdHJhbnNpdGlvbiI+CiAgICAgICAgICAgICAgICAgIEV4cGxvcmUgTVdMIOKGkgogICAgICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgIHsvKiBQaWxsYXIgMiDigJQgQWNhZGVteSAoUHVycGxlKSAqL30KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InJlbGF0aXZlIHJvdW5kZWQtMnhsIG92ZXJmbG93LWhpZGRlbiBncm91cCBib3JkZXIgYm9yZGVyLXB1cnBsZS01MDAvMjAgaG92ZXI6Ym9yZGVyLXB1cnBsZS01MDAvNTAgdHJhbnNpdGlvbi1hbGwgZHVyYXRpb24tMzAwIGJnLWdyYWRpZW50LXRvLWIgZnJvbS1wdXJwbGUtOTUwLzMwIHRvLWJsYWNrIj4KICAgICAgICAgICAgICA8aW1nIHNyYz0iL2ltYWdlcy9tYXJrZXRpbmcvYmFzbWEtaWctYWNhZGVteS5qcGciIGFsdD0iQkFTTUEgQmVjb21lIEEgU2luZ2VyIE11c2ljIEFjYWRlbXkgTGFzIFZlZ2FzIgogICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgaC01MiBvYmplY3QtY292ZXIgZ3JvdXAtaG92ZXI6c2NhbGUtMTA1IHRyYW5zaXRpb24gZHVyYXRpb24tNTAwIG9wYWNpdHktODAiIC8+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImFic29sdXRlIHRvcC0wIGxlZnQtMCByaWdodC0wIGgtNTIgYmctZ3JhZGllbnQtdG8tYiBmcm9tLXRyYW5zcGFyZW50IHRvLWJsYWNrLzgwIiAvPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJwLTYiPgogICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXB1cnBsZS00MDAgdGV4dC14cyBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+TXVzaWMgQWNhZGVteSAmIEFydGlzdDwvc3Bhbj4KICAgICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9InRleHQtMnhsIGZvbnQtYm9sZCB0ZXh0LXdoaXRlIG10LTIgbWItMyI+QkFTTUEgTXVzaWMgQWNhZGVteTwvaDM+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtZ3JheS00MDAgdGV4dC1zbSBtYi00IGxlYWRpbmctcmVsYXhlZCI+CiAgICAgICAgICAgICAgICAgIEJlY29tZSBBIFNpbmdlciDigJQgZ2FtaWZpZWQgbXVzaWMgbGVzc29ucywgbGl2ZSB2b2NhbCBjb2FjaGluZywgcGlhbm8sIGd1aXRhciwgYW5kIGFydGlzdCBtZW50b3JzaGlwIGluIExhcyBWZWdhcyBhbmQgb25saW5lLgogICAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICAgICAgPHVsIGNsYXNzTmFtZT0idGV4dC1ncmF5LTUwMCB0ZXh0LXhzIHNwYWNlLXktMSBtYi01Ij4KICAgICAgICAgICAgICAgICAgPGxpIGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPjxzcGFuIGNsYXNzTmFtZT0idGV4dC1wdXJwbGUtNTAwIj7ihpI8L3NwYW4+IFNpbmdpbmcgTGVzc29uczwvbGk+CiAgICAgICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj48c3BhbiBjbGFzc05hbWU9InRleHQtcHVycGxlLTUwMCI+4oaSPC9zcGFuPiBQaWFubyAmIEd1aXRhcjwvbGk+CiAgICAgICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj48c3BhbiBjbGFzc05hbWU9InRleHQtcHVycGxlLTUwMCI+4oaSPC9zcGFuPiBMaXZlIENvYWNoaW5nPC9saT4KICAgICAgICAgICAgICAgIDwvdWw+CiAgICAgICAgICAgICAgICA8TGluayBocmVmPSIvYWNhZGVteSIgY2xhc3NOYW1lPSJpbmxpbmUtYmxvY2sgYmctcHVycGxlLTYwMCBob3ZlcjpiZy1wdXJwbGUtNTAwIGZvbnQtYm9sZCBweC01IHB5LTIuNSByb3VuZGVkLWZ1bGwgdGV4dC1zbSB0cmFuc2l0aW9uIj4KICAgICAgICAgICAgICAgICAgRXhwbG9yZSBBY2FkZW15IOKGkgogICAgICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgIHsvKiBQaWxsYXIgMyDigJQgSG9wZXMgQ2hhbmNlIChHcmVlbikgKi99CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyZWxhdGl2ZSByb3VuZGVkLTJ4bCBvdmVyZmxvdy1oaWRkZW4gZ3JvdXAgYm9yZGVyIGJvcmRlci1ncmVlbi01MDAvMjAgaG92ZXI6Ym9yZGVyLWdyZWVuLTUwMC81MCB0cmFuc2l0aW9uLWFsbCBkdXJhdGlvbi0zMDAgYmctZ3JhZGllbnQtdG8tYiBmcm9tLWdyZWVuLTk1MC8zMCB0by1ibGFjayI+CiAgICAgICAgICAgICAgPGltZyBzcmM9Ii9pbWFnZXMvaG9wZXMtY2hhbmNlLmpwZyIgYWx0PSJIb3BlcyBDaGFuY2UgeW91dGggcmVzb3VyY2VzIExhcyBWZWdhcyIKICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0idy1mdWxsIGgtNTIgb2JqZWN0LWNvdmVyIGdyb3VwLWhvdmVyOnNjYWxlLTEwNSB0cmFuc2l0aW9uIGR1cmF0aW9uLTUwMCBvcGFjaXR5LTgwIgogICAgICAgICAgICAgICAgb25FcnJvcj17KGUpID0+IHsgKGUudGFyZ2V0IGFzIEhUTUxJbWFnZUVsZW1lbnQpLnNyYyA9ICcvaW1hZ2VzL2Jhc21hLWFib3V0LmpwZycgfX0KICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhYnNvbHV0ZSB0b3AtMCBsZWZ0LTAgcmlnaHQtMCBoLTUyIGJnLWdyYWRpZW50LXRvLWIgZnJvbS10cmFuc3BhcmVudCB0by1ibGFjay84MCIgLz4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0icC02Ij4KICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC1ncmVlbi00MDAgdGV4dC14cyBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+WW91dGggUmVzb3VyY2VzPC9zcGFuPgogICAgICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIHRleHQtd2hpdGUgbXQtMiBtYi0zIj5Ib3BlcyBDaGFuY2U8L2gzPgogICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LWdyYXktNDAwIHRleHQtc20gbWItNCBsZWFkaW5nLXJlbGF4ZWQiPgogICAgICAgICAgICAgICAgICBDb25uZWN0aW5nIHlvdXRoIGFuZCBmYW1pbGllcyBpbiBMYXMgVmVnYXMgdG8gcmVzb3VyY2VzLCBzdXBwb3J0IHN5c3RlbXMsIGFuZCBjb21tdW5pdHkgcHJvZ3JhbXMgdGhhdCBjcmVhdGUgcmVhbCBvcHBvcnR1bml0eS4KICAgICAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgICAgIDx1bCBjbGFzc05hbWU9InRleHQtZ3JheS01MDAgdGV4dC14cyBzcGFjZS15LTEgbWItNSI+CiAgICAgICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj48c3BhbiBjbGFzc05hbWU9InRleHQtZ3JlZW4tNTAwIj7ihpI8L3NwYW4+IFlvdXRoIFN1cHBvcnQ8L2xpPgogICAgICAgICAgICAgICAgICA8bGkgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+PHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWdyZWVuLTUwMCI+4oaSPC9zcGFuPiBDb21tdW5pdHkgUmVzb3VyY2VzPC9saT4KICAgICAgICAgICAgICAgICAgPGxpIGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPjxzcGFuIGNsYXNzTmFtZT0idGV4dC1ncmVlbi01MDAiPuKGkjwvc3Bhbj4gTGFzIFZlZ2FzIE91dHJlYWNoPC9saT4KICAgICAgICAgICAgICAgIDwvdWw+CiAgICAgICAgICAgICAgICA8TGluayBocmVmPSIvaG9wZXMiIGNsYXNzTmFtZT0iaW5saW5lLWJsb2NrIGJnLWdyZWVuLTcwMCBob3ZlcjpiZy1ncmVlbi02MDAgZm9udC1ib2xkIHB4LTUgcHktMi41IHJvdW5kZWQtZnVsbCB0ZXh0LXNtIHRyYW5zaXRpb24iPgogICAgICAgICAgICAgICAgICBFeHBsb3JlIEhvcGVzIOKGkgogICAgICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L3NlY3Rpb24+CgogICAgICAgIHsvKiDimIUgU0VSVklDRVMgU0hPV0NBU0Ug4oCUIEJ1c2luZXNzICsgQWNhZGVteSBHcmFwaGljcyDimIUgKi99CiAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPSJweS0yMCBiZy1ncmFkaWVudC10by1iIGZyb20tYmxhY2sgdmlhLWdyYXktOTUwIHRvLWJsYWNrIGJvcmRlci10IGJvcmRlci13aGl0ZS81Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy02eGwgbXgtYXV0byBweC00Ij4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtY2VudGVyIG1iLTE0Ij4KICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtcHVycGxlLTQwMCBmb250LXNlbWlib2xkIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgdGV4dC1zbSBtYi0zIj5XaGF0IFdlIE9mZmVyPC9wPgogICAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9InRleHQtNHhsIG1kOnRleHQtNXhsIGZvbnQtYm9sZCB0ZXh0LXdoaXRlIGxlYWRpbmctdGlnaHQiPkV2ZXJ5dGhpbmcgWW91IE5lZWQgdG8gR3JvdzwvaDI+CiAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LWdyYXktNDAwIG10LTQgdGV4dC1sZyBtYXgtdy0yeGwgbXgtYXV0byI+CiAgICAgICAgICAgICAgICBGcm9tIHZvY2FsIGNvYWNoaW5nIHRvIGJ1c2luZXNzIG1hcmtldGluZyDigJQgQkFTTUEgaGFzIHlvdSBjb3ZlcmVkLgogICAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIG1kOmdyaWQtY29scy0yIGdhcC04Ij4KICAgICAgICAgICAgICB7LyogQWNhZGVteSBDYXJkICovfQogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyZWxhdGl2ZSByb3VuZGVkLTJ4bCBvdmVyZmxvdy1oaWRkZW4gZ3JvdXAiPgogICAgICAgICAgICAgICAgPGltZwogICAgICAgICAgICAgICAgICBzcmM9Ii9pbWFnZXMvbWFya2V0aW5nL2Jhc21hLXRpa3Rvay1zdG9yeS5qcGciCiAgICAgICAgICAgICAgICAgIGFsdD0iQkFTTUEgQWNhZGVteSB2b2NhbCBjb2FjaGluZyBhbmQgbXVzaWMgbGVzc29ucyIKICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgaC04MCBvYmplY3QtY292ZXIgZ3JvdXAtaG92ZXI6c2NhbGUtMTA1IHRyYW5zaXRpb24gZHVyYXRpb24tNTAwIgogICAgICAgICAgICAgICAgLz4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhYnNvbHV0ZSBpbnNldC0wIGJnLWdyYWRpZW50LXRvLXQgZnJvbS1ibGFjayB2aWEtYmxhY2svNDAgdG8tdHJhbnNwYXJlbnQiIC8+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYWJzb2x1dGUgYm90dG9tLTAgbGVmdC0wIHJpZ2h0LTAgcC04Ij4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXB1cnBsZS00MDAgdGV4dC14cyBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+Rm9yIE11c2ljaWFuczwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIHRleHQtd2hpdGUgbXQtMiBtYi0yIj5Wb2NhbCBDb2FjaGluZyAmIE11c2ljIExlc3NvbnM8L2gzPgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtZ3JheS0zMDAgdGV4dC1zbSBtYi00Ij5HYW1pZmllZCBsZWFybmluZywgZXhwZXJ0IGNvYWNoaW5nLCBhbmQgYXJ0aXN0IGRldmVsb3BtZW50IGZvciBhbGwgYWdlcyBhbmQgc2tpbGwgbGV2ZWxzLjwvcD4KICAgICAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgICAgICBocmVmPSJodHRwczovL2Jhc21hLWxlYWRzLTk4OGZiZDg0LnZpa3Rvci5zcGFjZSIKICAgICAgICAgICAgICAgICAgICB0YXJnZXQ9Il9ibGFuayIKICAgICAgICAgICAgICAgICAgICByZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiCiAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJpbmxpbmUtYmxvY2sgYmctcHVycGxlLTYwMCBob3ZlcjpiZy1wdXJwbGUtNTAwIHB4LTYgcHktMi41IHJvdW5kZWQtZnVsbCB0ZXh0LXNtIGZvbnQtYm9sZCB0cmFuc2l0aW9uIgogICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgU2lnbiBVcCBGcmVlIOKGkgogICAgICAgICAgICAgICAgICA8L2E+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICB7LyogQnVzaW5lc3MgQ2FyZCAqL30KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0icmVsYXRpdmUgcm91bmRlZC0yeGwgb3ZlcmZsb3ctaGlkZGVuIGdyb3VwIj4KICAgICAgICAgICAgICAgIDxpbWcKICAgICAgICAgICAgICAgICAgc3JjPSIvaW1hZ2VzL21hcmtldGluZy9iYXNtYS1idXNpbmVzcy5qcGciCiAgICAgICAgICAgICAgICAgIGFsdD0iTWFqb3IgV2lubmVycyBMZWFndWUgYnVzaW5lc3MgbWFya2V0aW5nIGFuZCB0ZWNoIHNlcnZpY2VzIgogICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBoLTgwIG9iamVjdC1jb3ZlciBncm91cC1ob3ZlcjpzY2FsZS0xMDUgdHJhbnNpdGlvbiBkdXJhdGlvbi01MDAiCiAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImFic29sdXRlIGluc2V0LTAgYmctZ3JhZGllbnQtdG8tdCBmcm9tLWJsYWNrIHZpYS1ibGFjay80MCB0by10cmFuc3BhcmVudCIgLz4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJhYnNvbHV0ZSBib3R0b20tMCBsZWZ0LTAgcmlnaHQtMCBwLTgiPgogICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQteWVsbG93LTQwMCB0ZXh0LXhzIGZvbnQtYm9sZCB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0Ij5Gb3IgQnVzaW5lc3Nlczwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIHRleHQtd2hpdGUgbXQtMiBtYi0yIj5NYXJrZXRpbmcsIFRlY2ggJiBWaWRlbyBQcm9kdWN0aW9uPC9oMz4KICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LWdyYXktMzAwIHRleHQtc20gbWItNCI+RGlnaXRhbCBtYXJrZXRpbmcsIHdlYnNpdGUgZGV2ZWxvcG1lbnQsIFNFTywgYnJhbmQgc3RyYXRlZ3ksIGFuZCB2aWRlbyBwcm9kdWN0aW9uIGZvciBMYXMgVmVnYXMgYnVzaW5lc3Nlcy48L3A+CiAgICAgICAgICAgICAgICAgIDxhCiAgICAgICAgICAgICAgICAgICAgaHJlZj0iaHR0cHM6Ly9iYXNtYS1sZWFkcy05ODhmYmQ4NC52aWt0b3Iuc3BhY2UiCiAgICAgICAgICAgICAgICAgICAgdGFyZ2V0PSJfYmxhbmsiCiAgICAgICAgICAgICAgICAgICAgcmVsPSJub29wZW5lciBub3JlZmVycmVyIgogICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iaW5saW5lLWJsb2NrIGJnLXllbGxvdy01MDAgaG92ZXI6YmcteWVsbG93LTQwMCB0ZXh0LWJsYWNrIHB4LTYgcHktMi41IHJvdW5kZWQtZnVsbCB0ZXh0LXNtIGZvbnQtYm9sZCB0cmFuc2l0aW9uIgogICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgR2V0IFN0YXJ0ZWQg4oaSCiAgICAgICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgey8qIEFCT1VUIEJBU01BIOKAlCBwaG90byArIHRleHQgKi99CiAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPSJtYXgtdy02eGwgbXgtYXV0byBweC00IHB5LTIwIGdyaWQgbWQ6Z3JpZC1jb2xzLTIgZ2FwLTEyIGl0ZW1zLWNlbnRlciBib3JkZXItdCBib3JkZXItd2hpdGUvMTAiPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InJlbGF0aXZlIj4KICAgICAgICAgICAgPGltZwogICAgICAgICAgICAgIHNyYz0iL2ltYWdlcy9iYXNtYS1hYm91dC5qcGciCiAgICAgICAgICAgICAgYWx0PSJCYXNtYSBBd2FkYSDigJQgTXVzaWMgZWR1Y2F0b3IgYW5kIGNvbW11bml0eSBsZWFkZXIgaW4gTGFzIFZlZ2FzIgogICAgICAgICAgICAgIGNsYXNzTmFtZT0icm91bmRlZC0yeGwgdy1mdWxsIG9iamVjdC1jb3ZlciBzaGFkb3ctMnhsIHNoYWRvdy1wdXJwbGUtOTAwLzMwIgogICAgICAgICAgICAgIHN0eWxlPXt7bWF4SGVpZ2h0OiAnNTAwcHgnLCBvYmplY3RGaXQ6ICdjb3Zlcid9fQogICAgICAgICAgICAvPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYWJzb2x1dGUgLWJvdHRvbS00IC1yaWdodC00IGJnLXllbGxvdy01MDAgdGV4dC1ibGFjayBmb250LWJvbGQgcHgtNCBweS0yIHJvdW5kZWQteGwgdGV4dC1zbSBzaGFkb3ctbGciPgogICAgICAgICAgICAgIDMwMGsrIFN0dWRlbnRzIFdvcmxkd2lkZSDwn4yNCiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8ZGl2PgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteWVsbG93LTQwMCBmb250LXNlbWlib2xkIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgdGV4dC1zbSBtYi0zIj5NZWV0IEJhc21hPC9wPgogICAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJ0ZXh0LTR4bCBmb250LWJvbGQgdGV4dC13aGl0ZSBtYi02IGxlYWRpbmctdGlnaHQiPlNpbmdlci4gRWR1Y2F0b3IuPGJyLz5Db21tdW5pdHkgTGVhZGVyLjwvaDI+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1ncmF5LTMwMCB0ZXh0LWxnIGxlYWRpbmctcmVsYXhlZCBtYi00Ij4KICAgICAgICAgICAgICBCYXNtYSBpcyBhIG11bHRpLWluc3RydW1lbnRhbGlzdCwgTVBBLCBwcm9mZXNzaW9uYWwgdm9jYWwgY29hY2gsIGFuZCBjb21tdW5pdHkgYWN0aXZpc3QgYmFzZWQgaW4gPHN0cm9uZyBjbGFzc05hbWU9InRleHQtd2hpdGUiPkxhcyBWZWdhcywgTmV2YWRhPC9zdHJvbmc+LgogICAgICAgICAgICA8L3A+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1ncmF5LTQwMCBsZWFkaW5nLXJlbGF4ZWQgbWItNiI+CiAgICAgICAgICAgICAgV2l0aCAzMDBrKyBzdHVkZW50cyBsZWFybmluZyBtdXNpYyB0aHJvdWdoIGhlciBjb250ZW50LCBzaGUgYnJpbmdzIGFydGlzdHJ5LCBlZHVjYXRpb24sIGFuZCBzb2NpYWwgaW1wYWN0IHRvZ2V0aGVyIHVuZGVyIG9uZSByb29mIOKAlCA8c3BhbiBjbGFzc05hbWU9InRleHQtd2hpdGUgZm9udC1zZW1pYm9sZCI+QmFzbWFXb3JsZDwvc3Bhbj4uCiAgICAgICAgICAgIDwvcD4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTQgZmxleC13cmFwIj4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvYmFzbWEiIGNsYXNzTmFtZT0iYmctcHVycGxlLTcwMCBob3ZlcjpiZy1wdXJwbGUtNjAwIHB4LTYgcHktMyByb3VuZGVkLWZ1bGwgdGV4dC1zbSBmb250LXNlbWlib2xkIHRyYW5zaXRpb24iPvCfjqQgTWVldCBCYXNtYTwvTGluaz4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvbXdsIiBjbGFzc05hbWU9ImJnLXllbGxvdy02MDAgaG92ZXI6YmcteWVsbG93LTUwMCB0ZXh0LWJsYWNrIHB4LTYgcHktMyByb3VuZGVkLWZ1bGwgdGV4dC1zbSBmb250LXNlbWlib2xkIHRyYW5zaXRpb24iPvCfj4YgQ29tbXVuaXR5IFdvcms8L0xpbms+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICB7LyogUVVJQ0sgTElOS1MgUk9XICovfQogICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT0iYm9yZGVyLXQgYm9yZGVyLXdoaXRlLzEwIHB5LTEyIGJnLXdoaXRlL1swLjAyXSI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctNXhsIG14LWF1dG8gcHgtNCI+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1jZW50ZXIgdGV4dC1ncmF5LTUwMCB0ZXh0LXhzIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgbWItNiI+RXhwbG9yZSBCYXNtYVdvcmxkPC9wPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBmbGV4LXdyYXAganVzdGlmeS1jZW50ZXIgZ2FwLTMiPgogICAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9td2wvYmFzbWF0ZWFjaG1lIiBjbGFzc05hbWU9ImJnLXllbGxvdy05MDAvMzAgaG92ZXI6YmcteWVsbG93LTgwMC81MCBib3JkZXIgYm9yZGVyLXllbGxvdy03MDAvNDAgcHgtNSBweS0zIHJvdW5kZWQtZnVsbCB0ZXh0LXNtIGZvbnQtbWVkaXVtIHRyYW5zaXRpb24iPvCfjpMgQmFzbWFUZWFjaCBNZTwvTGluaz4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvbXdsI3Bvc2l0aXZlIiBjbGFzc05hbWU9ImJnLXllbGxvdy05MDAvMzAgaG92ZXI6YmcteWVsbG93LTgwMC81MCBib3JkZXIgYm9yZGVyLXllbGxvdy03MDAvNDAgcHgtNSBweS0zIHJvdW5kZWQtZnVsbCB0ZXh0LXNtIGZvbnQtbWVkaXVtIHRyYW5zaXRpb24iPuKcqCBJIEFtIFBvc2l0aXZlPC9MaW5rPgogICAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9ob3BlcyIgY2xhc3NOYW1lPSJiZy1ncmVlbi05MDAvNDAgaG92ZXI6YmctZ3JlZW4tODAwLzYwIGJvcmRlciBib3JkZXItZ3JlZW4tNzAwLzQwIHB4LTUgcHktMyByb3VuZGVkLWZ1bGwgdGV4dC1zbSBmb250LW1lZGl1bSB0cmFuc2l0aW9uIj7wn6SdIEhvcGVzIENoYW5jZTwvTGluaz4KICAgICAgICAgICAgICA8TGluayBocmVmPSIvbXdsI3ZlZ2FuIiBjbGFzc05hbWU9ImJnLW9yYW5nZS05MDAvNDAgaG92ZXI6Ymctb3JhbmdlLTgwMC82MCBib3JkZXIgYm9yZGVyLW9yYW5nZS03MDAvNDAgcHgtNSBweS0zIHJvdW5kZWQtZnVsbCB0ZXh0LXNtIGZvbnQtbWVkaXVtIHRyYW5zaXRpb24iPvCfpaYgVmVnYW4gU3Vydml2b3JzPC9MaW5rPgogICAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9td2wjZ2FtaW5nIiBjbGFzc05hbWU9ImJnLWJsdWUtOTAwLzQwIGhvdmVyOmJnLWJsdWUtODAwLzYwIGJvcmRlciBib3JkZXItYmx1ZS03MDAvNDAgcHgtNSBweS0zIHJvdW5kZWQtZnVsbCB0ZXh0LXNtIGZvbnQtbWVkaXVtIHRyYW5zaXRpb24iPvCfjq4gR2FtaW5nPC9MaW5rPgogICAgICAgICAgICAgIDxMaW5rIGhyZWY9Ii9td2wvcG9kY2FzdCIgY2xhc3NOYW1lPSJiZy1wdXJwbGUtOTAwLzQwIGhvdmVyOmJnLXB1cnBsZS04MDAvNjAgYm9yZGVyIGJvcmRlci1wdXJwbGUtNzAwLzQwIHB4LTUgcHktMyByb3VuZGVkLWZ1bGwgdGV4dC1zbSBmb250LW1lZGl1bSB0cmFuc2l0aW9uIj7wn46Z77iPIFBvZGNhc3Q8L0xpbms+CiAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cHM6Ly9saW5rdHIuZWUvQkFTTUFUZWEiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiIGNsYXNzTmFtZT0iYmctd2hpdGUvMTAgaG92ZXI6Ymctd2hpdGUvMjAgYm9yZGVyIGJvcmRlci13aGl0ZS8yMCBweC01IHB5LTMgcm91bmRlZC1mdWxsIHRleHQtc20gZm9udC1tZWRpdW0gdHJhbnNpdGlvbiI+8J+MjSBBbGwgTGlua3M8L2E+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICB7Lyog4piFIEJPVFRPTSBDVEEg4oCUIEZpbmFsIGxlYWQgY2FwdHVyZSBwdXNoIOKYhSAqL30KICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9InB5LTIwIGJnLWdyYWRpZW50LXRvLWIgZnJvbS1ibGFjayB0by1wdXJwbGUtOTUwLzMwIGJvcmRlci10IGJvcmRlci13aGl0ZS8xMCI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctM3hsIG14LWF1dG8gcHgtNCB0ZXh0LWNlbnRlciI+CiAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9InRleHQtM3hsIG1kOnRleHQtNHhsIGZvbnQtYm9sZCB0ZXh0LXdoaXRlIG1iLTQiPlJlYWR5IHRvIEpvaW4gdGhlIE1vdmVtZW50PzwvaDI+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1ncmF5LTQwMCB0ZXh0LWxnIG1iLTgiPgogICAgICAgICAgICAgIDMwMEsrIHBlb3BsZSBhbHJlYWR5IGhhdmUuIFNpZ24gdXAgZnJlZSBhbmQgZ2V0IGFjY2VzcyB0byB2b2NhbCBjb2FjaGluZywgbXVzaWMgbGVzc29ucywgYnVzaW5lc3Mgc2VydmljZXMsIGFuZCBjb21tdW5pdHkgcmVzb3VyY2VzLgogICAgICAgICAgICA8L3A+CiAgICAgICAgICAgIDxhCiAgICAgICAgICAgICAgaHJlZj0iaHR0cHM6Ly9iYXNtYS1sZWFkcy05ODhmYmQ4NC52aWt0b3Iuc3BhY2UiCiAgICAgICAgICAgICAgdGFyZ2V0PSJfYmxhbmsiCiAgICAgICAgICAgICAgcmVsPSJub29wZW5lciBub3JlZmVycmVyIgogICAgICAgICAgICAgIGNsYXNzTmFtZT0iaW5saW5lLWJsb2NrIGJnLWdyYWRpZW50LXRvLXIgZnJvbS1wdXJwbGUtNjAwIHRvLXBpbmstNjAwIGhvdmVyOmZyb20tcHVycGxlLTUwMCBob3Zlcjp0by1waW5rLTUwMCBweC0xMiBweS01IHJvdW5kZWQtZnVsbCBmb250LWJvbGQgdGV4dC14bCB0cmFuc2l0aW9uIGhvdmVyOnNjYWxlLTEwNSBzaGFkb3ctbGcgc2hhZG93LXB1cnBsZS01MDAvMzAiCiAgICAgICAgICAgID4KICAgICAgICAgICAgICDinKggU2lnbiBVcCBGUkVFIOKAlCBKb2luIEJBU01BCiAgICAgICAgICAgIDwvYT4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgey8qIFNFTyBmb290ZXIgdGV4dCAqL30KICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9ImJvcmRlci10IGJvcmRlci13aGl0ZS8xMCBweS0xMiI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctNHhsIG14LWF1dG8gcHgtNCB0ZXh0LWNlbnRlciI+CiAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9InRleHQtMnhsIGZvbnQtYm9sZCB0ZXh0LXdoaXRlIG1iLTQiPkxhcyBWZWdhcyBNdXNpYyBBY2FkZW15ICZhbXA7IENvbW11bml0eSBIdWI8L2gyPgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtZ3JheS01MDAgbGVhZGluZy1yZWxheGVkIHRleHQtc20gbWF4LXctMnhsIG14LWF1dG8iPgogICAgICAgICAgICAgIEJhc21hV29ybGQgYnJpbmdzIHRvZ2V0aGVyIEJBU01BIE11c2ljIEFjYWRlbXkg4oCUIG9mZmVyaW5nIHNpbmdpbmcsIHBpYW5vLCBhbmQgZ3VpdGFyIGxlc3NvbnMgaW4gTGFzIFZlZ2FzIGFuZCBvbmxpbmUg4oCUIHRoZSBNYWpvciBXaW5uZXJzIExlYWd1ZSBjb21tdW5pdHkgcGxhdGZvcm0sIGFuZCBIb3BlcyBDaGFuY2UgeW91dGggcmVzb3VyY2VzLiBGb3VuZGVkIGJ5IEJhc21hIEF3YWRhLCBlZHVjYXRvciwgc2luZ2VyLCBhbmQgY29tbXVuaXR5IGxlYWRlciBpbiBMYXMgVmVnYXMsIE5WLgogICAgICAgICAgICA8L3A+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L3NlY3Rpb24+CgogICAgICA8L21haW4+CiAgICAgIDxGb290ZXIgLz4KICAgIDwvPgogICkKfQo=
+'use client'
+import Link from 'next/link'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+
+export default function HomeContent() {
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-black text-white">
+
+        {/* HERO — full bleed photo with Las Vegas mention */}
+        <section className="relative min-h-screen flex items-end pb-20 px-4">
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              src="/images/basma-hero.jpg"
+              alt="Basma — artist, educator, community leader based in Las Vegas"
+              className="w-full h-full object-cover object-top"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+          </div>
+          <div className="relative z-10 max-w-4xl mx-auto text-center w-full">
+            {/* Las Vegas badge */}
+            <span className="inline-block bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+              📍 Las Vegas, NV
+            </span>
+            <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-white to-purple-400 bg-clip-text text-transparent drop-shadow-lg">
+              BasmaWorld
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-200 mb-3 font-light">
+              Music Academy · Community · Youth Resources
+            </p>
+            <p className="text-gray-400 mb-10 text-base max-w-xl mx-auto">
+              One platform connecting the BASMA Music Academy, Major Winners League, and Hopes Chance — changing lives through music, community, and opportunity.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Link href="/mwl" className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-yellow-500/20">
+                🏆 Major Winners League
+              </Link>
+              <Link href="/academy" className="bg-purple-600 hover:bg-purple-500 px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-purple-500/20">
+                🎵 BASMA Academy
+              </Link>
+              <Link href="/hopes" className="bg-green-700 hover:bg-green-600 px-8 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-green-500/20">
+                🤝 Hopes Chance
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ★ JOIN BASMA — PROMOTIONAL BANNER ★ */}
+        <section className="relative overflow-hidden py-16 bg-gradient-to-r from-purple-900/50 via-black to-purple-900/50 border-y border-purple-500/20">
+          <div className="absolute inset-0">
+            <img
+              src="/images/marketing/basma-banner.jpg"
+              alt="BASMA Academy — Become A Singer Music Academy in Las Vegas"
+              className="w-full h-full object-cover opacity-30"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black" />
+          </div>
+          <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+            <span className="inline-block bg-green-500/20 border border-green-500/40 text-green-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4 animate-pulse">
+              🔥 Now Accepting Students
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+              Your Voice <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Matters</span>
+            </h2>
+            <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+              Join 300K+ community members. Sign up for FREE vocal coaching, music lessons, business services, and community resources.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <a
+                href="https://basma-leads-988fbd84.viktor.space"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-10 py-4 rounded-full font-bold text-lg transition hover:scale-105 shadow-lg shadow-purple-500/30"
+              >
+                ✨ Sign Up FREE
+              </a>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSdfRnjiJkjR4VN4_WgRRh5dtticSW2ly5czJeAAoLv2VJn3Lw/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition"
+              >
+                📝 Quick Form
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* THREE PILLARS */}
+        <section className="max-w-6xl mx-auto px-4 py-20">
+          <div className="text-center mb-14">
+            <p className="text-yellow-400 font-semibold uppercase tracking-widest text-sm mb-3">What Is BasmaWorld?</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">Three Worlds. One Mission.</h2>
+            <p className="text-gray-400 mt-4 text-lg max-w-2xl mx-auto">
+              Built in Las Vegas, reaching the world — BasmaWorld unites music education, community impact, and youth support under one roof.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+
+            {/* Pillar 1 — MWL (Gold) */}
+            <div className="relative rounded-2xl overflow-hidden group border border-yellow-500/20 hover:border-yellow-500/50 transition-all duration-300 bg-gradient-to-b from-yellow-950/30 to-black">
+              <img src="/images/basma-mwl.jpg" alt="Major Winners League community events Las Vegas"
+                className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80" />
+              <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
+              <div className="p-6">
+                <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest">Community & Social Impact</span>
+                <h3 className="text-2xl font-bold text-white mt-2 mb-3">Major Winners League</h3>
+                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                  Events, interviews, motivation, gaming, BasmaTeach Me, and social impact initiatives — all under the MWL banner.
+                </p>
+                <ul className="text-gray-500 text-xs space-y-1 mb-5">
+                  <li className="flex items-center gap-2"><span className="text-yellow-500">→</span> BasmaTeach Me</li>
+                  <li className="flex items-center gap-2"><span className="text-yellow-500">→</span> I Am Positive</li>
+                  <li className="flex items-center gap-2"><span className="text-yellow-500">→</span> Gaming & Podcast</li>
+                </ul>
+                <Link href="/mwl" className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-5 py-2.5 rounded-full text-sm transition">
+                  Explore MWL →
+                </Link>
+              </div>
+            </div>
+
+            {/* Pillar 2 — Academy (Purple) */}
+            <div className="relative rounded-2xl overflow-hidden group border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 bg-gradient-to-b from-purple-950/30 to-black">
+              <img src="/images/marketing/basma-ig-academy.jpg" alt="BASMA Become A Singer Music Academy Las Vegas"
+                className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80" />
+              <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
+              <div className="p-6">
+                <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">Music Academy & Artist</span>
+                <h3 className="text-2xl font-bold text-white mt-2 mb-3">BASMA Music Academy</h3>
+                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                  Become A Singer — gamified music lessons, live vocal coaching, piano, guitar, and artist mentorship in Las Vegas and online.
+                </p>
+                <ul className="text-gray-500 text-xs space-y-1 mb-5">
+                  <li className="flex items-center gap-2"><span className="text-purple-500">→</span> Singing Lessons</li>
+                  <li className="flex items-center gap-2"><span className="text-purple-500">→</span> Piano & Guitar</li>
+                  <li className="flex items-center gap-2"><span className="text-purple-500">→</span> Live Coaching</li>
+                </ul>
+                <Link href="/academy" className="inline-block bg-purple-600 hover:bg-purple-500 font-bold px-5 py-2.5 rounded-full text-sm transition">
+                  Explore Academy →
+                </Link>
+              </div>
+            </div>
+
+            {/* Pillar 3 — Hopes Chance (Green) */}
+            <div className="relative rounded-2xl overflow-hidden group border border-green-500/20 hover:border-green-500/50 transition-all duration-300 bg-gradient-to-b from-green-950/30 to-black">
+              <img src="/images/hopes-chance.jpg" alt="Hopes Chance youth resources Las Vegas"
+                className="w-full h-52 object-cover group-hover:scale-105 transition duration-500 opacity-80"
+                onError={(e) => { (e.target as HTMLImageElement).src = '/images/basma-about.jpg' }}
+              />
+              <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent to-black/80" />
+              <div className="p-6">
+                <span className="text-green-400 text-xs font-bold uppercase tracking-widest">Youth Resources</span>
+                <h3 className="text-2xl font-bold text-white mt-2 mb-3">Hopes Chance</h3>
+                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                  Connecting youth and families in Las Vegas to resources, support systems, and community programs that create real opportunity.
+                </p>
+                <ul className="text-gray-500 text-xs space-y-1 mb-5">
+                  <li className="flex items-center gap-2"><span className="text-green-500">→</span> Youth Support</li>
+                  <li className="flex items-center gap-2"><span className="text-green-500">→</span> Community Resources</li>
+                  <li className="flex items-center gap-2"><span className="text-green-500">→</span> Las Vegas Outreach</li>
+                </ul>
+                <Link href="/hopes" className="inline-block bg-green-700 hover:bg-green-600 font-bold px-5 py-2.5 rounded-full text-sm transition">
+                  Explore Hopes →
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ★ SERVICES SHOWCASE — Business + Academy Graphics ★ */}
+        <section className="py-20 bg-gradient-to-b from-black via-gray-950 to-black border-t border-white/5">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-14">
+              <p className="text-purple-400 font-semibold uppercase tracking-widest text-sm mb-3">What We Offer</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">Everything You Need to Grow</h2>
+              <p className="text-gray-400 mt-4 text-lg max-w-2xl mx-auto">
+                From vocal coaching to business marketing — BASMA has you covered.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Academy Card */}
+              <div className="relative rounded-2xl overflow-hidden group">
+                <img
+                  src="/images/marketing/basma-tiktok-story.jpg"
+                  alt="BASMA Academy vocal coaching and music lessons"
+                  className="w-full h-80 object-cover group-hover:scale-105 transition duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">For Musicians</span>
+                  <h3 className="text-2xl font-bold text-white mt-2 mb-2">Vocal Coaching & Music Lessons</h3>
+                  <p className="text-gray-300 text-sm mb-4">Gamified learning, expert coaching, and artist development for all ages and skill levels.</p>
+                  <a
+                    href="https://basma-leads-988fbd84.viktor.space"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-purple-600 hover:bg-purple-500 px-6 py-2.5 rounded-full text-sm font-bold transition"
+                  >
+                    Sign Up Free →
+                  </a>
+                </div>
+              </div>
+              {/* Business Card */}
+              <div className="relative rounded-2xl overflow-hidden group">
+                <img
+                  src="/images/marketing/basma-business.jpg"
+                  alt="Major Winners League business marketing and tech services"
+                  className="w-full h-80 object-cover group-hover:scale-105 transition duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest">For Businesses</span>
+                  <h3 className="text-2xl font-bold text-white mt-2 mb-2">Marketing, Tech & Video Production</h3>
+                  <p className="text-gray-300 text-sm mb-4">Digital marketing, website development, SEO, brand strategy, and video production for Las Vegas businesses.</p>
+                  <a
+                    href="https://basma-leads-988fbd84.viktor.space"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-full text-sm font-bold transition"
+                  >
+                    Get Started →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ABOUT BASMA — photo + text */}
+        <section className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-12 items-center border-t border-white/10">
+          <div className="relative">
+            <img
+              src="/images/basma-about.jpg"
+              alt="Basma Awada — Music educator and community leader in Las Vegas"
+              className="rounded-2xl w-full object-cover shadow-2xl shadow-purple-900/30"
+              style={{maxHeight: '500px', objectFit: 'cover'}}
+            />
+            <div className="absolute -bottom-4 -right-4 bg-yellow-500 text-black font-bold px-4 py-2 rounded-xl text-sm shadow-lg">
+              300k+ Students Worldwide 🌍
+            </div>
+          </div>
+          <div>
+            <p className="text-yellow-400 font-semibold uppercase tracking-widest text-sm mb-3">Meet Basma</p>
+            <h2 className="text-4xl font-bold text-white mb-6 leading-tight">Singer. Educator.<br/>Community Leader.</h2>
+            <p className="text-gray-300 text-lg leading-relaxed mb-4">
+              Basma is a multi-instrumentalist, MPA, professional vocal coach, and community activist based in <strong className="text-white">Las Vegas, Nevada</strong>.
+            </p>
+            <p className="text-gray-400 leading-relaxed mb-6">
+              With 300k+ students learning music through her content, she brings artistry, education, and social impact together under one roof — <span className="text-white font-semibold">BasmaWorld</span>.
+            </p>
+            <div className="flex gap-4 flex-wrap">
+              <Link href="/basma" className="bg-purple-700 hover:bg-purple-600 px-6 py-3 rounded-full text-sm font-semibold transition">🎤 Meet Basma</Link>
+              <Link href="/mwl" className="bg-yellow-600 hover:bg-yellow-500 text-black px-6 py-3 rounded-full text-sm font-semibold transition">🏆 Community Work</Link>
+            </div>
+          </div>
+        </section>
+
+        {/* QUICK LINKS ROW */}
+        <section className="border-t border-white/10 py-12 bg-white/[0.02]">
+          <div className="max-w-5xl mx-auto px-4">
+            <p className="text-center text-gray-500 text-xs uppercase tracking-widest mb-6">Explore BasmaWorld</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link href="/mwl/basmateachme" className="bg-yellow-900/30 hover:bg-yellow-800/50 border border-yellow-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎓 BasmaTeach Me</Link>
+              <Link href="/mwl#positive" className="bg-yellow-900/30 hover:bg-yellow-800/50 border border-yellow-700/40 px-5 py-3 rounded-full text-sm font-medium transition">✨ I Am Positive</Link>
+              <Link href="/hopes" className="bg-green-900/40 hover:bg-green-800/60 border border-green-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🤝 Hopes Chance</Link>
+              <Link href="/mwl#vegan" className="bg-orange-900/40 hover:bg-orange-800/60 border border-orange-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🥦 Vegan Survivors</Link>
+              <Link href="/mwl#gaming" className="bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎮 Gaming</Link>
+              <Link href="/mwl/podcast" className="bg-purple-900/40 hover:bg-purple-800/60 border border-purple-700/40 px-5 py-3 rounded-full text-sm font-medium transition">🎙️ Podcast</Link>
+              <a href="https://linktr.ee/BASMATea" target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 rounded-full text-sm font-medium transition">🌍 All Links</a>
+            </div>
+          </div>
+        </section>
+
+        {/* ★ BOTTOM CTA — Final lead capture push ★ */}
+        <section className="py-20 bg-gradient-to-b from-black to-purple-950/30 border-t border-white/10">
+          <div className="max-w-3xl mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Join the Movement?</h2>
+            <p className="text-gray-400 text-lg mb-8">
+              300K+ people already have. Sign up free and get access to vocal coaching, music lessons, business services, and community resources.
+            </p>
+            <a
+              href="https://basma-leads-988fbd84.viktor.space"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-12 py-5 rounded-full font-bold text-xl transition hover:scale-105 shadow-lg shadow-purple-500/30"
+            >
+              ✨ Sign Up FREE — Join BASMA
+            </a>
+          </div>
+        </section>
+
+        {/* SEO footer text */}
+        <section className="border-t border-white/10 py-12">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <h2 className="text-2xl font-bold text-white mb-4">Las Vegas Music Academy &amp; Community Hub</h2>
+            <p className="text-gray-500 leading-relaxed text-sm max-w-2xl mx-auto">
+              BasmaWorld brings together BASMA Music Academy — offering singing, piano, and guitar lessons in Las Vegas and online — the Major Winners League community platform, and Hopes Chance youth resources. Founded by Basma Awada, educator, singer, and community leader in Las Vegas, NV.
+            </p>
+          </div>
+        </section>
+
+      </main>
+      <Footer />
+    </>
+  )
+}
