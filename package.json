@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vercel/blob": "^0.27.0",
     "airtable": "^0.12.2",
     "next": "14.2.35",
     "posthog-js": "^1.96.1",
@@ -24,7 +25,7 @@
     "tailwindcss": "^3.4.0",
     "typescript": "^5.9.3"
   },
-  "description": "**BasmaWorld.com** — A unified platform integrating three pillars:",
+  "description": "**BasmaWorld.com** \u2014 A unified platform integrating three pillars:",
   "main": "next.config.js",
   "repository": {
     "type": "git",

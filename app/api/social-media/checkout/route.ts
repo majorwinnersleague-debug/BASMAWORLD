@@ -7,17 +7,20 @@ export const dynamic = 'force-dynamic'
 const TIERS = {
   starter: {
     name: 'Social Media Starter',
-    description: '4 videos/month · 1 platform · AI captions · Opus Clip processing',
+    description:
+      '4 videos/month · 1 platform · AI captions · Opus Clip processing',
     amount: 9700, // $97.00
   },
   growth: {
     name: 'Social Media Growth',
-    description: '8 videos/month · 3 platforms · AI captions · Scheduled posting · Dashboard',
+    description:
+      '8 videos/month · 3 platforms · AI captions · Scheduled posting · Dashboard',
     amount: 19700, // $197.00
   },
   elite: {
     name: 'Social Media Elite',
-    description: 'Unlimited videos · All platforms · Branded templates · Priority processing',
+    description:
+      'Unlimited videos · All platforms · Branded templates · Priority processing',
     amount: 49700, // $497.00
   },
 }
@@ -34,7 +37,10 @@ export async function POST(req: NextRequest) {
 
   const secretKey = process.env.STRIPE_SECRET_KEY
   if (!secretKey) {
-    return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 })
+    return NextResponse.json(
+      { error: 'Stripe not configured' },
+      { status: 503 }
+    )
   }
 
   try {
@@ -47,6 +53,10 @@ export async function POST(req: NextRequest) {
 
     const plan = TIERS[tier as keyof typeof TIERS]
     const stripe = new Stripe(secretKey, { apiVersion: '2026-03-25.dahlia' })
+
+    // Use env var for site URL, fall back to production domain
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL || 'https://basmaworld.com'
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -65,8 +75,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: `https://basmaworld.com/social-media/onboarding?session_id={CHECKOUT_SESSION_ID}&tier=${tier}`,
-      cancel_url: 'https://basmaworld.com/social-media',
+      success_url: `${siteUrl}/social-media/onboarding?session_id={CHECKOUT_SESSION_ID}&tier=${tier}`,
+      cancel_url: `${siteUrl}/social-media`,
       metadata: {
         tier,
         platforms: JSON.stringify(surveyData?.platforms ?? []),
@@ -82,6 +92,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: session.url })
   } catch (err) {
     console.error('Social media checkout error:', err)
-    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to create checkout session' },
+      { status: 500 }
+    )
   }
 }

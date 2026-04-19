@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
+// Sanitize user input for Airtable filterByFormula
+function sanitizeForFormula(input: string): string {
+  return input.replace(/["\\]/g, '')
+}
+
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get('session_id')
   if (!sessionId) {
@@ -15,8 +20,11 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const safeSession = sanitizeForFormula(sessionId)
     const res = await fetch(
-      `https://api.airtable.com/v0/${baseId}/Social%20Media%20Clients?filterByFormula=${encodeURIComponent(`{Stripe Session ID}="${sessionId}"`)}`,
+      `https://api.airtable.com/v0/${baseId}/Social%20Media%20Clients?filterByFormula=${encodeURIComponent(
+        `{Stripe Session ID}="${safeSession}"`
+      )}`,
       { headers: { Authorization: `Bearer ${apiKey}` } }
     )
     const data = await res.json()
@@ -38,19 +46,24 @@ export async function GET(req: NextRequest) {
         postsPublished: f['Posts Published'] ?? 0,
         status: f['Status'] ?? 'Active',
       },
-      videos: f['Last Video URL'] ? [
-        {
-          id: record.id,
-          videoUrl: f['Last Video URL'],
-          status: f['Status'] ?? 'Active',
-          clipsPosted: f['Posts Published'] ?? 0,
-          platforms: f['Platforms'] ?? [],
-          processedAt: f['Last Processed At'] ?? '',
-        },
-      ] : [],
+      videos: f['Last Video URL']
+        ? [
+            {
+              id: record.id,
+              videoUrl: f['Last Video URL'],
+              status: f['Status'] ?? 'Active',
+              clipsPosted: f['Posts Published'] ?? 0,
+              platforms: f['Platforms'] ?? [],
+              processedAt: f['Last Processed At'] ?? '',
+            },
+          ]
+        : [],
     })
   } catch (err) {
     console.error('Dashboard data error:', err)
-    return NextResponse.json({ error: 'Failed to load dashboard' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to load dashboard' },
+      { status: 500 }
+    )
   }
 }
