@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 const PLATFORMS = ['TikTok', 'Instagram Reels', 'YouTube Shorts', 'Facebook', 'LinkedIn']
 const NICHES = ['Music', 'Fitness', 'Education', 'Business', 'Lifestyle', 'Comedy', 'Other']
@@ -71,7 +70,6 @@ const PACKAGES = {
 }
 
 export default function SocialMediaPage() {
-  const router = useRouter()
   const [step, setStep] = useState(1)
   const [data, setData] = useState<SurveyData>(EMPTY)
   const [loading, setLoading] = useState(false)
