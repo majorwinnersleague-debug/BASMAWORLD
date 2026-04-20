@@ -321,16 +321,16 @@ export default function UploadPage() {
           ) : (
             <>
               <p className="text-white/60 max-w-md mx-auto">
-                Your video is being processed by Opus Clip. We&apos;ll pick the best clips,
+                Your video is being processed by our AI. We&apos;ll pick the best clips,
                 write platform-specific captions, and post everything automatically.
                 You&apos;ll get an email when it&apos;s done.
               </p>
 
-              {/* Opus pipeline status */}
+              {/* AI pipeline status */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-left max-w-sm mx-auto space-y-3">
                 {[
                   { label: 'Video uploaded', done: true },
-                  { label: 'Sent to Opus Clip', done: true },
+                  { label: 'Sent for AI processing', done: true },
                   { label: 'Selecting best clips', done: false },
                   { label: 'Writing captions per platform', done: false },
                   { label: 'Auto-posting to your accounts', done: false },
@@ -495,7 +495,7 @@ export default function UploadPage() {
                     ? `Uploading ${files.length} clip${files.length !== 1 ? 's' : ''}…`
                     : state === 'posting'
                     ? 'Generating captions & posting to socials…'
-                    : 'Submitting to Opus Clip…'}
+                    : 'Processing video…'}
                 </span>
                 <span className="text-[#8B5CF6] font-medium">{progress}%</span>
               </div>
@@ -547,7 +547,7 @@ export default function UploadPage() {
               {mode === 'preclipped' ? (
                 <>
                   {[
-                    { icon: '✂️', text: 'Clip your video in Opus Clip (or any editor)' },
+                    { icon: '✂️', text: 'Clip your video in any editor you like' },
                     { icon: '📤', text: 'Upload your clips here (drag & drop multiple)' },
                     { icon: '✍️', text: 'AI writes platform-specific captions for each clip' },
                     { icon: '🚀', text: 'Clips are posted directly to all your connected accounts' },
@@ -562,7 +562,7 @@ export default function UploadPage() {
                 <>
                   {[
                     { icon: '📤', text: 'Upload your video (any length)' },
-                    { icon: '✂️', text: 'Opus Clip AI picks the best moments & creates short clips' },
+                    { icon: '✂️', text: 'Our AI picks the best moments & creates short clips' },
                     { icon: '✍️', text: 'AI writes platform-specific captions with trending hashtags' },
                     { icon: '🚀', text: 'Clips are auto-posted to all your connected social accounts' },
                   ].map((step, i) => (
