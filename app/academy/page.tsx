@@ -1,7 +1,8 @@
 import Image from 'next/image'
+import XPLeaderboard from '@/components/XPLeaderboard'
+import QuestBoard from '@/components/QuestBoard'
 
-export const dynamic = 'force-static'
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 export default function Academy() {
   const paths = [
@@ -139,6 +140,12 @@ export default function Academy() {
         </div>
       </section>
 
+      {/* ── Quest Board (NEW) ──────────────────────────────────────────────── */}
+      <QuestBoard />
+
+      {/* ── XP Leaderboard (NEW) ───────────────────────────────────────────── */}
+      <XPLeaderboard />
+
       {/* ── Photo Gallery ──────────────────────────────────────────────────── */}
       <section className="px-6 pb-16 max-w-6xl mx-auto">
         <h2 className="text-2xl font-bold text-white text-center mb-8" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -175,12 +182,20 @@ export default function Academy() {
             Ready to begin? 🎶
           </h2>
           <p className="text-gray-300 mb-8">Book a free intro lesson and let&apos;s find your path together.</p>
-          <a
-            href="/mwl"
-            className="pulse-cta inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
-          >
-            🎵 Book My Free Lesson
-          </a>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <a
+              href="/mwl"
+              className="pulse-cta inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+            >
+              🎵 Book My Free Lesson
+            </a>
+            <a
+              href="/game"
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 px-8 py-4 rounded-2xl font-bold text-lg transition-all"
+            >
+              🎮 Play MajorWinners
+            </a>
+          </div>
         </div>
       </section>
 
