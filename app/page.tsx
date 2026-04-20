@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Navbar from '@/components/Navbar'
 
 export const dynamic = 'force-static'
 export const revalidate = 86400
@@ -6,265 +7,316 @@ export const revalidate = 86400
 export default function Home() {
   return (
     <main className="min-h-screen text-white overflow-hidden">
+      <Navbar />
 
-      {/* ── Decorative background blobs ── */}
+      {/* ── Ambient background ────────────────────────────────────────────── */}
       <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-[-10%] left-[-5%] w-96 h-96 rounded-full opacity-20 blur-3xl"
-             style={{ background: 'radial-gradient(circle, #a855f7, transparent)' }} />
-        <div className="absolute top-[30%] right-[-8%] w-80 h-80 rounded-full opacity-15 blur-3xl"
-             style={{ background: 'radial-gradient(circle, #fbbf24, transparent)' }} />
-        <div className="absolute bottom-[10%] left-[20%] w-72 h-72 rounded-full opacity-10 blur-3xl"
-             style={{ background: 'radial-gradient(circle, #34d399, transparent)' }} />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full opacity-[0.04] blur-[120px]"
+             style={{ background: 'radial-gradient(circle, #c9a84c, transparent)' }} />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.02] blur-[100px]"
+             style={{ background: 'radial-gradient(circle, #9b7dff, transparent)' }} />
       </div>
 
-      {/* ── Hero with background image ── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 py-20">
-        {/* Hero background */}
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 py-24">
+        {/* Background image */}
         <div className="absolute inset-0 -z-[5]">
           <Image
             src="/images/basma/basma-performing-stage-1.jpg"
-            alt="Basma performing live on stage"
+            alt="Live performance"
             fill
             className="object-cover object-center"
             priority
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-[#0a0a0a]" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(5,5,5,0.75) 0%, rgba(5,5,5,0.6) 40%, rgba(5,5,5,0.95) 100%)' }} />
         </div>
 
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-purple-900/40 border border-purple-500/40 rounded-full px-5 py-2 mb-8 text-sm font-medium text-purple-300 shimmer backdrop-blur-sm">
-          ✨ Music · Community · Opportunity
-        </div>
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl mx-auto">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 glass-gold rounded-full px-5 py-2 mb-10 text-xs font-medium text-[#c9a84c] tracking-widest uppercase">
+            Est. Las Vegas
+          </div>
 
-        {/* Headline */}
-        <h1
-          className="text-6xl md:text-8xl font-black mb-6 leading-tight"
-          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-        >
-          <span className="gradient-text">Basma</span>
-          <span className="text-white">World</span>
-        </h1>
+          {/* Headline */}
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-8 leading-[0.9] tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <span className="gradient-gold">Basma</span>
+            <span className="text-white">World</span>
+          </h1>
 
-        <p className="text-xl md:text-2xl text-purple-200 mb-4 max-w-2xl leading-relaxed">
-          Where artists <strong className="text-yellow-400">level up</strong>, communities <strong className="text-green-400">thrive</strong>, and dreams become <strong className="text-purple-400">reality</strong>.
-        </p>
-        <p className="text-base text-gray-400 mb-12 max-w-xl">
-          Join thousands of students, creators & changemakers building their best life through music and community.
-        </p>
+          <p className="text-lg md:text-xl text-white/50 mb-4 max-w-2xl mx-auto leading-relaxed font-light">
+            Where artists evolve, communities connect, and real opportunity begins.
+          </p>
+          <p className="text-sm text-white/25 mb-14 max-w-lg mx-auto">
+            Music education, brand strategy, and youth resources — all under one roof.
+          </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-wrap gap-4 justify-center">
-          <a
-            href="/academy"
-            className="pulse-cta inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
-          >
-            🎵 Start Your Music Journey
-          </a>
-          <a
-            href="/mwl"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-amber-400 hover:from-yellow-400 hover:to-amber-300 text-black px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 glow-gold"
-          >
-            🏆 Grow Your Brand
-          </a>
-          <a
-            href="/hopes"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
-          >
-            🤝 Get Support
-          </a>
-        </div>
+          {/* CTAs */}
+          <div className="flex flex-wrap gap-4 justify-center">
+            <a
+              href="/academy"
+              className="btn-gold pulse-cta px-10 py-4 rounded-full text-sm font-semibold tracking-wide"
+            >
+              Start Your Journey
+            </a>
+            <a
+              href="/game"
+              className="btn-outline px-10 py-4 rounded-full text-sm tracking-wide"
+            >
+              Play MajorWinners
+            </a>
+          </div>
 
-        {/* Social proof strip */}
-        <div className="flex flex-wrap gap-6 justify-center mt-16 text-sm text-gray-400">
-          <span className="flex items-center gap-2"><span className="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</span> 500+ students</span>
-          <span className="text-gray-600">|</span>
-          <span className="flex items-center gap-2">🎉 <span>Las Vegas & Online</span></span>
-          <span className="text-gray-600">|</span>
-          <span className="flex items-center gap-2">🎵 <span>All ages welcome</span></span>
+          {/* Social proof */}
+          <div className="flex flex-wrap gap-6 justify-center mt-20 text-xs text-white/25 tracking-wide uppercase">
+            <span>500+ Students</span>
+            <span className="text-white/10">|</span>
+            <span>Las Vegas & Online</span>
+            <span className="text-white/10">|</span>
+            <span>All Ages Welcome</span>
+          </div>
         </div>
       </section>
 
-      {/* ── Photo strip ── */}
-      <section className="py-4 overflow-hidden">
-        <div className="flex gap-4 animate-[scroll_30s_linear_infinite] w-max">
+      {/* ── Photo strip ───────────────────────────────────────────────────── */}
+      <section className="py-1 overflow-hidden opacity-60">
+        <div className="flex gap-2 photo-strip w-max">
           {[
-            { src: '/images/basma/basma-live-music-stage.jpg', alt: 'Live music performance' },
-            { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Basma teaching music class' },
-            { src: '/images/basma/basma-community-daytime.jpg', alt: 'Community gathering outdoors' },
-            { src: '/images/basma/students-recital-performance.jpg', alt: 'Students performing at recital' },
-            { src: '/images/basma/basma-dance-crew-gym.jpg', alt: 'Dance crew rehearsal' },
-            { src: '/images/basma/basma-broadway-kids-academy.jpg', alt: 'Broadway kids academy' },
-            { src: '/images/basma/basma-community-event.jpg', alt: 'Community event at night' },
-            { src: '/images/basma/basma-with-student.jpg', alt: 'Basma with film clapperboard' },
-            { src: '/images/basma/basma-live-music-stage.jpg', alt: 'Live music performance' },
-            { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Basma teaching music class' },
-            { src: '/images/basma/basma-community-daytime.jpg', alt: 'Community gathering outdoors' },
-            { src: '/images/basma/students-recital-performance.jpg', alt: 'Students performing at recital' },
+            { src: '/images/basma/basma-live-music-stage.jpg', alt: 'Live performance' },
+            { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Music class' },
+            { src: '/images/basma/basma-community-daytime.jpg', alt: 'Community' },
+            { src: '/images/basma/students-recital-performance.jpg', alt: 'Student recital' },
+            { src: '/images/basma/basma-dance-crew-gym.jpg', alt: 'Dance crew' },
+            { src: '/images/basma/basma-broadway-kids-academy.jpg', alt: 'Kids academy' },
+            { src: '/images/basma/basma-community-event.jpg', alt: 'Community event' },
+            { src: '/images/basma/basma-with-student.jpg', alt: 'Mentorship' },
+            { src: '/images/basma/basma-live-music-stage.jpg', alt: 'Live performance' },
+            { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Music class' },
+            { src: '/images/basma/basma-community-daytime.jpg', alt: 'Community' },
+            { src: '/images/basma/students-recital-performance.jpg', alt: 'Student recital' },
           ].map((img, i) => (
-            <div key={i} className="relative w-64 h-44 flex-shrink-0 rounded-2xl overflow-hidden">
+            <div key={i} className="relative w-56 h-36 flex-shrink-0 overflow-hidden" style={{ borderRadius: '2px' }}>
               <Image
                 src={img.src}
                 alt={img.alt}
                 fill
-                className="object-cover hover:scale-110 transition-transform duration-500"
-                sizes="256px"
+                className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                sizes="224px"
               />
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── What is BasmaWorld ── */}
-      <section className="py-24 px-6 max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-black mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            Three Worlds. <span className="gradient-text">One Community.</span>
+      {/* ── Three Worlds ──────────────────────────────────────────────────── */}
+      <section className="py-32 px-6 max-w-6xl mx-auto">
+        <div className="text-center mb-20">
+          <p className="text-xs text-[#c9a84c]/60 tracking-[0.3em] uppercase mb-4 font-medium">The Ecosystem</p>
+          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Three Worlds. <span className="gradient-gold">One Vision.</span>
           </h2>
-          <p className="text-gray-400 text-lg max-w-xl mx-auto">Everything you need to level up your artistry, grow your brand, and find real support.</p>
+          <p className="text-white/30 text-lg max-w-xl mx-auto font-light">
+            Everything you need to master your craft, grow your brand, and access real support.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-
+        <div className="grid md:grid-cols-3 gap-6">
           {/* Academy Card */}
-          <a href="/academy" className="card-hover group block bg-gradient-to-b from-purple-900/50 to-purple-950/30 border border-purple-500/30 rounded-3xl overflow-hidden hover:border-purple-400/60">
-            <div className="relative h-48 overflow-hidden">
+          <a href="/academy" className="group card-premium rounded-2xl overflow-hidden">
+            <div className="relative h-56 overflow-hidden">
               <Image
                 src="/images/basma/basma-teaching-classroom.jpg"
-                alt="Basma teaching a music class"
+                alt="Music Academy"
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-950/90 to-transparent" />
-              <div className="absolute bottom-3 left-4 text-4xl">🎵</div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
             </div>
-            <div className="p-6 pt-4 text-center">
-              <h3 className="text-2xl font-bold text-purple-300 mb-3">Music Academy</h3>
-              <p className="text-gray-400 leading-relaxed mb-4">Master your instrument, build a killer brand, and perform with confidence. Lessons for all levels.</p>
-              <span className="inline-block bg-purple-500/20 text-purple-300 rounded-full px-4 py-1 text-sm font-medium">
+            <div className="p-7">
+              <p className="text-xs text-[#c9a84c] tracking-widest uppercase mb-3 font-medium">Music Academy</p>
+              <h3 className="text-xl font-semibold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Master Your Instrument
+              </h3>
+              <p className="text-white/30 text-sm leading-relaxed mb-5">
+                Professional vocal coaching, piano, guitar, and music theory. Gamified learning with XP progression.
+              </p>
+              <span className="text-[#c9a84c] text-sm font-medium group-hover:tracking-wider transition-all duration-300">
                 Start Learning →
               </span>
             </div>
           </a>
 
           {/* MWL Card */}
-          <a href="/mwl" className="card-hover group block bg-gradient-to-b from-yellow-900/40 to-amber-950/20 border border-yellow-500/30 rounded-3xl overflow-hidden hover:border-yellow-400/60">
-            <div className="relative h-48 overflow-hidden">
+          <a href="/mwl" className="group card-premium rounded-2xl overflow-hidden">
+            <div className="relative h-56 overflow-hidden">
               <Image
                 src="/images/basma/basma-with-student.jpg"
-                alt="Basma with film clapperboard — content creation"
+                alt="Brand Strategy"
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-amber-950/90 to-transparent" />
-              <div className="absolute bottom-3 left-4 text-4xl">🏆</div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
             </div>
-            <div className="p-6 pt-4 text-center">
-              <h3 className="text-2xl font-bold text-yellow-300 mb-3">Major Winners League</h3>
-              <p className="text-gray-400 leading-relaxed mb-4">Content creation, music marketing, and brand strategy that gets real results. Let&apos;s grow.</p>
-              <span className="inline-block bg-yellow-500/20 text-yellow-300 rounded-full px-4 py-1 text-sm font-medium">
+            <div className="p-7">
+              <p className="text-xs text-[#c9a84c] tracking-widest uppercase mb-3 font-medium">Major Winners League</p>
+              <h3 className="text-xl font-semibold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Grow Your Brand
+              </h3>
+              <p className="text-white/30 text-sm leading-relaxed mb-5">
+                Content creation, music marketing, and brand strategy that delivers real, measurable results.
+              </p>
+              <span className="text-[#c9a84c] text-sm font-medium group-hover:tracking-wider transition-all duration-300">
                 Work With Us →
               </span>
             </div>
           </a>
 
           {/* Hopes Card */}
-          <a href="/hopes" className="card-hover group block bg-gradient-to-b from-emerald-900/40 to-green-950/20 border border-emerald-500/30 rounded-3xl overflow-hidden hover:border-emerald-400/60">
-            <div className="relative h-48 overflow-hidden">
+          <a href="/hopes" className="group card-premium rounded-2xl overflow-hidden">
+            <div className="relative h-56 overflow-hidden">
               <Image
                 src="/images/basma/basma-community-event.jpg"
-                alt="BasmaWorld community gathering"
+                alt="Community Resources"
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-green-950/90 to-transparent" />
-              <div className="absolute bottom-3 left-4 text-4xl">🤝</div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
             </div>
-            <div className="p-6 pt-4 text-center">
-              <h3 className="text-2xl font-bold text-emerald-300 mb-3">Hopes Chance</h3>
-              <p className="text-gray-400 leading-relaxed mb-4">Free, confidential resources for housing, jobs, mental health & more. No judgment. Just help.</p>
-              <span className="inline-block bg-emerald-500/20 text-emerald-300 rounded-full px-4 py-1 text-sm font-medium">
-                Find Resources →
+            <div className="p-7">
+              <p className="text-xs text-[#c9a84c] tracking-widest uppercase mb-3 font-medium">Hopes Chance</p>
+              <h3 className="text-xl font-semibold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Find Real Support
+              </h3>
+              <p className="text-white/30 text-sm leading-relaxed mb-5">
+                Free, confidential resources for housing, jobs, mental health, and more. No judgment. Ever.
+              </p>
+              <span className="text-[#c9a84c] text-sm font-medium group-hover:tracking-wider transition-all duration-300">
+                Get Help →
               </span>
             </div>
           </a>
         </div>
       </section>
 
-      {/* ── Gallery grid ── */}
-      <section className="py-16 px-6 max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-black mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            The <span className="gradient-text">BasmaWorld</span> Experience
+      {/* ── Gallery ───────────────────────────────────────────────────────── */}
+      <section className="py-20 px-6 max-w-6xl mx-auto">
+        <div className="text-center mb-14">
+          <p className="text-xs text-[#c9a84c]/60 tracking-[0.3em] uppercase mb-4 font-medium">The Experience</p>
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+            More Than a <span className="gradient-gold">Stage</span>
           </h2>
-          <p className="text-gray-400 max-w-lg mx-auto">From stage performances to community events — see what makes us different.</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {[
-            { src: '/images/basma/basma-performing-stage-1.jpg', alt: 'Live stage performance', span: 'md:col-span-2 md:row-span-2' },
-            { src: '/images/basma/basma-orchestra.jpg', alt: 'Orchestra performance' },
-            { src: '/images/basma/basma-editing-studio.jpg', alt: 'Editing studio session' },
-            { src: '/images/basma/basma-community-daytime.jpg', alt: 'Community backyard gathering', span: 'md:col-span-2' },
+            { src: '/images/basma/basma-performing-stage-1.jpg', alt: 'Stage performance', span: 'md:col-span-2 md:row-span-2' },
+            { src: '/images/basma/basma-orchestra.jpg', alt: 'Orchestra' },
+            { src: '/images/basma/basma-editing-studio.jpg', alt: 'Studio session' },
+            { src: '/images/basma/basma-community-daytime.jpg', alt: 'Community gathering', span: 'md:col-span-2' },
             { src: '/images/basma/students-recital-performance.jpg', alt: 'Student recital' },
-            { src: '/images/basma/basma-performing-stage-2.jpg', alt: 'On stage performing' },
+            { src: '/images/basma/basma-performing-stage-2.jpg', alt: 'Performing' },
           ].map((img, i) => (
             <div
               key={i}
-              className={`relative overflow-hidden rounded-2xl ${img.span ?? ''} ${
+              className={`relative overflow-hidden group ${img.span ?? ''} ${
                 img.span?.includes('row-span-2') ? 'h-64 md:h-full min-h-[16rem]' : 'h-48 md:h-56'
               }`}
+              style={{ borderRadius: '4px' }}
             >
               <Image
                 src={img.src}
                 alt={img.alt}
                 fill
-                className="object-cover hover:scale-105 transition-transform duration-500"
+                className="object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
                 sizes={img.span?.includes('col-span-2') ? '(max-width: 768px) 100vw, 50vw' : '(max-width: 768px) 50vw, 25vw'}
               />
-              <div className="absolute inset-0 bg-black/20 hover:bg-black/0 transition-colors duration-300" />
+              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-500" />
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── Billy Bob the Puppet CTA ── */}
-      <section className="py-20 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 bg-gradient-to-r from-purple-900/30 to-yellow-900/20 border border-purple-500/20 rounded-3xl p-8 md:p-12">
-          <div className="relative w-48 h-48 md:w-64 md:h-64 flex-shrink-0 rounded-2xl overflow-hidden">
+      {/* ── Billy Bob Section ─────────────────────────────────────────────── */}
+      <section className="py-24 px-6">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12 glass-gold rounded-2xl p-10 md:p-14">
+          <div className="relative w-44 h-44 md:w-56 md:h-56 flex-shrink-0 overflow-hidden rounded-2xl">
             <Image
               src="/images/basma-hero.jpg"
-              alt="Boddee Billy Bob — BasmaWorld mascot"
+              alt="Boddee Billy Bob"
               fill
               className="object-cover"
-              sizes="256px"
+              sizes="224px"
             />
           </div>
           <div className="text-center md:text-left">
-            <h3 className="text-3xl font-bold mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Meet <span className="text-yellow-400">Boddee Billy Bob</span> 🧡
+            <p className="text-xs text-[#c9a84c]/60 tracking-[0.3em] uppercase mb-3 font-medium">The Mascot</p>
+            <h3 className="text-3xl font-semibold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Meet <span className="gradient-gold">Boddee Billy Bob</span>
             </h3>
-            <p className="text-gray-300 text-lg leading-relaxed mb-6">
-              Our orange, fuzzy, slightly unhinged mascot. He&apos;s part puppet, part hype man, and 100% the heart of BasmaWorld. If he believes in you, that&apos;s all you need.
+            <p className="text-white/40 text-base leading-relaxed mb-8 max-w-lg">
+              Part puppet, part hype man, and the undeniable heart of BasmaWorld. If Billy believes in you, that&apos;s all you need.
             </p>
             <a
               href="/academy"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-400 hover:to-yellow-400 text-black px-6 py-3 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105"
+              className="btn-gold px-8 py-3 rounded-full text-sm font-semibold tracking-wide inline-block"
             >
-              Join the Family →
+              Join the Family
             </a>
           </div>
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="text-center py-12 px-6 border-t border-white/5">
-        <p className="text-2xl font-bold gradient-text mb-2">BasmaWorld 🌍</p>
-        <p className="text-gray-500 text-sm">Built with love in Las Vegas · Music · Community · Opportunity</p>
-        <p className="text-gray-600 text-xs mt-3">© {new Date().getFullYear()} BasmaWorld. All rights reserved.</p>
+      {/* ── MajorWinners Game CTA ─────────────────────────────────────────── */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto glass rounded-2xl p-12 md:p-16 text-center">
+          <p className="text-xs text-[#c9a84c]/60 tracking-[0.3em] uppercase mb-4 font-medium">Now Playing</p>
+          <h2 className="text-3xl md:text-5xl font-semibold mb-6 tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <span className="gradient-text">MajorWinners</span> Game
+          </h2>
+          <p className="text-white/35 text-base mb-10 max-w-lg mx-auto leading-relaxed">
+            Choose your character. Complete quests. Earn XP in the real world and the Viverse. Your avatar connects across the entire ecosystem.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="/game"
+              className="btn-gold px-10 py-4 rounded-full text-sm font-semibold tracking-wide"
+            >
+              Enter the Game
+            </a>
+            <a
+              href="https://www.viverse.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline px-10 py-4 rounded-full text-sm tracking-wide"
+            >
+              Launch Viverse World
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ────────────────────────────────────────────────────────── */}
+      <footer className="border-t border-white/[0.04] py-16 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <p
+            className="text-xl font-semibold mb-3"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              background: 'linear-gradient(135deg, #e4cc7a, #c9a84c)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            BasmaWorld
+          </p>
+          <p className="text-white/20 text-sm mb-1">Music · Community · Opportunity</p>
+          <p className="text-white/10 text-xs">&copy; {new Date().getFullYear()} BASMA LLC. All rights reserved.</p>
+        </div>
       </footer>
 
     </main>
