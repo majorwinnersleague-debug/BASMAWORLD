@@ -69,3 +69,9 @@ main.bg-\[\#0a0a0a\],
 main.bg-black {
   background: transparent !important;
 }
+
+/* ─── Photo strip infinite scroll ────────────────────────── */
+@keyframes scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
