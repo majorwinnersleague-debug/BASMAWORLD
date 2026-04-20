@@ -8,7 +8,7 @@ const TIERS = {
   starter: {
     name: 'Social Media Starter',
     description:
-      '4 videos/month · 1 platform · AI captions · Opus Clip processing',
+      '4 videos/month · 1 platform · AI captions · Auto-post to your accounts',
     amount: 9700, // $97.00
   },
   growth: {

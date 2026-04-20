@@ -45,7 +45,7 @@ const PACKAGES = {
     price: '$97',
     period: '/mo',
     desc: 'Perfect for getting started on one platform.',
-    features: ['4 videos/month', '1 platform', 'AI-written captions', 'Opus Clip processing', 'Email notifications'],
+    features: ['4 videos/month', '1 platform', 'AI-written captions', 'Auto-post to your accounts', 'Email notifications'],
     color: 'border-white/20',
     badge: null,
   },
