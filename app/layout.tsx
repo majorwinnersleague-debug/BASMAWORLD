@@ -14,13 +14,7 @@ export const metadata: Metadata = {
   openGraph: { type: 'website', locale: 'en_US', url: 'https://basmaworld.com', siteName: 'BasmaWorld', images: [{ url: '/images/basma-hero.jpg', width: 1200, height: 630, alt: 'BasmaWorld — Music Academy, Community & Youth Resources in Las Vegas' }] },
   twitter: { card: 'summary_large_image', site: '@basma_singer', creator: '@basma_singer' },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 } },
-  verification: {
-    // google: 'your-google-verification-code',
-    // yandex: 'your-yandex-code',
-  },
-  alternates: {
-    canonical: 'https://basmaworld.com',
-  },
+  alternates: { canonical: 'https://basmaworld.com' },
   other: {
     'geo.region': 'US-NV',
     'geo.placename': 'Las Vegas',
@@ -66,11 +60,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* Google Fonts — Inter + Space Grotesk for friendly modern feel */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;800;900&display=swap"
           rel="stylesheet"
         />
         <link rel="canonical" href="https://basmaworld.com" />
@@ -81,11 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
-      {/* Bright warm deep purple/blue gradient — much friendlier than pure black */}
-      <body
-        className="text-white antialiased"
-        style={{ background: 'linear-gradient(160deg, #0f0225 0%, #1a053a 35%, #0d1a2e 100%)', minHeight: '100vh' }}
-      >
+      <body className="grain antialiased" style={{ background: '#050505', minHeight: '100vh' }}>
         <PostHogProvider>
           <AnnouncementBar />
           {children}
