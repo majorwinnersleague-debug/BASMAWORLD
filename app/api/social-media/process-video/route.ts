@@ -198,6 +198,62 @@ async function generateCaption(
   }
 }
 
+/**
+ * Generate a caption for a direct-post video (no Opus Clip metadata).
+ * Uses the filename and client context to create platform-specific captions.
+ */
+async function generateDirectCaption(
+  platform: string,
+  filename: string,
+  tone: string
+): Promise<string> {
+  const apiKey = process.env.OPENROUTER_API_KEY
+  // Clean filename for use as a title hint
+  const cleanName = filename
+    .replace(/\.[^.]+$/, '')
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+
+  if (!apiKey) return cleanName
+
+  const rules = PLATFORM_RULES[platform] ?? 'Max 200 chars. 3-5 hashtags.'
+  const toneMap: Record<string, string> = {
+    'Funny / Casual': 'funny, casual, and relatable',
+    Professional: 'professional and authoritative',
+    Inspirational: 'inspiring and motivating',
+    Educational: 'educational and informative',
+  }
+  const toneDesc = toneMap[tone] ?? 'engaging'
+
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-4o-mini',
+        messages: [
+          {
+            role: 'user',
+            content: `Write a ${toneDesc} ${platform} caption for a short video clip titled "${cleanName}".
+The creator is an artist/musician in Las Vegas.
+Platform rules: ${rules}
+Return ONLY the caption text, nothing else.`,
+          },
+        ],
+        max_tokens: 200,
+        temperature: 0.7,
+      }),
+    })
+    const data = await res.json()
+    return data.choices?.[0]?.message?.content?.trim() ?? cleanName
+  } catch {
+    return cleanName
+  }
+}
+
 // ─── Upload-Post ───────────────────────────────────────────────────────────────
 
 async function postClipToSocial(
@@ -281,11 +337,11 @@ async function sendNotificationEmail(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { sessionId, videoUrl, skipOpus, projectId } = body
+    const { sessionId, videoUrl, skipOpus, projectId, directPost, clips: directClips, filename } = body
 
-    if (!sessionId || !videoUrl) {
+    if (!sessionId) {
       return NextResponse.json(
-        { error: 'Missing sessionId or videoUrl' },
+        { error: 'Missing sessionId' },
         { status: 400 }
       )
     }
@@ -296,12 +352,85 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 })
     }
 
+    // ── Path C: Direct post — skip Opus entirely, post pre-clipped videos ────
+    if (directPost) {
+      // Accept either a single videoUrl or an array of clips
+      const clipUrls: Array<{ url: string; filename: string }> = []
+
+      if (directClips && Array.isArray(directClips)) {
+        for (const c of directClips) {
+          if (c.url) clipUrls.push({ url: c.url, filename: c.filename ?? 'clip.mp4' })
+        }
+      } else if (videoUrl) {
+        clipUrls.push({ url: videoUrl, filename: filename ?? 'clip.mp4' })
+      }
+
+      if (clipUrls.length === 0) {
+        return NextResponse.json(
+          { error: 'No clips provided for direct post' },
+          { status: 400 }
+        )
+      }
+
+      await updateAirtableRecord(client.id, { Status: 'Direct Posting' })
+
+      let clipsPosted = 0
+      const results: Array<{ url: string; platform: string; success: boolean }> = []
+
+      for (const clip of clipUrls) {
+        for (const platform of client.platforms) {
+          // Generate a caption using AI (no Opus metadata, so use filename + context)
+          const caption = await generateDirectCaption(
+            platform,
+            clip.filename,
+            client.tone
+          )
+          const posted = await postClipToSocial(
+            clip.url,
+            caption,
+            client.uploadPostUserId,
+            [platform]
+          )
+          results.push({ url: clip.url, platform, success: posted })
+          if (posted) clipsPosted++
+        }
+      }
+
+      // Update Airtable counters
+      await updateAirtableRecord(client.id, {
+        Status: clipsPosted > 0 ? 'Posted' : 'Post Failed',
+        'Videos Processed': client.videosProcessed + clipUrls.length,
+        'Posts Published': client.postsPublished + clipsPosted,
+        'Last Processed At': new Date().toISOString(),
+      })
+
+      // Notify client
+      if (clipsPosted > 0) {
+        await sendNotificationEmail(client.email, clipsPosted, client.platforms)
+      }
+
+      return NextResponse.json({
+        success: clipsPosted > 0,
+        mode: 'direct',
+        clipsPosted,
+        totalAttempted: results.length,
+        results,
+      })
+    }
+
     // ── Path A: Fresh upload → submit to Opus and return immediately ─────────
+    if (!videoUrl) {
+      return NextResponse.json(
+        { error: 'Missing videoUrl' },
+        { status: 400 }
+      )
+    }
+
     if (!skipOpus) {
       const opusProjectId = await submitToOpusClip(videoUrl)
       if (!opusProjectId) {
         return NextResponse.json(
-          { error: 'Opus Clip submission failed' },
+          { error: 'Opus Clip submission failed — API key may be missing or invalid' },
           { status: 500 }
         )
       }
@@ -311,7 +440,6 @@ export async function POST(req: NextRequest) {
         Status: 'Clipping',
       })
 
-      // Return immediately — the Opus webhook will call us back with skipOpus: true
       return NextResponse.json({
         status: 'processing',
         projectId: opusProjectId,
@@ -356,7 +484,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4. Update Airtable — INCREMENT counters instead of resetting
+    // 4. Update Airtable
     await updateAirtableRecord(client.id, {
       Status: 'Posted',
       'Videos Processed': client.videosProcessed + 1,
