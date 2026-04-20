@@ -4,9 +4,10 @@ import { useState } from 'react'
 
 const navLinks = [
   { href: '/', label: 'Home', color: 'hover:text-yellow-400' },
+  { href: '/academy', label: 'Academy', color: 'hover:text-purple-400' },
+  { href: '/navigator', label: 'Navigator', color: 'hover:text-yellow-400' },
+  { href: '/game', label: 'MajorWinners', color: 'hover:text-orange-400' },
   { href: '/mwl', label: 'MWL', color: 'hover:text-yellow-400' },
-  { href: '/mwm', label: 'MWM', color: 'hover:text-blue-400' },
-  { href: '/basma', label: 'BASMA', color: 'hover:text-purple-400' },
   { href: '/contact', label: 'Contact', color: 'hover:text-white' },
 ]
 
