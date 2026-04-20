@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import ExpandableSection from '@/components/ExpandableSection'
 import BotPackageCard from '@/components/BotPackageCard'
@@ -10,8 +11,8 @@ export default function MWMContent() {
       
       <main className="min-h-screen bg-[#0a0a0a] text-white pt-16">
 
-        {/* ── Hero ─────────────────────────────────────────────── */}
-        <section className="max-w-4xl mx-auto px-4 pt-12 pb-16 text-center">
+        {/* ── Hero with background ─────────────────────────────── */}
+        <section className="relative max-w-4xl mx-auto px-4 pt-12 pb-16 text-center">
           <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold px-4 py-1.5 rounded-full mb-8 uppercase tracking-widest">
             📱 Social Media · Content · Growth · AI
           </div>
@@ -30,6 +31,28 @@ export default function MWMContent() {
           <Link href="/contact" className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-8 py-4 rounded-xl font-bold text-lg transition hover:opacity-90 shadow-lg shadow-blue-900/30">
             📱 Get a Free Consultation
           </Link>
+        </section>
+
+        {/* ── Social proof photo strip ─────────────────────────── */}
+        <section className="max-w-5xl mx-auto px-4 pb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { src: '/images/marketing/basma-tiktok-story.jpg', alt: 'TikTok content creation' },
+              { src: '/images/marketing/basma-banner.jpg', alt: 'Basma brand banner' },
+              { src: '/images/marketing/basma-business.jpg', alt: 'Professional business content' },
+              { src: '/images/marketing/basma-ig-academy.jpg', alt: 'Instagram academy growth' },
+            ].map((img, i) => (
+              <div key={i} className="relative h-48 rounded-2xl overflow-hidden group border border-blue-500/10">
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* ── What We Offer ───────────────────────────────────── */}
