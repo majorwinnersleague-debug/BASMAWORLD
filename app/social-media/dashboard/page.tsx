@@ -300,9 +300,9 @@ export default function DashboardPage() {
                     className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                       v.status === 'Posted'
                         ? 'bg-[#22C55E]/10 text-[#22C55E]'
-                        : v.status === 'Processing' || v.status === 'Clipping'
+                        : v.status === 'Processing' || v.status === 'Clipping' || v.status === 'Direct Posting'
                         ? 'bg-[#F59E0B]/10 text-[#F59E0B]'
-                        : v.status === 'No Clips Found'
+                        : v.status === 'No Clips Found' || v.status === 'Post Failed'
                         ? 'bg-red-500/10 text-red-400'
                         : 'bg-white/5 text-white/40'
                     }`}
@@ -334,19 +334,19 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-white/50">
           <div className="flex items-start gap-2">
             <span>1️⃣</span>
-            <span>Upload a video — any length, any format</span>
+            <span>Upload pre-clipped videos or a full-length video</span>
           </div>
           <div className="flex items-start gap-2">
             <span>2️⃣</span>
-            <span>AI picks the best clips & writes captions</span>
+            <span>AI writes platform-specific captions for each clip</span>
           </div>
           <div className="flex items-start gap-2">
             <span>3️⃣</span>
-            <span>Clips auto-post to your connected accounts</span>
+            <span>Clips auto-post to all your connected accounts</span>
           </div>
           <div className="flex items-start gap-2">
             <span>4️⃣</span>
-            <span>You get an email when everything&apos;s posted</span>
+            <span>You get an email when everything&apos;s live</span>
           </div>
         </div>
       </div>

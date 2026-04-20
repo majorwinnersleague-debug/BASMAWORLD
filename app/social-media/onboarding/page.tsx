@@ -85,10 +85,15 @@ export default function OnboardingPage() {
       await fetch('/api/social-media/process-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, videoUrl }),
+        body: JSON.stringify({
+          sessionId,
+          videoUrl,
+          directPost: true,
+          filename: uploadedFile?.name ?? 'clip.mp4',
+        }),
       })
     } catch {
-      // Fire and forget — webhook handles the rest
+      // Fire and forget — posting continues server-side
     }
     setProcessing(false)
   }
@@ -228,17 +233,23 @@ export default function OnboardingPage() {
           <div className="text-6xl mb-2 float">🚀</div>
           <h2 className="text-3xl font-bold text-white">You&apos;re all set!</h2>
           <p className="text-white/60">
-            Your video is queued. We&apos;ll run it through Opus Clip, pick the best moments,
-            write platform-specific captions, and post everything automatically.
+            Your video is ready! Hit the button below and we&apos;ll generate
+            platform-specific captions with AI and post directly to all your
+            connected accounts.
           </p>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-left space-y-3">
-            {['Video received ✓', 'Opus Clip processing…', 'AI selecting best clips', 'Writing captions per platform', 'Posting to your accounts'].map((step, i) => (
+            {[
+              { label: 'Video uploaded to cloud', done: true },
+              { label: 'AI generating captions per platform', done: false },
+              { label: 'Posting to your connected accounts', done: false },
+              { label: 'Email notification when done', done: false },
+            ].map((s, i) => (
               <div key={i} className="flex items-center gap-3">
-                <span className={`text-sm w-5 h-5 rounded-full flex items-center justify-center ${i === 0 ? 'text-[#22C55E] bg-[#22C55E]/10' : 'text-white/20 bg-white/5'}`}>
-                  {i === 0 ? '✓' : '○'}
+                <span className={`text-sm w-5 h-5 rounded-full flex items-center justify-center ${s.done ? 'text-[#22C55E] bg-[#22C55E]/10' : 'text-white/20 bg-white/5'}`}>
+                  {s.done ? '✓' : '○'}
                 </span>
-                <span className={`text-sm ${i === 0 ? 'text-white' : 'text-white/30'}`}>{step}</span>
+                <span className={`text-sm ${s.done ? 'text-white' : 'text-white/30'}`}>{s.label}</span>
               </div>
             ))}
           </div>
@@ -248,7 +259,7 @@ export default function OnboardingPage() {
             disabled={processing}
             className="w-full py-4 rounded-xl font-bold text-white bg-[#8B5CF6] hover:bg-[#7C3AED] transition-all glow-purple disabled:opacity-50"
           >
-            {processing ? 'Starting automation…' : 'Start Processing My Video →'}
+            {processing ? 'Posting to your socials…' : 'Post My Video Now →'}
           </button>
 
           <a
