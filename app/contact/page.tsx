@@ -40,7 +40,7 @@ export default function ContactPage() {
 
           {/* Header */}
           <div className="text-center mb-16">
-            <p className="text-xs text-[#c9a84c]/60 tracking-[0.3em] uppercase mb-4 font-medium">Get In Touch</p>
+            <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-4">Get In Touch</p>
             <h1 className="text-4xl md:text-5xl font-semibold text-white mb-5 tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
               Contact <span className="gradient-gold">BasmaWorld</span>
             </h1>
@@ -53,7 +53,7 @@ export default function ContactPage() {
 
             {/* Left — quick options */}
             <div className="space-y-3">
-              <h2 className="text-sm font-semibold text-white/60 uppercase tracking-widest mb-5">How Can We Help</h2>
+              <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-5">How Can We Help</h2>
 
               {[
                 { title: 'Marketing Consultation', desc: 'Grow your brand with MWL', href: '/mwl', accent: 'border-[#c9a84c]/20 hover:border-[#c9a84c]/40' },
@@ -64,7 +64,7 @@ export default function ContactPage() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className={`flex items-center gap-4 bg-white/[0.02] border ${item.accent} rounded-xl p-5 transition-all duration-300 group hover:bg-white/[0.04]`}
+                  className={`flex items-center gap-4 card-minimal border ${item.accent} rounded-xl p-5 transition-all duration-200 group`}
                 >
                   <div className="flex-1">
                     <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">{item.title}</p>
@@ -75,8 +75,8 @@ export default function ContactPage() {
               ))}
 
               {/* Direct contact */}
-              <div className="glass rounded-xl p-5 mt-4">
-                <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Direct Contact</p>
+              <div className="card-minimal rounded-xl p-5 mt-4">
+                <p className="text-white/30 text-xs uppercase tracking-widest mb-3">Direct Contact</p>
                 <div className="space-y-2 text-sm text-white/35">
                   <p>(702) 788-7369</p>
                   <p>9205 W Russell Rd Bldg 3, Las Vegas NV 89148</p>
@@ -93,7 +93,7 @@ export default function ContactPage() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.12] px-3 py-1.5 rounded-full text-xs transition-all duration-300"
+                        className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.12] px-3 py-1.5 rounded-full text-xs transition-all duration-200"
                       >
                         {link.label}
                       </a>
@@ -105,7 +105,7 @@ export default function ContactPage() {
 
             {/* Right — contact form */}
             <div>
-              <h2 className="text-sm font-semibold text-white/60 uppercase tracking-widest mb-5">Send a Message</h2>
+              <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-5">Send a Message</h2>
               <MWLContactForm />
             </div>
 
