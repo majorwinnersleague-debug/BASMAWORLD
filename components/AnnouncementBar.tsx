@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
 const DISMISSED_KEY = 'basmaworld_announcement_dismissed'
-const BAR_HEIGHT = '36px'
+const BAR_HEIGHT = '32px'
 
 export default function AnnouncementBar() {
   const [dismissed, setDismissed] = useState(true)
@@ -28,32 +28,23 @@ export default function AnnouncementBar() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-between gap-2 px-3"
+      className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-center gap-3 px-4"
       style={{
-        background: 'linear-gradient(90deg, #050505, #0d0a00, #050505)',
-        borderBottom: '1px solid rgba(201, 168, 76, 0.15)',
+        background: '#0a0a0a',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
         height: BAR_HEIGHT,
       }}
     >
-      <div className="w-7 flex-shrink-0" />
-
-      <div className="flex flex-1 items-center justify-center gap-3 min-w-0">
-        <span className="text-white/50 text-xs font-medium tracking-wide">
-          <span className="hidden sm:inline">Limited Availability — </span>
-          Book Your <span className="text-[#c9a84c] font-semibold">Free</span> Trial Lesson
-        </span>
-        <Link
-          href="/basma"
-          className="flex-shrink-0 text-[#c9a84c] hover:text-[#e4cc7a] text-xs font-semibold tracking-wide transition-colors duration-200 border-b border-[#c9a84c]/30 hover:border-[#c9a84c]/60 pb-px"
-        >
-          Reserve Now
-        </Link>
-      </div>
-
+      <span className="text-white/30 text-xs">
+        Book a <span className="text-[#c9a84c]">free</span> trial lesson
+      </span>
+      <Link href="/basma" className="text-[#c9a84c] text-xs hover:text-[#e4cc7a] transition-colors">
+        Reserve →
+      </Link>
       <button
         onClick={dismiss}
         aria-label="Dismiss"
-        className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-white/20 hover:text-white/50 transition-colors duration-200 text-xs"
+        className="absolute right-3 text-white/15 hover:text-white/30 text-xs transition-colors"
       >
         ✕
       </button>
