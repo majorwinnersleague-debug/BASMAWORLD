@@ -166,7 +166,7 @@ export default function Home() {
               Enter the Game
             </a>
             <a
-              href="https://www.viverse.com"
+              href="https://www.viverse.com/YHJwrYG"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-outline px-8 py-3.5 rounded-full text-sm tracking-wide"

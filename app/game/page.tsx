@@ -295,7 +295,7 @@ export default function GamePage() {
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
           <a
-            href="https://www.viverse.com"
+            href="https://www.viverse.com/YHJwrYG"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-gold px-8 py-3.5 rounded-full text-sm tracking-wide"
