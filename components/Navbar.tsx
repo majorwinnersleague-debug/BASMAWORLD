@@ -5,9 +5,8 @@ import { useState, useEffect } from 'react'
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/academy', label: 'Academy' },
+  { href: '/game', label: 'Game' },
   { href: '/navigator', label: 'Navigator' },
-  { href: '/game', label: 'MajorWinners' },
-  { href: '/mwl', label: 'MWL' },
   { href: '/contact', label: 'Contact' },
 ]
 
@@ -23,58 +22,43 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'backdrop-blur-xl border-b border-white/[0.06]'
-          : 'border-b border-transparent'
+      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-[#050505]/90 backdrop-blur-md border-b border-white/[0.04]' : ''
       }`}
-      style={{
-        top: 'var(--ann-bar-height, 0px)',
-        background: scrolled ? 'rgba(5, 5, 5, 0.85)' : 'transparent',
-      }}
+      style={{ top: 'var(--ann-bar-height, 0px)' }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link
           href="/"
-          className="text-lg font-semibold tracking-tight hover:opacity-80 transition-opacity"
-          style={{
-            fontFamily: "'Playfair Display', serif",
-            background: 'linear-gradient(135deg, #e4cc7a, #c9a84c)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
+          className="text-lg font-semibold tracking-tight gradient-gold"
+          style={{ fontFamily: "'Playfair Display', serif" }}
         >
           BasmaWorld
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+          {navLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-white/50 hover:text-white transition-colors duration-300"
+              className="text-sm text-white/40 hover:text-white transition-colors"
             >
               {link.label}
             </Link>
           ))}
-          <a
-            href="/basma"
-            className="btn-gold px-5 py-2 rounded-full text-xs font-semibold tracking-wide uppercase"
-          >
+          <a href="/basma" className="text-sm text-[#c9a84c] hover:text-[#e4cc7a] transition-colors">
             Book a Lesson
           </a>
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Mobile */}
         <button
-          className="md:hidden text-white/60 hover:text-white transition-colors w-8 h-8 flex items-center justify-center"
+          className="md:hidden text-white/40 hover:text-white w-8 h-8 flex items-center justify-center"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
             {open ? (
               <>
                 <line x1="4" y1="4" x2="16" y2="16" />
@@ -91,18 +75,15 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile dropdown */}
+      {/* Mobile menu */}
       {open && (
-        <div
-          className="md:hidden border-t border-white/[0.06] px-6 py-6 flex flex-col gap-1 animate-fadeIn"
-          style={{ background: 'rgba(5, 5, 5, 0.95)', backdropFilter: 'blur(24px)' }}
-        >
-          {navLinks.map((link) => (
+        <div className="md:hidden bg-[#050505]/95 backdrop-blur-md border-t border-white/[0.04] px-6 py-4 animate-fadeIn">
+          {navLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="text-white/50 hover:text-white py-3 text-sm font-medium transition-colors border-b border-white/[0.04] last:border-0"
+              className="block text-white/40 hover:text-white py-2.5 text-sm transition-colors"
             >
               {link.label}
             </Link>
@@ -110,7 +91,7 @@ export default function Navbar() {
           <a
             href="/basma"
             onClick={() => setOpen(false)}
-            className="btn-gold mt-4 px-5 py-3 rounded-full text-xs font-semibold tracking-wide uppercase text-center"
+            className="block text-[#c9a84c] py-2.5 text-sm mt-2 border-t border-white/[0.04] pt-4"
           >
             Book a Lesson
           </a>
