@@ -2,17 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "redirects": [
-    {
-      "source": "/enroll",
-      "destination": "https://basma-enrollment-v2-51e52f45.viktor.space",
-      "permanent": false
-    },
-    {
-      "source": "/enroll/:path*",
-      "destination": "https://basma-enrollment-v2-51e52f45.viktor.space/:path*",
-      "permanent": false
-    }
-  ]
+  "installCommand": "npm install"
 }
