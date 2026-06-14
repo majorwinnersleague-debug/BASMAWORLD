@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   TYPES — matches /api/registrations response
+   TYPES
    ═══════════════════════════════════════════════════════════════════════════ */
 
 interface Registration {
@@ -25,18 +25,24 @@ interface Registration {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   SCHEDULE DATA — Mon-Thu, 6787 W Tropicana Ave
+   SCHEDULE DATA — correct times per academy schedule
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const SCHEDULE_BLOCKS = [
-  { time: '9:00–9:45 AM',       label: 'Tiny Tots Music',         month: 'july-aug', ageRange: '2–5',   duration: '45 min',  maxSlots: 10 },
-  { time: '10:00–11:00 AM',     label: 'Kids Music (5–10)',       month: 'july-aug', ageRange: '5–10',  duration: '60 min',  maxSlots: 15 },
-  { time: '11:00 AM–12:00 PM',  label: 'Kids Music (11–17)',      month: 'july-aug', ageRange: '11–17', duration: '60 min',  maxSlots: 15 },
-  { time: '12:00–1:00 PM',      label: 'Piano Class',             month: 'july-aug', ageRange: 'All',   duration: '60 min',  maxSlots: 10 },
-  { time: '1:00–2:00 PM',       label: 'Teens Recording Studio',  month: 'july-aug', ageRange: '13–17', duration: '60 min',  maxSlots: 10 },
+  { time: '9:00 – 9:45 AM',        label: 'Tiny Tots Music & Fun',   ageRange: '2–5',   emoji: '👶', color: '#f472b6' },
+  { time: '10:00 – 11:30 AM',      label: 'Kids Music & Fun (5–10)', ageRange: '5–10',  emoji: '🎵', color: '#60a5fa' },
+  { time: '11:30 AM – 1:00 PM',    label: 'Kids Music & Fun (10–17)',ageRange: '10–17', emoji: '🎤', color: '#a78bfa' },
+  { time: '1:30 – 2:45 PM',        label: 'Piano Class Lecture',     ageRange: 'All',   emoji: '🎹', color: '#34d399' },
+  { time: '2:45 – 4:00 PM',        label: 'Teens Recording Lecture', ageRange: 'Teens', emoji: '🎧', color: '#f59e0b', julyAugOnly: true },
 ]
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
+
+/* Pre-set closures */
+const DEFAULT_CLOSURES: { date: string; note: string }[] = [
+  { date: '2026-07-03', note: 'Independence Day Weekend' },
+  { date: '2026-07-04', note: 'Independence Day 🇺🇸' },
+]
 
 /* ═══════════════════════════════════════════════════════════════════════════
    HELPERS
@@ -55,42 +61,66 @@ function safe(val: unknown): string {
   return ''
 }
 
-/** Try to classify a registration into a schedule block based on interests/age */
 function classifyRegistration(r: Registration): string {
   const interests = safe(r.interests).toLowerCase()
   const age = parseInt(safe(r.studentAge)) || 0
   const msg = safe(r.message).toLowerCase()
-
-  // Check interests for keywords
-  if (interests.includes('piano')) return 'Piano Class'
-  if (interests.includes('recording') || interests.includes('studio')) return 'Teens Recording Studio'
-  if (interests.includes('tiny tots') || interests.includes('toddler')) return 'Tiny Tots Music'
-
-  // Classify by age
-  if (age >= 2 && age <= 4) return 'Tiny Tots Music'
-  if (age >= 5 && age <= 10) return 'Kids Music (5–10)'
-  if (age >= 11 && age <= 17) return 'Kids Music (11–17)'
-  if (age >= 13) return 'Teens Recording Studio'
-
-  // Check message field for age
+  if (interests.includes('piano')) return 'Piano Class Lecture'
+  if (interests.includes('recording') || interests.includes('studio')) return 'Teens Recording Lecture'
+  if (interests.includes('tiny tots') || interests.includes('toddler')) return 'Tiny Tots Music & Fun'
+  if (age >= 2 && age <= 4) return 'Tiny Tots Music & Fun'
+  if (age >= 5 && age <= 10) return 'Kids Music & Fun (5–10)'
+  if (age >= 10 && age <= 17) return 'Kids Music & Fun (10–17)'
   const ageMatch = msg.match(/age:\s*(\d+)/)
   if (ageMatch) {
-    const parsedAge = parseInt(ageMatch[1])
-    if (parsedAge >= 2 && parsedAge <= 4) return 'Tiny Tots Music'
-    if (parsedAge >= 5 && parsedAge <= 10) return 'Kids Music (5–10)'
-    if (parsedAge >= 11 && parsedAge <= 17) return 'Kids Music (11–17)'
+    const a = parseInt(ageMatch[1])
+    if (a >= 2 && a <= 4) return 'Tiny Tots Music & Fun'
+    if (a >= 5 && a <= 10) return 'Kids Music & Fun (5–10)'
+    if (a >= 10 && a <= 17) return 'Kids Music & Fun (10–17)'
   }
-
   return 'Unassigned'
 }
+
+function getMonthDays(year: number, month: number) {
+  const firstDay = new Date(year, month, 1)
+  const lastDay = new Date(year, month + 1, 0)
+  const startPad = firstDay.getDay() // 0=Sun
+  const days: { date: Date; inMonth: boolean }[] = []
+  // Pad start
+  for (let i = startPad - 1; i >= 0; i--) {
+    const d = new Date(year, month, -i)
+    days.push({ date: d, inMonth: false })
+  }
+  // Month days
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    days.push({ date: new Date(year, month, d), inMonth: true })
+  }
+  // Pad end to 42 (6 rows)
+  while (days.length < 42) {
+    const d = new Date(year, month + 1, days.length - startPad - lastDay.getDate() + 1)
+    days.push({ date: d, inMonth: false })
+  }
+  return days
+}
+
+function dateKey(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function isClassDay(d: Date): boolean {
+  const dow = d.getDay()
+  return dow >= 1 && dow <= 4 // Mon-Thu
+}
+
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMPONENT
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-
-type TabView = 'roster' | 'calendar'
+type TabView = 'roster' | 'calendar' | 'closures'
 
 export default function TeacherContent() {
   const [authenticated, setAuthenticated] = useState(false)
@@ -102,11 +132,35 @@ export default function TeacherContent() {
   const [expandedClass, setExpandedClass] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Check localStorage for saved auth
+  // Calendar month navigation
+  const [calMonth, setCalMonth] = useState(new Date().getMonth()) // 0-indexed
+  const [calYear, setCalYear] = useState(2026)
+
+  // Closures
+  const [closures, setClosures] = useState<{ date: string; note: string }[]>(DEFAULT_CLOSURES)
+  const [newClosureDate, setNewClosureDate] = useState('')
+  const [newClosureNote, setNewClosureNote] = useState('')
+
+  // Birthdays (local storage)
+  const [birthdays, setBirthdays] = useState<Record<string, string>>({})
+  const [editingBirthday, setEditingBirthday] = useState<string | null>(null)
+  const [birthdayInput, setBirthdayInput] = useState('')
+
+  // Auth check
   useEffect(() => {
     try {
       const saved = localStorage.getItem('basma-teacher-auth')
       if (saved === 'true') setAuthenticated(true)
+    } catch {}
+  }, [])
+
+  // Load closures & birthdays from localStorage
+  useEffect(() => {
+    try {
+      const savedClosures = localStorage.getItem('basma-closures')
+      if (savedClosures) setClosures(JSON.parse(savedClosures))
+      const savedBdays = localStorage.getItem('basma-birthdays')
+      if (savedBdays) setBirthdays(JSON.parse(savedBdays))
     } catch {}
   }, [])
 
@@ -121,114 +175,74 @@ export default function TeacherContent() {
     }
   }
 
-  if (!authenticated) {
-    return (
-      <main className="min-h-screen flex items-center justify-center text-white" style={{ background: '#050505' }}>
-        <div className="text-center max-w-sm mx-auto px-6">
-          <div className="mb-8">
-            <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-4">Teacher Portal</p>
-            <h1 className="text-3xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-              <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BASMA</span> Teachers
-            </h1>
-            <p className="text-white/40 text-sm">Enter your access code to continue.</p>
-          </div>
-          <form onSubmit={handleCodeSubmit} className="space-y-4">
-            <input
-              type="password"
-              placeholder="Access code"
-              value={codeInput}
-              onChange={(e) => { setCodeInput(e.target.value); setCodeError(false) }}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-2xl tracking-[0.5em] placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition"
-              autoFocus
-            />
-            {codeError && <p className="text-red-400 text-sm">Incorrect code. Please try again.</p>}
-            <button
-              type="submit"
-              disabled={!codeInput.trim()}
-              className="w-full py-3 rounded-xl font-semibold text-sm tracking-wide transition disabled:opacity-40"
-              style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}
-            >
-              Enter Portal
-            </button>
-          </form>
-          <p className="mt-6 text-xs text-white/20">
-            Contact admin for your access code
-          </p>
-        </div>
-      </main>
-    )
+  // Save closures
+  function addClosure() {
+    if (!newClosureDate) return
+    const updated = [...closures, { date: newClosureDate, note: newClosureNote || 'School Closed' }]
+    setClosures(updated)
+    try { localStorage.setItem('basma-closures', JSON.stringify(updated)) } catch {}
+    setNewClosureDate('')
+    setNewClosureNote('')
   }
 
-  // Calendar state — teacher availability
-  const [availability, setAvailability] = useState<Record<string, Record<string, 'available' | 'busy' | 'off'>>>(() => {
-    const init: Record<string, Record<string, 'available' | 'busy' | 'off'>> = {}
-    for (const day of DAYS) {
-      init[day] = {}
-      for (const block of SCHEDULE_BLOCKS) {
-        init[day][block.label] = 'available'
-      }
+  function removeClosure(date: string) {
+    const updated = closures.filter(c => c.date !== date)
+    setClosures(updated)
+    try { localStorage.setItem('basma-closures', JSON.stringify(updated)) } catch {}
+  }
+
+  function toggleClosureOnDate(dateStr: string) {
+    const existing = closures.find(c => c.date === dateStr)
+    if (existing) {
+      removeClosure(dateStr)
+    } else {
+      const updated = [...closures, { date: dateStr, note: 'School Closed' }]
+      setClosures(updated)
+      try { localStorage.setItem('basma-closures', JSON.stringify(updated)) } catch {}
     }
-    return init
-  })
-
-  // Load from localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('basma-teacher-availability')
-      if (saved) setAvailability(JSON.parse(saved))
-    } catch {}
-  }, [])
-
-  // Save to localStorage
-  function toggleAvailability(day: string, block: string) {
-    setAvailability(prev => {
-      const next = { ...prev }
-      next[day] = { ...prev[day] }
-      const current = next[day][block] || 'available'
-      const cycle: Record<string, 'available' | 'busy' | 'off'> = {
-        'available': 'busy',
-        'busy': 'off',
-        'off': 'available',
-      }
-      next[day][block] = cycle[current]
-      try { localStorage.setItem('basma-teacher-availability', JSON.stringify(next)) } catch {}
-      return next
-    })
   }
 
+  // Save birthday
+  function saveBirthday(studentId: string) {
+    const updated = { ...birthdays, [studentId]: birthdayInput }
+    setBirthdays(updated)
+    try { localStorage.setItem('basma-birthdays', JSON.stringify(updated)) } catch {}
+    setEditingBirthday(null)
+    setBirthdayInput('')
+  }
+
+  // Fetch registrations
   useEffect(() => {
-    fetch('/api/registrations')
+    if (!authenticated) return
+    fetch('/api/registrations?source=all')
       .then(r => r.json())
       .then(data => {
         setRegistrations(data.registrations || [])
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [])
+  }, [authenticated])
 
-  /* Group registrations by class block */
+  const closureSet = useMemo(() => new Set(closures.map(c => c.date)), [closures])
+
+  /* Group registrations by class */
   const classBuckets = useMemo(() => {
     const buckets: Record<string, { block: typeof SCHEDULE_BLOCKS[0]; students: Registration[] }> = {}
     for (const block of SCHEDULE_BLOCKS) {
       buckets[block.label] = { block, students: [] }
     }
     buckets['Unassigned'] = {
-      block: { time: 'TBD', label: 'Unassigned', month: 'july-aug', ageRange: 'All', duration: '', maxSlots: 0 },
+      block: { time: 'TBD', label: 'Unassigned', ageRange: 'All', emoji: '📋', color: '#6b7280' },
       students: [],
     }
-
     for (const reg of registrations) {
       const cls = classifyRegistration(reg)
-      if (buckets[cls]) {
-        buckets[cls].students.push(reg)
-      } else {
-        buckets['Unassigned'].students.push(reg)
-      }
+      if (buckets[cls]) buckets[cls].students.push(reg)
+      else buckets['Unassigned'].students.push(reg)
     }
     return buckets
   }, [registrations])
 
-  /* Filtered buckets */
   const filteredBuckets = useMemo(() => {
     return Object.entries(classBuckets)
       .filter(([, { students }]) => students.length > 0)
@@ -243,56 +257,97 @@ export default function TeacherContent() {
       })
   }, [classBuckets, searchQuery])
 
-  /* Summary stats */
   const stats = useMemo(() => {
     const uniqueStudents = new Set(registrations.map(r => safe(r.studentName).trim().toLowerCase()).filter(Boolean))
     const uniqueParents = new Set(registrations.map(r => safe(r.email).trim().toLowerCase()).filter(Boolean))
-    const complete = registrations.filter(r => safe(r.status).toLowerCase() !== 'incomplete').length
-    const incomplete = registrations.filter(r => safe(r.status).toLowerCase() === 'incomplete').length
-
     return {
       total: registrations.length,
       uniqueStudents: uniqueStudents.size,
       uniqueParents: uniqueParents.size,
-      complete,
-      incomplete,
+      complete: registrations.filter(r => safe(r.status).toLowerCase() !== 'incomplete').length,
+      incomplete: registrations.filter(r => safe(r.status).toLowerCase() === 'incomplete').length,
     }
   }, [registrations])
+
+  // Upcoming birthdays
+  const upcomingBirthdays = useMemo(() => {
+    const today = new Date()
+    return Object.entries(birthdays)
+      .map(([id, bday]) => {
+        const student = registrations.find(r => r.id === id)
+        if (!student || !bday) return null
+        const [m, d] = bday.split('/').map(Number)
+        if (!m || !d) return null
+        let next = new Date(today.getFullYear(), m - 1, d)
+        if (next < today) next = new Date(today.getFullYear() + 1, m - 1, d)
+        const daysUntil = Math.ceil((next.getTime() - today.getTime()) / 86400000)
+        return { name: safe(student.studentName) || safe(student.parentName), birthday: bday, daysUntil }
+      })
+      .filter(Boolean)
+      .sort((a, b) => a!.daysUntil - b!.daysUntil)
+      .slice(0, 5) as { name: string; birthday: string; daysUntil: number }[]
+  }, [birthdays, registrations])
+
+  // Login screen
+  if (!authenticated) {
+    return (
+      <main className="min-h-screen flex items-center justify-center text-white" style={{ background: '#050505' }}>
+        <div className="text-center max-w-sm mx-auto px-6">
+          <div className="mb-8">
+            <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-4">Teacher Portal</p>
+            <h1 className="text-3xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BASMA</span> Teachers
+            </h1>
+            <p className="text-white/40 text-sm">Enter your access code to continue.</p>
+          </div>
+          <form onSubmit={handleCodeSubmit} className="space-y-4">
+            <input type="password" placeholder="Access code" value={codeInput}
+              onChange={(e) => { setCodeInput(e.target.value); setCodeError(false) }}
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-2xl tracking-[0.5em] placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition"
+              autoFocus />
+            {codeError && <p className="text-red-400 text-sm">Incorrect code. Please try again.</p>}
+            <button type="submit" disabled={!codeInput.trim()}
+              className="w-full py-3 rounded-xl font-semibold text-sm tracking-wide transition disabled:opacity-40"
+              style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+              Enter Portal
+            </button>
+          </form>
+        </div>
+      </main>
+    )
+  }
 
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#050505' }}>
         <div className="text-center">
           <div className="text-4xl animate-pulse mb-4">🎵</div>
-          <p className="text-white/40 text-sm">Loading registrations...</p>
+          <p className="text-white/40 text-sm">Loading...</p>
         </div>
       </main>
     )
   }
 
+  const calDays = getMonthDays(calYear, calMonth)
+
   return (
     <main className="min-h-screen text-white" style={{ background: '#050505' }}>
-      {/* ─── Header ────────────────────────────────────────── */}
+      {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-        <Link href="/" className="text-lg font-bold tracking-wider" style={{ color: '#c9a84c', fontFamily: "'Playfair Display', serif" }}>
-          BASMA
-        </Link>
+        <Link href="/" className="text-lg font-bold tracking-wider" style={{ color: '#c9a84c', fontFamily: "'Playfair Display', serif" }}>BASMA</Link>
         <span className="text-sm text-white/40">Teacher Portal</span>
       </header>
 
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8">
-        {/* ─── Title & Stats ──────────────────────────────── */}
+        {/* Title */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Teacher{' '}
-            <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Dashboard
-            </span>
+            Teacher <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Dashboard</span>
           </h1>
-          <p className="text-white/30 text-sm">Summer 2026 · 6787 W Tropicana Ave · Mon–Thu</p>
+          <p className="text-white/30 text-sm">Summer 2026 · 6787 W Tropicana Ave Suite 260 · Mon–Thu</p>
         </div>
 
-        {/* Stats cards */}
+        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
           {[
             { label: 'Total Sign-ups', value: stats.total, emoji: '📋' },
@@ -309,40 +364,43 @@ export default function TeacherContent() {
           ))}
         </div>
 
-        {/* ─── Tab navigation ─────────────────────────────── */}
+        {/* Upcoming Birthdays */}
+        {upcomingBirthdays.length > 0 && (
+          <div className="mb-6 p-4 rounded-xl" style={{ background: 'rgba(244,114,182,0.05)', border: '1px solid rgba(244,114,182,0.15)' }}>
+            <h3 className="text-sm font-semibold text-pink-400 mb-2">🎂 Upcoming Birthdays</h3>
+            <div className="flex flex-wrap gap-3">
+              {upcomingBirthdays.map(b => (
+                <span key={b.name} className="text-xs px-3 py-1.5 rounded-full" style={{ background: 'rgba(244,114,182,0.1)', color: '#f472b6' }}>
+                  {b.name} — {b.birthday} {b.daysUntil === 0 ? '🎉 TODAY!' : b.daysUntil <= 7 ? `(in ${b.daysUntil}d!)` : `(in ${b.daysUntil}d)`}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tabs */}
         <div className="flex gap-1 mb-6 p-1 rounded-xl bg-white/[0.03] w-fit">
           {([
             { id: 'roster' as const, label: '📋 Class Roster' },
             { id: 'calendar' as const, label: '📅 Calendar' },
+            { id: 'closures' as const, label: '🚫 School Closures' },
           ]).map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                tab === t.id
-                  ? 'bg-[#c9a84c]/20 text-[#c9a84c]'
-                  : 'text-white/40 hover:text-white/60'
-              }`}
-            >
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${tab === t.id ? 'bg-[#c9a84c]/20 text-[#c9a84c]' : 'text-white/40 hover:text-white/60'}`}>
               {t.label}
             </button>
           ))}
         </div>
 
+        {/* ═══ ROSTER TAB ═══ */}
         {tab === 'roster' && (
           <>
-            {/* ─── Search ─────────────────────────────────── */}
             <div className="flex flex-wrap gap-3 mb-6">
-              <input
-                type="text"
-                placeholder="Search student or parent..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-sm text-white placeholder-white/20 focus:border-[#c9a84c]/30 focus:outline-none transition flex-1 min-w-[200px]"
-              />
+              <input type="text" placeholder="Search student or parent..."
+                value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-sm text-white placeholder-white/20 focus:border-[#c9a84c]/30 focus:outline-none transition flex-1 min-w-[200px]" />
             </div>
 
-            {/* ─── Class blocks ───────────────────────────── */}
             {filteredBuckets.length === 0 ? (
               <div className="text-center py-12 text-white/30">
                 <p className="text-4xl mb-4">📭</p>
@@ -354,80 +412,82 @@ export default function TeacherContent() {
                 const filteredStudents = searchQuery.trim()
                   ? students.filter(s => {
                       const q = searchQuery.toLowerCase()
-                      return safe(s.studentName).toLowerCase().includes(q) ||
-                             safe(s.parentName).toLowerCase().includes(q) ||
-                             safe(s.email).toLowerCase().includes(q)
+                      return safe(s.studentName).toLowerCase().includes(q) || safe(s.parentName).toLowerCase().includes(q) || safe(s.email).toLowerCase().includes(q)
                     })
                   : students
 
                 return (
                   <div key={label} className="mb-4 rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    {/* Class header — clickable */}
-                    <button
-                      onClick={() => setExpandedClass(isExpanded ? null : label)}
-                      className="w-full px-5 py-4 flex items-center justify-between hover:bg-white/[0.02] transition text-left"
-                    >
+                    <button onClick={() => setExpandedClass(isExpanded ? null : label)}
+                      className="w-full px-5 py-4 flex items-center justify-between hover:bg-white/[0.02] transition text-left">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: 'rgba(201,168,76,0.1)' }}>
-                          {label === 'Tiny Tots Music' ? '👶' :
-                           label.includes('5–10') ? '🎵' :
-                           label.includes('11–17') ? '🎤' :
-                           label === 'Piano Class' ? '🎹' :
-                           label === 'Teens Recording Studio' ? '🎧' : '📋'}
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: `${block.color}15` }}>
+                          {block.emoji}
                         </div>
                         <div>
                           <h3 className="font-semibold text-white/90">{block.label}</h3>
-                          <p className="text-xs text-white/30">
-                            {block.time} · Ages {block.ageRange}{block.duration ? ` · ${block.duration}` : ''}
-                          </p>
+                          <p className="text-xs text-white/30">{block.time} · Ages {block.ageRange}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold" style={{ color: '#c9a84c' }}>
-                          {filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''}
-                        </span>
+                        <span className="text-sm font-bold" style={{ color: '#c9a84c' }}>{filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''}</span>
                         <svg className={`w-5 h-5 text-white/30 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </div>
                     </button>
 
-                    {/* Expanded student list */}
                     {isExpanded && (
                       <div className="border-t border-white/5">
                         {/* Table header */}
                         <div className="hidden md:grid grid-cols-12 gap-2 px-5 py-2 text-xs text-white/25 uppercase tracking-wider border-b border-white/5">
-                          <div className="col-span-3">Student</div>
+                          <div className="col-span-2">Student</div>
                           <div className="col-span-1">Age</div>
-                          <div className="col-span-3">Parent</div>
+                          <div className="col-span-2">Birthday</div>
+                          <div className="col-span-2">Parent</div>
                           <div className="col-span-2">Phone</div>
-                          <div className="col-span-2">Interests</div>
+                          <div className="col-span-2">Email</div>
                           <div className="col-span-1">Status</div>
                         </div>
 
                         {filteredStudents.map((s, idx) => (
                           <div key={s.id} className={`px-5 py-3 ${idx % 2 === 0 ? 'bg-white/[0.01]' : ''} border-b border-white/[0.03] last:border-0`}>
-                            {/* Desktop row */}
                             <div className="hidden md:grid grid-cols-12 gap-2 items-center text-sm">
-                              <div className="col-span-3 font-medium text-white/80">{safe(s.studentName) || safe(s.parentName)}</div>
+                              <div className="col-span-2 font-medium text-white/80">{safe(s.studentName) || safe(s.parentName)}</div>
                               <div className="col-span-1 text-white/40">{safe(s.studentAge) || '—'}</div>
-                              <div className="col-span-3">
-                                <p className="text-white/60">{safe(s.parentName)}</p>
-                                <p className="text-xs text-white/25">{safe(s.email)}</p>
+                              <div className="col-span-2">
+                                {editingBirthday === s.id ? (
+                                  <div className="flex gap-1">
+                                    <input type="text" placeholder="MM/DD" value={birthdayInput}
+                                      onChange={e => setBirthdayInput(e.target.value)}
+                                      onKeyDown={e => e.key === 'Enter' && saveBirthday(s.id)}
+                                      className="w-20 px-2 py-1 rounded text-xs bg-white/10 border border-white/20 text-white focus:outline-none"
+                                      autoFocus />
+                                    <button onClick={() => saveBirthday(s.id)} className="text-xs text-green-400 hover:text-green-300">✓</button>
+                                    <button onClick={() => setEditingBirthday(null)} className="text-xs text-white/30 hover:text-white/50">✕</button>
+                                  </div>
+                                ) : (
+                                  <button onClick={() => { setEditingBirthday(s.id); setBirthdayInput(birthdays[s.id] || '') }}
+                                    className="text-xs hover:text-white/60 transition">
+                                    {birthdays[s.id] ? (
+                                      <span className="text-pink-400">🎂 {birthdays[s.id]}</span>
+                                    ) : (
+                                      <span className="text-white/20">+ Add birthday</span>
+                                    )}
+                                  </button>
+                                )}
+                              </div>
+                              <div className="col-span-2">
+                                <p className="text-white/60 text-xs">{safe(s.parentName)}</p>
                               </div>
                               <div className="col-span-2 text-white/40 text-xs">{formatPhone(safe(s.phone))}</div>
-                              <div className="col-span-2 text-xs text-white/40">{safe(s.interests) || '—'}</div>
+                              <div className="col-span-2 text-white/30 text-xs truncate">{safe(s.email)}</div>
                               <div className="col-span-1">
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                  safe(s.status).toLowerCase() === 'incomplete'
-                                    ? 'bg-yellow-500/10 text-yellow-400'
-                                    : 'bg-green-500/10 text-green-400'
-                                }`}>
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${safe(s.status).toLowerCase() === 'incomplete' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
                                   {safe(s.status) || 'New'}
                                 </span>
                               </div>
                             </div>
-
                             {/* Mobile card */}
                             <div className="md:hidden space-y-1">
                               <div className="flex items-center justify-between">
@@ -435,16 +495,12 @@ export default function TeacherContent() {
                                   {safe(s.studentName) || safe(s.parentName)}
                                   {safe(s.studentAge) && <span className="text-white/30"> (age {s.studentAge})</span>}
                                 </span>
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                  safe(s.status).toLowerCase() === 'incomplete'
-                                    ? 'bg-yellow-500/10 text-yellow-400'
-                                    : 'bg-green-500/10 text-green-400'
-                                }`}>
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${safe(s.status).toLowerCase() === 'incomplete' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
                                   {safe(s.status) || 'New'}
                                 </span>
                               </div>
                               <p className="text-xs text-white/40">{safe(s.parentName)} · {formatPhone(safe(s.phone))}</p>
-                              {safe(s.interests) && <p className="text-xs text-white/30">🎵 {s.interests}</p>}
+                              {birthdays[s.id] && <p className="text-xs text-pink-400">🎂 Birthday: {birthdays[s.id]}</p>}
                             </div>
                           </div>
                         ))}
@@ -457,88 +513,160 @@ export default function TeacherContent() {
           </>
         )}
 
+        {/* ═══ CALENDAR TAB ═══ */}
         {tab === 'calendar' && (
           <>
-            {/* ─── Calendar View ──────────────────────────── */}
-            <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-2">
-              <div>
-                <h2 className="text-xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Weekly{' '}
-                  <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    Schedule
-                  </span>
-                </h2>
-                <p className="text-xs text-white/30 mt-1">
-                  Click a cell to toggle: <span className="text-green-400">Available</span> → <span className="text-yellow-400">Busy</span> → <span className="text-red-400/60">Off</span>
-                </p>
-              </div>
-              <div className="flex gap-3 text-xs">
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)' }} /> Available</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(234,179,8,0.2)', border: '1px solid rgba(234,179,8,0.3)' }} /> Busy</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }} /> Off</span>
+            <div className="flex items-center justify-between mb-6">
+              <button onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(calYear - 1) } else setCalMonth(calMonth - 1) }}
+                className="px-3 py-2 rounded-lg bg-white/5 text-white/60 hover:bg-white/10 transition">←</button>
+              <h2 className="text-xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  {MONTH_NAMES[calMonth]} {calYear}
+                </span>
+              </h2>
+              <button onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(calYear + 1) } else setCalMonth(calMonth + 1) }}
+                className="px-3 py-2 rounded-lg bg-white/5 text-white/60 hover:bg-white/10 transition">→</button>
+            </div>
+
+            <p className="text-xs text-white/30 mb-4">Click any class day (Mon–Thu) to toggle it as closed. Red = closed.</p>
+
+            <div className="overflow-x-auto">
+              <div className="grid grid-cols-7 gap-1 min-w-[700px]">
+                {/* Day headers */}
+                {DAY_HEADERS.map(d => (
+                  <div key={d} className="text-center text-xs text-white/30 uppercase tracking-wider py-2 font-medium">{d}</div>
+                ))}
+                {/* Days */}
+                {calDays.map(({ date, inMonth }, i) => {
+                  const dk = dateKey(date)
+                  const isClosed = closureSet.has(dk)
+                  const isClass = isClassDay(date)
+                  const today = new Date()
+                  const isToday = date.toDateString() === today.toDateString()
+                  const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate())
+                  const closureNote = closures.find(c => c.date === dk)?.note
+
+                  return (
+                    <button key={i}
+                      onClick={() => inMonth && isClass && toggleClosureOnDate(dk)}
+                      disabled={!inMonth || !isClass}
+                      className={`rounded-lg p-2 text-left transition min-h-[100px] ${
+                        !inMonth ? 'opacity-20 cursor-default' :
+                        isClosed ? 'cursor-pointer' :
+                        isClass ? 'cursor-pointer hover:bg-white/[0.04]' :
+                        'cursor-default'
+                      }`}
+                      style={{
+                        background: isClosed && inMonth ? 'rgba(239,68,68,0.1)' :
+                                    isToday ? 'rgba(201,168,76,0.08)' :
+                                    isClass && inMonth ? 'rgba(255,255,255,0.02)' : 'transparent',
+                        border: isToday ? '2px solid rgba(201,168,76,0.3)' :
+                                isClosed && inMonth ? '1px solid rgba(239,68,68,0.2)' :
+                                isClass && inMonth ? '1px solid rgba(255,255,255,0.05)' :
+                                '1px solid transparent',
+                      }}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className={`text-sm font-medium ${isToday ? 'text-[#c9a84c]' : isPast ? 'text-white/20' : 'text-white/60'}`}>
+                          {date.getDate()}
+                        </span>
+                        {isClosed && inMonth && <span className="text-xs">🚫</span>}
+                      </div>
+                      {isClosed && inMonth ? (
+                        <p className="text-[10px] text-red-400 font-medium leading-tight">{closureNote || 'CLOSED'}</p>
+                      ) : isClass && inMonth && !isPast ? (
+                        <div className="space-y-0.5">
+                          {SCHEDULE_BLOCKS.filter(b => {
+                            if (b.julyAugOnly && calMonth < 6) return false // June = 5, July = 6
+                            return true
+                          }).map(b => (
+                            <div key={b.label} className="text-[9px] text-white/25 truncate leading-tight">
+                              <span style={{ color: b.color, opacity: 0.6 }}>●</span> {b.time.split('–')[0].trim()}
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-[700px]">
-                <thead>
-                  <tr>
-                    <th className="p-3 text-left text-xs text-white/30 uppercase tracking-wider border-b border-white/5 w-48">Time Slot</th>
-                    {DAYS.map(day => (
-                      <th key={day} className="p-3 text-center text-xs text-white/30 uppercase tracking-wider border-b border-white/5">{day}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {SCHEDULE_BLOCKS.map(block => {
-                    const studentCount = classBuckets[block.label]?.students.length || 0
-                    return (
-                      <tr key={block.label} className="border-b border-white/[0.03]">
-                        <td className="p-3">
-                          <div className="text-sm font-medium text-white/70">{block.label}</div>
-                          <div className="text-xs text-white/25">{block.time}</div>
-                          {studentCount > 0 && (
-                            <div className="text-xs mt-1" style={{ color: '#c9a84c' }}>
-                              {studentCount} enrolled
-                            </div>
-                          )}
-                        </td>
-                        {DAYS.map(day => {
-                          const status = availability[day]?.[block.label] || 'available'
-                          const colors = {
-                            available: { bg: 'rgba(34,197,94,0.08)', border: 'rgba(34,197,94,0.15)', text: 'text-green-400/60', icon: '✓' },
-                            busy: { bg: 'rgba(234,179,8,0.08)', border: 'rgba(234,179,8,0.15)', text: 'text-yellow-400/60', icon: '⏳' },
-                            off: { bg: 'rgba(239,68,68,0.05)', border: 'rgba(239,68,68,0.1)', text: 'text-red-400/40', icon: '✕' },
-                          }
-                          const c = colors[status]
-                          return (
-                            <td key={day} className="p-2">
-                              <button
-                                onClick={() => toggleAvailability(day, block.label)}
-                                className="w-full p-3 rounded-lg transition hover:scale-[1.02] active:scale-95"
-                                style={{ background: c.bg, border: `1px solid ${c.border}` }}
-                              >
-                                <div className={`text-lg ${c.text}`}>{c.icon}</div>
-                                <div className={`text-[10px] mt-1 capitalize ${c.text}`}>{status}</div>
-                              </button>
-                            </td>
-                          )
-                        })}
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+            {/* Legend */}
+            <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/40">
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }} /> Class Day (Mon–Thu)</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }} /> Closed</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded" style={{ background: 'rgba(201,168,76,0.08)', border: '2px solid rgba(201,168,76,0.3)' }} /> Today</span>
+            </div>
+          </>
+        )}
+
+        {/* ═══ CLOSURES TAB ═══ */}
+        {tab === 'closures' && (
+          <>
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Manage <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>School Closures</span>
+              </h2>
+              <p className="text-sm text-white/40">Add dates when the school is closed. These will appear on the calendar and parent portal.</p>
+            </div>
+
+            {/* Add new closure */}
+            <div className="p-5 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <h3 className="text-sm font-semibold text-white/70 mb-3">Add Closure Date</h3>
+              <div className="flex flex-wrap gap-3">
+                <input type="date" value={newClosureDate} onChange={e => setNewClosureDate(e.target.value)}
+                  className="px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#c9a84c]"
+                  style={{ background: '#ffffff', color: '#1a1a2e', border: '1px solid rgba(201,168,76,0.3)' }} />
+                <input type="text" placeholder="Reason (optional)" value={newClosureNote}
+                  onChange={e => setNewClosureNote(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && addClosure()}
+                  className="flex-1 min-w-[200px] px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#c9a84c]"
+                  style={{ background: '#ffffff', color: '#1a1a2e', border: '1px solid rgba(201,168,76,0.3)' }} />
+                <button onClick={addClosure} disabled={!newClosureDate}
+                  className="px-6 py-2.5 rounded-lg text-sm font-semibold transition disabled:opacity-30"
+                  style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+                  + Add Closure
+                </button>
+              </div>
+            </div>
+
+            {/* Closure list */}
+            <div className="space-y-2">
+              {closures.sort((a, b) => a.date.localeCompare(b.date)).map(c => {
+                const d = new Date(c.date + 'T12:00:00')
+                const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()]
+                const formatted = `${dayName}, ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+                const isPast = d < new Date()
+                return (
+                  <div key={c.date} className={`flex items-center justify-between px-5 py-3 rounded-xl ${isPast ? 'opacity-40' : ''}`}
+                    style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.1)' }}>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">🚫</span>
+                      <div>
+                        <p className="text-sm font-medium text-white/80">{formatted}</p>
+                        <p className="text-xs text-white/40">{c.note}</p>
+                      </div>
+                    </div>
+                    <button onClick={() => removeClosure(c.date)}
+                      className="text-xs text-red-400/60 hover:text-red-400 transition px-3 py-1 rounded-lg hover:bg-red-500/10">
+                      Remove
+                    </button>
+                  </div>
+                )
+              })}
+              {closures.length === 0 && (
+                <div className="text-center py-8 text-white/30">
+                  <p className="text-3xl mb-2">📅</p>
+                  <p className="text-sm">No closures scheduled. Add one above.</p>
+                </div>
+              )}
             </div>
           </>
         )}
       </div>
 
-      {/* Footer */}
       <footer className="mt-20 py-6 border-t border-white/5 text-center">
-        <p className="text-xs text-white/20">
-          © 2026 BASMA Music Academy · <a href="/" className="text-[#c9a84c]/40 hover:text-[#c9a84c]">basmaworld.com</a>
-        </p>
+        <p className="text-xs text-white/20">© 2026 BASMA Music Academy · <a href="/" className="text-[#c9a84c]/40 hover:text-[#c9a84c]">basmaworld.com</a></p>
       </footer>
     </main>
   )
