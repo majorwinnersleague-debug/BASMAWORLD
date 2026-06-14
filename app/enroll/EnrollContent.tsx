@@ -180,6 +180,9 @@ export default function EnrollContent() {
   const [discoveryWeek, setDiscoveryWeek] = useState('')
   const [discoveryTimeSlot, setDiscoveryTimeSlot] = useState('')
 
+  // Paid class week selection
+  const [paidWeek, setPaidWeek] = useState('')
+
   // Live spot counts
   interface SlotInfo { enrolled: number; spotsLeft: number; maxCapacity: number }
   interface WeekSpots { week: string; morning: SlotInfo; midday: SlotInfo; totalEnrolled: number; totalSpotsLeft: number }
@@ -208,6 +211,22 @@ export default function EnrollContent() {
     { value: '10:00 AM – 12:00 PM', label: '10:00 AM – 12:00 PM', icon: '☀️' },
     { value: '12:00 PM – 2:00 PM', label: '12:00 PM – 2:00 PM', icon: '🌤️' },
   ]
+
+  const JULY_WEEKS = [
+    { value: 'Week 1: July 7–10', label: 'Week 1', dates: 'July 7 – 10' },
+    { value: 'Week 2: July 14–17', label: 'Week 2', dates: 'July 14 – 17' },
+    { value: 'Week 3: July 21–24', label: 'Week 3', dates: 'July 21 – 24' },
+    { value: 'Week 4: July 28–31', label: 'Week 4', dates: 'July 28 – 31' },
+  ]
+
+  const AUGUST_WEEKS = [
+    { value: 'Week 1: Aug 4–7', label: 'Week 1', dates: 'Aug 4 – 7' },
+    { value: 'Week 2: Aug 11–14', label: 'Week 2', dates: 'Aug 11 – 14' },
+    { value: 'Week 3: Aug 18–21', label: 'Week 3', dates: 'Aug 18 – 21' },
+    { value: 'Week 4: Aug 25–28', label: 'Week 4', dates: 'Aug 25 – 28' },
+  ]
+
+  const paidWeeks = month === 'july' ? JULY_WEEKS : AUGUST_WEEKS
 
   // Auto-select class and month from URL query params
   useEffect(() => {
@@ -277,8 +296,8 @@ export default function EnrollContent() {
     setQuantity(1)
     setDiscoveryWeek('')
     setDiscoveryTimeSlot('')
-    // Discovery camp goes to details step for week/time selection
-    setStep(c.isJuneOnly ? 'details' : 'details')
+    setPaidWeek('')
+    setStep('details')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -318,6 +337,7 @@ export default function EnrollContent() {
           interests: selectedClass.name,
           ...(isFree && discoveryWeek ? { discoveryWeek } : {}),
           ...(isFree && discoveryTimeSlot ? { timeSlot: discoveryTimeSlot } : {}),
+          ...(!isFree && paidWeek ? { discoveryWeek: paidWeek } : {}),
         }),
       })
     } catch { /* non-blocking */ }
@@ -590,20 +610,48 @@ export default function EnrollContent() {
             {/* Month */}
             <h3 className="font-bold mb-3" style={{ color: '#F0C850' }}>Select Month</h3>
             <div className="grid grid-cols-2 gap-3 mb-6">
-              <button onClick={() => { setMonth('july'); setQuantity(1) }}
+              <button onClick={() => { setMonth('july'); setQuantity(1); setPaidWeek('') }}
                 className={`p-4 rounded-xl text-left transition ${month === 'july' ? 'ring-2' : 'bg-white/5 border border-white/10'}`}
                 style={month === 'july' ? { background: 'rgba(240,200,80,0.1)', borderColor: '#F0C850' } : {}}>
                 <p className="font-bold">July</p>
                 <p className="text-lg font-bold" style={{ color: '#F0C850' }}>${selectedClass.julyPrice} <span className="text-sm font-normal text-white/50">/class</span></p>
                 <p className="text-xs text-white/40 mt-1">⭐ Special pricing!</p>
               </button>
-              <button onClick={() => { setMonth('august'); setQuantity(1) }}
+              <button onClick={() => { setMonth('august'); setQuantity(1); setPaidWeek('') }}
                 className={`p-4 rounded-xl text-left transition ${month === 'august' ? 'ring-2' : 'bg-white/5 border border-white/10'}`}
                 style={month === 'august' ? { background: 'rgba(240,200,80,0.1)', borderColor: '#F0C850' } : {}}>
                 <p className="font-bold">August</p>
                 <p className="text-lg font-bold" style={{ color: '#F0C850' }}>${selectedClass.augustSinglePrice} <span className="text-sm font-normal text-white/50">/class</span></p>
                 <p className="text-xs text-white/40 mt-1">🎁 Buy 3 Get 1 Free!</p>
               </button>
+            </div>
+
+            {/* Week Selection */}
+            <h3 className="font-bold mb-3" style={{ color: '#F0C850' }}>📅 Select Week</h3>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {paidWeeks.map(w => (
+                <button key={w.value} onClick={() => setPaidWeek(w.value)}
+                  className={`p-4 rounded-xl text-left transition ${paidWeek === w.value ? 'ring-2 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-white/20'}`}
+                  style={paidWeek === w.value ? { background: 'rgba(240,200,80,0.1)', borderColor: '#F0C850' } : {}}>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="font-bold text-white">{w.label}</p>
+                    {paidWeek === w.value && <span style={{ color: '#F0C850' }}>✓</span>}
+                  </div>
+                  <p className="text-sm text-white/60">{w.dates}</p>
+                  <p className="text-xs text-white/30 mt-1">Mon – Thu</p>
+                </button>
+              ))}
+            </div>
+
+            {/* Time Slot (auto from class) */}
+            <div className="p-4 rounded-xl mb-6" style={{ background: 'rgba(240,200,80,0.05)', border: '1px solid rgba(240,200,80,0.1)' }}>
+              <div className="flex items-center gap-3">
+                <span className="text-xl">🕐</span>
+                <div>
+                  <p className="text-sm text-white/50">Your class time</p>
+                  <p className="font-bold" style={{ color: '#F0C850' }}>{selectedClass.schedule} · {selectedClass.days}</p>
+                </div>
+              </div>
             </div>
 
             {/* Package */}
@@ -666,9 +714,10 @@ export default function EnrollContent() {
             </div>
 
             <button onClick={goToForm}
-              className="w-full py-4 rounded-full font-bold text-lg transition hover:opacity-90"
+              disabled={!paidWeek}
+              className="w-full py-4 rounded-full font-bold text-lg transition hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed"
               style={{ background: 'linear-gradient(90deg, #F0C850, #FFE07A)', color: '#0D0118' }}>
-              Continue to Enrollment →
+              {!paidWeek ? 'Select a week to continue' : 'Continue to Enrollment →'}
             </button>
             </>
             )}
@@ -755,6 +804,9 @@ export default function EnrollContent() {
                   <div className="flex justify-between"><span className="text-white/50">Class:</span><span>{selectedClass.emoji} {selectedClass.name}</span></div>
                   {!selectedClass.isJuneOnly && (
                     <div className="flex justify-between"><span className="text-white/50">Month:</span><span>{month === 'july' ? 'July' : 'August'}</span></div>
+                  )}
+                  {!selectedClass.isJuneOnly && paidWeek && (
+                    <div className="flex justify-between"><span className="text-white/50">Week:</span><span>{paidWeek}</span></div>
                   )}
                   {selectedClass.isJuneOnly && discoveryWeek && (
                     <div className="flex justify-between"><span className="text-white/50">Week:</span><span>{discoveryWeek}</span></div>
