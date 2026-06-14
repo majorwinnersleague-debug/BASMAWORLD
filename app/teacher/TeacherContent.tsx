@@ -214,7 +214,7 @@ export default function TeacherContent() {
   // Fetch registrations
   useEffect(() => {
     if (!authenticated) return
-    fetch('/api/registrations?source=all')
+    fetch('/api/registrations?source=all&teacherCode=1515')
       .then(r => r.json())
       .then(data => {
         setRegistrations(data.registrations || [])

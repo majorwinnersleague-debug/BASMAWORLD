@@ -240,6 +240,59 @@ export async function GET(req: Request) {
     const name = url.searchParams.get("name")?.trim().toLowerCase() || "";
     const email = url.searchParams.get("email")?.trim().toLowerCase() || "";
     const phone = url.searchParams.get("phone")?.trim() || "";
+    const teacherCode = url.searchParams.get("teacherCode")?.trim() || "";
+    const source = url.searchParams.get("source")?.trim() || "";
+
+    // Teacher portal: authenticated with code 1515 + source=all → return all records
+    const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || "1515";
+    if (source === "all" && teacherCode === TEACHER_CODE) {
+      const [leadRecords, enrollmentRecords, paymentRecords] = await Promise.all([
+        fetchAllRecords(LEADS_TABLE),
+        fetchAllRecords(ENROLLMENTS_TABLE),
+        fetchAllRecords(PAYMENTS_TABLE),
+      ]);
+
+      const enrollmentsByEmail: Record<string, AirtableRecord[]> = {};
+      for (const e of enrollmentRecords) {
+        const em = (e.fields.Email || "").toLowerCase().trim();
+        if (em) {
+          if (!enrollmentsByEmail[em]) enrollmentsByEmail[em] = [];
+          enrollmentsByEmail[em].push(e);
+        }
+      }
+
+      const paymentsByEmail: Record<string, AirtableRecord[]> = {};
+      for (const p of paymentRecords) {
+        const em = (p.fields.Email || p.fields.email || "").toLowerCase().trim();
+        if (em) {
+          if (!paymentsByEmail[em]) paymentsByEmail[em] = [];
+          paymentsByEmail[em].push(p);
+        }
+      }
+
+      const registrations = leadRecords.map((r) => {
+        const f = r.fields;
+        const parsed = parseStudentInfo(f.Message || "");
+        return {
+          id: r.id,
+          parentName: f["Full Name"] || "",
+          email: f.Email || "",
+          phone: f.Phone || "",
+          studentName: f["Student Name"] || parsed?.studentName || "",
+          studentAge: f["Student Age"] || parsed?.studentAge || "",
+          interests: f.Interests || "",
+          status: f.Status || "Unknown",
+          source: f.Source || "",
+          ageGroup: f["Age Group"] || "",
+          experienceLevel: f["Experience Level"] || "",
+          referralSource: f["Referral Source"] || "",
+          message: f.Message || "",
+          createdAt: r.createdTime,
+        };
+      });
+
+      return NextResponse.json({ registrations });
+    }
 
     // Legacy single-search param — block it entirely
     const legacySearch = url.searchParams.get("search");
