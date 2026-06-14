@@ -45,10 +45,40 @@ const CLASSES = [
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const IMPORTANT_DATES = [
-  { date: "June 16 – June 30", label: "FREE Summer Classes", type: "free" },
+  { date: "June 9 – June 30", label: "FREE Discovery Camp", type: "free" },
   { date: "July 1 – July 31", label: "July Classes — All $25", type: "paid" },
   { date: "July 4", label: "🇺🇸 Independence Day — Closed", type: "closed" },
   { date: "August 1 – August 31", label: "August Session — Regular Pricing", type: "paid" },
+];
+
+/* ── June Discovery Camp Enrollment Data ───────────────── */
+const MAX_PER_SESSION = 15;
+
+const CAMP_WEEKS = [
+  {
+    label: "June 9 – 12",
+    days: "Mon – Thu",
+    morning: { enrolled: 6, students: ["Ana", "Innocence B.", "Jurnee B.", "Lincoln B.", "Mia R.", "Sarah"] },
+    midday:  { enrolled: 6, students: ["Ana", "Emebet G.", "Josie A.", "Mizani D.", "Niko"] },
+  },
+  {
+    label: "June 16 – 19",
+    days: "Mon – Thu",
+    morning: { enrolled: 8, students: ["Alexa M.", "Ana", "Cilia R.", "Elias R.", "Makaya R.", "Raissa G.", "Ryleigh S."] },
+    midday:  { enrolled: 8, students: ["Jaiden A.", "John S.", "Mizani D.", "Nikki B.", "Tiarra A.", "Zion P."] },
+  },
+  {
+    label: "June 23 – 26",
+    days: "Mon – Thu",
+    morning: { enrolled: 8, students: ["Aiyana J.", "Alexa M.", "Aniela P.", "Elias R.", "Heaven G.", "Hilton N.", "Raissa G.", "René G."] },
+    midday:  { enrolled: 5, students: ["Alexa M.", "Chela F.", "Hilton N.", "Raissa G.", "René G."] },
+  },
+  {
+    label: "June 30 – July 3",
+    days: "Mon – Thu",
+    morning: { enrolled: 2, students: ["Raissa G.", "René G."] },
+    midday:  { enrolled: 3, students: ["Josie A.", "Raissa G.", "René G."] },
+  },
 ];
 
 /* ── Calendar Builder ──────────────────────────────────── */
@@ -72,6 +102,39 @@ const CLOSED_DATES = ["2026-07-04"];
 function isClosedDate(d: Date) {
   const iso = d.toISOString().slice(0, 10);
   return CLOSED_DATES.includes(iso);
+}
+
+/* ── Progress Bar Component ────────────────────────────── */
+function CapacityBar({ enrolled, max, label }: { enrolled: number; max: number; label: string }) {
+  const pct = Math.min((enrolled / max) * 100, 100);
+  const isFull = enrolled >= max;
+  const spotsLeft = max - enrolled;
+  const barColor = isFull ? "#ef4444" : spotsLeft <= 3 ? "#f59e0b" : "#22c55e";
+
+  return (
+    <div style={{ flex: 1 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{label}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: barColor }}>
+          {isFull ? "FULL" : `${spotsLeft} spots left`}
+        </span>
+      </div>
+      <div style={{ height: 8, borderRadius: 4, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+        <div
+          style={{
+            height: "100%",
+            width: `${pct}%`,
+            borderRadius: 4,
+            background: barColor,
+            transition: "width 0.5s ease",
+          }}
+        />
+      </div>
+      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>
+        {enrolled}/{max} enrolled
+      </div>
+    </div>
+  );
 }
 
 export default function ScheduleContent() {
@@ -100,6 +163,8 @@ export default function ScheduleContent() {
         .cal-day { transition: all 0.15s; cursor: pointer; }
         .cal-day:hover { background: rgba(201,168,76,0.15) !important; transform: scale(1.05); }
         .cal-nav:hover { background: rgba(255,255,255,0.1) !important; }
+        .camp-card { transition: all 0.2s; }
+        .camp-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(34,197,94,0.15); }
       `}</style>
 
       {/* Header */}
@@ -115,6 +180,105 @@ export default function ScheduleContent() {
       </header>
 
       <main style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px 120px" }}>
+
+        {/* ══════════════════════════════════════════════════════
+            JUNE DISCOVERY CAMP ENROLLMENT
+            ══════════════════════════════════════════════════════ */}
+        <div style={{
+          background: "linear-gradient(135deg, rgba(34,197,94,0.08), rgba(16,185,129,0.04))",
+          border: "1px solid rgba(34,197,94,0.25)",
+          borderRadius: 24,
+          padding: "28px 24px",
+          marginBottom: 28,
+        }}>
+          {/* Section header */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
+            <span style={{ fontSize: 28 }}>🏕️</span>
+            <div>
+              <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, fontFamily: "'Playfair Display', serif", color: "#22c55e" }}>
+                Free Discovery Camp
+              </h2>
+              <p style={{ margin: "2px 0 0", fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
+                June 2026 · Mon–Thu · 🍕 Pizza Thursdays!
+              </p>
+            </div>
+          </div>
+          <p style={{ margin: "8px 0 20px", fontSize: 13, color: "rgba(255,255,255,0.45)", lineHeight: 1.5 }}>
+            Group classes and discovery lessons at the Tropicana location. Pick a week and time slot below — <strong style={{ color: "#22c55e" }}>15 students max</strong> per session.
+          </p>
+
+          {/* Week cards */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {CAMP_WEEKS.map((week, i) => {
+              const totalEnrolled = week.morning.enrolled + week.midday.enrolled;
+              const totalMax = MAX_PER_SESSION * 2;
+              const weekFull = totalEnrolled >= totalMax;
+
+              return (
+                <div
+                  key={i}
+                  className="camp-card"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: weekFull ? "1px solid rgba(239,68,68,0.3)" : "1px solid rgba(34,197,94,0.15)",
+                    borderRadius: 18,
+                    padding: "18px 20px",
+                  }}
+                >
+                  {/* Week header */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#fff" }}>
+                        Week of {week.label}
+                      </h3>
+                      <p style={{ margin: "2px 0 0", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                        {week.days} · 🍕 Pizza Thursday!
+                      </p>
+                    </div>
+                    <div style={{
+                      padding: "4px 12px",
+                      borderRadius: 20,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      background: weekFull ? "rgba(239,68,68,0.15)" : "rgba(34,197,94,0.12)",
+                      color: weekFull ? "#ef4444" : "#22c55e",
+                      border: `1px solid ${weekFull ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.25)"}`,
+                    }}>
+                      {totalEnrolled}/{totalMax} enrolled
+                    </div>
+                  </div>
+
+                  {/* Time slots */}
+                  <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                    <CapacityBar enrolled={week.morning.enrolled} max={MAX_PER_SESSION} label="🌅 Morning · 10 AM – 12 PM" />
+                    <CapacityBar enrolled={week.midday.enrolled} max={MAX_PER_SESSION} label="☀️ Midday · 12 PM – 2 PM" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Register CTA */}
+          <a
+            href="/enroll"
+            style={{
+              display: "block",
+              textAlign: "center",
+              marginTop: 20,
+              padding: "14px 24px",
+              background: "linear-gradient(135deg, #22c55e, #16a34a)",
+              color: "#fff",
+              fontSize: 15,
+              fontWeight: 700,
+              borderRadius: 14,
+              textDecoration: "none",
+              letterSpacing: "0.02em",
+              boxShadow: "0 4px 16px rgba(34,197,94,0.3)",
+            }}
+          >
+            Register for Discovery Camp →
+          </a>
+        </div>
 
         {/* ── Calendar ────────────────────────────── */}
         <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 24, padding: "24px 20px", marginBottom: 28 }}>
@@ -145,7 +309,6 @@ export default function ScheduleContent() {
               const dayClasses = getClassesForDay(day.getDay());
               const hasClasses = dayClasses.length > 0;
               const dow = day.getDay();
-              const isWeekend = dow === 0 || dow === 5 || dow === 6;
 
               return (
                 <button
