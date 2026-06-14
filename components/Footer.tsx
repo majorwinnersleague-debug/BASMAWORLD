@@ -44,6 +44,7 @@ export default function Footer() {
           <div>
             <h4 className="text-white/40 text-xs uppercase tracking-widest mb-3">Connect</h4>
             <div className="flex flex-col gap-2 text-sm">
+              <a href="mailto:becomeasingermusicacademy@gmail.com" className="text-white/25 hover:text-white/50 transition-colors">Email Us</a>
               <a href="https://www.tiktok.com/@basma_singer" target="_blank" rel="noopener noreferrer" className="text-white/25 hover:text-white/50 transition-colors">TikTok</a>
               <a href="https://www.instagram.com/basma.tea" target="_blank" rel="noopener noreferrer" className="text-white/25 hover:text-white/50 transition-colors">Instagram</a>
               <a href="https://www.youtube.com/channel/UChszcJ6HQ4u1NoTs4-06H3w" target="_blank" rel="noopener noreferrer" className="text-white/25 hover:text-white/50 transition-colors">YouTube</a>
