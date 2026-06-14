@@ -259,7 +259,7 @@ export default function HomeContent() {
               { src: '/images/billy/billy-closeup-smile.jpg', label: 'Meet Billy! 🧡' },
               { src: '/images/basma/basma-performing-stage-2.jpg', label: 'Live in Las Vegas 🎤' },
               { src: '/images/studio/studio-setup-3.jpg', label: 'The Studio 🎸' },
-              { src: '/images/basma/basma-with-billy.jpg', label: 'Basma & Billy 💜' },
+              { src: '/images/billy/basma-with-billy.jpg', label: 'Basma & Billy 💜' },
               { src: '/images/basma/basma-orchestra.jpg', label: 'Full Orchestra 🎼' },
               { src: '/images/basma/basma-teaching-classroom.jpg', label: 'In the classroom 📚' },
             ].map((item) => (

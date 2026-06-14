@@ -168,7 +168,7 @@ export default function BasmaContent() {
             </div>
             <div className="col-span-2 relative overflow-hidden group aspect-square" style={{ borderRadius: '4px' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/basma/basma-with-billy.jpg" alt="Basma with Billy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <img src="/images/billy/basma-with-billy.jpg" alt="Basma with Billy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute bottom-3 left-3 glass rounded-lg px-3 py-1.5 text-xs font-medium text-white/70">Basma & Billy</div>
             </div>
             <div className="relative overflow-hidden group aspect-square" style={{ borderRadius: '4px' }}>
