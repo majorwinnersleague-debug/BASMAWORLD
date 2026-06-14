@@ -581,8 +581,7 @@ export default function EnrollContent() {
                       )}
                     </button>
                     )
-                  }
-                  ))}
+                  })}
                 </div>
 
                 {/* Summary */}
