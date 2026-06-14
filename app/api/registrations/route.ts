@@ -236,7 +236,8 @@ export async function GET(req: Request) {
           r.parentName.toLowerCase().includes(search) ||
           r.email.toLowerCase().includes(search) ||
           r.studentName.toLowerCase().includes(search) ||
-          r.phone.includes(search)
+          r.phone.includes(search) ||
+          r.message.toLowerCase().includes(search)
       );
     }
     if (source) {
