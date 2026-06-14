@@ -480,6 +480,84 @@ export default function PortalContent() {
                 </div>
               </div>
             )}
+
+            {/* ─── Class Schedule Section ─── */}
+            <div style={{ marginTop: hasSearched ? 32 : 0 }}>
+              <div style={{
+                background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: 20, padding: "24px", marginBottom: 16,
+              }}>
+                <h3 style={{ fontSize: 18, fontWeight: 700, fontFamily: "'Playfair Display', serif", margin: "0 0 4px" }}>
+                  <span style={{ background: "linear-gradient(135deg, #c9a84c, #e4cc7a)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                    📅 Class Schedule
+                  </span>
+                </h3>
+                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", margin: "0 0 16px" }}>
+                  Monday – Thursday · 6787 W Tropicana Ave Suite 260, Las Vegas
+                </p>
+
+                {/* Schedule rows */}
+                {[
+                  { emoji: "👶", name: "Tiny Tots Music & Fun", ages: "Ages 2–5", time: "9:00 – 9:45 AM", color: "#f472b6" },
+                  { emoji: "🎵", name: "Kids Music & Fun", ages: "Ages 5–10", time: "10:00 – 11:30 AM", color: "#60a5fa" },
+                  { emoji: "🎤", name: "Kids Music & Fun", ages: "Ages 10–17", time: "11:30 AM – 1:00 PM", color: "#a78bfa" },
+                  { emoji: "🎹", name: "Piano Class Lecture", ages: "All Ages", time: "1:30 – 2:45 PM", color: "#34d399" },
+                  { emoji: "🎧", name: "Teens Recording Lecture", ages: "Teens Only", time: "2:45 – 4:00 PM", color: "#f59e0b", note: "July & August only" },
+                ].map((cls, i) => (
+                  <div key={i} style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "10px 14px", marginBottom: 6, borderRadius: 12,
+                    background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
+                  }}>
+                    <span style={{ fontSize: 20, width: 28, textAlign: "center" }}>{cls.emoji}</span>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#fff" }}>{cls.name}</p>
+                      <p style={{ margin: 0, fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
+                        {cls.ages}{cls.note ? ` · ${cls.note}` : ""}
+                      </p>
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: cls.color, whiteSpace: "nowrap" }}>{cls.time}</span>
+                  </div>
+                ))}
+
+                {/* Current month info */}
+                <div style={{
+                  marginTop: 16, padding: "12px 14px", borderRadius: 12,
+                  background: "rgba(74,222,128,0.05)", border: "1px solid rgba(74,222,128,0.12)",
+                }}>
+                  <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: "#4ade80" }}>
+                    🎉 June — FREE Discovery Camp!
+                  </p>
+                  <p style={{ margin: "4px 0 0", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                    All classes free for new students. Register at basmaworld.com/enroll
+                  </p>
+                </div>
+
+                <div style={{
+                  marginTop: 8, padding: "12px 14px", borderRadius: 12,
+                  background: "rgba(240,200,80,0.04)", border: "1px solid rgba(240,200,80,0.1)",
+                }}>
+                  <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: "#F0C850" }}>
+                    ⭐ July — $25/class special (all classes!)
+                  </p>
+                  <p style={{ margin: "4px 0 0", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                    Includes Teens Recording Lecture. Closed July 3–4 for Independence Day.
+                  </p>
+                </div>
+
+                <div style={{
+                  marginTop: 8, padding: "12px 14px", borderRadius: 12,
+                  background: "rgba(240,200,80,0.04)", border: "1px solid rgba(240,200,80,0.1)",
+                }}>
+                  <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: "#F0C850" }}>
+                    🎁 August — Buy 3 Get 1 Free!
+                  </p>
+                  <p style={{ margin: "4px 0 0", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                    Regular pricing with bundle discounts. Monthly pass: $350/month.
+                  </p>
+                </div>
+              </div>
+            </div>
           </>
         ) : (
           <FamilyDetail records={selected} onBack={() => setSelected(null)} />
