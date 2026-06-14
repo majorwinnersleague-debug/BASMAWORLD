@@ -221,7 +221,6 @@ export default function EnrollContent() {
     { value: 'Week 1: June 16–19', label: 'Week 1', dates: 'June 16 – 19' },
     { value: 'Week 2: June 23–26', label: 'Week 2', dates: 'June 23 – 26' },
     { value: 'Week 3: June 30 – July 3', label: 'Week 3', dates: 'June 30 – July 3' },
-    { value: 'Week 4: July 7–10', label: 'Week 4', dates: 'July 7 – 10' },
   ]
 
   const DISCOVERY_TIME_SLOTS = [

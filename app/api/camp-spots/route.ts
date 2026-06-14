@@ -60,7 +60,6 @@ export async function GET() {
       "June 16 – 19",
       "June 23 – 26",
       "June 30 – July 3",
-      "July 7 – 10",
     ].map((week) => {
       // Try both dash styles (Convex uses en-dash)
       const counts = weekMap[week] ||

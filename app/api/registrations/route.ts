@@ -281,6 +281,27 @@ export async function GET(req: Request) {
       const registrations = leadRecords.map((r) => {
         const f = r.fields;
         const parsed = parseStudentInfo(f.Message || "");
+        const em = (f.Email || "").toLowerCase().trim();
+        const src = (f.Source || "").toLowerCase();
+
+        // Determine payment status
+        const hasPaid = !!(paymentsByEmail[em] && paymentsByEmail[em].length > 0);
+        const isFreeSource = src.includes("discovery") || src.includes("free");
+        let paymentStatus: string;
+        if (hasPaid) {
+          paymentStatus = "Paid";
+        } else if (isFreeSource) {
+          paymentStatus = "Free";
+        } else {
+          paymentStatus = "Pending";
+        }
+
+        // Get enrolled class name from enrollment records
+        const enrollments = enrollmentsByEmail[em] || [];
+        const enrolledClass = enrollments.length > 0
+          ? (enrollments[0].fields["Class"] || enrollments[0].fields["Class Name"] || enrollments[0].fields["Selected Class"] || "")
+          : "";
+
         return {
           id: r.id,
           parentName: f["Full Name"] || "",
@@ -297,6 +318,9 @@ export async function GET(req: Request) {
           message: f.Message || "",
           discoveryWeek: f["Discovery Week"] || "",
           timeSlot: f["Time Slot"] || "",
+          paymentStatus,
+          enrolledClass: enrolledClass as string,
+          hasWaiver: enrollments.length > 0,
           createdAt: r.createdTime,
         };
       });

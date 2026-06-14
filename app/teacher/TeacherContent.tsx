@@ -23,6 +23,9 @@ interface Registration {
   referralSource: string
   discoveryWeek: string
   timeSlot: string
+  paymentStatus: string
+  enrolledClass: string
+  hasWaiver: boolean
   createdAt: string
 }
 
@@ -466,11 +469,12 @@ export default function TeacherContent() {
                         <div className="hidden md:grid grid-cols-12 gap-2 px-5 py-2 text-xs text-white/25 uppercase tracking-wider border-b border-white/5">
                           <div className="col-span-2">Student</div>
                           <div className="col-span-1">Age</div>
-                          <div className="col-span-2">Birthday</div>
                           <div className="col-span-2">Parent</div>
                           <div className="col-span-2">Phone</div>
                           <div className="col-span-2">Email</div>
+                          <div className="col-span-1">Payment</div>
                           <div className="col-span-1">Status</div>
+                          <div className="col-span-1">Class</div>
                         </div>
 
                         {filteredStudents.map((s, idx) => (
@@ -479,37 +483,25 @@ export default function TeacherContent() {
                               <div className="col-span-2 font-medium text-white/80">{safe(s.studentName) || safe(s.parentName)}</div>
                               <div className="col-span-1 text-white/40">{safe(s.studentAge) || '—'}</div>
                               <div className="col-span-2">
-                                {editingBirthday === s.id ? (
-                                  <div className="flex gap-1">
-                                    <input type="text" placeholder="MM/DD" value={birthdayInput}
-                                      onChange={e => setBirthdayInput(e.target.value)}
-                                      onKeyDown={e => e.key === 'Enter' && saveBirthday(s.id)}
-                                      className="w-20 px-2 py-1 rounded text-xs bg-white/10 border border-white/20 text-white focus:outline-none"
-                                      autoFocus />
-                                    <button onClick={() => saveBirthday(s.id)} className="text-xs text-green-400 hover:text-green-300">✓</button>
-                                    <button onClick={() => setEditingBirthday(null)} className="text-xs text-white/30 hover:text-white/50">✕</button>
-                                  </div>
-                                ) : (
-                                  <button onClick={() => { setEditingBirthday(s.id); setBirthdayInput(birthdays[s.id] || '') }}
-                                    className="text-xs hover:text-white/60 transition">
-                                    {birthdays[s.id] ? (
-                                      <span className="text-pink-400">🎂 {birthdays[s.id]}</span>
-                                    ) : (
-                                      <span className="text-white/20">+ Add birthday</span>
-                                    )}
-                                  </button>
-                                )}
-                              </div>
-                              <div className="col-span-2">
                                 <p className="text-white/60 text-xs">{safe(s.parentName)}</p>
                               </div>
                               <div className="col-span-2 text-white/40 text-xs">{formatPhone(safe(s.phone))}</div>
                               <div className="col-span-2 text-white/30 text-xs truncate">{safe(s.email)}</div>
                               <div className="col-span-1">
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                                  safe(s.paymentStatus) === 'Paid' ? 'bg-green-500/15 text-green-400' :
+                                  safe(s.paymentStatus) === 'Free' ? 'bg-blue-500/15 text-blue-400' :
+                                  'bg-yellow-500/10 text-yellow-400'
+                                }`}>
+                                  {safe(s.paymentStatus) === 'Paid' ? '💰 Paid' : safe(s.paymentStatus) === 'Free' ? '🆓 Free' : '⏳ Pending'}
+                                </span>
+                              </div>
+                              <div className="col-span-1">
                                 <span className={`text-xs px-2 py-0.5 rounded-full ${safe(s.status).toLowerCase() === 'incomplete' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
                                   {safe(s.status) || 'New'}
                                 </span>
                               </div>
+                              <div className="col-span-1 text-white/30 text-xs truncate">{safe(s.enrolledClass) || '—'}</div>
                             </div>
                             {/* Mobile card */}
                             <div className="md:hidden space-y-1">
@@ -518,12 +510,21 @@ export default function TeacherContent() {
                                   {safe(s.studentName) || safe(s.parentName)}
                                   {safe(s.studentAge) && <span className="text-white/30"> (age {s.studentAge})</span>}
                                 </span>
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${safe(s.status).toLowerCase() === 'incomplete' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
-                                  {safe(s.status) || 'New'}
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                                  safe(s.paymentStatus) === 'Paid' ? 'bg-green-500/15 text-green-400' :
+                                  safe(s.paymentStatus) === 'Free' ? 'bg-blue-500/15 text-blue-400' :
+                                  'bg-yellow-500/10 text-yellow-400'
+                                }`}>
+                                  {safe(s.paymentStatus) === 'Paid' ? '💰 Paid' : safe(s.paymentStatus) === 'Free' ? '🆓 Free' : '⏳ Pending'}
                                 </span>
                               </div>
                               <p className="text-xs text-white/40">{safe(s.parentName)} · {formatPhone(safe(s.phone))}</p>
-                              {birthdays[s.id] && <p className="text-xs text-pink-400">🎂 Birthday: {birthdays[s.id]}</p>}
+                              <div className="flex gap-2">
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${safe(s.status).toLowerCase() === 'incomplete' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
+                                  {safe(s.status) || 'New'}
+                                </span>
+                                {safe(s.enrolledClass) && <span className="text-xs text-white/25">{s.enrolledClass}</span>}
+                              </div>
                             </div>
                           </div>
                         ))}
