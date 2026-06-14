@@ -78,8 +78,9 @@ export default function ContactPage() {
               <div className="card-minimal rounded-xl p-5 mt-4">
                 <p className="text-white/30 text-xs uppercase tracking-widest mb-3">Direct Contact</p>
                 <div className="space-y-2 text-sm text-white/35">
+                  <p><a href="mailto:becomeasingermusicacademy@gmail.com" className="text-[#c9a84c]/70 hover:text-[#c9a84c] transition-colors">becomeasingermusicacademy@gmail.com</a></p>
                   <p>(702) 788-7369</p>
-                  <p>9205 W Russell Rd Bldg 3, Las Vegas NV 89148</p>
+                  <p>6787 W Tropicana Ave Suite 260, Las Vegas NV 89103</p>
                   <div className="flex flex-wrap gap-2 pt-3">
                     {[
                       { href: 'https://www.tiktok.com/@basma_singer', label: 'TikTok' },
