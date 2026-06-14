@@ -25,7 +25,7 @@ async function airtableRequest(method: string, body?: Record<string, unknown>, r
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json()
-    const { name, phone, email, source, status, interests, experienceLevel, referralSource, studentName, studentAge } = data
+    const { name, phone, email, source, status, interests, experienceLevel, referralSource, studentName, studentAge, discoveryWeek, timeSlot } = data
 
     // Map to BASMA Marketing Leads field names
     const fields: Record<string, string> = {}
@@ -39,6 +39,8 @@ export async function POST(request: NextRequest) {
     if (referralSource) fields['Referral Source'] = referralSource
     if (studentName) fields['Student Name'] = studentName
     if (studentAge) fields['Student Age'] = String(studentAge)
+    if (discoveryWeek) fields['Discovery Week'] = discoveryWeek
+    if (timeSlot) fields['Time Slot'] = timeSlot
 
     const result = await airtableRequest('POST', {
       records: [{ fields }],
@@ -58,6 +60,8 @@ export async function POST(request: NextRequest) {
           Email: email || '',
           'Student Name': studentName || '',
           'Student Age': studentAge || '',
+          'Discovery Week': discoveryWeek || '',
+          'Time Slot': timeSlot || '',
           Interests: interests || '',
           Experience: experienceLevel || '',
           'How Heard': referralSource || '',
