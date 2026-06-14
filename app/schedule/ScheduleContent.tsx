@@ -5,34 +5,28 @@ import { useState } from "react";
 /* ── Schedule Data ─────────────────────────────────────── */
 const CLASSES = [
   {
-    name: "Tiny Tots (Ages 2–5)",
+    name: "Tiny Tots Music & Fun (Ages 2–5)",
     emoji: "👶",
     color: "#f472b6",
-    times: { Mon: "10:00 AM – 11:00 AM", Tue: "10:00 AM – 11:00 AM", Wed: "10:00 AM – 11:00 AM", Thu: "10:00 AM – 11:00 AM" },
+    times: { Mon: "9:00 – 9:45 AM", Tue: "9:00 – 9:45 AM", Wed: "9:00 – 9:45 AM", Thu: "9:00 – 9:45 AM" },
   },
   {
-    name: "Kids Music (Ages 5–10)",
+    name: "Kids Music & Fun (Ages 5–10)",
     emoji: "🎵",
     color: "#60a5fa",
-    times: { Mon: "11:00 AM – 12:00 PM", Tue: "11:00 AM – 12:00 PM", Wed: "11:00 AM – 12:00 PM", Thu: "11:00 AM – 12:00 PM" },
+    times: { Mon: "10:00 – 11:30 AM", Tue: "10:00 – 11:30 AM", Wed: "10:00 – 11:30 AM", Thu: "10:00 – 11:30 AM" },
   },
   {
-    name: "Kids Music (Ages 11–17)",
+    name: "Kids Music & Fun (Ages 10–17)",
     emoji: "🎤",
     color: "#a78bfa",
-    times: { Mon: "12:00 PM – 1:00 PM", Tue: "12:00 PM – 1:00 PM", Wed: "12:00 PM – 1:00 PM", Thu: "12:00 PM – 1:00 PM" },
+    times: { Mon: "11:30 AM – 1:00 PM", Tue: "11:30 AM – 1:00 PM", Wed: "11:30 AM – 1:00 PM", Thu: "11:30 AM – 1:00 PM" },
   },
   {
-    name: "Piano Class",
+    name: "Piano Class Lecture",
     emoji: "🎹",
     color: "#34d399",
-    times: { Mon: "1:00 PM – 2:00 PM", Tue: "1:00 PM – 2:00 PM", Wed: "1:00 PM – 2:00 PM", Thu: "1:00 PM – 2:00 PM" },
-  },
-  {
-    name: "Teens Recording Studio",
-    emoji: "🎧",
-    color: "#fbbf24",
-    times: { Mon: "2:00 PM – 3:00 PM", Tue: "2:00 PM – 3:00 PM", Wed: "2:00 PM – 3:00 PM", Thu: "2:00 PM – 3:00 PM" },
+    times: { Mon: "1:30 – 2:45 PM", Tue: "1:30 – 2:45 PM", Wed: "1:30 – 2:45 PM", Thu: "1:30 – 2:45 PM" },
   },
   {
     name: "Private Lessons (By Appointment)",
@@ -45,10 +39,10 @@ const CLASSES = [
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const IMPORTANT_DATES = [
-  { date: "June 9 – June 30", label: "FREE Discovery Camp", type: "free" },
-  { date: "July 1 – July 31", label: "July Classes — All $25", type: "paid" },
+  { date: "June 9 – June 30", label: "FREE Discovery Camp — All Classes Free!", type: "free" },
+  { date: "July 1 – July 31", label: "July — $25/class for ALL classes (one-month special!)", type: "paid" },
   { date: "July 4", label: "🇺🇸 Independence Day — Closed", type: "closed" },
-  { date: "August 1 – August 31", label: "August Session — Regular Pricing", type: "paid" },
+  { date: "August 1 – August 31", label: "August — Regular Pricing + Buy 3 Get 1 Free", type: "paid" },
 ];
 
 /* ── June Discovery Camp Enrollment Data ───────────────── */
@@ -493,6 +487,42 @@ export default function ScheduleContent() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* ── Pricing ──────────────────────────── */}
+        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: "20px 24px", marginBottom: 28 }}>
+          <h3 style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 700, color: "#c9a84c", fontFamily: "'Playfair Display', serif" }}>
+            💰 Summer Pricing
+          </h3>
+
+          {/* June */}
+          <div style={{ marginBottom: 16, padding: "14px 16px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14 }}>
+            <h4 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 700, color: "#22c55e" }}>🏕️ June — FREE Discovery Camp</h4>
+            <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>All classes are 100% free. No catch!</p>
+          </div>
+
+          {/* July */}
+          <div style={{ marginBottom: 16, padding: "14px 16px", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14 }}>
+            <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: "#c9a84c" }}>🎵 July — $25/class Special</h4>
+            <p style={{ margin: "0 0 6px", fontSize: 13, color: "rgba(255,255,255,0.5)" }}>One-month special: every class is just $25 — including Teens Recording Studio!</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {["Tiny Tots $25", "Kids $25", "Piano $25", "Teens Recording $25"].map((t, i) => (
+                <span key={i} style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(201,168,76,0.12)", color: "#c9a84c", fontWeight: 600 }}>{t}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* August */}
+          <div style={{ padding: "14px 16px", background: "rgba(168,85,247,0.08)", border: "1px solid rgba(168,85,247,0.2)", borderRadius: 14 }}>
+            <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: "#a855f7" }}>🎓 August — Regular Pricing + Buy 3 Get 1 Free</h4>
+            <p style={{ margin: "0 0 8px", fontSize: 13, color: "rgba(255,255,255,0.5)" }}>Pay for a full week (Mon–Thu) and save!</p>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>
+              <div>👶 Tiny Tots: <strong>$25/class</strong> → 4 classes = $75 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $25)</span></div>
+              <div>🎵 Kids: <strong>$30/class</strong> → 4 classes = $105 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $35!)</span></div>
+              <div>🎹 Piano: <strong>$35/class</strong> → 4 classes = $105 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $35!)</span></div>
+              <div>🎧 Teens Recording: <strong>$40/class</strong> → 4 classes = $120</div>
+            </div>
+          </div>
         </div>
 
         {/* Color legend */}
