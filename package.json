@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "echo 'VERCEL_BUILD_RUNNING' && rm -rf .vercel/output && next build",
     "start": "next start",
     "lint": "next lint"
   },
