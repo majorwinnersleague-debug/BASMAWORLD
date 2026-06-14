@@ -84,15 +84,77 @@ function matchClassToBlock(classType: string, block: typeof SCHEDULE_BLOCKS[0]):
    COMPONENT
    ═══════════════════════════════════════════════════════════════════════════ */
 
+const ACCESS_CODE = '1515'
+
 type TabView = 'roster' | 'calendar' | 'attendance'
 
 export default function TeacherContent() {
+  const [authenticated, setAuthenticated] = useState(false)
+  const [codeInput, setCodeInput] = useState('')
+  const [codeError, setCodeError] = useState(false)
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<TabView>('roster')
   const [filterMonth, setFilterMonth] = useState<'all' | 'june' | 'july-aug'>('all')
   const [expandedClass, setExpandedClass] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+
+  // Check localStorage for saved auth
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('basma-teacher-auth')
+      if (saved === 'true') setAuthenticated(true)
+    } catch {}
+  }, [])
+
+  function handleCodeSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (codeInput.trim() === ACCESS_CODE) {
+      setAuthenticated(true)
+      setCodeError(false)
+      try { localStorage.setItem('basma-teacher-auth', 'true') } catch {}
+    } else {
+      setCodeError(true)
+    }
+  }
+
+  if (!authenticated) {
+    return (
+      <main className="min-h-screen flex items-center justify-center text-white" style={{ background: '#050505' }}>
+        <div className="text-center max-w-sm mx-auto px-6">
+          <div className="mb-8">
+            <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-4">Teacher Portal</p>
+            <h1 className="text-3xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <span className="gradient-gold">BASMA</span> Teachers
+            </h1>
+            <p className="text-white/40 text-sm">Enter your access code to continue.</p>
+          </div>
+          <form onSubmit={handleCodeSubmit} className="space-y-4">
+            <input
+              type="password"
+              placeholder="Access code"
+              value={codeInput}
+              onChange={(e) => { setCodeInput(e.target.value); setCodeError(false) }}
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-2xl tracking-[0.5em] placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition"
+              autoFocus
+            />
+            {codeError && <p className="text-red-400 text-sm">Incorrect code. Please try again.</p>}
+            <button
+              type="submit"
+              disabled={!codeInput.trim()}
+              className="w-full py-3 rounded-xl font-semibold text-sm tracking-wide transition disabled:opacity-40"
+              style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}
+            >
+              Enter Portal
+            </button>
+          </form>
+          <p className="mt-6 text-xs text-white/20">
+            Contact admin for your access code
+          </p>
+        </div>
+      </main>
+    )
+  }
 
   // Calendar state — teacher availability
   const [availability, setAvailability] = useState<Record<string, Record<string, 'available' | 'busy' | 'off'>>>(() => {
