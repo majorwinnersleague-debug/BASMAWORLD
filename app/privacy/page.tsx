@@ -43,7 +43,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-white font-bold text-lg mb-3">3. Children&apos;s Privacy (COPPA)</h2>
-            <p>BasmaWorld serves students of all ages including children under 13. We do not knowingly collect personal information from children under 13 without verifiable parental consent. Parents or guardians who believe their child has provided us personal information may contact us at (702) 788-7369 to request deletion.</p>
+            <p>BasmaWorld serves students of all ages including children under 13. We do not knowingly collect personal information from children under 13 without verifiable parental consent. Parents or guardians who believe their child has provided us personal information may contact us at becomeasingermusicacademy@gmail.com or (702) 788-7369 to request deletion.</p>
           </section>
 
           <section>
