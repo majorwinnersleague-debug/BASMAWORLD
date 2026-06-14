@@ -239,20 +239,58 @@ export async function GET(req: Request) {
       };
     });
 
-    // Filter
+    // Filter — PRIVACY-SAFE: only match on parent identifiers (email or phone),
+    // never on student names. This ensures parents can only see their own family.
     let filtered = registrations;
     if (search) {
-      filtered = filtered.filter(
-        (r) =>
-          r.parentName.toLowerCase().includes(search) ||
-          r.email.toLowerCase().includes(search) ||
-          r.studentName.toLowerCase().includes(search) ||
-          r.phone.includes(search) ||
-          r.message.toLowerCase().includes(search)
-      );
+      // Normalize phone: strip non-digits for comparison
+      const searchDigits = search.replace(/\D/g, "");
+      const isPhoneSearch = searchDigits.length >= 7;
+      const isEmailSearch = search.includes("@");
+
+      if (isEmailSearch) {
+        // Email search: exact match on email field only
+        filtered = filtered.filter(
+          (r) => r.email.toLowerCase().trim() === search.trim()
+        );
+      } else if (isPhoneSearch) {
+        // Phone search: match on normalized phone digits
+        filtered = filtered.filter((r) => {
+          const recDigits = r.phone.replace(/\D/g, "");
+          return recDigits.includes(searchDigits) || searchDigits.includes(recDigits);
+        });
+      } else {
+        // Name search: match on parent name only (not student name)
+        // Then return ALL records for that parent's email/phone to show complete family
+        const matchingParents = registrations.filter(
+          (r) => r.parentName.toLowerCase().includes(search)
+        );
+        // Get unique parent identifiers (email or phone)
+        const parentIds = new Set<string>();
+        for (const r of matchingParents) {
+          const key = r.email.toLowerCase().trim() || r.phone.replace(/\D/g, "");
+          if (key) parentIds.add(key);
+        }
+        // Return all records for those parents
+        filtered = registrations.filter((r) => {
+          const key = r.email.toLowerCase().trim() || r.phone.replace(/\D/g, "");
+          return parentIds.has(key);
+        });
+      }
     }
     if (source) {
       filtered = filtered.filter((r) => r.source === source);
+    }
+
+    // Privacy: show student first name + last initial only (e.g. "Amelia W.")
+    for (const r of filtered) {
+      if (r.studentName) {
+        const parts = r.studentName.trim().split(/\s+/);
+        if (parts.length > 1) {
+          r.studentName = parts[0] + " " + parts[parts.length - 1][0].toUpperCase() + ".";
+        }
+        // Single name stays as-is
+      }
     }
 
     // Group by parent
