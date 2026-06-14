@@ -147,15 +147,15 @@ function getRecommendations(age: number, interests: string, experience: string) 
 }
 
 /**
- * SECURE PARENT PORTAL — 2-step verification
+ * SECURE PARENT PORTAL — identity verification
  * 
- * Requires ALL THREE fields to match:
- *   1. Parent full name (case-insensitive)
- *   2. Email address (exact match)
- *   3. Phone number (digit match)
+ * Phone number is ALWAYS required, plus at least one of:
+ *   - First name (case-insensitive match)
+ *   - Email address (exact match)
  * 
- * If any field is missing or doesn't match → returns empty results.
- * No partial searches, no name-only lookups, no browsing.
+ * Valid combos: name+phone, email+phone, name+email+phone
+ * If fields don't match the same record → returns empty results.
+ * No single-field searches, no browsing.
  */
 export async function GET(req: Request) {
   try {
@@ -173,22 +173,11 @@ export async function GET(req: Request) {
         families: 0,
         registrations: [],
         byParent: {},
-        error: "Please use the updated portal with all three verification fields.",
+        error: "Please use the updated portal with verification fields.",
       });
     }
 
-    // ALL THREE fields are required
-    if (!name || !email || !phone) {
-      return NextResponse.json({
-        total: 0,
-        filtered: 0,
-        families: 0,
-        registrations: [],
-        byParent: {},
-      });
-    }
-
-    // Phone must have at least 7 digits
+    // Phone is ALWAYS required
     const phoneDigits = phone.replace(/\D/g, "");
     if (phoneDigits.length < 7) {
       return NextResponse.json({
@@ -200,8 +189,10 @@ export async function GET(req: Request) {
       });
     }
 
-    // Email must look like an email
-    if (!email.includes("@")) {
+    // Must also have at least name OR email
+    const hasName = name.length >= 2;
+    const hasEmail = email.includes("@");
+    if (!hasName && !hasEmail) {
       return NextResponse.json({
         total: 0,
         filtered: 0,
@@ -287,13 +278,17 @@ export async function GET(req: Request) {
       };
     });
 
-    // STRICT MATCH: All three fields must match the SAME registration record.
-    // First find records where email matches exactly.
-    const emailMatches = registrations.filter(
-      (r) => r.email.toLowerCase().trim() === email
-    );
+    // VERIFICATION: Phone is always matched. Plus name and/or email.
+    // Find records where phone matches first.
+    const phoneMatches = registrations.filter((r) => {
+      const recDigits = r.phone.replace(/\D/g, "");
+      return (
+        recDigits.length >= 7 &&
+        (recDigits.includes(phoneDigits) || phoneDigits.includes(recDigits))
+      );
+    });
 
-    if (emailMatches.length === 0) {
+    if (phoneMatches.length === 0) {
       return NextResponse.json({
         total: 0,
         filtered: 0,
@@ -303,21 +298,21 @@ export async function GET(req: Request) {
       });
     }
 
-    // Now verify that at least one of those records also matches first name AND phone
-    const verified = emailMatches.some((r) => {
-      // Match on first name only (case-insensitive)
+    // Now verify that at least one phone-matched record also matches name OR email
+    const verified = phoneMatches.some((r) => {
+      // Check first name match (case-insensitive)
       const recordFirstName = r.parentName.toLowerCase().trim().split(/\s+/)[0];
       const inputFirstName = name.split(/\s+/)[0];
-      const nameMatch = recordFirstName === inputFirstName;
-      const recDigits = r.phone.replace(/\D/g, "");
-      const phoneMatch =
-        recDigits.length >= 7 &&
-        (recDigits.includes(phoneDigits) || phoneDigits.includes(recDigits));
-      return nameMatch && phoneMatch;
+      const nameMatch = hasName && recordFirstName === inputFirstName;
+
+      // Check email match (exact)
+      const emailMatch = hasEmail && r.email.toLowerCase().trim() === email;
+
+      // Either name or email must match (on top of phone which already matched)
+      return nameMatch || emailMatch;
     });
 
     if (!verified) {
-      // None of the email-matching records also match name + phone
       return NextResponse.json({
         total: 0,
         filtered: 0,
@@ -327,15 +322,24 @@ export async function GET(req: Request) {
       });
     }
 
-    // Verified! Now return ALL records for this family (expand by email + phone)
+    // Verified! Now return ALL records for this family (expand by phone)
     const familyEmails = new Set<string>();
     const familyPhones = new Set<string>();
 
-    for (const r of emailMatches) {
-      const em = r.email.toLowerCase().trim();
-      const ph = r.phone.replace(/\D/g, "");
-      if (em && em.includes("@")) familyEmails.add(em);
-      if (ph.length >= 7) familyPhones.add(ph);
+    for (const r of phoneMatches) {
+      // Only seed from verified records
+      const recDigits = r.phone.replace(/\D/g, "");
+      const recordFirstName = r.parentName.toLowerCase().trim().split(/\s+/)[0];
+      const inputFirstName = name.split(/\s+/)[0];
+      const nameMatch = hasName && recordFirstName === inputFirstName;
+      const emailMatch = hasEmail && r.email.toLowerCase().trim() === email;
+
+      if (nameMatch || emailMatch) {
+        const em = r.email.toLowerCase().trim();
+        const ph = r.phone.replace(/\D/g, "");
+        if (em && em.includes("@")) familyEmails.add(em);
+        if (ph.length >= 7) familyPhones.add(ph);
+      }
     }
 
     // Transitive closure to find all family records

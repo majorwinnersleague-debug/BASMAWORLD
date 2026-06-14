@@ -328,7 +328,11 @@ export default function PortalContent() {
   const [hasSearched, setHasSearched] = useState(false);
   const [error, setError] = useState("");
 
-  const canSubmit = name.trim().length >= 2 && email.includes("@") && phone.replace(/\D/g, "").length >= 7;
+  // Phone is always required. Plus at least name or email.
+  const hasPhone = phone.replace(/\D/g, "").length >= 7;
+  const hasName = name.trim().length >= 2;
+  const hasEmail = email.includes("@");
+  const canSubmit = hasPhone && (hasName || hasEmail);
 
   const doSearch = useCallback(async () => {
     if (!canSubmit) return;
@@ -430,7 +434,7 @@ export default function PortalContent() {
                   Verify Your Identity
                 </h2>
                 <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, margin: 0, maxWidth: 400, marginLeft: "auto", marginRight: "auto" }}>
-                  To protect your family&apos;s privacy, please enter <strong style={{ color: "rgba(255,255,255,0.7)" }}>all three</strong> fields exactly as you registered
+                  To protect your family&apos;s privacy, enter your <strong style={{ color: "rgba(255,255,255,0.7)" }}>phone number</strong> plus your <strong style={{ color: "rgba(255,255,255,0.7)" }}>name or email</strong>
                 </p>
               </div>
 
@@ -442,7 +446,7 @@ export default function PortalContent() {
               }}>
                 {/* Name field */}
                 <div style={{ marginBottom: 16 }}>
-                  <label style={labelStyle}>Parent / Guardian First Name</label>
+                  <label style={labelStyle}>First Name <span style={{ color: "rgba(255,255,255,0.25)", fontWeight: 400 }}>(or use email below)</span></label>
                   <input
                     type="text"
                     placeholder="e.g. Maria"
@@ -456,7 +460,7 @@ export default function PortalContent() {
 
                 {/* Email field */}
                 <div style={{ marginBottom: 16 }}>
-                  <label style={labelStyle}>Email Address</label>
+                  <label style={labelStyle}>Email Address <span style={{ color: "rgba(255,255,255,0.25)", fontWeight: 400 }}>(or use name above)</span></label>
                   <input
                     type="email"
                     placeholder="e.g. maria@gmail.com"
@@ -469,7 +473,7 @@ export default function PortalContent() {
 
                 {/* Phone field */}
                 <div style={{ marginBottom: 20 }}>
-                  <label style={labelStyle}>Phone Number</label>
+                  <label style={labelStyle}>Phone Number <span style={{ color: "#c9a84c", fontWeight: 400 }}>· required</span></label>
                   <input
                     type="tel"
                     placeholder="e.g. (702) 555-1234"
@@ -504,7 +508,7 @@ export default function PortalContent() {
 
                 {!canSubmit && (name || email || phone) && (
                   <p style={{ textAlign: "center", fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 10 }}>
-                    All three fields are required
+                    {!hasPhone ? "Phone number is required" : "Enter your first name or email address"}
                   </p>
                 )}
               </div>
@@ -548,10 +552,10 @@ export default function PortalContent() {
                     <p style={{ fontSize: 40, margin: "0 0 12px" }}>🔒</p>
                     <p style={{ fontSize: 15, fontWeight: 600, margin: "0 0 6px" }}>No matching registration found</p>
                     <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "0 0 6px", maxWidth: 340, marginLeft: "auto", marginRight: "auto" }}>
-                      All three fields must match exactly as entered during registration.
+                      Your phone number plus name or email must match your registration.
                     </p>
                     <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", margin: "0 0 16px" }}>
-                      Double-check spelling, email address, and phone number.
+                      Double-check your phone number and try your name or email.
                     </p>
                     <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
                       <button
@@ -593,7 +597,7 @@ export default function PortalContent() {
                     🛡️ Privacy Protected
                   </div>
                   <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", margin: "0 0 16px", lineHeight: 1.6 }}>
-                    Your child&apos;s information is protected. You must verify your identity with the same name, email, and phone number used during registration.
+                    Your child&apos;s information is protected. Enter your phone number plus your first name or email to verify your identity.
                   </p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
