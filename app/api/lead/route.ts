@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     // Send email notification to owner via formsubmit
     try {
-      await fetch('https://formsubmit.co/ajax/majorwinnersleague@gmail.com', {
+      await fetch('https://formsubmit.co/ajax/becomeasingermusicacademy@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
