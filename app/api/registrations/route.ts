@@ -501,14 +501,19 @@ export async function GET(req: Request) {
     });
 
     // Send verification alert emails (server-side, before stripping PII)
+    // Must await — on Vercel serverless, fire-and-forget won't complete before function exits
     const verifyMethod = hasName && hasEmail ? "Name + Email + Phone" : hasName ? "Name + Phone" : "Email + Phone";
     const alertedEmails = new Set<string>();
+    const alertPromises: Promise<void>[] = [];
     for (const r of filtered) {
       const em = r.email?.toLowerCase().trim();
       if (em && em.includes("@") && !alertedEmails.has(em)) {
         alertedEmails.add(em);
-        sendVerificationAlert(em, verifyMethod).catch(() => {});
+        alertPromises.push(sendVerificationAlert(em, verifyMethod));
       }
+    }
+    if (alertPromises.length > 0) {
+      await Promise.allSettled(alertPromises);
     }
 
     // Privacy: show student FIRST NAME ONLY — no last name, no initial
