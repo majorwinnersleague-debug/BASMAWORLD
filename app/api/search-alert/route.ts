@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const FROM_EMAIL = "BASMA <noreply@basmaworld.com>";
+// basmaworld.com not yet verified in Resend — use default sender until DNS records are added
+const FROM_EMAIL = "BASMA Academy <onboarding@resend.dev>";
 
 // Simple in-memory rate limit: max 1 alert per email per 30 minutes
 const recentAlerts = new Map<string, number>();

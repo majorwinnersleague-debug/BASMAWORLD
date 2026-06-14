@@ -7,7 +7,8 @@ const ENROLLMENTS_TABLE = "tblelNWN2hed8OclX"; // Enrollments (waivers/medical)
 const PAYMENTS_TABLE = "tblfTQQEciBFqovYU"; // Stripe Payments
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const FROM_EMAIL = "BASMA <noreply@basmaworld.com>";
+// basmaworld.com not yet verified in Resend — use their default sender until DNS records are added
+const FROM_EMAIL = "BASMA Academy <onboarding@resend.dev>";
 
 // Rate limit: max 1 alert per email per 30 minutes
 const recentAlerts = new Map<string, number>();
