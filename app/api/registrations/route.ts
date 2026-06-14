@@ -6,6 +6,83 @@ const LEADS_TABLE = "tbl1diIEhM9MtKViE"; // BASMA Marketing Leads
 const ENROLLMENTS_TABLE = "tblelNWN2hed8OclX"; // Enrollments (waivers/medical)
 const PAYMENTS_TABLE = "tblfTQQEciBFqovYU"; // Stripe Payments
 
+const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+const FROM_EMAIL = "BASMA <noreply@basmaworld.com>";
+
+// Rate limit: max 1 alert per email per 30 minutes
+const recentAlerts = new Map<string, number>();
+const RATE_LIMIT_MS = 30 * 60 * 1000;
+
+async function sendVerificationAlert(parentEmail: string, verifyMethod: string) {
+  const key = parentEmail.toLowerCase().trim();
+  if (!key || !key.includes("@") || !RESEND_API_KEY) return;
+
+  const lastSent = recentAlerts.get(key);
+  if (lastSent && Date.now() - lastSent < RATE_LIMIT_MS) return;
+
+  const now = new Date();
+  const timeStr = now.toLocaleString("en-US", {
+    timeZone: "America/Los_Angeles",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #4a0e78, #6b21a8); padding: 20px; border-radius: 12px 12px 0 0; text-align: center;">
+        <h2 style="color: #ffd700; margin: 0; font-size: 22px;">🔔 BASMA Portal Access Alert</h2>
+      </div>
+      <div style="background: #fff; padding: 24px; border: 1px solid #e5e7eb; border-radius: 0 0 12px 12px;">
+        <p style="font-size: 15px; color: #333; margin: 0 0 12px;">
+          Someone just accessed your family's registration on <strong>basmaworld.com/portal</strong>.
+        </p>
+        <div style="background: #f9fafb; padding: 14px; border-radius: 8px; margin: 16px 0;">
+          <p style="margin: 0; font-size: 14px; color: #666;">
+            <strong>Time:</strong> ${timeStr} (Pacific)<br>
+            <strong>Verified with:</strong> ${verifyMethod}
+          </p>
+        </div>
+        <p style="font-size: 14px; color: #333;">
+          <strong>Was this you?</strong>
+        </p>
+        <p style="font-size: 14px; color: #333;">
+          ✅ <strong>Yes</strong> — no action needed!
+        </p>
+        <p style="font-size: 14px; color: #333;">
+          ❌ <strong>No</strong> — please contact us immediately at
+          <a href="mailto:becomeasingermusicacademy@gmail.com" style="color: #6b21a8;">becomeasingermusicacademy@gmail.com</a>
+        </p>
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+        <p style="font-size: 12px; color: #999; text-align: center;">
+          Become A Singer Music Academy · <a href="https://basmaworld.com" style="color: #6b21a8;">basmaworld.com</a>
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: \`Bearer \${RESEND_API_KEY}\`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: key,
+        subject: "🔔 Someone accessed your BASMA registration — was this you?",
+        html,
+        text: \`Someone accessed your family's registration on basmaworld.com/portal at \${timeStr}. Verified with: \${verifyMethod}. If this was you, no action needed. If not, contact becomeasingermusicacademy@gmail.com immediately.\`,
+      }),
+    });
+    if (res.ok) {
+      recentAlerts.set(key, Date.now());
+    }
+  } catch (e) {
+    console.error("Alert email error:", e);
+  }
+}
+
 interface AirtableRecord {
   id: string;
   fields: Record<string, any>;
@@ -369,6 +446,17 @@ export async function GET(req: Request) {
           Array.from(familyPhones).some((fp) => fp.includes(ph) || ph.includes(fp)))
       );
     });
+
+    // Send verification alert emails (server-side, before stripping PII)
+    const verifyMethod = hasName && hasEmail ? "Name + Email + Phone" : hasName ? "Name + Phone" : "Email + Phone";
+    const alertedEmails = new Set<string>();
+    for (const r of filtered) {
+      const em = r.email?.toLowerCase().trim();
+      if (em && em.includes("@") && !alertedEmails.has(em)) {
+        alertedEmails.add(em);
+        sendVerificationAlert(em, verifyMethod).catch(() => {});
+      }
+    }
 
     // Privacy: show student FIRST NAME ONLY — no last name, no initial
     for (const r of filtered) {
