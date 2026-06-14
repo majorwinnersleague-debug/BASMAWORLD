@@ -1,333 +1,570 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   TYPES
-   ═══════════════════════════════════════════════════════════════════════════ */
+import { useState, useEffect, useCallback } from "react";
 
 interface Registration {
-  _id: string
-  _creationTime: number
-  studentName: string
-  age: number
-  classType: string
-  parentName: string
-  parentEmail: string
-  parentPhone: string
-  paymentStatus: string
-  photoConsent: boolean
-  allergies: string
-  medications: string
-  medicalConditions: string
-  emergencyContactName: string
-  emergencyContactPhone: string
-  liabilityAgreed: boolean
-  createdAt?: number
+  id: string;
+  parentName: string;
+  email: string;
+  phone: string;
+  studentName: string;
+  studentAge: string;
+  interests: string;
+  status: string;
+  source: string;
+  ageGroup: string;
+  experienceLevel: string;
+  referralSource: string;
+  message: string;
+  address: string;
+  createdAt: string;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   HELPERS
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-function formatDate(ts: number): string {
-  return new Date(ts).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-  })
+interface ApiResponse {
+  total: number;
+  filtered: number;
+  families: number;
+  registrations: Registration[];
+  byParent: Record<string, Registration[]>;
+  stats: {
+    total: number;
+    newLead: number;
+    incomplete: number;
+    withStudent: number;
+    sources: Record<string, number>;
+  };
 }
 
-function formatPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '')
-  if (digits.length === 10) {
-    return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
-  }
-  return phone
+const STATUS_COLORS: Record<string, string> = {
+  "New Lead": "#22c55e",
+  Incomplete: "#f59e0b",
+  Unknown: "#6b7280",
+};
+
+function StatusBadge({ status }: { status: string }) {
+  const color = STATUS_COLORS[status] || "#6b7280";
+  return (
+    <span
+      style={{
+        background: `${color}22`,
+        color,
+        border: `1px solid ${color}44`,
+        padding: "2px 10px",
+        borderRadius: 20,
+        fontSize: 11,
+        fontWeight: 600,
+        letterSpacing: "0.03em",
+      }}
+    >
+      {status === "New Lead" ? "✅ Registered" : status === "Incomplete" ? "⚠️ Incomplete" : status}
+    </span>
+  );
 }
 
-function getClassEmoji(classType: string): string {
-  if (classType.includes('Tiny Tots')) return '🧸'
-  if (classType.includes('1-on-1') || classType.includes('Discovery Lesson')) return '⭐'
-  if (classType.includes('Group Discovery') || classType.includes('Group Music') || classType.includes('Group Classes')) return '🎵'
-  if (classType.includes('Kids Music')) return '🎹'
-  if (classType.includes('Recording') || classType.includes('Teen')) return '🎙️'
-  if (classType.includes('Piano')) return '🎹'
-  return '🎶'
-}
-
-function getClassMonth(classType: string): 'june' | 'july-aug' | 'unknown' {
-  const lower = classType.toLowerCase()
-  if (lower.includes('june') || lower.includes('(june)') || lower.includes('– june')) return 'june'
-  if (lower.includes('jul') || lower.includes('aug')) return 'july-aug'
-  return 'june' // default to June for general classes
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   COMPONENT
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-export default function PortalContent() {
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [registrations, setRegistrations] = useState<Registration[]>([])
-  const [allRegistrations, setAllRegistrations] = useState<Registration[]>([])
-  const [error, setError] = useState('')
-
-  async function handleLookup(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    try {
-      const resp = await fetch('/api/registrations')
-      if (!resp.ok) throw new Error('Failed to load registrations')
-      const data = await resp.json()
-      setAllRegistrations(data.registrations || [])
-
-      const normalEmail = email.trim().toLowerCase()
-      const normalPhone = phone.replace(/\D/g, '')
-
-      const matches = (data.registrations || []).filter((r: Registration) => {
-        const rEmail = (r.parentEmail || '').trim().toLowerCase()
-        const rPhone = (r.parentPhone || '').replace(/\D/g, '')
-        if (normalEmail && rEmail === normalEmail) return true
-        if (normalPhone && normalPhone.length >= 7 && rPhone.includes(normalPhone)) return true
-        return false
-      })
-
-      setRegistrations(matches)
-      setSubmitted(true)
-    } catch {
-      setError('Unable to load registrations. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const parentName = registrations.length > 0 ? registrations[0].parentName : ''
-
-  const childrenMap = useMemo(() => {
-    const map = new Map<string, Registration[]>()
-    for (const reg of registrations) {
-      const name = reg.studentName.trim()
-      if (!map.has(name)) map.set(name, [])
-      map.get(name)!.push(reg)
-    }
-    return map
-  }, [registrations])
+function FamilyCard({
+  familyKey,
+  records,
+  onSelect,
+}: {
+  familyKey: string;
+  records: Registration[];
+  onSelect: (r: Registration[]) => void;
+}) {
+  const parent = records[0];
+  const students = records.filter((r) => r.studentName);
+  const incomplete = records.filter((r) => r.status === "Incomplete");
 
   return (
-    <main className="min-h-screen text-white" style={{ background: '#050505' }}>
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-        <Link href="/" className="text-lg font-bold tracking-wider" style={{ color: '#c9a84c', fontFamily: "'Playfair Display', serif" }}>
-          BASMA
-        </Link>
-        <span className="text-sm text-white/40">Parent Portal</span>
-      </header>
+    <button
+      onClick={() => onSelect(records)}
+      style={{
+        display: "block",
+        width: "100%",
+        textAlign: "left",
+        background: "rgba(255,255,255,0.03)",
+        border: incomplete.length > 0 ? "1px solid rgba(245,158,11,0.4)" : "1px solid rgba(255,255,255,0.08)",
+        borderRadius: 16,
+        padding: "16px 20px",
+        cursor: "pointer",
+        transition: "all 0.2s",
+        marginBottom: 10,
+      }}
+      className="family-card"
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+        <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#fff" }}>
+          {parent.parentName || "Unknown"}
+        </h3>
+        <StatusBadge status={incomplete.length > 0 ? "Incomplete" : "New Lead"} />
+      </div>
+      <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
+        {parent.email} {parent.phone ? `· ${parent.phone}` : ""}
+      </p>
+      {students.length > 0 && (
+        <div style={{ marginTop: 8 }}>
+          {students.map((s, i) => (
+            <span
+              key={i}
+              style={{
+                display: "inline-block",
+                background: "rgba(201,168,76,0.15)",
+                color: "#c9a84c",
+                padding: "3px 10px",
+                borderRadius: 12,
+                fontSize: 12,
+                fontWeight: 500,
+                marginRight: 6,
+                marginBottom: 4,
+              }}
+            >
+              {s.studentName} {s.studentAge ? `(${s.studentAge})` : ""}
+            </span>
+          ))}
+        </div>
+      )}
+      {records.length > students.length && (
+        <p style={{ margin: "6px 0 0", fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
+          {records.length} registration{records.length > 1 ? "s" : ""} total
+        </p>
+      )}
+    </button>
+  );
+}
 
-      <div className="max-w-3xl mx-auto px-6 py-12">
-        {!submitted ? (
-          /* ─── LOGIN FORM ────────────────────────────────────── */
-          <div className="text-center">
-            <div className="mb-8">
-              <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-4">Parent Portal</p>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Welcome, <span className="gradient-gold">Parent</span>
-              </h1>
-              <p className="text-white/40 max-w-md mx-auto">
-                Look up your child&apos;s enrollment by entering the email or phone number you used during registration.
-              </p>
-            </div>
+function StudentDetail({
+  records,
+  onBack,
+}: {
+  records: Registration[];
+  onBack: () => void;
+}) {
+  const parent = records[0];
+  const incomplete = records.filter((r) => r.status === "Incomplete");
 
-            <form onSubmit={handleLookup} className="max-w-md mx-auto space-y-4">
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition"
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex-1 h-px bg-white/10" />
-                <span className="text-xs text-white/20">or</span>
-                <div className="flex-1 h-px bg-white/10" />
-              </div>
-              <div>
-                <input
-                  type="tel"
-                  placeholder="Phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition"
-                />
-              </div>
+  return (
+    <div>
+      <button
+        onClick={onBack}
+        style={{
+          background: "none",
+          border: "none",
+          color: "#c9a84c",
+          cursor: "pointer",
+          fontSize: 14,
+          fontWeight: 600,
+          marginBottom: 20,
+          padding: 0,
+        }}
+      >
+        ← Back to search
+      </button>
 
-              {error && (
-                <p className="text-red-400 text-sm">{error}</p>
-              )}
+      <div
+        style={{
+          background: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.1)",
+          borderRadius: 20,
+          padding: "24px 28px",
+          marginBottom: 20,
+        }}
+      >
+        <h2 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#fff" }}>
+          {parent.parentName}
+        </h2>
+        <p style={{ margin: "0 0 12px", fontSize: 14, color: "rgba(255,255,255,0.5)" }}>
+          {parent.email} {parent.phone ? `· ${parent.phone}` : ""}
+        </p>
 
-              <button
-                type="submit"
-                disabled={loading || (!email.trim() && !phone.trim())}
-                className="w-full py-3 rounded-xl font-semibold text-sm tracking-wide transition disabled:opacity-40"
-                style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}
-              >
-                {loading ? 'Looking up...' : 'View My Enrollments'}
-              </button>
-            </form>
-
-            <p className="mt-6 text-xs text-white/20">
-              Having trouble? Call us at{' '}
-              <a href="tel:7027887369" className="text-[#c9a84c]/60 hover:text-[#c9a84c]">(702) 788-7369</a>
+        {incomplete.length > 0 && (
+          <div
+            style={{
+              background: "rgba(245,158,11,0.1)",
+              border: "1px solid rgba(245,158,11,0.3)",
+              borderRadius: 12,
+              padding: "12px 16px",
+              marginBottom: 16,
+            }}
+          >
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#f59e0b" }}>
+              ⚠️ {incomplete.length} incomplete registration{incomplete.length > 1 ? "s" : ""} — forms need to be finished
             </p>
-          </div>
-        ) : registrations.length === 0 ? (
-          /* ─── NO RESULTS ─────────────────────────────────── */
-          <div className="text-center py-12">
-            <div className="text-5xl mb-6">🔍</div>
-            <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-              No Enrollments Found
-            </h2>
-            <p className="text-white/40 mb-8 max-w-md mx-auto">
-              We couldn&apos;t find any registrations matching that email or phone number.
-              Please double-check and try again, or contact us for help.
+            <p style={{ margin: "6px 0 0", fontSize: 12, color: "rgba(245,158,11,0.7)" }}>
+              Please complete the registration to secure your spot.
             </p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <button
-                onClick={() => { setSubmitted(false); setEmail(''); setPhone('') }}
-                className="px-6 py-2.5 rounded-xl text-sm font-medium border border-white/10 text-white/60 hover:text-white hover:border-white/20 transition"
-              >
-                Try Again
-              </button>
-              <a
-                href="tel:7027887369"
-                className="px-6 py-2.5 rounded-xl text-sm font-medium transition"
-                style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}
-              >
-                Call (702) 788-7369
-              </a>
-            </div>
-          </div>
-        ) : (
-          /* ─── DASHBOARD ──────────────────────────────────── */
-          <div>
-            <div className="mb-10">
-              <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-2">Parent Portal</p>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Welcome, <span className="gradient-gold">{parentName.split(' ')[0]}</span>
-              </h1>
-              <p className="text-white/40 text-sm">
-                {registrations.length} enrollment{registrations.length !== 1 ? 's' : ''} across {childrenMap.size} child{childrenMap.size !== 1 ? 'ren' : ''}
-              </p>
-            </div>
-
-            {/* Children cards */}
-            {Array.from(childrenMap.entries()).map(([childName, regs]) => (
-              <div key={childName} className="mb-8 rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                {/* Child header */}
-                <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                      {childName}
-                    </h3>
-                    <p className="text-sm text-white/30">Age {regs[0].age ? Math.floor(regs[0].age) : '—'}</p>
-                  </div>
-                  <div className="text-3xl">{getClassEmoji(regs[0].classType)}</div>
-                </div>
-
-                {/* Classes */}
-                {regs.map((reg) => {
-                  const month = getClassMonth(reg.classType)
-                  return (
-                    <div key={reg._id} className="px-6 py-4 border-b border-white/5 last:border-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-lg">{getClassEmoji(reg.classType)}</span>
-                            <span className="font-medium text-white/90">{reg.classType}</span>
-                          </div>
-                          <p className="text-xs text-white/30">
-                            Registered {formatDate(reg._creationTime || reg.createdAt || 0)}
-                          </p>
-                        </div>
-                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-                          reg.paymentStatus === 'free' || reg.paymentStatus === 'N/A'
-                            ? 'bg-green-500/10 text-green-400'
-                            : reg.paymentStatus === 'pending'
-                            ? 'bg-yellow-500/10 text-yellow-400'
-                            : 'bg-white/5 text-white/40'
-                        }`}>
-                          {reg.paymentStatus === 'free' || reg.paymentStatus === 'N/A' ? '✓ Free' : reg.paymentStatus === 'pending' ? '⏳ Payment Pending' : reg.paymentStatus}
-                        </span>
-                      </div>
-                    </div>
-                  )
-                })}
-
-                {/* Medical & emergency info */}
-                <div className="px-6 py-4 bg-white/[0.01]">
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                      <p className="text-white/25 mb-1 uppercase tracking-wider" style={{ fontSize: '10px' }}>Emergency Contact</p>
-                      <p className="text-white/60">{regs[0].emergencyContactName}</p>
-                      <p className="text-white/40">{formatPhone(regs[0].emergencyContactPhone)}</p>
-                    </div>
-                    <div>
-                      <p className="text-white/25 mb-1 uppercase tracking-wider" style={{ fontSize: '10px' }}>Medical Info</p>
-                      {regs[0].allergies && regs[0].allergies !== 'None' && regs[0].allergies !== 'No' && regs[0].allergies !== 'N/A' && (
-                        <p className="text-orange-400/80">⚠️ Allergies: {regs[0].allergies}</p>
-                      )}
-                      {(!regs[0].allergies || regs[0].allergies === 'None' || regs[0].allergies === 'No' || regs[0].allergies === 'N/A') && (
-                        <p className="text-white/40">No allergies reported</p>
-                      )}
-                      {regs[0].medications && regs[0].medications !== 'None' && regs[0].medications !== 'No' && regs[0].medications !== 'N/A' && (
-                        <p className="text-white/40">Meds: {regs[0].medications}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Quick info */}
-            <div className="mt-8 p-6 rounded-2xl text-center" style={{ background: 'rgba(201, 168, 76, 0.05)', border: '1px solid rgba(201, 168, 76, 0.1)' }}>
-              <h3 className="font-semibold mb-2 gradient-gold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                📍 Class Location
-              </h3>
-              <p className="text-white/50 text-sm">6787 W Tropicana Ave, Las Vegas</p>
-              <p className="text-white/30 text-xs mt-1">Mon–Thu · June classes are FREE</p>
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-3 justify-center">
-              <a
-                href="/enroll"
-                className="px-6 py-2.5 rounded-xl text-sm font-medium transition"
-                style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}
-              >
-                Enroll in Another Class
-              </a>
-              <button
-                onClick={() => { setSubmitted(false); setEmail(''); setPhone(''); setRegistrations([]) }}
-                className="px-6 py-2.5 rounded-xl text-sm font-medium border border-white/10 text-white/60 hover:text-white hover:border-white/20 transition"
-              >
-                Sign Out
-              </button>
-            </div>
+            <a
+              href="/enroll"
+              style={{
+                display: "inline-block",
+                marginTop: 10,
+                padding: "8px 20px",
+                background: "#f59e0b",
+                color: "#000",
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              Complete Registration →
+            </a>
           </div>
         )}
-      </div>
 
-      {/* Footer */}
-      <footer className="mt-20 py-6 border-t border-white/5 text-center">
-        <p className="text-xs text-white/20">
-          © 2026 BASMA Music Academy · <a href="/" className="text-[#c9a84c]/40 hover:text-[#c9a84c]">basmaworld.com</a>
-        </p>
-      </footer>
-    </main>
-  )
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: "#c9a84c", margin: "16px 0 10px" }}>
+          Students ({records.filter(r => r.studentName).length})
+        </h3>
+        {records.map((r, i) => (
+          <div
+            key={i}
+            style={{
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.06)",
+              borderRadius: 14,
+              padding: "14px 18px",
+              marginBottom: 10,
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: "#fff" }}>
+                  {r.studentName || r.parentName} {r.studentAge ? `— Age ${r.studentAge}` : ""}
+                </p>
+                {r.interests && (
+                  <p style={{ margin: "4px 0 0", fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
+                    Interests: {r.interests}
+                  </p>
+                )}
+                {r.ageGroup && (
+                  <p style={{ margin: "2px 0 0", fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                    Age Group: {r.ageGroup}
+                  </p>
+                )}
+                {r.experienceLevel && (
+                  <p style={{ margin: "2px 0 0", fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                    Experience: {r.experienceLevel}
+                  </p>
+                )}
+                {r.address && (
+                  <p style={{ margin: "2px 0 0", fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                    Address: {r.address}
+                  </p>
+                )}
+              </div>
+              <StatusBadge status={r.status} />
+            </div>
+            {r.status === "Incomplete" && (
+              <a
+                href="/enroll"
+                style={{
+                  display: "inline-block",
+                  marginTop: 10,
+                  padding: "6px 16px",
+                  background: "rgba(245,158,11,0.2)",
+                  color: "#f59e0b",
+                  border: "1px solid rgba(245,158,11,0.3)",
+                  borderRadius: 8,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+              >
+                Finish Registration →
+              </a>
+            )}
+            <p style={{ margin: "8px 0 0", fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
+              Registered: {new Date(r.createdAt).toLocaleDateString()} · Source: {r.source}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function PortalContent() {
+  const [search, setSearch] = useState("");
+  const [data, setData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState<Registration[] | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const doSearch = useCallback(async () => {
+    if (!search.trim()) return;
+    setLoading(true);
+    setHasSearched(true);
+    try {
+      const resp = await fetch(`/api/registrations?search=${encodeURIComponent(search.trim())}`);
+      const json = await resp.json();
+      setData(json);
+      setSelected(null);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [search]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") doSearch();
+  };
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#050505",
+        color: "#fff",
+        fontFamily: "'Inter', -apple-system, sans-serif",
+      }}
+    >
+      <style>{`
+        .family-card:hover { background: rgba(255,255,255,0.06) !important; transform: translateY(-1px); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
+
+      {/* Header */}
+      <header
+        style={{
+          padding: "20px 24px",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          <p
+            style={{
+              margin: 0,
+              fontSize: 10,
+              letterSpacing: "0.3em",
+              color: "rgba(201,168,76,0.5)",
+              textTransform: "uppercase",
+            }}
+          >
+            Parent Portal
+          </p>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 22,
+              fontWeight: 700,
+              fontFamily: "'Playfair Display', serif",
+            }}
+          >
+            <span style={{ background: "linear-gradient(135deg, #c9a84c, #e4cc7a)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>BASMA</span>{" "}
+            <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 400 }}>Academy</span>
+          </h1>
+        </div>
+        <a
+          href="/"
+          style={{
+            color: "rgba(255,255,255,0.4)",
+            textDecoration: "none",
+            fontSize: 13,
+            fontWeight: 500,
+          }}
+        >
+          ← Home
+        </a>
+      </header>
+
+      <main style={{ maxWidth: 640, margin: "0 auto", padding: "32px 20px" }}>
+        {!selected ? (
+          <>
+            {/* Search */}
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <h2
+                style={{
+                  fontSize: 26,
+                  fontWeight: 700,
+                  fontFamily: "'Playfair Display', serif",
+                  margin: "0 0 8px",
+                }}
+              >
+                Welcome Back! 👋
+              </h2>
+              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 14, margin: "0 0 24px" }}>
+                Type your name, email, or phone to find your registrations
+              </p>
+              <div style={{ display: "flex", gap: 10 }}>
+                <input
+                  type="text"
+                  placeholder="Search by name, email, or phone..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  autoFocus
+                  style={{
+                    flex: 1,
+                    padding: "14px 18px",
+                    borderRadius: 14,
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    background: "rgba(255,255,255,0.05)",
+                    color: "#fff",
+                    fontSize: 15,
+                    outline: "none",
+                  }}
+                />
+                <button
+                  onClick={doSearch}
+                  disabled={loading || !search.trim()}
+                  style={{
+                    padding: "14px 24px",
+                    borderRadius: 14,
+                    border: "none",
+                    background: "linear-gradient(135deg, #c9a84c, #e4cc7a)",
+                    color: "#050505",
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    opacity: loading || !search.trim() ? 0.5 : 1,
+                  }}
+                >
+                  {loading ? "..." : "Search"}
+                </button>
+              </div>
+            </div>
+
+            {/* Results */}
+            {hasSearched && data && (
+              <div>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 16 }}>
+                  Found {data.filtered} registration{data.filtered !== 1 ? "s" : ""} in {data.families} famil{data.families !== 1 ? "ies" : "y"}
+                </p>
+
+                {data.filtered === 0 && (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      padding: 40,
+                      background: "rgba(255,255,255,0.03)",
+                      borderRadius: 20,
+                    }}
+                  >
+                    <p style={{ fontSize: 40, margin: "0 0 12px" }}>🔍</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, margin: "0 0 6px" }}>
+                      No registrations found
+                    </p>
+                    <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "0 0 16px" }}>
+                      Try searching with a different name, email, or phone number
+                    </p>
+                    <a
+                      href="/enroll"
+                      style={{
+                        display: "inline-block",
+                        padding: "10px 24px",
+                        background: "linear-gradient(135deg, #c9a84c, #e4cc7a)",
+                        color: "#050505",
+                        borderRadius: 12,
+                        fontSize: 14,
+                        fontWeight: 700,
+                        textDecoration: "none",
+                      }}
+                    >
+                      Register Now →
+                    </a>
+                  </div>
+                )}
+
+                {Object.entries(data.byParent).map(([key, records]) => (
+                  <FamilyCard
+                    key={key}
+                    familyKey={key}
+                    records={records}
+                    onSelect={setSelected}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Not searched yet */}
+            {!hasSearched && (
+              <div style={{ textAlign: "center", marginTop: 20 }}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 12,
+                    maxWidth: 400,
+                    margin: "0 auto",
+                  }}
+                >
+                  <a
+                    href="/enroll"
+                    style={{
+                      display: "block",
+                      padding: "20px 16px",
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: 16,
+                      textDecoration: "none",
+                      textAlign: "center",
+                    }}
+                  >
+                    <p style={{ fontSize: 28, margin: "0 0 8px" }}>📝</p>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: "#fff", margin: 0 }}>
+                      New Registration
+                    </p>
+                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", margin: "4px 0 0" }}>
+                      Sign up for classes
+                    </p>
+                  </a>
+                  <a
+                    href="/"
+                    style={{
+                      display: "block",
+                      padding: "20px 16px",
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: 16,
+                      textDecoration: "none",
+                      textAlign: "center",
+                    }}
+                  >
+                    <p style={{ fontSize: 28, margin: "0 0 8px" }}>🏠</p>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: "#fff", margin: 0 }}>
+                      Back Home
+                    </p>
+                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", margin: "4px 0 0" }}>
+                      View all programs
+                    </p>
+                  </a>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <StudentDetail records={selected} onBack={() => setSelected(null)} />
+        )}
+      </main>
+
+      {/* Footer nav */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: "rgba(5,5,5,0.95)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          display: "flex",
+          justifyContent: "center",
+          gap: 32,
+          padding: "12px 20px",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <a href="/" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: 12, textAlign: "center" }}>
+          <span style={{ fontSize: 18, display: "block" }}>🏠</span> Home
+        </a>
+        <a href="/enroll" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: 12, textAlign: "center" }}>
+          <span style={{ fontSize: 18, display: "block" }}>📝</span> Enroll
+        </a>
+        <a href="/portal" style={{ color: "#c9a84c", textDecoration: "none", fontSize: 12, textAlign: "center" }}>
+          <span style={{ fontSize: 18, display: "block" }}>👨‍👩‍👧</span> Portal
+        </a>
+      </div>
+    </div>
+  );
 }
