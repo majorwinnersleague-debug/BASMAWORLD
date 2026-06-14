@@ -101,6 +101,11 @@ function ChecklistItem({ complete, label, desc, link, linkLabel }: {
 }
 
 function StudentChecklist({ reg }: { reg: Registration }) {
+  // Show only first name of student (or first name of parent as fallback)
+  const displayName = reg.studentName
+    ? reg.studentName.split(/\s+/)[0]
+    : (reg.parentName ? reg.parentName.split(/\s+/)[0] : "Student");
+
   return (
     <div style={{
       background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
@@ -109,7 +114,7 @@ function StudentChecklist({ reg }: { reg: Registration }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
         <div>
           <h4 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#fff" }}>
-            {reg.studentName || reg.parentName} {reg.studentAge ? `— Age ${reg.studentAge}` : ""}
+            {displayName} {reg.studentAge ? `— Age ${reg.studentAge}` : ""}
           </h4>
           {reg.interests && (
             <p style={{ margin: "4px 0 0", fontSize: 12, color: "rgba(201,168,76,0.7)" }}>
@@ -152,7 +157,7 @@ function StudentChecklist({ reg }: { reg: Registration }) {
       ))}
 
       <p style={{ margin: "10px 0 0", fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
-        Registered: {new Date(reg.createdAt).toLocaleDateString()} · Source: {reg.source}
+        Registered: {new Date(reg.createdAt).toLocaleDateString()}
       </p>
     </div>
   );
@@ -218,7 +223,7 @@ function FamilyDetail({ records, onBack }: { records: Registration[]; onBack: ()
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
           <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#fff" }}>
-            {parent.parentName}
+            Welcome, {parent.parentName ? parent.parentName.split(/\s+/)[0] : "Parent"}
           </h2>
           {allComplete ? (
             <span style={{ fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 20, background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" }}>
@@ -230,9 +235,6 @@ function FamilyDetail({ records, onBack }: { records: Registration[]; onBack: ()
             </span>
           )}
         </div>
-        <p style={{ margin: "0 0 4px", fontSize: 14, color: "rgba(255,255,255,0.5)" }}>
-          📧 {parent.email} {parent.phone ? `· 📱 ${parent.phone}` : ""}
-        </p>
         <p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
           {records.length} student{records.length > 1 ? "s" : ""} registered
         </p>
@@ -283,7 +285,7 @@ function FamilyListCard({ records, onSelect }: { records: Registration[]; onSele
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
         <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#fff" }}>
-          {parent.parentName || "Unknown"}
+          {parent.parentName ? parent.parentName.split(/\s+/)[0] : "Parent"}
         </h3>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 12, fontWeight: 700, color: allComplete ? "#22c55e" : "#f59e0b" }}>
@@ -294,9 +296,6 @@ function FamilyListCard({ records, onSelect }: { records: Registration[]; onSele
           </div>
         </div>
       </div>
-      <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-        {parent.email} {parent.phone ? `· ${parent.phone}` : ""}
-      </p>
       {students.length > 0 && (
         <div style={{ marginTop: 8 }}>
           {students.map((s, i) => (
@@ -305,7 +304,7 @@ function FamilyListCard({ records, onSelect }: { records: Registration[]; onSele
               padding: "3px 10px", borderRadius: 12, fontSize: 12, fontWeight: 500,
               marginRight: 6, marginBottom: 4,
             }}>
-              {s.studentName} {s.studentAge ? `(${s.studentAge})` : ""}
+              {s.studentName} {s.studentAge ? `(age ${s.studentAge})` : ""}
             </span>
           ))}
         </div>
@@ -320,18 +319,28 @@ function FamilyListCard({ records, onSelect }: { records: Registration[]; onSele
 }
 
 export default function PortalContent() {
-  const [search, setSearch] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Registration[] | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [error, setError] = useState("");
+
+  const canSubmit = name.trim().length >= 2 && email.includes("@") && phone.replace(/\D/g, "").length >= 7;
 
   const doSearch = useCallback(async () => {
-    if (!search.trim()) return;
+    if (!canSubmit) return;
     setLoading(true);
     setHasSearched(true);
+    setError("");
     try {
-      const params = new URLSearchParams({ search: search.trim() });
+      const params = new URLSearchParams({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+      });
       const resp = await fetch(`/api/registrations?${params}`);
       const json = await resp.json();
       setData(json);
@@ -341,23 +350,24 @@ export default function PortalContent() {
       if (json.filtered > 0 && json.byParent) {
         const alertedEmails = new Set<string>();
         for (const records of Object.values(json.byParent) as Registration[][]) {
-          const email = records[0]?.email?.toLowerCase().trim();
-          if (email && email.includes("@") && !alertedEmails.has(email)) {
-            alertedEmails.add(email);
+          const parentEmail = records[0]?.email?.toLowerCase().trim();
+          if (parentEmail && parentEmail.includes("@") && !alertedEmails.has(parentEmail)) {
+            alertedEmails.add(parentEmail);
             fetch("/api/search-alert", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ parentEmail: email, searchTerm: search.trim() }),
+              body: JSON.stringify({ parentEmail, searchTerm: `Verified lookup (name + email + phone)` }),
             }).catch(() => {}); // fire-and-forget
           }
         }
       }
     } catch (err) {
       console.error(err);
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [search]);
+  }, [name, email, phone, canSubmit]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") doSearch();
@@ -366,6 +376,28 @@ export default function PortalContent() {
   const filteredByParent = data?.byParent || {};
   const filteredCount = Object.values(filteredByParent).reduce((acc, r) => acc + r.length, 0);
   const familyCount = Object.keys(filteredByParent).length;
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "14px 18px",
+    borderRadius: 14,
+    border: "1px solid rgba(255,255,255,0.1)",
+    background: "rgba(255,255,255,0.05)",
+    color: "#fff",
+    fontSize: 15,
+    outline: "none",
+    boxSizing: "border-box",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: "block",
+    fontSize: 11,
+    fontWeight: 700,
+    color: "rgba(255,255,255,0.4)",
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
+    marginBottom: 6,
+  };
 
   return (
     <div style={{ minHeight: "100vh", background: "#050505", color: "#fff", fontFamily: "'Inter', -apple-system, sans-serif" }}>
@@ -390,43 +422,91 @@ export default function PortalContent() {
       <main style={{ maxWidth: 700, margin: "0 auto", padding: "24px 20px 100px" }}>
         {!selected ? (
           <>
-            {/* Search */}
+            {/* Verification Form */}
             <div style={{ marginBottom: 16 }}>
-              <div style={{ textAlign: "center", marginBottom: hasSearched ? 16 : 40, marginTop: hasSearched ? 0 : 40 }}>
-                <p style={{ fontSize: 48, margin: "0 0 12px" }}>🔍</p>
+              <div style={{ textAlign: "center", marginBottom: hasSearched ? 16 : 32, marginTop: hasSearched ? 0 : 32 }}>
+                <p style={{ fontSize: 48, margin: "0 0 12px" }}>🔐</p>
                 <h2 style={{ fontSize: 24, fontWeight: 700, fontFamily: "'Playfair Display', serif", margin: "0 0 8px" }}>
-                  Find Your Registration
+                  Verify Your Identity
                 </h2>
-                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, margin: 0, maxWidth: 380, marginLeft: "auto", marginRight: "auto" }}>
-                  Enter the email or phone number you used to register
+                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, margin: 0, maxWidth: 400, marginLeft: "auto", marginRight: "auto" }}>
+                  To protect your family&apos;s privacy, please enter <strong style={{ color: "rgba(255,255,255,0.7)" }}>all three</strong> fields exactly as you registered
                 </p>
               </div>
-              <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-                <input
-                  type="text"
-                  placeholder="Your email or phone number..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  autoFocus
-                  style={{
-                    flex: 1, padding: "14px 18px", borderRadius: 14,
-                    border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)",
-                    color: "#fff", fontSize: 15, outline: "none",
-                  }}
-                />
+
+              <div style={{
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: 20,
+                padding: "24px 20px",
+              }}>
+                {/* Name field */}
+                <div style={{ marginBottom: 16 }}>
+                  <label style={labelStyle}>Parent / Guardian First Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Maria"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Email field */}
+                <div style={{ marginBottom: 16 }}>
+                  <label style={labelStyle}>Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="e.g. maria@gmail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Phone field */}
+                <div style={{ marginBottom: 20 }}>
+                  <label style={labelStyle}>Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="e.g. (702) 555-1234"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Submit */}
                 <button
                   onClick={doSearch}
-                  disabled={loading || !search.trim()}
+                  disabled={loading || !canSubmit}
                   style={{
-                    padding: "14px 24px", borderRadius: 14, border: "none",
-                    background: "linear-gradient(135deg, #c9a84c, #e4cc7a)",
-                    color: "#050505", fontSize: 14, fontWeight: 700, cursor: "pointer",
-                    opacity: (loading || !search.trim()) ? 0.5 : 1,
+                    width: "100%",
+                    padding: "15px 24px",
+                    borderRadius: 14,
+                    border: "none",
+                    background: canSubmit
+                      ? "linear-gradient(135deg, #c9a84c, #e4cc7a)"
+                      : "rgba(255,255,255,0.08)",
+                    color: canSubmit ? "#050505" : "rgba(255,255,255,0.25)",
+                    fontSize: 15,
+                    fontWeight: 700,
+                    cursor: canSubmit ? "pointer" : "not-allowed",
+                    transition: "all 0.2s",
                   }}
                 >
-                  {loading ? "..." : "Search"}
+                  {loading ? "Verifying..." : "🔍 Retrieve My Registration"}
                 </button>
+
+                {!canSubmit && (name || email || phone) && (
+                  <p style={{ textAlign: "center", fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 10 }}>
+                    All three fields are required
+                  </p>
+                )}
               </div>
             </div>
 
@@ -434,7 +514,14 @@ export default function PortalContent() {
             {loading && (
               <div style={{ textAlign: "center", padding: 40 }}>
                 <div style={{ width: 32, height: 32, border: "3px solid rgba(201,168,76,0.2)", borderTopColor: "#c9a84c", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 12px" }} />
-                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>Searching registrations...</p>
+                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>Verifying your identity...</p>
+              </div>
+            )}
+
+            {/* Error */}
+            {error && (
+              <div style={{ textAlign: "center", padding: 20, background: "rgba(239,68,68,0.1)", borderRadius: 16, marginBottom: 16 }}>
+                <p style={{ color: "#ef4444", fontSize: 14, margin: 0 }}>{error}</p>
               </div>
             )}
 
@@ -443,27 +530,48 @@ export default function PortalContent() {
               <div>
                 {familyCount > 0 ? (
                   <>
-                    <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 16 }}>
-                      {filteredCount} registration{filteredCount !== 1 ? "s" : ""} found · {familyCount} famil{familyCount !== 1 ? "ies" : "y"}
-                    </p>
+                    <div style={{
+                      textAlign: "center", padding: "14px 20px", marginBottom: 16,
+                      background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)",
+                      borderRadius: 14,
+                    }}>
+                      <p style={{ margin: 0, fontSize: 14, color: "#22c55e", fontWeight: 600 }}>
+                        ✅ Identity verified — {filteredCount} registration{filteredCount !== 1 ? "s" : ""} found
+                      </p>
+                    </div>
                     {Object.entries(filteredByParent).map(([key, records]) => (
                       <FamilyListCard key={key} records={records} onSelect={setSelected} />
                     ))}
                   </>
                 ) : (
                   <div style={{ textAlign: "center", padding: 40, background: "rgba(255,255,255,0.03)", borderRadius: 20 }}>
-                    <p style={{ fontSize: 40, margin: "0 0 12px" }}>🔍</p>
-                    <p style={{ fontSize: 15, fontWeight: 600, margin: "0 0 6px" }}>No registrations found</p>
-                    <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "0 0 16px" }}>
-                      Try a different email, phone, or name
+                    <p style={{ fontSize: 40, margin: "0 0 12px" }}>🔒</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, margin: "0 0 6px" }}>No matching registration found</p>
+                    <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "0 0 6px", maxWidth: 340, marginLeft: "auto", marginRight: "auto" }}>
+                      All three fields must match exactly as entered during registration.
                     </p>
-                    <a href="/enroll" style={{
-                      display: "inline-block", padding: "10px 24px",
-                      background: "linear-gradient(135deg, #c9a84c, #e4cc7a)",
-                      color: "#050505", borderRadius: 12, fontSize: 14, fontWeight: 700, textDecoration: "none",
-                    }}>
-                      Register Now →
-                    </a>
+                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", margin: "0 0 16px" }}>
+                      Double-check spelling, email address, and phone number.
+                    </p>
+                    <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+                      <button
+                        onClick={() => { setHasSearched(false); setData(null); setName(""); setEmail(""); setPhone(""); }}
+                        style={{
+                          padding: "10px 20px", borderRadius: 12, fontSize: 13, fontWeight: 600,
+                          background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+                          color: "rgba(255,255,255,0.6)", cursor: "pointer",
+                        }}
+                      >
+                        Try Again
+                      </button>
+                      <a href="/enroll" style={{
+                        display: "inline-block", padding: "10px 24px",
+                        background: "linear-gradient(135deg, #c9a84c, #e4cc7a)",
+                        color: "#050505", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none",
+                      }}>
+                        Register Now →
+                      </a>
+                    </div>
                   </div>
                 )}
               </div>
@@ -476,8 +584,16 @@ export default function PortalContent() {
                   background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
                   borderRadius: 16, padding: "24px 20px", maxWidth: 400, margin: "0 auto",
                 }}>
+                  <div style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)",
+                    borderRadius: 20, padding: "4px 14px", marginBottom: 16,
+                    fontSize: 11, fontWeight: 700, color: "#22c55e",
+                  }}>
+                    🛡️ Privacy Protected
+                  </div>
                   <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", margin: "0 0 16px", lineHeight: 1.6 }}>
-                    Search using the email or phone number you registered with to view your child&apos;s enrollment status, completed forms, and next steps.
+                    Your child&apos;s information is protected. You must verify your identity with the same name, email, and phone number used during registration.
                   </p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
