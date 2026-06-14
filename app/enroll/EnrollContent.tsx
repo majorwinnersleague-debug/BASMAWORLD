@@ -176,6 +176,22 @@ export default function EnrollContent() {
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Discovery camp week + time slot
+  const [discoveryWeek, setDiscoveryWeek] = useState('')
+  const [discoveryTimeSlot, setDiscoveryTimeSlot] = useState('')
+
+  const DISCOVERY_WEEKS = [
+    { value: 'Week 1: June 16–19', label: 'Week 1', dates: 'June 16 – 19' },
+    { value: 'Week 2: June 23–26', label: 'Week 2', dates: 'June 23 – 26' },
+    { value: 'Week 3: June 30 – July 3', label: 'Week 3', dates: 'June 30 – July 3' },
+    { value: 'Week 4: July 7–10', label: 'Week 4', dates: 'July 7 – 10' },
+  ]
+
+  const DISCOVERY_TIME_SLOTS = [
+    { value: '10:00 AM – 12:00 PM', label: '10:00 AM – 12:00 PM', icon: '☀️' },
+    { value: '12:00 PM – 2:00 PM', label: '12:00 PM – 2:00 PM', icon: '🌤️' },
+  ]
+
   // Auto-select class and month from URL query params
   useEffect(() => {
     const classParam = searchParams.get('class')
@@ -242,11 +258,10 @@ export default function EnrollContent() {
   function selectClass(c: ClassInfo) {
     setSelectedClass(c)
     setQuantity(1)
-    if (c.isJuneOnly) {
-      setStep('form')
-    } else {
-      setStep('details')
-    }
+    setDiscoveryWeek('')
+    setDiscoveryTimeSlot('')
+    // Discovery camp goes to details step for week/time selection
+    setStep(c.isJuneOnly ? 'details' : 'details')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -257,7 +272,7 @@ export default function EnrollContent() {
   }
 
   function goBack() {
-    if (step === 'form') setStep(selectedClass?.isJuneOnly ? 'select-class' : 'details')
+    if (step === 'form') setStep('details')
     else if (step === 'details') { setStep('select-class'); setSelectedClass(null) }
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -270,18 +285,22 @@ export default function EnrollContent() {
     const stripeLink = getStripeLink()
     const isFree = selectedClass.isJuneOnly || !stripeLink
 
-    // Save enrollment data (best-effort, non-blocking)
+    // Save enrollment data to Airtable (best-effort, non-blocking)
     try {
-      await fetch('/api/billy-lead', {
+      await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          parentName, email, phone, studentName, studentAge,
-          className: selectedClass.name,
-          ageGroup: selectedClass.ageRange,
-          month, packageType: isFree ? 'free' : pkg,
-          pricing: getPriceLabel(),
-          source: 'enrollment-page',
+          name: parentName,
+          email,
+          phone,
+          studentName,
+          studentAge,
+          source: isFree ? 'discovery-camp-enrollment' : 'enrollment-page',
+          status: isFree ? 'New Lead' : 'New Lead',
+          interests: selectedClass.name,
+          ...(isFree && discoveryWeek ? { discoveryWeek } : {}),
+          ...(isFree && discoveryTimeSlot ? { timeSlot: discoveryTimeSlot } : {}),
         }),
       })
     } catch { /* non-blocking */ }
@@ -298,9 +317,9 @@ export default function EnrollContent() {
   /* ─── Step indicator ────────────────────────────────────────── */
   const steps = [
     { num: 1, label: 'Choose Class', done: step !== 'select-class' },
-    { num: 2, label: 'Schedule', done: step === 'form', show: !selectedClass?.isJuneOnly },
+    { num: 2, label: selectedClass?.isJuneOnly ? 'Week & Time' : 'Schedule', done: step === 'form' },
     { num: 3, label: 'Your Info', done: false },
-  ].filter(s => s.show !== false)
+  ]
 
   const currentStepIdx = step === 'select-class' ? 0 : step === 'details' ? 1 : steps.length - 1
 
@@ -437,21 +456,72 @@ export default function EnrollContent() {
           <>
             <button onClick={goBack} className="text-sm text-white/50 hover:text-white/80 mb-6 block">← Back to all classes</button>
 
-            <div className="rounded-2xl p-6 mb-6" style={{ background: 'rgba(45,27,78,0.6)', border: '1px solid rgba(240,200,80,0.15)' }}>
+            <div className="rounded-2xl p-6 mb-6" style={{ background: selectedClass.isJuneOnly ? 'linear-gradient(135deg, #1a3a1a, #0D0118)' : 'rgba(45,27,78,0.6)', border: selectedClass.isJuneOnly ? '1px solid rgba(74,222,128,0.2)' : '1px solid rgba(240,200,80,0.15)' }}>
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">{selectedClass.emoji}</span>
                 <div>
                   <h2 className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>{selectedClass.name}</h2>
-                  <p style={{ color: '#F0C850' }}>{selectedClass.ageRange}</p>
+                  <p style={{ color: selectedClass.isJuneOnly ? '#4ade80' : '#F0C850' }}>{selectedClass.ageRange}</p>
                 </div>
+                {selectedClass.isJuneOnly && (
+                  <span className="ml-auto px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">FREE</span>
+                )}
               </div>
               <div className="text-white/50 text-sm mt-3 flex flex-wrap gap-4">
                 <span>📅 {selectedClass.days}</span>
-                <span>🕐 {selectedClass.schedule}</span>
                 <span>📍 6787 W Tropicana Ave, Suite 260</span>
               </div>
             </div>
 
+            {/* ─── Discovery Camp: Week + Time Slot ─── */}
+            {selectedClass.isJuneOnly && (
+              <>
+                <h3 className="font-bold mb-3 text-green-400">📅 Which Week?</h3>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {DISCOVERY_WEEKS.map(w => (
+                    <button key={w.value} onClick={() => setDiscoveryWeek(w.value)}
+                      className={`p-4 rounded-xl text-left transition ${discoveryWeek === w.value ? 'ring-2 ring-green-400' : 'bg-white/5 border border-white/10 hover:border-green-500/30'}`}
+                      style={discoveryWeek === w.value ? { background: 'rgba(74,222,128,0.1)' } : {}}>
+                      <p className="font-bold text-white">{w.label}</p>
+                      <p className="text-sm text-white/50 mt-1">{w.dates}</p>
+                      <p className="text-xs text-white/30 mt-1">Mon – Thu</p>
+                    </button>
+                  ))}
+                </div>
+
+                <h3 className="font-bold mb-3 text-green-400">🕐 What Time?</h3>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {DISCOVERY_TIME_SLOTS.map(t => (
+                    <button key={t.value} onClick={() => setDiscoveryTimeSlot(t.value)}
+                      className={`p-4 rounded-xl text-left transition ${discoveryTimeSlot === t.value ? 'ring-2 ring-green-400' : 'bg-white/5 border border-white/10 hover:border-green-500/30'}`}
+                      style={discoveryTimeSlot === t.value ? { background: 'rgba(74,222,128,0.1)' } : {}}>
+                      <p className="font-bold text-white">{t.icon} {t.label}</p>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Summary */}
+                {discoveryWeek && discoveryTimeSlot && (
+                  <div className="p-4 rounded-xl mb-6" style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.2)' }}>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-white/60">Your selection:</span>
+                      <span className="text-green-400 font-semibold">{discoveryWeek} · {discoveryTimeSlot}</span>
+                    </div>
+                  </div>
+                )}
+
+                <button onClick={goToForm}
+                  disabled={!discoveryWeek || !discoveryTimeSlot}
+                  className="w-full py-4 rounded-full font-bold text-lg transition hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{ background: 'linear-gradient(90deg, #4ade80, #22c55e)', color: '#0D0118' }}>
+                  {!discoveryWeek || !discoveryTimeSlot ? 'Select a week & time slot to continue' : 'Continue to Your Info →'}
+                </button>
+              </>
+            )}
+
+            {/* ─── Paid Classes: Month/Package ─── */}
+            {!selectedClass.isJuneOnly && (
+            <>
             {/* Month */}
             <h3 className="font-bold mb-3" style={{ color: '#F0C850' }}>Select Month</h3>
             <div className="grid grid-cols-2 gap-3 mb-6">
@@ -535,6 +605,8 @@ export default function EnrollContent() {
               style={{ background: 'linear-gradient(90deg, #F0C850, #FFE07A)', color: '#0D0118' }}>
               Continue to Enrollment →
             </button>
+            </>
+            )}
           </>
         )}
 
@@ -614,7 +686,15 @@ export default function EnrollContent() {
                   {!selectedClass.isJuneOnly && (
                     <div className="flex justify-between"><span className="text-white/50">Month:</span><span>{month === 'july' ? 'July' : 'August'}</span></div>
                   )}
-                  <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>{selectedClass.days}, {selectedClass.schedule}</span></div>
+                  {selectedClass.isJuneOnly && discoveryWeek && (
+                    <div className="flex justify-between"><span className="text-white/50">Week:</span><span>{discoveryWeek}</span></div>
+                  )}
+                  {selectedClass.isJuneOnly && discoveryTimeSlot && (
+                    <div className="flex justify-between"><span className="text-white/50">Time:</span><span>{discoveryTimeSlot}</span></div>
+                  )}
+                  {!selectedClass.isJuneOnly && (
+                    <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>{selectedClass.days}, {selectedClass.schedule}</span></div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-white/50">Price:</span>
                     <span className={`font-semibold ${selectedClass.isJuneOnly ? 'text-green-400' : ''}`} style={selectedClass.isJuneOnly ? {} : { color: '#F0C850' }}>
