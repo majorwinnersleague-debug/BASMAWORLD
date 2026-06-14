@@ -425,14 +425,14 @@ export default function EnrollContent() {
             <div className="grid grid-cols-2 gap-3 mb-6">
               <button onClick={() => { setMonth('july'); setQuantity(1) }}
                 className={`p-4 rounded-xl text-left transition ${month === 'july' ? 'ring-2' : 'bg-white/5 border border-white/10'}`}
-                style={month === 'july' ? { background: 'rgba(240,200,80,0.1)', borderColor: '#F0C850', ringColor: '#F0C850' } : {}}>
+                style={month === 'july' ? { background: 'rgba(240,200,80,0.1)', borderColor: '#F0C850' } : {}}>
                 <p className="font-bold">July</p>
                 <p className="text-lg font-bold" style={{ color: '#F0C850' }}>${selectedClass.julyPrice} <span className="text-sm font-normal text-white/50">/class</span></p>
                 <p className="text-xs text-white/40 mt-1">⭐ Special pricing!</p>
               </button>
               <button onClick={() => { setMonth('august'); setQuantity(1) }}
                 className={`p-4 rounded-xl text-left transition ${month === 'august' ? 'ring-2' : 'bg-white/5 border border-white/10'}`}
-                style={month === 'august' ? { background: 'rgba(240,200,80,0.1)', borderColor: '#F0C850', ringColor: '#F0C850' } : {}}>
+                style={month === 'august' ? { background: 'rgba(240,200,80,0.1)', borderColor: '#F0C850' } : {}}>
                 <p className="font-bold">August</p>
                 <p className="text-lg font-bold" style={{ color: '#F0C850' }}>${selectedClass.augustSinglePrice} <span className="text-sm font-normal text-white/50">/class</span></p>
                 <p className="text-xs text-white/40 mt-1">🎁 Buy 3 Get 1 Free!</p>
