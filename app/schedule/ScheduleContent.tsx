@@ -179,7 +179,8 @@ export default function ScheduleContent() {
                     <div style={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 4, width: "100%" }}>
                       {dayClasses.map((c, ci) => {
                         const dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day.getDay()] as keyof typeof c.times;
-                        const time = c.times[dayName];
+                        const time = c.times[dayName] || "";
+                        if (!time) return null;
                         const shortTime = time === "By Appointment" ? "Appt" : time.split(" – ")[0].replace(":00", "");
                         return (
                           <div key={ci} style={{
