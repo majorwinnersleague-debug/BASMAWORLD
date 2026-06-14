@@ -13,12 +13,13 @@ const FROM_EMAIL = "BASMA <noreply@basmaworld.com>";
 const recentAlerts = new Map<string, number>();
 const RATE_LIMIT_MS = 30 * 60 * 1000;
 
-async function sendVerificationAlert(parentEmail: string, verifyMethod: string) {
+async function sendVerificationAlert(parentEmail: string, verifyMethod: string): Promise<string> {
   const key = parentEmail.toLowerCase().trim();
-  if (!key || !key.includes("@") || !RESEND_API_KEY) return;
+  if (!key || !key.includes("@")) return "skipped:invalid-email";
+  if (!RESEND_API_KEY) return "skipped:no-api-key";
 
   const lastSent = recentAlerts.get(key);
-  if (lastSent && Date.now() - lastSent < RATE_LIMIT_MS) return;
+  if (lastSent && Date.now() - lastSent < RATE_LIMIT_MS) return "skipped:rate-limited";
 
   const now = new Date();
   const timeStr = now.toLocaleString("en-US", {
@@ -77,9 +78,15 @@ async function sendVerificationAlert(parentEmail: string, verifyMethod: string) 
     });
     if (res.ok) {
       recentAlerts.set(key, Date.now());
+      return "sent:ok";
+    } else {
+      const errBody = await res.text();
+      console.error("Resend error:", res.status, errBody);
+      return `error:${res.status}:${errBody.slice(0, 200)}`;
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error("Alert email error:", e);
+    return `error:exception:${e.message}`;
   }
 }
 
@@ -504,16 +511,14 @@ export async function GET(req: Request) {
     // Must await — on Vercel serverless, fire-and-forget won't complete before function exits
     const verifyMethod = hasName && hasEmail ? "Name + Email + Phone" : hasName ? "Name + Phone" : "Email + Phone";
     const alertedEmails = new Set<string>();
-    const alertPromises: Promise<void>[] = [];
+    const alertResults: string[] = [];
     for (const r of filtered) {
       const em = r.email?.toLowerCase().trim();
       if (em && em.includes("@") && !alertedEmails.has(em)) {
         alertedEmails.add(em);
-        alertPromises.push(sendVerificationAlert(em, verifyMethod));
+        const result = await sendVerificationAlert(em, verifyMethod);
+        alertResults.push(`${em.slice(0, 3)}***:${result}`);
       }
-    }
-    if (alertPromises.length > 0) {
-      await Promise.allSettled(alertPromises);
     }
 
     // Privacy: show student FIRST NAME ONLY — no last name, no initial
@@ -542,6 +547,7 @@ export async function GET(req: Request) {
       families: Object.keys(byParent).length,
       registrations: filtered,
       byParent,
+      _alertDebug: alertResults,
     });
   } catch (err: any) {
     console.error("API error:", err);
