@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -147,7 +148,19 @@ type Step = 'select-class' | 'details' | 'form'
 type Month = 'july' | 'august'
 type Package = 'single' | 'bundle' | 'monthly'
 
+// Map homepage query param class names to our class IDs
+const CLASS_PARAM_MAP: Record<string, string> = {
+  'tiny-tots': 'tiny-tots',
+  'kids-5-10': 'kids-music-5-10',
+  'kids-music': 'kids-music-5-10',
+  'piano': 'piano',
+  'teens-recording': 'teens-recording',
+  'discovery-11-17': 'discovery-camp-11-17',
+  'discovery-5-10': 'discovery-camp-5-10',
+}
+
 export default function EnrollContent() {
+  const searchParams = useSearchParams()
   const [step, setStep] = useState<Step>('select-class')
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null)
   const [ageFilter, setAgeFilter] = useState<string>('')
@@ -162,6 +175,25 @@ export default function EnrollContent() {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Auto-select class and month from URL query params
+  useEffect(() => {
+    const classParam = searchParams.get('class')
+    const monthParam = searchParams.get('month')
+
+    if (classParam) {
+      const classId = CLASS_PARAM_MAP[classParam] || classParam
+      const foundClass = CLASSES.find(c => c.id === classId)
+      if (foundClass) {
+        setSelectedClass(foundClass)
+        if (monthParam === 'july' || monthParam === 'august') {
+          setMonth(monthParam)
+        }
+        // Skip to details step
+        setStep('details')
+      }
+    }
+  }, [searchParams])
 
   const age = ageFilter ? parseInt(ageFilter) : null
 

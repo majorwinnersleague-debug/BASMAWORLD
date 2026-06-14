@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import EnrollContent from './EnrollContent'
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 }
 
 export default function EnrollPage() {
-  return <EnrollContent />
+  return (
+    <Suspense fallback={<div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#050505',color:'#c9a84c',fontSize:'18px'}}>Loading enrollment...</div>}>
+      <EnrollContent />
+    </Suspense>
+  )
 }

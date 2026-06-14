@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // ── Rewrites ──────────────────────────────────────────────────────────────
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // Serve the static homepage at /
+        { source: '/', destination: '/home.html' },
+      ],
+    }
+  },
+
   // ── Redirects ──────────────────────────────────────────────────────────────
   async redirects() {
     return [
@@ -49,14 +59,14 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://us-assets.i.posthog.com",
+              "script-src 'self' 'unsafe-inline' https://us-assets.i.posthog.com https://www.googletagmanager.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https:",
-              "connect-src 'self' https://app.posthog.com https://us.i.posthog.com https://openrouter.ai https://buy.stripe.com https://amiable-finch-612.convex.cloud",
+              "connect-src 'self' https://app.posthog.com https://us.i.posthog.com https://openrouter.ai https://buy.stripe.com https://amiable-finch-612.convex.cloud https://formsubmit.co https://www.google-analytics.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
-              "form-action 'self' https://buy.stripe.com",
+              "form-action 'self' https://buy.stripe.com https://formsubmit.co",
             ].join('; '),
           },
         ],

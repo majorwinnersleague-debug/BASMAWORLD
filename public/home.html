@@ -1,0 +1,1277 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>BASMA — Music Academy, Social Media & Marketing | Las Vegas</title>
+<meta name="description" content="BASMA LLC — Become A Singer Music Academy. Summer camp, social media management, marketing services, and artist development in Las Vegas.">
+<meta property="og:title" content="BASMA — Music, Marketing & Creativity in Las Vegas">
+<meta property="og:description" content="Summer music camp, social media management, marketing services, and artist development. Building brands and artists from Las Vegas.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://basmaworld.com">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root {
+    --purple-deep: #0D0118;
+    --purple-dark: #1A0533;
+    --purple-mid: #2D1B4E;
+    --purple-light: #432868;
+    --gold: #F0C850;
+    --gold-light: #FFE07A;
+    --gold-dark: #D4A843;
+    --cream: #FFFDF5;
+    --text: #FFFFFF;
+    --muted: #D0C4E8;
+    --card-bg: rgba(45,27,78,0.6);
+    --card-border: rgba(240,200,80,0.3);
+    --gradient-gold: linear-gradient(135deg, #F0C850, #FFE07A, #F0C850);
+    --gradient-purple: linear-gradient(135deg, #1A0533, #2D1B4E, #432868);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+::selection{background:rgba(212,168,67,0.3);color:#fff;}
+body{font-family:'Inter',-apple-system,sans-serif;color:var(--text);background:var(--purple-deep);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+.container{max-width:1100px;margin:0 auto;padding:0 28px;}
+.gold-text{color:var(--gold);background:var(--gradient-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+
+/* BODDEE FLOATING DECORATIONS */
+.boddee-float{position:absolute;pointer-events:none;z-index:5;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.3));}
+.boddee-float img{width:100%;height:100%;object-fit:contain;}
+.boddee-hero{right:-20px;bottom:-10px;width:220px;height:220px;animation:bobble 4s ease-in-out infinite;}
+.boddee-services{left:-60px;top:50%;transform:translateY(-50%);width:160px;height:160px;animation:bobble 5s ease-in-out infinite 0.5s;}
+.boddee-camp{right:-30px;top:120px;width:180px;height:180px;animation:bobble 4.5s ease-in-out infinite 1s;}
+.boddee-team{left:-40px;bottom:60px;width:150px;height:150px;animation:bobble 5.5s ease-in-out infinite 0.3s;}
+.boddee-cta{right:5%;bottom:-40px;width:200px;height:200px;animation:bobble 4s ease-in-out infinite 0.7s;}
+.boddee-divider{display:flex;justify-content:center;padding:10px 0;margin:-40px 0;}
+.boddee-divider img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(0,0,0,0.3));animation:bobble 3.5s ease-in-out infinite;}
+@keyframes bobble{0%,100%{transform:translateY(0) rotate(0deg);}25%{transform:translateY(-8px) rotate(2deg);}75%{transform:translateY(4px) rotate(-1deg);}}
+
+/* DECORATIVE MUSIC NOTES */
+.music-notes{position:absolute;pointer-events:none;opacity:0.06;font-size:120px;color:var(--gold);}
+
+/* TOP BAR */
+.top-bar{background:var(--gradient-gold);text-align:center;padding:10px 20px;font-size:13px;font-weight:600;color:var(--purple-deep);letter-spacing:0.3px;}
+.top-bar a{color:var(--purple-deep);text-decoration:underline;margin-left:6px;font-weight:700;}
+
+/* NAV */
+nav{position:fixed;top:38px;left:0;right:0;z-index:1000;background:rgba(13,1,24,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,168,67,0.15);transition:top 0.3s,box-shadow 0.3s;}
+nav.scrolled{box-shadow:0 1px 20px rgba(0,0,0,0.4);}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-family:'Playfair Display',serif;font-weight:800;font-size:24px;letter-spacing:1px;text-decoration:none;color:var(--gold);}
+.nav-brand span{color:var(--gold-light);}
+.nav-links{display:flex;gap:32px;align-items:center;}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;transition:color 0.2s;}
+.nav-links a:hover{color:var(--gold);}
+.nav-links .cta{background:var(--gradient-gold);color:var(--purple-deep);padding:8px 20px;border-radius:100px;font-weight:700;}
+.nav-links .cta:hover{color:var(--purple-deep);opacity:0.9;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
+.hamburger span{width:22px;height:2px;background:var(--gold);transition:0.3s;}
+.mobile-nav{display:none;position:fixed;top:102px;left:0;right:0;background:var(--purple-dark);border-bottom:1px solid var(--card-border);padding:20px 28px;z-index:999;}
+.mobile-nav.open{display:block;}
+.mobile-nav a{display:block;padding:12px 0;text-decoration:none;color:var(--text);font-size:16px;font-weight:500;border-bottom:1px solid rgba(212,168,67,0.1);}
+
+/* HERO */
+.hero{padding:160px 0 120px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(67,40,104,0.5) 0%,transparent 70%),radial-gradient(ellipse at 80% 80%,rgba(212,168,67,0.05) 0%,transparent 50%);pointer-events:none;}
+.hero::after{content:'♪ ♫ 𝄞';position:absolute;top:60px;right:10%;font-size:60px;color:var(--gold);opacity:0.08;transform:rotate(15deg);pointer-events:none;}
+.hero-label{display:inline-block;background:var(--gradient-gold);color:var(--purple-deep);font-size:13px;font-weight:700;padding:6px 18px;border-radius:100px;margin-bottom:24px;letter-spacing:0.5px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(42px,7vw,72px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1px;color:#fff;}
+.hero p{font-size:18px;color:rgba(255,255,255,0.85);max-width:560px;margin:0 auto 36px;line-height:1.7;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:var(--gradient-gold);color:var(--purple-deep);padding:14px 32px;border-radius:100px;text-decoration:none;font-weight:700;font-size:15px;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(212,168,67,0.3);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,168,67,0.45);}
+.btn-outline{border:2px solid var(--gold);color:var(--gold);padding:12px 28px;border-radius:100px;text-decoration:none;font-weight:600;font-size:15px;transition:0.2s;}
+.btn-outline:hover{background:var(--gold);color:var(--purple-deep);}
+.hero-stats{display:flex;justify-content:center;gap:24px;margin-top:64px;flex-wrap:wrap;}
+.hero-stat .num{font-family:'Playfair Display',serif;font-size:34px;font-weight:800;color:var(--gold);}
+.hero-stat .lbl{font-size:13px;color:var(--muted);font-weight:500;margin-top:2px;}
+
+/* SECTION COMMON */
+section{padding:100px 0;position:relative;overflow:hidden;}
+.section-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:12px;}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,44px);font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-0.5px;color:#fff;}
+.section-desc{font-size:17px;color:rgba(255,255,255,0.8);max-width:560px;line-height:1.7;margin-bottom:48px;}
+.section-center{text-align:center;}
+.section-center .section-desc{margin-left:auto;margin-right:auto;}
+.section-divider{width:60px;height:3px;background:var(--gradient-gold);margin:0 auto 32px;border-radius:100px;opacity:0.6;}
+
+/* SIGNUP FORM SECTION */
+.signup-section{background:linear-gradient(180deg, var(--purple-deep) 0%, var(--purple-dark) 100%);padding:80px 0 100px;position:relative;overflow:hidden;}
+.signup-section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:200px;background:var(--gold);filter:blur(160px);opacity:0.06;pointer-events:none;}
+.signup-section .section-title{text-align:center;}
+.signup-section .section-label{text-align:center;}
+.signup-section .section-desc{text-align:center;margin-left:auto;margin-right:auto;}
+.signup-section .section-divider{margin-left:auto;margin-right:auto;}
+.form-wrapper{max-width:720px;margin:0 auto;border-radius:28px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,0.3);background:rgba(255,255,255,0.03);}
+.form-wrapper iframe{width:100%;height:1400px;border:none;background:#fff;border-radius:28px;}
+.native-form{max-width:600px;margin:0 auto;padding:40px 32px;background:rgba(255,255,255,0.06);border-radius:28px;box-shadow:0 12px 48px rgba(0,0,0,0.3);}
+.native-form label{display:block;font-weight:600;margin-bottom:6px;color:var(--light);font-size:0.95rem;}
+.native-form input,.native-form select,.native-form textarea{width:100%;padding:14px 16px;border:2px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(255,255,255,0.08);color:#fff;font-size:1rem;margin-bottom:18px;transition:border 0.3s;}
+.native-form input:focus,.native-form select:focus,.native-form textarea:focus{outline:none;border-color:var(--purple);}
+.native-form select option{background:#1a1a2e;color:#fff;}
+.native-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.native-form .form-row{grid-template-columns:1fr;}}
+.native-form .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--purple),var(--gold));border:none;border-radius:14px;color:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;margin-top:8px;transition:transform 0.2s,box-shadow 0.2s;}
+.native-form .submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,92,246,0.4);}
+.native-form .submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.native-form .form-success{text-align:center;padding:40px 20px;}
+.native-form .form-success h3{font-size:1.5rem;margin-bottom:12px;color:var(--gold);}
+.native-form .chip-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+.native-form .chip{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:2px solid rgba(255,255,255,0.15);border-radius:50px;cursor:pointer;transition:all 0.2s;font-size:0.9rem;}
+.native-form .chip:has(input:checked),.native-form .chip.selected{border-color:var(--purple);background:rgba(139,92,246,0.2);}
+.native-form .chip input{display:none;}
+
+/* ORGANIC WAVE SEPARATORS */
+.wave-top,.wave-bottom{position:absolute;left:0;right:0;height:60px;overflow:hidden;pointer-events:none;z-index:2;}
+.wave-top{top:-1px;}
+.wave-bottom{bottom:-1px;}
+.wave-top svg,.wave-bottom svg{width:100%;height:100%;display:block;}
+
+/* SERVICES */
+.services{background:var(--purple-dark);}
+.services-grid{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;}
+.svc-card{padding:32px 20px;border-radius:20px;border:none;background:transparent;backdrop-filter:none;transition:0.3s;text-decoration:none;color:var(--text);flex:1 1 260px;max-width:320px;box-shadow:none;position:relative;overflow:hidden;text-align:center;}
+.svc-card:hover{transform:translateY(-3px);}.svc-card:hover h3{color:#FFE07A;}.svc-card::before{display:none;}
+.svc-icon{font-size:40px;margin-bottom:12px;}
+.svc-card h3{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--gold);}
+.svc-card p{font-size:14px;color:rgba(255,255,255,0.75);line-height:1.6;}
+
+/* CAMP */
+.camp{background:var(--purple-deep);position:relative;}
+.camp::before{content:'';position:absolute;top:-40px;left:0;right:0;height:80px;background:linear-gradient(180deg, var(--purple-dark), var(--purple-deep));pointer-events:none;}
+.camp-grid{display:flex;flex-wrap:wrap;gap:32px;justify-content:center;margin-top:16px;}
+.camp-card{background:linear-gradient(160deg, rgba(67,40,104,0.5), rgba(26,5,51,0.7));border-radius:36px;overflow:hidden;border:none;backdrop-filter:blur(12px);transition:0.4s;flex:1 1 420px;max-width:520px;box-shadow:0 12px 40px rgba(0,0,0,0.25);}
+.camp-card:hover{box-shadow:0 16px 56px rgba(212,168,67,0.12);transform:translateY(-4px);}
+.camp-card img{width:100%;aspect-ratio:3/2;object-fit:cover;}
+.camp-body{padding:28px 28px 32px;}
+.camp-badge{display:inline-block;font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;margin-bottom:12px;}
+.camp-badge.free{background:rgba(46,125,50,0.15);color:#66BB6A;border:1px solid rgba(46,125,50,0.3);}
+.camp-badge.paid{background:rgba(212,168,67,0.15);color:var(--gold);border:1px solid rgba(212,168,67,0.3);}
+.camp-card h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#fff;}
+.camp-address{font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:16px;line-height:1.5;}
+.camp-card .desc{font-size:14px;color:rgba(255,255,255,0.75);line-height:1.7;margin-bottom:20px;}
+.schedule{list-style:none;margin-bottom:24px;}
+.schedule li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(212,168,67,0.08);font-size:13px;color:var(--text);}
+.schedule .time{font-weight:600;color:var(--gold);}
+.camp-price{font-family:'Playfair Display',serif;font-size:36px;font-weight:800;margin-bottom:4px;color:var(--gold);}
+.camp-price span{font-size:16px;font-weight:500;color:var(--muted);}
+.camp-price-note{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:20px;}
+.camp-btn{display:inline-block;background:var(--gradient-gold);color:var(--purple-deep);padding:12px 28px;border-radius:100px;text-decoration:none;font-weight:700;font-size:14px;transition:0.2s;}
+.camp-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(212,168,67,0.3);}
+.camp-flow{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:40px;font-size:15px;font-weight:600;flex-wrap:wrap;color:var(--text);}.camp-flow span:not(.arrow){padding:8px 0;}
+.camp-flow .arrow{color:var(--gold);font-size:20px;}
+
+/* TEAM */
+.team{background:var(--purple-dark);}
+.team::before{content:'';position:absolute;top:-40px;left:0;right:0;height:80px;background:linear-gradient(180deg, var(--purple-deep), var(--purple-dark));pointer-events:none;}
+.team-grid{display:flex;flex-wrap:wrap;gap:40px;justify-content:center;margin-bottom:48px;}
+.member{text-align:center;flex:1 1 300px;max-width:420px;}
+.member img{width:100%;max-width:300px;aspect-ratio:1;object-fit:cover;border-radius:50%;margin-bottom:24px;border:3px solid var(--gold);box-shadow:0 8px 32px rgba(212,168,67,0.15);}
+.member .role{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;}
+.member h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#fff;}
+.member .instruments{font-size:14px;color:var(--muted);margin-bottom:12px;}
+.member p.bio{font-size:14px;color:rgba(255,255,255,0.75);line-height:1.7;text-align:left;max-width:420px;margin:0 auto;}
+.mascot{display:flex;align-items:center;gap:36px;background:transparent;border:none;padding:44px 0;border-radius:0;margin-top:48px;box-shadow:none;}
+.mascot img{width:180px;height:180px;object-fit:cover;border-radius:50%;flex-shrink:0;border:3px solid var(--gold);box-shadow:0 6px 24px rgba(212,168,67,0.15);}
+.mascot h3{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px;color:var(--gold);}
+.mascot p{font-size:14px;color:rgba(255,255,255,0.8);line-height:1.7;}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px;}
+.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:24px;border:none;box-shadow:0 6px 24px rgba(0,0,0,0.2);transition:0.3s;}.gallery img:hover{transform:scale(1.03);}
+
+/* PORTFOLIO */
+.portfolio{background:#ffffff;color:#1a1a1a;}
+.portfolio .section-label{color:var(--purple-mid);}
+.portfolio .section-title{color:#1a1a1a;}
+.portfolio .section-desc{color:#555;}
+.portfolio .section-divider{background:linear-gradient(90deg,var(--purple-mid),var(--gold));}
+.portfolio::before{content:'';position:absolute;top:-40px;left:0;right:0;height:80px;background:linear-gradient(180deg, var(--purple-dark), #ffffff);pointer-events:none;}
+.port-grid{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:48px;}
+.port-card{background:transparent;padding:16px 20px;border-radius:100px;text-align:center;border:1px solid rgba(67,40,104,0.2);transition:0.3s;flex:0 1 auto;cursor:pointer;}
+.port-card:hover{background:rgba(67,40,104,0.06);border-color:var(--purple-mid);transform:scale(1.05);}
+.port-card .icon{font-size:20px;margin-bottom:0;display:inline;margin-right:6px;}
+.port-card h4{font-size:13px;font-weight:600;margin-bottom:0;color:var(--purple-mid);display:inline;}
+.port-card p{font-size:11px;color:#777;margin-top:2px;}
+.port-services{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
+.port-svc{padding:20px 0 20px 24px;border:none;background:transparent;border-radius:0;flex:1 1 280px;max-width:340px;box-shadow:none;position:relative;overflow:hidden;border-left:3px solid var(--purple-mid);}
+.port-svc h4{font-size:15px;font-weight:700;margin-bottom:6px;color:var(--purple-mid);}
+.port-svc p{font-size:13px;color:#666;line-height:1.6;}
+
+/* ARTISTS */
+.artists{background:var(--purple-dark);}
+.artists::before{content:'';position:absolute;top:-40px;left:0;right:0;height:80px;background:linear-gradient(180deg, #ffffff, var(--purple-dark));pointer-events:none;}
+.artist-grid{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;}
+.artist-feat{padding:24px 16px;border-radius:16px;background:transparent;border:none;flex:1 1 280px;max-width:480px;box-shadow:none;transition:0.3s;cursor:pointer;}.artist-feat:hover{background:rgba(67,40,104,0.2);}.artist-feat:hover h4{color:#FFE07A;}
+.artist-feat .icon{font-size:28px;margin-bottom:12px;}
+.artist-feat h4{font-size:17px;font-weight:700;margin-bottom:6px;color:var(--gold);}
+.artist-feat p{font-size:14px;color:rgba(255,255,255,0.75);line-height:1.6;}
+
+/* CTA */
+.cta-section{text-align:center;padding:100px 0;background:var(--gradient-gold);color:var(--purple-deep);position:relative;border-radius:60px 60px 0 0;margin-top:-30px;}
+.cta-section h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,42px);font-weight:800;margin-bottom:16px;color:var(--purple-deep);}
+.cta-section p{font-size:17px;opacity:0.8;max-width:480px;margin:0 auto 32px;color:var(--purple-dark);}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-white{background:var(--purple-deep);color:var(--gold);padding:14px 28px;border-radius:100px;text-decoration:none;font-weight:700;font-size:15px;transition:0.2s;}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+.btn-ghost{border:2px solid var(--purple-deep);color:var(--purple-deep);padding:12px 28px;border-radius:100px;text-decoration:none;font-weight:600;font-size:15px;transition:0.2s;}
+.btn-ghost:hover{background:var(--purple-deep);color:var(--gold);}
+
+/* FOOTER */
+footer{background:var(--purple-deep);color:var(--text);padding:60px 0 24px;border-top:1px solid rgba(212,168,67,0.15);}
+.footer-grid{display:flex;flex-wrap:wrap;gap:40px;margin-bottom:40px;justify-content:space-between;}
+.footer-brand{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:12px;color:var(--gold);}
+.footer-brand span{color:var(--gold-light);}
+footer p{font-size:13px;color:var(--muted);line-height:1.7;}
+footer h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;color:var(--gold);}
+footer a{display:block;text-decoration:none;color:var(--muted);font-size:13px;padding:4px 0;transition:color 0.2s;}
+footer a:hover{color:var(--gold);}
+.footer-bottom{border-top:1px solid rgba(212,168,67,0.1);padding-top:20px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
+
+/* PAYMENT MODAL */
+#pay-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;}
+#pay-overlay.open{display:flex;}
+#pay-modal{background:linear-gradient(160deg, var(--purple-dark), var(--purple-mid));border:none;border-radius:24px;padding:28px 24px;max-width:380px;width:90%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.5);max-height:85vh;overflow-y:auto;}
+#pay-modal h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px;color:var(--gold);}
+#pay-modal .sub{font-size:14px;color:var(--muted);margin-bottom:18px;}
+.pay-opt{display:block;border:none;border-radius:16px;padding:14px 18px;margin-bottom:10px;text-decoration:none;color:var(--text);transition:0.3s;background:rgba(67,40,104,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.15);}
+.pay-opt:hover{background:rgba(212,168,67,0.1);transform:translateY(-2px);box-shadow:0 6px 24px rgba(212,168,67,0.1);}
+.pay-opt .label{font-weight:700;font-size:15px;display:block;color:#fff;}
+.pay-opt .price{font-size:15px;color:var(--gold);font-weight:600;display:block;margin-top:2px;}
+.pay-opt .desc{font-size:14px;color:var(--muted);display:block;margin-top:4px;}
+.enroll-step{display:flex;gap:16px;align-items:flex-start;}
+.step-number{width:40px;height:40px;min-width:40px;border-radius:50%;background:var(--gold);color:var(--purple-dark);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;}
+.step-content{flex:1;}
+.step-content h3{font-family:'Playfair Display',serif;font-size:16px;color:#fff;margin:0 0 4px;}
+.step-content p{font-size:15px;color:var(--muted);margin:0 0 10px;line-height:1.4;}
+.step-btn{display:block;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--purple-dark);font-weight:700;font-size:14px;padding:12px 16px;border-radius:14px;text-decoration:none;text-align:center;margin-bottom:8px;transition:0.3s;box-shadow:0 4px 12px rgba(212,168,67,0.25);}
+.step-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(212,168,67,0.35);}
+.step-btn-alt{background:rgba(67,40,104,0.4);color:var(--gold);box-shadow:none;}
+.step-btn-alt:hover{background:rgba(67,40,104,0.6);}
+.step-connector{width:2px;height:20px;background:linear-gradient(to bottom,var(--gold),transparent);margin:0 0 0 19px;}
+.pay-divider{text-align:center;color:var(--muted);font-size:13px;margin:16px 0;position:relative;}
+.pay-divider::before,.pay-divider::after{content:'';position:absolute;top:50%;width:35%;height:1px;background:var(--card-border);}
+.pay-divider::before{left:0;}
+.pay-divider::after{right:0;}
+.close-modal{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);padding:8px;}
+
+/* LESSONS POPUP */
+#lessons-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);z-index:9998;align-items:center;justify-content:center;}
+#lessons-overlay.open{display:flex;}
+#lessons-popup{background:linear-gradient(160deg, var(--purple-dark), var(--purple-mid));border:none;border-radius:24px;max-width:360px;width:90%;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.5);padding:0;max-height:85vh;overflow-y:auto;}
+#lessons-popup .close{position:absolute;top:10px;right:14px;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:20px;cursor:pointer;z-index:2;border-radius:50%;width:32px;height:32px;}
+#lessons-popup img{width:100%;display:block;object-fit:contain;border-radius:24px 24px 0 0;background:#1a0a2e;max-height:180px;}
+.lessons-body{padding:20px 22px 22px;}
+.lessons-body h2{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:4px;color:var(--gold);}
+.lessons-body .sub{color:var(--muted);font-size:15px;margin-bottom:14px;}
+.lessons-body p{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+.inst-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.inst-tag{background:rgba(212,168,67,0.1);border:1px solid var(--card-border);padding:6px 12px;border-radius:100px;font-size:12px;font-weight:600;color:var(--gold);}
+.lessons-cta{display:block;text-align:center;background:var(--gradient-gold);color:var(--purple-deep);padding:12px;border-radius:100px;text-decoration:none;font-weight:700;font-size:15px;margin-bottom:8px;}
+.lessons-dismiss{display:block;width:100%;text-align:center;background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:8px;}
+
+
+/* ORGANIC BLOB DECORATIONS */
+.blob{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px);opacity:0.04;z-index:0;}
+.blob-gold{background:var(--gold);}
+.blob-purple{background:#8B5CF6;}
+.services::after{content:'';position:absolute;top:20%;right:-100px;width:300px;height:300px;border-radius:50%;background:var(--gold);filter:blur(120px);opacity:0.03;pointer-events:none;}
+.camp::after{content:'';position:absolute;bottom:10%;left:-100px;width:400px;height:400px;border-radius:50%;background:#8B5CF6;filter:blur(120px);opacity:0.04;pointer-events:none;}
+.artists::after{content:'';position:absolute;top:30%;right:-80px;width:250px;height:250px;border-radius:50%;background:var(--gold);filter:blur(100px);opacity:0.03;pointer-events:none;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .nav-links{display:none;}
+    .hamburger{display:flex;}
+    .hero{padding:140px 0 80px;}
+    .hero h1{font-size:36px;}
+    .hero-stats{gap:24px;}
+    .services-grid,.camp-grid,.team-grid,.artist-grid{flex-direction:column;align-items:center;}
+    .port-grid{justify-content:center;}
+    .port-services{flex-direction:column;align-items:center;}
+    .footer-grid{justify-content:center;}
+    .mascot{flex-direction:column;text-align:center;}
+    .mascot img{width:140px;height:140px;}
+    .boddee-float{display:none!important;visibility:hidden;}
+    .boddee-divider img{width:100px;height:100px;}
+    /* iframe removed - native form used */
+}
+@media(max-width:600px){
+    .hero-stats{gap:16px;}
+    .hero-stat .num{font-size:28px;}
+    .port-grid{flex-direction:column;align-items:center;}
+    .gallery{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    .footer-bottom{flex-direction:column;gap:8px;text-align:center;}
+}
+
+/* MUSIC NOTE DECORATIONS */
+.music-notes-deco{position:absolute;pointer-events:none;z-index:1;opacity:0.12;}
+.music-notes-deco svg{width:100%;height:100%;}
+.music-notes-deco.top-right{top:-20px;right:-40px;width:300px;height:200px;transform:rotate(-10deg);}
+.music-notes-deco.bottom-left{bottom:-20px;left:-40px;width:250px;height:180px;transform:rotate(15deg) scaleX(-1);}
+.music-notes-deco.mid-left{top:30%;left:-60px;width:200px;height:150px;transform:rotate(5deg);}
+.music-notes-deco.mid-right{top:40%;right:-50px;width:220px;height:160px;transform:rotate(-8deg);}
+
+/* GOLD SPARKLE PARTICLES */
+@keyframes sparkle{
+    0%,100%{opacity:0;transform:scale(0.3);}
+    50%{opacity:1;transform:scale(1);}
+}
+@keyframes floatUp{
+    0%{transform:translateY(0) rotate(0deg);opacity:0;}
+    10%{opacity:0.7;}
+    90%{opacity:0.7;}
+    100%{transform:translateY(-120px) rotate(180deg);opacity:0;}
+}
+.sparkles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1;}
+.sparkle{position:absolute;width:4px;height:4px;background:var(--gold);border-radius:50%;animation:sparkle 3s ease-in-out infinite;}
+.sparkle:nth-child(1){top:10%;left:5%;animation-delay:0s;animation-duration:2.5s;}
+.sparkle:nth-child(2){top:20%;right:8%;animation-delay:0.5s;animation-duration:3.2s;}
+.sparkle:nth-child(3){top:60%;left:12%;animation-delay:1s;animation-duration:2.8s;}
+.sparkle:nth-child(4){top:80%;right:15%;animation-delay:1.5s;animation-duration:3.5s;}
+.sparkle:nth-child(5){top:40%;left:85%;animation-delay:2s;animation-duration:2.2s;}
+.sparkle:nth-child(6){top:70%;left:90%;animation-delay:0.3s;animation-duration:4s;}
+.sparkle:nth-child(7){top:15%;left:50%;animation-delay:1.2s;animation-duration:3s;width:3px;height:3px;}
+.sparkle:nth-child(8){top:90%;left:30%;animation-delay:2.5s;animation-duration:2.7s;width:5px;height:5px;}
+
+/* TREBLE CLEF WATERMARKS */
+.treble-watermark{position:absolute;pointer-events:none;z-index:0;opacity:0.04;font-size:180px;color:var(--gold);font-family:serif;}
+.treble-wm-1{top:5%;right:5%;transform:rotate(15deg);}
+.treble-wm-2{bottom:10%;left:3%;transform:rotate(-20deg);font-size:140px;}
+
+/* FLOWING GOLD LINES - like the music staff curves on the business card */
+.gold-flow{position:absolute;pointer-events:none;z-index:0;overflow:hidden;}
+.gold-flow svg path{fill:none;stroke:var(--gold);stroke-width:1.5;opacity:0.08;}
+.gold-flow.top{top:0;right:0;width:60%;height:200px;}
+.gold-flow.bottom{bottom:0;left:0;width:50%;height:160px;transform:scaleX(-1);}
+
+/* SECTION GOLD DIVIDER ORNAMENT (like the diamond on the card) */
+.gold-ornament{text-align:center;margin:8px 0 16px;color:var(--gold);font-size:18px;opacity:0.6;letter-spacing:8px;}
+
+/* Hero musical note float animation */
+@keyframes noteFloat{
+    0%{transform:translateY(0) rotate(0deg);opacity:0.15;}
+    50%{transform:translateY(-30px) rotate(10deg);opacity:0.25;}
+    100%{transform:translateY(0) rotate(0deg);opacity:0.15;}
+}
+.hero-notes{position:absolute;pointer-events:none;z-index:1;}
+.hero-notes span{position:absolute;color:var(--gold);animation:noteFloat 4s ease-in-out infinite;}
+.hero-notes span:nth-child(1){top:15%;left:8%;font-size:36px;animation-delay:0s;}
+.hero-notes span:nth-child(2){top:25%;right:12%;font-size:28px;animation-delay:0.8s;}
+.hero-notes span:nth-child(3){bottom:30%;left:15%;font-size:32px;animation-delay:1.6s;}
+.hero-notes span:nth-child(4){bottom:20%;right:6%;font-size:24px;animation-delay:2.4s;}
+.hero-notes span:nth-child(5){top:50%;left:3%;font-size:20px;animation-delay:3.2s;}
+
+@media(max-width:768px){
+    .music-notes-deco{display:none;}
+    .treble-watermark{font-size:100px;opacity:0.03;}
+    .hero-notes span{font-size:18px !important;}
+}
+
+
+/* REVIEWS */
+.reviews{padding:80px 24px;background:#fff;}
+.reviews .section-title{color:#1a1a1a;text-align:center;}
+.reviews-subtitle{text-align:center;font-size:18px;color:#555;margin-bottom:40px;}
+.reviews-rating{text-align:center;margin-bottom:40px;}
+.reviews-rating .stars{font-size:36px;color:#f4b400;letter-spacing:4px;}
+.reviews-rating .rating-text{font-size:20px;color:#1a1a1a;font-weight:700;margin-top:8px;}
+.reviews-rating .rating-sub{font-size:14px;color:#888;margin-top:4px;}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:1100px;margin:0 auto 40px;}
+.review-card{background:#faf9f6;border-radius:16px;padding:28px;border:1px solid #eee;transition:transform 0.2s;}
+.review-card:hover{transform:translateY(-3px);}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.review-card .review-avatar{width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px;}
+.review-card .review-meta{flex:1;}
+.review-card .review-name{font-weight:700;color:#1a1a1a;font-size:16px;}
+.review-card .review-date{font-size:13px;color:#999;}
+.review-card .review-stars{color:#f4b400;font-size:16px;letter-spacing:2px;margin-bottom:10px;}
+.review-card .review-text{color:#444;font-size:15px;line-height:1.6;}
+.review-card .review-source{display:flex;align-items:center;gap:6px;margin-top:14px;font-size:13px;color:#999;}
+.reviews-cta{text-align:center;}
+.reviews-cta a{display:inline-block;padding:14px 32px;background:var(--gold);color:#fff;text-decoration:none;border-radius:99px;font-weight:700;font-size:16px;transition:background 0.2s;}
+.reviews-cta a:hover{background:#c9982a;}
+.reviews-links{text-align:center;margin-top:16px;}
+.reviews-links a{color:var(--gold);text-decoration:none;font-size:14px;margin:0 12px;}
+.reviews-links a:hover{text-decoration:underline;}
+
+/* PRIVATE LESSONS */
+.private-lessons{padding:80px 24px;background:linear-gradient(135deg,#1a1132 0%,#2a1f4e 100%);position:relative;overflow:hidden;}
+.private-lessons .section-title{color:#fff;text-align:center;}
+.private-lessons .section-desc{color:rgba(255,255,255,0.7);text-align:center;max-width:600px;margin:0 auto 40px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:700px;margin:0 auto 32px;}
+.pricing-card{background:rgba(255,255,255,0.07);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:32px 28px;text-align:center;transition:transform 0.2s,border-color 0.2s;}
+.pricing-card:hover{transform:translateY(-4px);border-color:var(--gold);}
+.pricing-card .duration{font-size:14px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700;margin-bottom:8px;}
+.pricing-card .price{font-size:48px;font-weight:800;color:#fff;line-height:1;}
+.pricing-card .price span{font-size:18px;font-weight:400;color:rgba(255,255,255,0.5);}
+.pricing-card .per{font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px;}
+.pricing-card .instruments{font-size:14px;color:rgba(255,255,255,0.6);margin-top:16px;line-height:1.6;}
+.pricing-policies{max-width:600px;margin:0 auto 36px;background:rgba(255,255,255,0.05);border-radius:14px;padding:24px 28px;border:1px solid rgba(255,255,255,0.08);}
+.pricing-policies h4{color:var(--gold);font-size:16px;margin:0 0 12px;font-weight:700;}
+.pricing-policies ul{list-style:none;padding:0;margin:0;}
+.pricing-policies li{color:rgba(255,255,255,0.7);font-size:15px;padding:6px 0;padding-left:24px;position:relative;}
+.pricing-policies li::before{content:'✓';position:absolute;left:0;color:var(--gold);font-weight:700;}
+.private-cta{text-align:center;}
+.private-cta a{display:inline-block;padding:16px 36px;background:var(--gold);color:#fff;text-decoration:none;border-radius:99px;font-weight:700;font-size:17px;transition:background 0.2s,transform 0.2s;}
+.private-cta a:hover{background:#c9982a;transform:scale(1.03);}
+.private-cta .or-text{display:block;color:rgba(255,255,255,0.4);font-size:13px;margin-top:10px;}
+.private-cta .or-text a{display:inline;padding:0;background:none;color:var(--gold);font-size:13px;text-decoration:underline;}
+</style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5Y15E29C0E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5Y15E29C0E');
+</script>
+</head><body>
+
+<!-- TOP BAR -->
+<div class="top-bar" id="topBar">🎵 FREE June Classes! July: $25/class · August: per-class pricing + Buy 3 Get 1 Free! 📍 6787 W Tropicana Ave <a href="#signup">Register Now →</a></div>
+
+<!-- NAV -->
+<nav id="navbar">
+<div class="nav-inner">
+    <a href="#" class="nav-brand">B.A.S.M.A<span>.</span></a>
+    <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#camp">Camp</a>
+        <a href="#team">Team</a>
+                <a href="#reviews">Reviews</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#private-lessons">Lessons</a>
+                <a href="#artists">Artists</a>
+        <a href="/portal" target="_blank">Parent Portal</a>
+        <a href="#contact">Contact</a>
+        <a href="https://www.instagram.com/becomeasingermusicacademy" target="_blank" style="display:inline-flex;align-items:center;gap:4px;color:#E1306C;" title="Follow us on Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
+        <a href="https://www.tiktok.com/@basmateachme" target="_blank" style="display:inline-flex;align-items:center;gap:4px;color:#00f2ea;" title="Follow us on TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78c.27 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.3 6.34 6.34 0 0 0 9.49 21.6a6.34 6.34 0 0 0 6.34-6.34V8.7a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.13z"/></svg></a>
+        <a href="#signup" class="cta">Register →</a>
+    </div>
+    <div class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
+</div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+    <a href="#camp" onclick="closeMobile()">🎵 Summer Camp</a>
+    <a href="#services" onclick="closeMobile()">What We Do</a>
+    <a href="#reviews" onclick="closeMobile()">⭐ Reviews</a>
+    <a href="#private-lessons" onclick="closeMobile()">🎹 Lessons</a>
+    <a href="#team" onclick="closeMobile()">Our Team</a>
+    <a href="#portfolio" onclick="closeMobile()">Marketing</a>
+    <a href="#artists" onclick="closeMobile()">Artists</a>
+    <a href="/portal" onclick="closeMobile()">👨‍👩‍👧 Parent Portal</a>
+    <a href="#contact" onclick="closeMobile()">📞 Contact</a>
+    <a href="https://www.instagram.com/becomeasingermusicacademy" target="_blank" onclick="closeMobile()" style="color:#E1306C;">📷 Instagram</a>
+    <a href="https://www.tiktok.com/@basmateachme" target="_blank" onclick="closeMobile()" style="color:#00f2ea;">🎵 TikTok</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+<div class="container" style="text-align:center;">
+    <img src="/images/bcard-hero.png" alt="B.A.S.M.A. — Become A Singer Music Academy — Where Music Meets Passion" style="max-width:700px;width:90%;border-radius:20px;margin-bottom:28px;box-shadow:0 12px 48px rgba(0,0,0,0.4);">
+    <p style="font-size:18px;max-width:600px;margin:0 auto 24px;">🆓 <strong>FREE music classes in June!</strong> Piano, voice &amp; performance · Ages 5–17. <strong style="color:var(--gold);">July just $25/class! August: Buy 3 Get 1 Free!</strong></p>
+    <div class="hero-btns">
+        <a href="/enroll" class="btn-primary" target="_blank">Enroll Now →</a>
+        <a href="#camp" class="btn-outline">See What's Included</a>
+    </div>
+    <div class="hero-stats">
+        <div class="hero-stat"><div class="num">Free</div><div class="lbl">To Try</div></div>
+        <div class="hero-stat"><div class="num">5–17</div><div class="lbl">Ages Welcome</div></div>
+        <div class="hero-stat"><div class="num">$25</div><div class="lbl">Per Class in July</div></div>
+        <div class="hero-stat"><div class="num">17 &amp; Under</div><div class="lbl">Ages Welcome</div></div>
+    </div>
+</div>
+</section>
+
+<!-- CLASS SCHEDULE AT A GLANCE -->
+<section id="classes" style="padding:60px 0 40px;background:linear-gradient(180deg,rgba(45,27,78,0.3) 0%,transparent 100%);">
+<div class="container section-center">
+    <div class="section-label">📅 Summer 2026 Schedule</div>
+    <div class="section-title" style="margin-bottom:8px;">Classes at a Glance</div>
+    <p style="color:rgba(255,255,255,0.6);margin-bottom:32px;font-size:15px;">📍 6787 W Tropicana Ave Suite 260, Las Vegas 89103 · Mon–Thu</p>
+
+    <!-- June Discovery Camp -->
+    <div style="max-width:800px;margin:0 auto 24px;background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15);border-radius:16px;padding:24px;text-align:left;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div>
+                <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#34D399;">🌟 June Discovery Camp</span>
+                <div style="color:rgba(52,211,153,0.7);font-size:13px;font-weight:600;">June 14 – July 2 · Mon–Thu</div>
+            </div>
+            <span style="background:#34D399;color:#0D0118;font-weight:700;padding:6px 16px;border-radius:100px;font-size:14px;">FREE</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="background:rgba(52,211,153,0.08);border-radius:10px;padding:14px;">
+                <div style="font-weight:600;color:#fff;font-size:14px;">Ages 11–17</div>
+                <div style="color:var(--gold);font-weight:600;font-size:13px;">10:00 AM – 12:00 PM</div>
+            </div>
+            <div style="background:rgba(52,211,153,0.08);border-radius:10px;padding:14px;">
+                <div style="font-weight:600;color:#fff;font-size:14px;">Ages 5–10</div>
+                <div style="color:var(--gold);font-weight:600;font-size:13px;">12:00 – 2:00 PM</div>
+            </div>
+        </div>
+        <p style="color:rgba(52,211,153,0.6);font-size:12px;margin-top:10px;">💡 Students welcome to attend the full 10 AM – 2 PM block!</p>
+        <a href="/enroll?class=discovery-11-17&month=june" style="display:inline-block;margin-top:12px;background:#34D399;color:#0D0118;padding:10px 24px;border-radius:100px;font-weight:700;font-size:14px;text-decoration:none;">Enroll Free →</a>
+    </div>
+
+    <!-- July & August Classes -->
+    <div style="max-width:800px;margin:0 auto;background:rgba(240,200,80,0.04);border:1px solid rgba(240,200,80,0.12);border-radius:16px;padding:24px;text-align:left;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div>
+                <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold);">🎶 July & August Classes</span>
+                <div style="color:rgba(240,200,80,0.6);font-size:13px;font-weight:600;">Mon–Thu · 🚫 Closed Jul 16–19</div>
+            </div>
+            <span style="background:var(--gradient-gold);color:#0D0118;font-weight:700;padding:6px 16px;border-radius:100px;font-size:14px;">July: $25/class</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+            <tr style="border-bottom:1px solid rgba(240,200,80,0.08);">
+                <td style="padding:10px 0;color:#fff;font-weight:600;">👶 Tiny Tots Music & Fun</td>
+                <td style="color:var(--gold);font-weight:600;text-align:right;">9:00 – 9:45 AM</td>
+                <td style="color:rgba(255,255,255,0.5);text-align:right;padding-left:12px;font-size:12px;">Ages 2–5</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(240,200,80,0.08);">
+                <td style="padding:10px 0;color:#fff;font-weight:600;">🎵 Kids Music & Fun</td>
+                <td style="color:var(--gold);font-weight:600;text-align:right;">10:00 – 11:30 AM</td>
+                <td style="color:rgba(255,255,255,0.5);text-align:right;padding-left:12px;font-size:12px;">Ages 5–10</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(240,200,80,0.08);">
+                <td style="padding:10px 0;color:#fff;font-weight:600;">🎵 Kids Music & Fun</td>
+                <td style="color:var(--gold);font-weight:600;text-align:right;">11:30 AM – 1:00 PM</td>
+                <td style="color:rgba(255,255,255,0.5);text-align:right;padding-left:12px;font-size:12px;">Ages 11–17</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(240,200,80,0.08);">
+                <td style="padding:10px 0;color:#fff;font-weight:600;">🎹 Piano Class</td>
+                <td style="color:var(--gold);font-weight:600;text-align:right;">1:30 – 2:45 PM</td>
+                <td style="color:rgba(255,255,255,0.5);text-align:right;padding-left:12px;font-size:12px;">All Ages</td>
+            </tr>
+            <tr>
+                <td style="padding:10px 0;color:#fff;font-weight:600;">🎤 Teens Recording</td>
+                <td style="color:var(--gold);font-weight:600;text-align:right;">2:45 – 4:00 PM</td>
+                <td style="color:rgba(255,255,255,0.5);text-align:right;padding-left:12px;font-size:12px;">Teens</td>
+            </tr>
+        </table>
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+            <a href="/enroll" style="display:inline-block;background:var(--gradient-gold);color:#0D0118;padding:10px 24px;border-radius:100px;font-weight:700;font-size:14px;text-decoration:none;">📅 View Schedule & Enroll →</a>
+            <a href="/booking" style="display:inline-block;border:2px solid var(--gold);color:var(--gold);padding:8px 20px;border-radius:100px;font-weight:600;font-size:14px;text-decoration:none;">🎵 Book Free Trial Lesson</a>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- SIGNUP FORM -->
+<section class="signup-section" id="signup">
+    <div class="sparkles">
+        <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+        <div class="sparkle"></div>
+    </div>
+<div class="container">
+    <div class="section-label">✍️ Sign Up Now</div>
+    <div class="section-title">Register for Summer Classes</div>
+    <div class="section-divider"></div>
+    <p class="section-desc">🆓 <strong>June classes are completely FREE!</strong> Fill out the form to reserve your child's spot. <strong style="color:var(--gold);">July: $25/class</strong> · August: normal pricing + Buy 3 Get 1 Free!</p>
+    <div class="native-form fade-in" id="signup-form-container">
+      <form id="homepage-signup" onsubmit="return submitHomepageForm(event)">
+        <div class="form-row">
+          <div><label>Parent/Guardian Name *</label><input type="text" id="hp_parent" required placeholder="Full name"></div>
+          <div><label>Phone *</label><input type="tel" id="hp_phone" required placeholder="(000) 000-0000"></div>
+        </div>
+        <label>Email *</label><input type="email" id="hp_email" required placeholder="your@email.com">
+        <div class="form-row">
+          <div><label>Student Name *</label><input type="text" id="hp_student" required placeholder="Child's full name"></div>
+          <div><label>Student Age *</label><input type="number" id="hp_age" required min="3" max="18" placeholder="Age"></div>
+        </div>
+        <label>Which classes are you interested in?</label>
+        <div class="chip-grid">
+          <label class="chip"><input type="checkbox" name="hp_interest" value="Piano" onchange="this.parentElement.classList.toggle('selected',this.checked)">🎹 Piano</label>
+          <label class="chip"><input type="checkbox" name="hp_interest" value="Voice/Singing" onchange="this.parentElement.classList.toggle('selected',this.checked)">🎤 Voice</label>
+          <label class="chip"><input type="checkbox" name="hp_interest" value="Performance & Dance" onchange="this.parentElement.classList.toggle('selected',this.checked)">💃 Performance & Dance</label>
+          <label class="chip"><input type="checkbox" name="hp_interest" value="All of the above" onchange="this.parentElement.classList.toggle('selected',this.checked)">🌟 All of the above</label>
+        </div>
+        <label>Experience Level</label>
+        <select id="hp_experience">
+          <option value="">Select...</option>
+          <option value="No experience - complete beginner">No experience – complete beginner</option>
+          <option value="Some experience (played or sang before)">Some experience</option>
+          <option value="Intermediate (1-3 years)">Intermediate (1–3 years)</option>
+          <option value="Advanced (3+ years)">Advanced (3+ years)</option>
+        </select>
+        <label>How did you hear about us?</label>
+        <select id="hp_referral">
+          <option value="">Select...</option>
+          <option value="Social Media">Social Media</option>
+          <option value="Friend or Family">Friend or Family</option>
+          <option value="School Flyer">School Flyer</option>
+          <option value="Google Search">Google Search</option>
+          <option value="Community Event">Community Event</option>
+          <option value="Other">Other</option>
+        </select>
+        <button type="submit" class="submit-btn" id="hp_submit_btn">🎵 Register for Summer Classes</button>
+      </form>
+      <div class="form-success" id="hp-success" style="display:none;">
+        <h3>🎉 You're Registered!</h3>
+        <p>Thank you! We'll be in touch soon with details about your child's free June classes. See you at BASMA!</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- BODDEE DIVIDER -->
+<div class="boddee-divider"><img src="/images/boddee-icon.png" alt="Boddee"></div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+    <div class="treble-watermark treble-wm-1">𝄞</div>
+    <div class="sparkles">
+        <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+        <div class="sparkle"></div>
+    </div>
+<div class="boddee-float boddee-services"><img src="/images/boddee-icon.png" alt="Boddee"></div>
+<div class="container section-center">
+    <div class="section-label">What We Do</div>
+    <div class="section-title">Music lessons, brand building & more</div>
+    <div class="section-divider"></div>
+    <p class="section-desc">BASMA is a Las Vegas music academy, social media agency, and artist development company — all under one roof.</p>
+    <div class="services-grid">
+        <a href="#camp" class="svc-card fade-in">
+            <div class="svc-icon">🎤</div>
+            <h3>Music Classes for Kids</h3>
+            <p>Start with free classes in June — piano, voice, performance & dance. Love it? July: all classes just $25. August: normal pricing with Buy 3 Get 1 Free!</p>
+        </a>
+        <a href="mailto:majorwinnersleague@gmail.com?subject=Social%20Media%20%26%20Marketing%20Inquiry&body=Hi%20BASMA%2C%0A%0AI%27m%20interested%20in%20your%20social%20media%20%2F%20marketing%20services.%20Here%27s%20what%20I%27m%20looking%20for%3A%0A%0A" class="svc-card fade-in">
+            <div class="svc-icon">📱</div>
+            <h3>Social Media for Businesses</h3>
+            <p>Need help with Instagram, content, or getting more customers online? We build and manage social media pages for Las Vegas businesses. <strong style="color:var(--gold);">Email us to get started →</strong></p>
+        </a>
+        <a href="mailto:majorwinnersleague@gmail.com?subject=Artist%20Coaching%20%2F%20Booking%20Inquiry&body=Hi%20BASMA%2C%0A%0AI%27m%20interested%20in%20artist%20coaching%20%2F%20booking%20%2F%20event%20performance.%20Here%27s%20what%20I%27m%20looking%20for%3A%0A%0A" class="svc-card fade-in">
+            <div class="svc-icon">⭐</div>
+            <h3>Artist Coaching & Booking</h3>
+            <p>Private vocal lessons, help with branding, connections to studios and venues, or book a young performer for your event. <strong style="color:var(--gold);">Email us for details →</strong></p>
+        </a>
+    </div>
+</div>
+</section>
+
+<!-- CAMP -->
+<section class="camp" id="camp">
+    <div class="treble-watermark treble-wm-2">𝄞</div>
+    <div class="sparkles">
+        <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+        <div class="sparkle"></div><div class="sparkle"></div>
+    </div>
+<div class="boddee-float boddee-camp"><img src="/images/boddee-icon.png" alt="Boddee"></div>
+<div class="container section-center">
+    <div class="section-label">Summer Camp 2026</div>
+    <div class="section-title">Summer Music Program · 6787 W Tropicana Ave</div>
+    <div class="section-divider"></div>
+    <p class="section-desc">Not sure if your child will like it? <strong style="color:var(--gold);">June classes are completely free — no cost, no commitment.</strong> Love it? July: $25/class special. August: normal pricing + Buy 3 Get 1 Free!</p>
+    <div class="camp-grid">
+        <!-- FREE JUNE CLASSES -->
+        <div class="camp-card fade-in" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})" style="cursor:pointer;">
+            <img src="/images/kids-bubbles-group.jpg" alt="Free summer music classes at BASMA">
+            <div class="camp-body">
+                <span class="camp-badge free">🆓 FREE — June Classes</span>
+                <h3>Free June Discovery Classes</h3>
+                <p class="camp-address">📍 6787 W Tropicana Ave Suite 260, Las Vegas 89103</p>
+                <p class="desc">We promised free classes for the summer — and we delivered! Come explore piano, voice, performance & dance at <strong>no cost and no commitment</strong>.</p>
+                <ul class="schedule">
+                    <li><span>🎵 Session 1</span><span class="time">10 AM – 12 PM</span></li>
+                    <li><span>🎵 Session 2</span><span class="time">12 PM – 2 PM</span></li>
+                </ul>
+                <div class="camp-price gold-text">FREE</div>
+                <p class="camp-price-note">✅ Mon–Thu · All levels welcome</p>
+                <a href="#signup" class="camp-btn">Register Free →</a>
+            </div>
+        </div>
+        <!-- JULY SPECIAL -->
+        <div class="camp-card fade-in" style="cursor:default;">
+            <img src="/images/guitar-lesson.jpg" alt="July music classes at BASMA" style="object-position:top;">
+            <div class="camp-body">
+                <span class="camp-badge paid">⭐ July Special — ALL Classes $25!</span>
+                <h3>July $25/Class Special</h3>
+                <p class="camp-address">📍 6787 W Tropicana Ave Suite 260, Las Vegas 89103</p>
+                <p class="desc">Every class — just $25/class for the entire month of July. Pick your class below!</p>
+                <ul class="schedule">
+                    <li><span>👶 Tiny Tots (ages 2–5)</span><span class="time">9:00 – 9:45 AM</span></li>
+                    <li><span>🎵 Kids Music (ages 5–17)</span><span class="time">10:00 AM – 1:00 PM</span></li>
+                    <li><span>🎹 Piano Class</span><span class="time">1:30 – 2:45 PM</span></li>
+                    <li><span>🎤 Teen Recording (teens only)</span><span class="time">2:45 – 4:00 PM</span></li>
+                </ul>
+                <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:12px 0 16px;">
+                    <div style="background:rgba(212,175,55,0.18);border:2px solid var(--gold);border-radius:14px;padding:14px 22px;text-align:center;position:relative;">
+                        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--purple-deep);font-size:10px;font-weight:800;padding:2px 10px;border-radius:20px;text-transform:uppercase;">July Special</div>
+                        <div class="gold-text" style="font-size:28px;font-weight:800;">$25<span style="font-size:14px;font-weight:400;opacity:0.7;">+tax /class</span></div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:4px;">All group classes · Mon–Thu</div>
+                    </div>
+                </div>
+                <p class="camp-price-note">
+                    ✅ Normally $25–$40/class — all just $25 in July<br>
+                    ✅ Pay via Stripe or Zelle
+                </p>
+                <div style="text-align:center;margin-top:12px;">
+                    <a href="/enroll" onclick="event.stopPropagation();" class="camp-btn" target="_blank" style="font-size:16px;padding:16px 36px;">
+                        📅 View Schedule & Enroll →
+                    </a>
+                    <div style="font-size:11px;color:var(--muted);margin-top:8px;">See class times, pick your month, then pay</div>
+                </div>
+                <div style="margin-top:10px;padding:8px 12px;background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.2);border-radius:10px;text-align:center;">
+                    <span style="font-size:12px;color:#ffb347;">🚫 Closed July 16–19 — no classes those days</span>
+                </div>
+            </div>
+        </div>
+        <!-- AUGUST — PER-CLASS PRICING + BUNDLE -->
+        <div class="camp-card fade-in" id="august-card" style="cursor:default;">
+            <img src="/images/guitar-solo.jpg" alt="August music classes at BASMA" style="object-position:top;">
+            <div class="camp-body">
+                <span class="camp-badge paid">🎁 August — Buy 3 Get 1 Free!</span>
+                <h3>August Classes · Per-Class Pricing</h3>
+                <p class="camp-address">📍 6787 W Tropicana Ave Suite 260, Las Vegas 89103</p>
+                <p class="desc">Same great classes, normal pricing — buy Mon–Thu (4 classes/week) and the 4th class is FREE!</p>
+                <ul class="schedule">
+                    <li><span>👶 Tiny Tots (ages 2–5)</span><span class="time">$25/class · 4 for $75</span></li>
+                    <li><span>🎵 Kids Music (ages 5–17)</span><span class="time">$30/class · 4 for $90</span></li>
+                    <li><span>🎹 Piano Class</span><span class="time">$35/class · 4 for $105</span></li>
+                    <li><span>🎤 Teens Recording (teens only)</span><span class="time">$40/class · 4 for $120</span></li>
+                </ul>
+                <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:12px 0 16px;">
+                    <div style="background:rgba(212,175,55,0.18);border:2px solid var(--gold);border-radius:14px;padding:14px 22px;text-align:center;position:relative;">
+                        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--purple-deep);font-size:10px;font-weight:800;padding:2px 10px;border-radius:20px;text-transform:uppercase;">Buy 3 Get 1 Free</div>
+                        <div class="gold-text" style="font-size:22px;font-weight:800;">$75–$120<span style="font-size:14px;font-weight:400;opacity:0.7;"> /week</span></div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:4px;">Mon–Thu · Save 25% on the full week</div>
+                    </div>
+                </div>
+                <p class="camp-price-note">
+                    ✅ Same schedule as July<br>
+                    ✅ Pay via Stripe or Zelle
+                </p>
+                <div style="text-align:center;margin-top:12px;">
+                    <a href="/enroll" onclick="event.stopPropagation();" class="camp-btn" target="_blank" style="font-size:16px;padding:16px 36px;">
+                        📅 View Schedule & Enroll →
+                    </a>
+                    <div style="font-size:11px;color:var(--muted);margin-top:8px;">See class times, choose your package, then pay</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- BODDEE DIVIDER -->
+<div class="boddee-divider"><img src="/images/boddee-icon.png" alt="Boddee"></div>
+
+<!-- TEAM -->
+<section class="team" id="team">
+<div class="container section-center">
+    <div class="section-label">Your Instructors</div>
+    <div class="section-title">Real musicians. Real experience.</div>
+    <div class="section-divider"></div>
+    <p class="section-desc">Your kids learn from people who actually perform, teach, and create music every day — not just textbooks.</p>
+    <div class="team-grid">
+        <div class="member fade-in">
+            <img src="/images/basma-headshot.jpg" alt="Basma - Founder">
+            <div class="role">Founder & Lead Instructor</div>
+            <h3>Basma</h3>
+            <div class="instruments">Voice · Songwriting · Performance · Social Media</div>
+            <p class="bio">Born and raised in Las Vegas. UNLV graduate, vocalist, puppeteer, and creative entrepreneur. Basma leads the free summer program — the place where kids get their first taste of music, performance, and dance. She started BASMA to give every kid in Vegas a chance to discover music.</p>
+        </div>
+        <div class="member fade-in">
+            <img src="/images/sarah-orchestra.jpg" alt="Sarah - Co-Founder">
+            <div class="role">Co-Founder & Studio Instructor</div>
+            <h3>Sarah</h3>
+            <div class="instruments">Viola · Violin · Piano · Music Theory</div>
+            <p class="bio">Classically trained in viola, violin, cello, and piano. Sarah leads the professional intensive training at the Tropicana studio — the place where kids who loved the free classes go to get serious. Real personal attention and performance opportunities.</p>
+        </div>
+    </div>
+    <div class="mascot fade-in">
+        <img src="/images/boddee-puppet.jpg" alt="Boddee Billy Bob mascot">
+        <div>
+            <h3>🧡 Meet Boddee Billy Bob</h3>
+            <p>Our orange puppet mascot! Boddee helps kids feel comfortable, have fun, and find their voice through play and laughter. You might've seen him at Anime Las Vegas or in classrooms around the city — kids absolutely love him.</p>
+        </div>
+    </div>
+    <div style="text-align:center;margin-top:60px;margin-bottom:24px;">
+        <div class="section-label">📸 Inside Our Studio</div>
+        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff;">Real moments from BASMA classes</div>
+    </div>
+    <div class="gallery" style="grid-template-columns:repeat(3,1fr);">
+        <img src="/images/guitar-lesson.jpg" alt="Student learning guitar at BASMA" class="fade-in">
+        <img src="/images/bubbles-fun.jpg" alt="Kids having fun with bubbles at music camp" class="fade-in">
+        <img src="/images/kids-table.jpg" alt="Students at BASMA summer camp lunch" class="fade-in">
+        <img src="/images/guitar-solo.jpg" alt="Young student playing guitar" class="fade-in">
+        <img src="/images/studio-session.jpg" alt="Recording studio session at BASMA" class="fade-in">
+        <img src="/images/kids-bubbles-group.jpg" alt="Group of kids enjoying music camp activities" class="fade-in">
+    </div>
+</div>
+</section>
+
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-title">What parents & students are saying</div>
+    <div class="reviews-rating">
+      <div class="stars">★★★★★</div>
+      <div class="rating-text">5.0 out of 5</div>
+      <div class="rating-sub">Based on 7 Google Reviews</div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-header">
+          <div class="review-avatar">K</div>
+          <div class="review-meta">
+            <div class="review-name">Keith Graves</div>
+            <div class="review-date">June 2026</div>
+          </div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">I love that the instructors are hosting a free program for the community for the community… it was really fun. The studio on Tropicana is great and convenient!</div>
+        <div class="review-source">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google Review
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-header">
+          <div class="review-avatar">V</div>
+          <div class="review-meta">
+            <div class="review-name">Vegan S</div>
+            <div class="review-date">June 2026</div>
+          </div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">Very fun creative atmosphere. Great instructors. Overall great experience — voice lessons, piano lessons. 100% recommend!</div>
+        <div class="review-source">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google Review
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-header">
+          <div class="review-avatar">D</div>
+          <div class="review-meta">
+            <div class="review-name">Diana Galindo</div>
+            <div class="review-date">June 2026</div>
+          </div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">I bring my kids and they had such a good experience — the teachers are awesome!</div>
+        <div class="review-source">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google Review
+        </div>
+      </div>
+    </div>
+    <div class="reviews-cta">
+      <a href="#signup">Register for Summer Program →</a>
+    </div>
+    <div class="reviews-links">
+      <a href="https://search.google.com/local/writereview?placeid=ChIJMa3OMCa5yIARe38rXgrBeb0" target="_blank" rel="noopener">✏️ Leave a Google Review</a>
+      <a href="https://www.yelp.com/biz/become-a-singer-music-academy-las-vegas" target="_blank" rel="noopener">✏️ Leave a Yelp Review</a>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+<div class="container">
+    <div class="section-label">Need Marketing Help?</div>
+    <div class="section-title">We also run social media for businesses.</div>
+    <div class="section-divider"></div>
+    <p class="section-desc">Own a business in Las Vegas? We'll handle your social media — content, posting, strategy, and growth. Here are some of the businesses we've worked with:</p>
+    <div class="port-grid">
+        <div class="port-card fade-in"><div class="icon">📸</div><h4>Hollywood Photography</h4><p>Social Media</p></div>
+        <div class="port-card fade-in"><div class="icon">🎰</div><h4>Casino Quest</h4><p>Social Media</p></div>
+        <div class="port-card fade-in"><div class="icon">🃏</div><h4>CEG Dealer School</h4><p>Social Media</p></div>
+        <div class="port-card fade-in"><div class="icon">💇</div><h4>Fabian Miranda Salon</h4><p>Social Media</p></div>
+        <div class="port-card fade-in"><div class="icon">🎵</div><h4>Studio Partnerships</h4><p>Dave Chase, UNLV, CSN</p></div>
+        <div class="port-card fade-in"><div class="icon">🎤</div><h4>basma_singer</h4><p>Personal Brand</p></div>
+        <div class="port-card fade-in"><div class="icon">🎭</div><h4>InVegasEntertainment</h4><p>Social Media</p></div>
+        <div class="port-card fade-in"><div class="icon">✨</div><h4>And More...</h4><p>10+ brands managed</p></div>
+    </div>
+    <div class="port-services">
+        <div class="port-svc fade-in"><h4>📋 We Plan Your Content</h4><p>We figure out what to post, when to post, and how to sound like your brand — so you don't have to.</p></div>
+        <div class="port-svc fade-in"><h4>🎨 We Create It For You</h4><p>Graphics, reels, stories, captions — we make all the content so your page looks professional and stays active.</p></div>
+        <div class="port-svc fade-in"><h4>📈 We Grow Your Audience</h4><p>We track what's working, fix what isn't, and help you reach more customers every month.</p></div>
+    </div>
+</div>
+</section>
+
+<!-- PRIVATE LESSONS -->
+<section class="private-lessons" id="private-lessons">
+    <div class="treble-watermark treble-wm-1" style="font-size:120px;top:15%;right:8%;">𝄞</div>
+    <div class="sparkles">
+        <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+    </div>
+<div class="container">
+    <div class="section-label">One-on-One Instruction</div>
+    <div class="section-title">Private Lessons</div>
+    <div class="section-divider"></div>
+    <p class="section-desc">Piano, voice, violin, viola, cello, guitar — personalized instruction for ages 17 & under, all skill levels.</p>
+    <div style="background:linear-gradient(135deg,rgba(212,175,55,0.2),rgba(212,175,55,0.05));border:2px solid var(--gold);border-radius:18px;padding:24px 28px;max-width:500px;margin:0 auto 40px;text-align:center;">
+      <div style="font-size:28px;margin-bottom:6px;">🆓</div>
+      <h3 style="color:var(--gold);font-size:22px;margin:0 0 8px;">FREE 20-Minute Private Lesson — By Appointment</h3>
+      <p style="color:rgba(255,255,255,0.8);font-size:15px;margin:0 0 16px;">Try a one-on-one lesson at no cost! Piano, voice, strings, or guitar. Ages 17 &amp; under.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 16px;text-align:left;">
+        <div style="background:rgba(212,175,55,0.15);border-radius:12px;padding:14px;">
+          <div style="font-weight:700;color:var(--gold);font-size:14px;margin-bottom:4px;">🗓️ June</div>
+          <div style="color:rgba(255,255,255,0.8);font-size:13px;">8 AM – 10 AM &amp; 2 PM – 4 PM<br>Daily with Miss Basma</div>
+        </div>
+        <div style="background:rgba(212,175,55,0.15);border-radius:12px;padding:14px;">
+          <div style="font-weight:700;color:var(--gold);font-size:14px;margin-bottom:4px;">📅 July &amp; Beyond</div>
+          <div style="color:rgba(255,255,255,0.8);font-size:13px;">Fri / Sat / Sun<br>By Appointment — <a href="mailto:majorwinnersleague@gmail.com" style="color:var(--gold);">Email to schedule</a></div>
+        </div>
+      </div>
+      <a href="/booking" style="display:inline-block;background:var(--gold);color:var(--purple-deep);padding:12px 28px;border-radius:30px;font-weight:700;font-size:15px;text-decoration:none;">Book Your Free Lesson →</a>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="duration">30 Minutes</div>
+        <div class="price">$35<span>/lesson</span></div>
+        <div class="instruments">Perfect for younger students<br>or focused skill work</div>
+      </div>
+      <div class="pricing-card">
+        <div class="duration">60 Minutes</div>
+        <div class="price">$50<span>/lesson</span></div>
+        <div class="instruments">Full lesson with technique,<br>repertoire & performance prep</div>
+      </div>
+    </div>
+    <div class="pricing-policies">
+      <h4>How It Works</h4>
+      <ul>
+        <li>4 classes minimum per month</li>
+        <li>Payment due at the beginning of each month</li>
+        <li>1 makeup class allowed per 4 lessons</li>
+        <li>Instruments: piano, voice, violin, viola, cello, guitar</li>
+      </ul>
+    </div>
+    <div class="private-cta">
+      <a href="/booking">Book Private Lessons →</a>
+      <span class="or-text">Questions? Call <a href="tel:7027887369">(702) 788-7369</a> or <a href="mailto:majorwinnersleague@gmail.com">email us</a></span>
+    </div>
+</div>
+</section>
+
+<!-- ARTISTS -->
+<section class="artists" id="artists">
+    <div class="treble-watermark treble-wm-1" style="font-size:120px;top:15%;right:8%;">𝄞</div>
+    <div class="sparkles">
+        <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+    </div>
+<div class="container">
+    <div class="section-label">For Singers & Performers</div>
+    <div class="section-title">Artist Development & Coaching</div>
+    <div class="section-divider"></div>
+    <p class="section-desc">Beyond lessons — we help artists build their brand, make connections, and get stage-ready.</p>
+    <div class="artist-grid">
+        <a href="mailto:majorwinnersleague@gmail.com?subject=Brand%20Building%20Inquiry&body=Hi%20BASMA%2C%0A%0AI%27m%20interested%20in%20building%20my%20brand%20%2F%20social%20media.%20Here%27s%20what%20I%27m%20looking%20for%3A%0A%0A" class="artist-feat fade-in" style="text-decoration:none;color:var(--text);"><div class="icon">🌐</div><h4>Build Your Brand</h4><p>We help artists set up their social media, create a professional look, and start getting noticed online. <strong style="color:var(--gold);">Email us →</strong></p></a>
+        <a href="mailto:majorwinnersleague@gmail.com?subject=Booking%20%2F%20Connections%20Inquiry&body=Hi%20BASMA%2C%0A%0AI%27m%20interested%20in%20booking%20%2F%20getting%20connected%20with%20studios%20%2F%20venues.%20Here%27s%20what%20I%27m%20looking%20for%3A%0A%0A" class="artist-feat fade-in" style="text-decoration:none;color:var(--text);"><div class="icon">🤝</div><h4>Meet The Right People</h4><p>We connect you with studios, venues, and other artists in Las Vegas. No cold-calling — we make the introductions. <strong style="color:var(--gold);">Email us →</strong></p></a>
+        <a href="mailto:majorwinnersleague@gmail.com?subject=Performance%20%2F%20Event%20Booking&body=Hi%20BASMA%2C%0A%0AI%27m%20interested%20in%20performance%20prep%20%2F%20booking%20a%20performer%20for%20an%20event.%20Here%27s%20what%20I%27m%20looking%20for%3A%0A%0A" class="artist-feat fade-in" style="text-decoration:none;color:var(--text);"><div class="icon">🎬</div><h4>Get Stage-Ready</h4><p>Performance prep, showcases, and real studio recording time. Build your confidence and your portfolio at the same time. <strong style="color:var(--gold);">Email us →</strong></p></a>
+    </div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+    <div class="gold-flow bottom">
+        <svg viewBox="0 0 500 160" preserveAspectRatio="none"><path d="M0,80 Q125,10 250,60 T500,30"/><path d="M0,110 Q125,40 250,90 T500,60"/></svg>
+    </div>
+    <div class="sparkles">
+        <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+        <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+    </div>
+<div class="boddee-float boddee-cta"><img src="/images/boddee-icon.png" alt="Boddee"></div>
+<div class="container">
+    <h2>Questions? We're happy to help. 🎶</h2>
+    <p>Call, text, or email us anytime. We'll answer any questions about classes, pricing, or how to get started.</p>
+    <div class="cta-btns">
+        <a href="/portal" class="btn-white" style="font-weight:700;">👨‍👩‍👧 Parent Portal — Enrollment & Forms</a>
+        <a href="/enroll" class="btn-white" target="_blank">✍️ Enroll a New Student</a>
+        <a href="mailto:majorwinnersleague@gmail.com" class="btn-ghost">✉️ Email Us a Question</a>
+        <a href="tel:7027887369" class="btn-ghost">📞 Call or Text (702) 788-7369</a>
+        <a href="https://www.instagram.com/becomeasingermusicacademy" target="_blank" class="btn-ghost" style="border-color:rgba(225,48,108,0.5);color:#E1306C;">📷 Follow Us on Instagram</a>
+        <a href="https://www.tiktok.com/@basmateachme" target="_blank" class="btn-ghost" style="border-color:rgba(0,242,234,0.5);color:#00f2ea;">🎵 Follow Us on TikTok</a>
+    </div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer style="position:relative;">
+    <div class="gold-flow top" style="opacity:0.5;">
+        <svg viewBox="0 0 600 200" preserveAspectRatio="none"><path d="M0,100 Q150,20 300,80 T600,40" style="opacity:0.06;"/><path d="M0,130 Q150,50 300,110 T600,70" style="opacity:0.06;"/></svg>
+    </div>
+<div class="container">
+    <div class="footer-grid">
+        <div>
+            <div class="footer-brand">B.A.S.M.A<span>.</span></div>
+            <p>Become A Singer Music Academy — music education, social media, marketing, and artist development in Las Vegas.</p>
+        </div>
+        <div><h4>Academy</h4><a href="#camp">Summer Camp</a><a href="/contract">Registration</a><a href="#camp">Locations</a><a href="#camp">Schedule</a></div>
+        <div><h4>Services</h4><a href="#portfolio">Social Media</a><a href="#artists">Artist Dev</a><a href="#portfolio">Marketing</a><a href="#contact">Consulting</a></div>
+        <div><h4>Contact</h4><a href="mailto:majorwinnersleague@gmail.com">Email</a><a href="tel:7027887369">(702) 788-7369</a><a href="https://www.instagram.com/becomeasingermusicacademy" target="_blank">Instagram</a><a href="https://www.tiktok.com/@basmateachme" target="_blank">TikTok</a></div>
+    </div>
+    <div style="text-align:center;padding:16px 0 0;margin-bottom:12px;font-size:12px;color:var(--muted);border-top:1px solid rgba(212,168,67,0.1);">
+        BASMA LLC reserves the right to refuse service to anyone at any time.
+    </div>
+    <div class="footer-bottom">
+        <span>© 2026 BASMA LLC. All rights reserved.</span>
+        <span>📍 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103 · (702) 788-7369</span>
+    </div>
+</div>
+</footer>
+
+<!-- PAY MODAL -->
+<div id="pay-overlay" onclick="if(event.target===this)closePay()">
+<div id="pay-modal">
+    <button class="close-modal" onclick="closePay()">✕</button>
+    <h2 style="margin-bottom:8px;">Choose Your Month</h2>
+    <p class="sub" style="margin-bottom:24px;">📍 6787 W Tropicana Ave · Mon–Thu</p>
+
+    <a class="step-btn step-btn-alt" href="/enroll" target="_blank" style="display:block;text-align:center;margin-bottom:14px;padding:18px 20px;font-size:16px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);">
+        🎉 June — FREE Trial Classes<br>
+        <span style="font-size:13px;font-weight:400;opacity:0.8;">View schedule & enroll for free</span>
+    </a>
+
+    <a class="step-btn" href="/enroll" target="_blank" style="display:block;text-align:center;margin-bottom:14px;padding:18px 20px;font-size:16px;background:rgba(67,40,104,0.3);border:1px solid var(--gold);">
+        ⭐ July — All Classes $25<br>
+        <span style="font-size:13px;font-weight:400;opacity:0.8;">View schedule, pick class & pay</span>
+    </a>
+
+    <a class="step-btn" href="/enroll" target="_blank" style="display:block;text-align:center;margin-bottom:14px;padding:18px 20px;font-size:16px;background:rgba(67,40,104,0.3);border:1px solid var(--gold);">
+        🎁 August — Buy 3 Get 1 Free<br>
+        <span style="font-size:13px;font-weight:400;opacity:0.8;">View schedule, pick class & pay</span>
+    </a>
+
+    <a class="step-btn" href="/portal" style="display:block;text-align:center;margin-bottom:14px;padding:18px 20px;font-size:16px;background:rgba(67,40,104,0.3);border:1px solid var(--gold);">
+        👨‍👩‍👧 Parent Portal<br>
+        <span style="font-size:13px;font-weight:400;opacity:0.8;">View enrollment, forms & schedule</span>
+    </a>
+
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted);">
+        Questions? <a href="tel:7027887369" style="color:var(--gold);text-decoration:none;">(702) 788-7369</a>
+         · <a href="mailto:majorwinnersleague@gmail.com" style="color:var(--gold);text-decoration:none;">Email Us</a>
+    </div>
+</div>
+</div>
+
+<!-- LESSONS POPUP -->
+<div id="lessons-overlay" class="open" onclick="if(event.target===this)closeLessons()">
+<div id="lessons-popup">
+    <button class="close" onclick="closeLessons()">✕</button>
+    <img src="/images/bcard-popup.png" alt="BASMA - Become A Singer Music Academy" style="width:100%;">
+    <div class="lessons-body">
+        <h2 style="text-align:center;font-size:20px;">Welcome to BASMA 🎵</h2>
+        <p class="sub" style="text-align:center;">Choose your path:</p>
+
+        <a href="#signup" onclick="closeLessons();" class="lessons-cta" style="margin-bottom:12px;display:block;text-align:center;">
+            🆓 FREE June Classes<br>
+            <span style="font-size:13px;font-weight:400;opacity:0.8;">Group classes · No cost, no commitment · 10 AM–2 PM</span>
+        </a>
+
+        <a href="#private-lessons" onclick="closeLessons();" class="lessons-cta" style="margin-bottom:12px;display:block;text-align:center;background:rgba(67,40,104,0.4);color:var(--gold);">
+            🎤 FREE 20-Min Private Lesson — By Appointment<br>
+            <span style="font-size:13px;font-weight:400;opacity:0.8;">June: 8 AM–10 AM &amp; 2 PM–4 PM daily with Miss Basma · Jul+: Fri/Sat/Sun by appointment</span>
+        </a>
+
+        <div style="background:rgba(67,40,104,0.25);border:1px solid var(--gold);border-radius:14px;padding:12px;margin-bottom:12px;">
+            <p style="text-align:center;font-weight:700;margin:0 0 6px;font-size:14px;color:var(--gold);">⭐ July — All Classes $25!</p>
+            <a href="/enroll?class=tiny-tots&month=july" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;">
+                👶 Tiny Tots (2–5) — $25
+            </a>
+            <a href="/enroll?class=kids-5-10&month=july" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;">
+                🎵 Kids Music (5–17) — $25
+            </a>
+            <a href="/enroll?class=piano&month=july" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;">
+                🎹 Piano Class — $25
+            </a>
+            <a href="/enroll?class=teens-recording&month=july" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:0;padding:9px;font-size:12px;">
+                🎤 Teens Recording — $25
+            </a>
+        </div>
+
+        <div style="background:rgba(67,40,104,0.25);border:1px solid var(--gold);border-radius:14px;padding:12px;margin-bottom:12px;">
+            <p style="text-align:center;font-weight:700;margin:0 0 6px;font-size:14px;color:var(--gold);">🎵 August — Single Class</p>
+            <a href="/enroll?class=tiny-tots&month=july" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;">
+                👶 Tiny Tots (2–5) — $25/class
+            </a>
+            <a href="/enroll?class=kids-5-10&month=august" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;">
+                🎵 Kids Music (5–17) — $30/class
+            </a>
+            <a href="/enroll?class=piano&month=august" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;">
+                🎹 Piano — $35/class
+            </a>
+            <a href="/enroll?class=teens-recording&month=august" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:0;padding:9px;font-size:12px;">
+                🎤 Teens Recording — $40/class
+            </a>
+            <p style="text-align:center;font-weight:700;margin:10px 0 6px;font-size:14px;color:var(--gold);">🎁 Buy 3 Get 1 Free — Weekly Bundle</p>
+            <a href="/enroll?class=tiny-tots&month=august" class="lessons-cta" style="background:rgba(212,175,55,0.15);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;border:1px solid var(--gold);">
+                👶 Tiny Tots — 4 for $75 (save $25)
+            </a>
+            <a href="/enroll?class=kids-5-10&month=august" class="lessons-cta" style="background:rgba(212,175,55,0.15);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;border:1px solid var(--gold);">
+                🎵 Kids Music — 4 for $90 (save $30)
+            </a>
+            <a href="/enroll?class=piano&month=august" class="lessons-cta" style="background:rgba(212,175,55,0.15);color:var(--gold);display:block;text-align:center;margin-bottom:5px;padding:9px;font-size:12px;border:1px solid var(--gold);">
+                🎹 Piano — 4 for $105 (save $35)
+            </a>
+            <a href="/enroll?class=teens-recording&month=august" class="lessons-cta" style="background:rgba(212,175,55,0.15);color:var(--gold);display:block;text-align:center;margin-bottom:0;padding:9px;font-size:12px;border:1px solid var(--gold);">
+                🎤 Teens Recording — 4 for $120 (save $40)
+            </a>
+        </div>
+
+        <a href="#private-lessons" onclick="closeLessons();" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:12px;">
+            🎹 Private Lessons<br>
+            <span style="font-size:13px;font-weight:400;opacity:0.8;">One-on-One · Piano, Voice, Strings, Guitar · Ages 17 &amp; under · $35–$50/lesson</span>
+        </a>
+
+        <a href="/portal" class="lessons-cta" style="background:rgba(67,40,104,0.4);color:var(--gold);display:block;text-align:center;margin-bottom:12px;">
+            👨‍👩‍👧 Parent Portal<br>
+            <span style="font-size:13px;font-weight:400;opacity:0.8;">Look up enrollment, check forms &amp; requirements, register new students</span>
+        </a>
+
+        <button class="lessons-dismiss" onclick="closeLessons()">Just browsing</button>
+    </div>
+</div>
+</div>
+
+<script>
+// Nav
+const topBar=document.getElementById('topBar'),nav=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+    nav.classList.toggle('scrolled',scrollY>10);
+    if(scrollY>200){topBar.style.transform='translateY(-100%)';topBar.style.transition='transform .3s';nav.style.top='0';}
+    else{topBar.style.transform='';nav.style.top='38px';}
+});
+function toggleMobile(){document.getElementById('mobileNav').classList.toggle('open');}
+function closeMobile(){document.getElementById('mobileNav').classList.remove('open');}
+
+// Fade in
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target);}}),{threshold:0.15});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// Pay modal
+function openPay(){document.getElementById('pay-overlay').classList.add('open');}
+function closePay(){document.getElementById('pay-overlay').classList.remove('open');}
+
+// Lessons popup
+function closeLessons(){document.getElementById('lessons-overlay').classList.remove('open');}
+</script>
+<script>
+async function submitHomepageForm(e){
+  e.preventDefault();
+  var btn=document.getElementById('hp_submit_btn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  var parent=document.getElementById('hp_parent').value.trim();
+  var phone=document.getElementById('hp_phone').value.trim();
+  var email=document.getElementById('hp_email').value.trim();
+  var student=document.getElementById('hp_student').value.trim();
+  var age=document.getElementById('hp_age').value;
+  var interests=[];document.querySelectorAll('input[name="hp_interest"]:checked').forEach(function(c){interests.push(c.value);});
+  var exp=document.getElementById('hp_experience').value;
+  var ref=document.getElementById('hp_referral').value;
+  try{
+    var r=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:parent,phone:phone,email:email,source:'homepage-signup'})});
+    var d=await r.json();
+    if(d.recordId){
+      await fetch('/api/lead',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:d.recordId,interests:interests.join(', '),experienceLevel:exp,ageGroup:age,referralSource:ref,message:'Student: '+student+', Age: '+age})});
+    }
+  }catch(err){}
+  try{
+    await fetch('https://formsubmit.co/ajax/majorwinnersleague@gmail.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({_subject:'New BASMA Signup - '+parent,'Parent Name':parent,Phone:phone,Email:email,'Student Name':student,'Student Age':age,Interests:interests.join(', '),Experience:exp,'How Heard':ref})});
+  }catch(err){}
+  document.getElementById('homepage-signup').style.display='none';
+  document.getElementById('hp-success').style.display='block';
+  window.scrollTo({top:document.getElementById('signup').offsetTop-80,behavior:'smooth'});
+}
+</script>
+
+<script>
+/* ══════ AUTO-SAVE: Homepage Form ══════ */
+(function(){
+  var _rid = null; // Airtable record ID
+  var _saving = false;
+  var _queue = null; // queued save
+
+  function getFields(){
+    return {
+      name: (document.getElementById('hp_parent').value||'').trim(),
+      phone: (document.getElementById('hp_phone').value||'').trim(),
+      email: (document.getElementById('hp_email').value||'').trim(),
+      studentName: (document.getElementById('hp_student').value||'').trim(),
+      studentAge: (document.getElementById('hp_age').value||'').trim(),
+      interests: Array.from(document.querySelectorAll('input[name="hp_interest"]:checked')).map(function(c){return c.value;}).join(', '),
+      experienceLevel: document.getElementById('hp_experience').value,
+      referralSource: document.getElementById('hp_referral').value
+    };
+  }
+
+  function hasMinData(f){
+    return f.name.length >= 2 || f.email.length >= 5 || f.phone.length >= 7;
+  }
+
+  async function autoSave(){
+    if(_saving){ _queue = true; return; }
+    var f = getFields();
+    if(!hasMinData(f)) return;
+    _saving = true;
+    try {
+      if(!_rid){
+        // Create new partial record
+        var r = await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          name:f.name, phone:f.phone, email:f.email, source:'homepage-signup',
+          status:'Incomplete', interests:f.interests, experienceLevel:f.experienceLevel,
+          referralSource:f.referralSource, studentName:f.studentName, studentAge:f.studentAge
+        })});
+        var d = await r.json();
+        if(d.recordId){ _rid = d.recordId; sessionStorage.setItem('hp_rid',_rid); }
+      } else {
+        // Update existing
+        var body = {recordId:_rid, name:f.name, phone:f.phone, email:f.email,
+          interests:f.interests, experienceLevel:f.experienceLevel,
+          referralSource:f.referralSource, studentName:f.studentName, studentAge:f.studentAge};
+        await fetch('/api/lead',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      }
+    }catch(e){}
+    _saving = false;
+    if(_queue){ _queue = false; autoSave(); }
+  }
+
+  // Debounce
+  var _timer = null;
+  function triggerSave(){
+    clearTimeout(_timer);
+    _timer = setTimeout(autoSave, 1500);
+  }
+
+  // Attach to all form fields
+  ['hp_parent','hp_phone','hp_email','hp_student','hp_age','hp_experience','hp_referral'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){
+      el.addEventListener('blur', triggerSave);
+      el.addEventListener('change', triggerSave);
+    }
+  });
+  // Checkboxes
+  document.querySelectorAll('input[name="hp_interest"]').forEach(function(c){
+    c.addEventListener('change', triggerSave);
+  });
+
+  // Restore record ID if page refreshed mid-session
+  _rid = sessionStorage.getItem('hp_rid') || null;
+
+  // On full submit: mark as "New Lead" (override "Incomplete")
+  var origSubmit = window.submitHomepageForm;
+  window.submitHomepageForm = async function(e){
+    // If we have partial record, update status before full submit
+    if(_rid){
+      try{
+        await fetch('/api/lead',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({recordId:_rid, status:'New Lead'})});
+      }catch(ex){}
+    }
+    // Call original (which also does POST+PATCH to Airtable, that's fine — extra data)
+    return origSubmit(e);
+  };
+})();
+
+</script>
+</body></html>

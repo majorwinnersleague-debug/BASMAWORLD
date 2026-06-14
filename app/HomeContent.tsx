@@ -290,7 +290,7 @@ export default function HomeContent() {
                 💬 Contact Us
               </Link>
               <a
-                href="https://linktr.ee/BASMATea"
+                href="/contact"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gradient-to-r from-yellow-500 to-amber-400 text-black px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105"
