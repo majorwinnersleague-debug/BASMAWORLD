@@ -45,6 +45,30 @@ export async function POST(request: NextRequest) {
     })
 
     const recordId = result?.records?.[0]?.id || null
+
+    // Send email notification to owner via formsubmit
+    try {
+      await fetch('https://formsubmit.co/ajax/majorwinnersleague@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          _subject: `🎵 New BASMA Registration: ${name || 'Unknown'}`,
+          'Parent Name': name || '',
+          Phone: phone || '',
+          Email: email || '',
+          'Student Name': studentName || '',
+          'Student Age': studentAge || '',
+          Interests: interests || '',
+          Experience: experienceLevel || '',
+          'How Heard': referralSource || '',
+          Source: source || 'website-form',
+        }),
+      })
+    } catch (emailErr) {
+      // Don't fail the request if notification fails
+      console.error('Email notification error:', emailErr)
+    }
+
     return NextResponse.json({ success: true, recordId })
   } catch (error) {
     console.error('Lead POST error:', error)
