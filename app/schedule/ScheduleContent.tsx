@@ -32,7 +32,7 @@ const CLASSES = [
     name: "Teens Recording Studio",
     emoji: "🎧",
     color: "#fbbf24",
-    times: { Mon: "1:00 PM – 2:00 PM", Tue: "1:00 PM – 2:00 PM", Wed: "1:00 PM – 2:00 PM", Thu: "1:00 PM – 2:00 PM" },
+    times: { Mon: "2:00 PM – 3:00 PM", Tue: "2:00 PM – 3:00 PM", Wed: "2:00 PM – 3:00 PM", Thu: "2:00 PM – 3:00 PM" },
   },
   {
     name: "Private Lessons (By Appointment)",
@@ -138,11 +138,12 @@ export default function ScheduleContent() {
           {/* Days grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
             {monthDays.map((day, i) => {
-              if (!day) return <div key={`empty-${i}`} />;
+              if (!day) return <div key={`empty-${i}`} style={{ minHeight: 90 }} />;
               const isToday = day.toDateString() === today.toDateString();
               const isSel = selectedDate && day.toDateString() === selectedDate.toDateString();
               const closed = isClosedDate(day);
-              const hasClasses = getClassesForDay(day.getDay()).length > 0;
+              const dayClasses = getClassesForDay(day.getDay());
+              const hasClasses = dayClasses.length > 0;
               const dow = day.getDay();
               const isWeekend = dow === 0 || dow === 5 || dow === 6;
 
@@ -161,29 +162,45 @@ export default function ScheduleContent() {
                       : "rgba(255,255,255,0.02)",
                     border: isToday && !isSel ? "1px solid rgba(201,168,76,0.4)" : "1px solid transparent",
                     borderRadius: 12,
-                    padding: "10px 4px",
+                    padding: "10px 4px 8px",
                     textAlign: "center",
                     color: isSel ? "#050505" : closed ? "#ef4444" : "#fff",
                     fontWeight: isToday || isSel ? 800 : 500,
                     fontSize: 15,
                     position: "relative",
+                    minHeight: 90,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                   }}
                 >
-                  {day.getDate()}
+                  <span>{day.getDate()}</span>
                   {hasClasses && !closed && (
-                    <div style={{ display: "flex", justifyContent: "center", gap: 2, marginTop: 4 }}>
-                      {getClassesForDay(day.getDay()).slice(0, 3).map((c, ci) => (
-                        <div key={ci} style={{ width: 5, height: 5, borderRadius: "50%", background: isSel ? "rgba(0,0,0,0.4)" : c.color }} />
-                      ))}
-                      {getClassesForDay(day.getDay()).length > 3 && (
-                        <div style={{ width: 5, height: 5, borderRadius: "50%", background: isSel ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.3)" }} />
-                      )}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 4, width: "100%" }}>
+                      {dayClasses.map((c, ci) => {
+                        const dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day.getDay()] as keyof typeof c.times;
+                        const time = c.times[dayName];
+                        const shortTime = time === "By Appointment" ? "Appt" : time.split(" – ")[0].replace(":00", "");
+                        return (
+                          <div key={ci} style={{
+                            fontSize: 7,
+                            lineHeight: "10px",
+                            padding: "2px 2px",
+                            borderRadius: 3,
+                            background: isSel ? "rgba(0,0,0,0.15)" : `${c.color}22`,
+                            color: isSel ? "rgba(0,0,0,0.7)" : c.color,
+                            fontWeight: 600,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}>
+                            {shortTime}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
-                  {closed && <div style={{ fontSize: 8, marginTop: 2 }}>CLOSED</div>}
-                  {isWeekend && !closed && hasClasses && (
-                    <div style={{ fontSize: 7, marginTop: 2, color: isSel ? "rgba(0,0,0,0.5)" : "rgba(201,168,76,0.6)" }}>Appt</div>
-                  )}
+                  {closed && <div style={{ fontSize: 8, marginTop: 4 }}>CLOSED</div>}
                 </button>
               );
             })}

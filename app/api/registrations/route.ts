@@ -152,6 +152,17 @@ export async function GET(req: Request) {
     const search = url.searchParams.get("search")?.toLowerCase() || "";
     const source = url.searchParams.get("source") || "";
 
+    // Require a search query — don't expose all records without one
+    if (!search && !source) {
+      return NextResponse.json({
+        total: 0,
+        filtered: 0,
+        families: 0,
+        registrations: [],
+        byParent: {},
+      });
+    }
+
     // Fetch from all three tables in parallel
     const [leadRecords, enrollmentRecords, paymentRecords] = await Promise.all([
       fetchAllRecords(LEADS_TABLE),

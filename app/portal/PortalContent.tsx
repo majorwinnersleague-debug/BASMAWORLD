@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 interface FormStatus {
   parentInfo: boolean;
@@ -46,16 +46,6 @@ interface ApiResponse {
   families: number;
   registrations: Registration[];
   byParent: Record<string, Registration[]>;
-  stats: {
-    total: number;
-    newLead: number;
-    incomplete: number;
-    withStudent: number;
-    fullyComplete: number;
-    needsWaiver: number;
-    needsPayment: number;
-    sources: Record<string, number>;
-  };
 }
 
 const FORM_STEPS = [
@@ -116,7 +106,6 @@ function StudentChecklist({ reg }: { reg: Registration }) {
       background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
       borderRadius: 16, padding: "20px", marginBottom: 16,
     }}>
-      {/* Student header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
         <div>
           <h4 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#fff" }}>
@@ -144,7 +133,6 @@ function StudentChecklist({ reg }: { reg: Registration }) {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div style={{ marginBottom: 16 }}>
         <ProgressBar pct={reg.completionPct} />
         <p style={{ margin: "6px 0 0", fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
@@ -152,7 +140,6 @@ function StudentChecklist({ reg }: { reg: Registration }) {
         </p>
       </div>
 
-      {/* Checklist */}
       {FORM_STEPS.map((step) => (
         <ChecklistItem
           key={step.key}
@@ -205,7 +192,6 @@ function FamilyDetail({ records, onBack }: { records: Registration[]; onBack: ()
   const allComplete = records.every((r) => r.completionPct === 100);
   const avgCompletion = Math.round(records.reduce((a, r) => a + r.completionPct, 0) / records.length);
 
-  // Collect unique recommendations across all students
   const allRecs: Recommendation[] = [];
   const seenNames = new Set<string>();
   for (const r of records) {
@@ -226,7 +212,6 @@ function FamilyDetail({ records, onBack }: { records: Registration[]; onBack: ()
         ← Back to search
       </button>
 
-      {/* Family header */}
       <div style={{
         background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
         borderRadius: 20, padding: "24px 28px", marginBottom: 24,
@@ -253,7 +238,6 @@ function FamilyDetail({ records, onBack }: { records: Registration[]; onBack: ()
         </p>
       </div>
 
-      {/* Per-student checklists */}
       <h3 style={{ fontSize: 16, fontWeight: 700, color: "#c9a84c", margin: "0 0 14px" }}>
         📋 Registration Progress
       </h3>
@@ -261,7 +245,6 @@ function FamilyDetail({ records, onBack }: { records: Registration[]; onBack: ()
         <StudentChecklist key={r.id} reg={r} />
       ))}
 
-      {/* Recommendations */}
       {allRecs.length > 0 && (
         <>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#c9a84c", margin: "24px 0 14px" }}>
@@ -336,48 +319,19 @@ function FamilyListCard({ records, onSelect }: { records: Registration[]; onSele
   );
 }
 
-function StatsBar({ stats }: { stats: ApiResponse["stats"] }) {
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 20 }}>
-      {[
-        { label: "Total", value: stats.total, icon: "📊", color: "#c9a84c" },
-        { label: "Complete", value: stats.fullyComplete, icon: "✅", color: "#22c55e" },
-        { label: "Need Waiver", value: stats.needsWaiver, icon: "📝", color: "#f59e0b" },
-        { label: "Need Payment", value: stats.needsPayment, icon: "💳", color: "#ef4444" },
-      ].map((s) => (
-        <div key={s.label} style={{
-          background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: 12, padding: "12px 8px", textAlign: "center",
-        }}>
-          <p style={{ fontSize: 18, margin: "0 0 2px" }}>{s.icon}</p>
-          <p style={{ fontSize: 18, fontWeight: 700, color: s.color, margin: "0 0 2px" }}>{s.value}</p>
-          <p style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.label}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export default function PortalContent() {
   const [search, setSearch] = useState("");
   const [data, setData] = useState<ApiResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Registration[] | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-
-  // Load all data on mount
-  useEffect(() => {
-    fetch("/api/registrations")
-      .then((r) => r.json())
-      .then((d) => { setData(d); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const doSearch = useCallback(async () => {
+    if (!search.trim()) return;
     setLoading(true);
+    setHasSearched(true);
     try {
-      const params = new URLSearchParams();
-      if (search.trim()) params.set("search", search.trim());
+      const params = new URLSearchParams({ search: search.trim() });
       const resp = await fetch(`/api/registrations?${params}`);
       const json = await resp.json();
       setData(json);
@@ -393,18 +347,7 @@ export default function PortalContent() {
     if (e.key === "Enter") doSearch();
   };
 
-  // Apply client-side filters
-  const filteredByParent = data?.byParent
-    ? Object.fromEntries(
-        Object.entries(data.byParent).filter(([, records]) => {
-          if (statusFilter === "all") return true;
-          if (statusFilter === "complete") return records.every((r) => r.completionPct === 100);
-          if (statusFilter === "incomplete") return records.some((r) => r.completionPct < 100);
-          return true;
-        })
-      )
-    : {};
-
+  const filteredByParent = data?.byParent || {};
   const filteredCount = Object.values(filteredByParent).reduce((acc, r) => acc + r.length, 0);
   const familyCount = Object.keys(filteredByParent).length;
 
@@ -414,8 +357,6 @@ export default function PortalContent() {
         .family-card:hover { background: rgba(255,255,255,0.06) !important; transform: translateY(-1px); }
         .rec-card:hover { background: rgba(201,168,76,0.12) !important; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .filter-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; }
-        .filter-btn.active { background: rgba(201,168,76,0.2); border-color: rgba(201,168,76,0.4); color: #c9a84c; }
       `}</style>
 
       {/* Header */}
@@ -433,17 +374,15 @@ export default function PortalContent() {
       <main style={{ maxWidth: 700, margin: "0 auto", padding: "24px 20px 100px" }}>
         {!selected ? (
           <>
-            {/* Stats */}
-            {data?.stats && <StatsBar stats={data.stats} />}
-
             {/* Search */}
             <div style={{ marginBottom: 16 }}>
-              <div style={{ textAlign: "center", marginBottom: 16 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 700, fontFamily: "'Playfair Display', serif", margin: "0 0 6px" }}>
-                  Find Your Registration 🔍
+              <div style={{ textAlign: "center", marginBottom: hasSearched ? 16 : 40, marginTop: hasSearched ? 0 : 40 }}>
+                <p style={{ fontSize: 48, margin: "0 0 12px" }}>🔍</p>
+                <h2 style={{ fontSize: 24, fontWeight: 700, fontFamily: "'Playfair Display', serif", margin: "0 0 8px" }}>
+                  Find Your Registration
                 </h2>
-                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, margin: 0 }}>
-                  Enter your email or phone to see your kids&apos; progress
+                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, margin: 0, maxWidth: 380, marginLeft: "auto", marginRight: "auto" }}>
+                  Enter your email, phone number, or name to look up your child&apos;s enrollment and progress
                 </p>
               </div>
               <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
@@ -462,23 +401,16 @@ export default function PortalContent() {
                 />
                 <button
                   onClick={doSearch}
-                  disabled={loading}
+                  disabled={loading || !search.trim()}
                   style={{
                     padding: "14px 24px", borderRadius: 14, border: "none",
                     background: "linear-gradient(135deg, #c9a84c, #e4cc7a)",
                     color: "#050505", fontSize: 14, fontWeight: 700, cursor: "pointer",
-                    opacity: loading ? 0.5 : 1,
+                    opacity: (loading || !search.trim()) ? 0.5 : 1,
                   }}
                 >
                   {loading ? "..." : "Search"}
                 </button>
-              </div>
-
-              {/* Filters */}
-              <div style={{ display: "flex", gap: 8 }}>
-                <button className={`filter-btn ${statusFilter === "all" ? "active" : ""}`} onClick={() => setStatusFilter("all")}>All ({data?.filtered || 0})</button>
-                <button className={`filter-btn ${statusFilter === "complete" ? "active" : ""}`} onClick={() => setStatusFilter("complete")}>✅ Complete</button>
-                <button className={`filter-btn ${statusFilter === "incomplete" ? "active" : ""}`} onClick={() => setStatusFilter("incomplete")}>⚠️ Needs Action</button>
               </div>
             </div>
 
@@ -486,18 +418,23 @@ export default function PortalContent() {
             {loading && (
               <div style={{ textAlign: "center", padding: 40 }}>
                 <div style={{ width: 32, height: 32, border: "3px solid rgba(201,168,76,0.2)", borderTopColor: "#c9a84c", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 12px" }} />
-                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>Loading registrations...</p>
+                <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>Searching registrations...</p>
               </div>
             )}
 
-            {/* Results */}
-            {!loading && data && (
+            {/* Results - only shown after a search */}
+            {!loading && hasSearched && data && (
               <div>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 16 }}>
-                  {filteredCount} registration{filteredCount !== 1 ? "s" : ""} · {familyCount} famil{familyCount !== 1 ? "ies" : "y"}
-                </p>
-
-                {familyCount === 0 && (
+                {familyCount > 0 ? (
+                  <>
+                    <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 16 }}>
+                      {filteredCount} registration{filteredCount !== 1 ? "s" : ""} found · {familyCount} famil{familyCount !== 1 ? "ies" : "y"}
+                    </p>
+                    {Object.entries(filteredByParent).map(([key, records]) => (
+                      <FamilyListCard key={key} records={records} onSelect={setSelected} />
+                    ))}
+                  </>
+                ) : (
                   <div style={{ textAlign: "center", padding: 40, background: "rgba(255,255,255,0.03)", borderRadius: 20 }}>
                     <p style={{ fontSize: 40, margin: "0 0 12px" }}>🔍</p>
                     <p style={{ fontSize: 15, fontWeight: 600, margin: "0 0 6px" }}>No registrations found</p>
@@ -513,10 +450,34 @@ export default function PortalContent() {
                     </a>
                   </div>
                 )}
+              </div>
+            )}
 
-                {Object.entries(filteredByParent).map(([key, records]) => (
-                  <FamilyListCard key={key} records={records} onSelect={setSelected} />
-                ))}
+            {/* Initial state - no search yet */}
+            {!loading && !hasSearched && (
+              <div style={{ textAlign: "center", padding: "20px 0 40px" }}>
+                <div style={{
+                  background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+                  borderRadius: 16, padding: "24px 20px", maxWidth: 400, margin: "0 auto",
+                }}>
+                  <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", margin: "0 0 16px", lineHeight: 1.6 }}>
+                    Search using the email or phone number you registered with to view your child&apos;s enrollment status, completed forms, and next steps.
+                  </p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: 16 }}>📋</span>
+                      <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>See which forms are complete or missing</span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: 16 }}>🔗</span>
+                      <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Get direct links to finish incomplete steps</span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: 16 }}>⭐</span>
+                      <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Get personalized class recommendations</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </>
