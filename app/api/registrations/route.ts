@@ -295,6 +295,8 @@ export async function GET(req: Request) {
           experienceLevel: f["Experience Level"] || "",
           referralSource: f["Referral Source"] || "",
           message: f.Message || "",
+          discoveryWeek: f["Discovery Week"] || "",
+          timeSlot: f["Time Slot"] || "",
           createdAt: r.createdTime,
         };
       });

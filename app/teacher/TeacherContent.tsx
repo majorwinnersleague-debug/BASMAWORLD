@@ -21,6 +21,8 @@ interface Registration {
   ageGroup: string
   experienceLevel: string
   referralSource: string
+  discoveryWeek: string
+  timeSlot: string
   createdAt: string
 }
 
@@ -120,7 +122,7 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-type TabView = 'roster' | 'calendar' | 'closures'
+type TabView = 'roster' | 'discovery' | 'calendar' | 'closures'
 
 export default function TeacherContent() {
   const [authenticated, setAuthenticated] = useState(false)
@@ -257,6 +259,26 @@ export default function TeacherContent() {
       })
   }, [classBuckets, searchQuery])
 
+  /* Group Discovery Camp students by week & time slot */
+  const discoveryGroups = useMemo(() => {
+    const campStudents = registrations.filter(r =>
+      safe(r.source).includes('discovery') || safe(r.interests).toLowerCase().includes('discovery')
+      || safe(r.discoveryWeek)
+    )
+    const groups: Record<string, { morning: Registration[]; midday: Registration[] }> = {}
+    for (const s of campStudents) {
+      const week = safe(s.discoveryWeek) || 'No week selected'
+      if (!groups[week]) groups[week] = { morning: [], midday: [] }
+      const slot = safe(s.timeSlot).toLowerCase()
+      if (slot.includes('12') || slot.includes('midday') || slot.includes('pm') && !slot.includes('10')) {
+        groups[week].midday.push(s)
+      } else {
+        groups[week].morning.push(s)
+      }
+    }
+    return groups
+  }, [registrations])
+
   const stats = useMemo(() => {
     const uniqueStudents = new Set(registrations.map(r => safe(r.studentName).trim().toLowerCase()).filter(Boolean))
     const uniqueParents = new Set(registrations.map(r => safe(r.email).trim().toLowerCase()).filter(Boolean))
@@ -382,6 +404,7 @@ export default function TeacherContent() {
         <div className="flex gap-1 mb-6 p-1 rounded-xl bg-white/[0.03] w-fit">
           {([
             { id: 'roster' as const, label: '📋 Class Roster' },
+            { id: 'discovery' as const, label: '🏕️ Discovery Camp' },
             { id: 'calendar' as const, label: '📅 Calendar' },
             { id: 'closures' as const, label: '🚫 School Closures' },
           ]).map(t => (
@@ -509,6 +532,81 @@ export default function TeacherContent() {
                   </div>
                 )
               })
+            )}
+          </>
+        )}
+
+        {/* ═══ DISCOVERY CAMP TAB ═══ */}
+        {tab === 'discovery' && (
+          <>
+            <div className="mb-4 p-4 rounded-xl" style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)' }}>
+              <h3 className="text-lg font-bold text-green-400 mb-1">🏕️ June Discovery Camp Attendance</h3>
+              <p className="text-xs text-white/40">Who&apos;s coming at 10 AM vs 12 PM — grouped by week</p>
+            </div>
+
+            {Object.keys(discoveryGroups).length === 0 ? (
+              <div className="text-center py-12 text-white/30">
+                <p className="text-4xl mb-4">📭</p>
+                <p>No Discovery Camp registrations with week/time data yet</p>
+                <p className="text-xs mt-2 text-white/20">Students need to select a week & time slot when enrolling</p>
+              </div>
+            ) : (
+              Object.entries(discoveryGroups)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([week, { morning, midday }]) => (
+                <div key={week} className="mb-6 rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(34,197,94,0.12)' }}>
+                  <div className="px-5 py-4" style={{ background: 'rgba(34,197,94,0.06)', borderBottom: '1px solid rgba(34,197,94,0.1)' }}>
+                    <h4 className="font-bold text-green-400 text-base">📅 {week}</h4>
+                    <p className="text-xs text-white/30 mt-1">{morning.length + midday.length} total students</p>
+                  </div>
+
+                  {/* 10 AM Session */}
+                  <div className="px-5 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-sm">🌅</span>
+                      <span className="font-semibold text-sm text-white/80">10:00 AM – 12:00 PM</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 font-bold ml-2">{morning.length} student{morning.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    {morning.length === 0 ? (
+                      <p className="text-xs text-white/20 ml-6">No students registered for this slot</p>
+                    ) : (
+                      <div className="space-y-1 ml-6">
+                        {morning.map((s, i) => (
+                          <div key={s.id} className={`flex items-center gap-4 py-2 px-3 rounded-lg text-sm ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
+                            <span className="text-white/70 w-5 text-right text-xs">{i + 1}.</span>
+                            <span className="font-medium text-white/80 min-w-[120px]">{safe(s.studentName) || safe(s.parentName)}</span>
+                            <span className="text-white/30 text-xs">Age {safe(s.studentAge) || '?'}</span>
+                            <span className="text-white/25 text-xs ml-auto">{safe(s.parentName)} · {formatPhone(safe(s.phone))}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 12 PM Session */}
+                  <div className="px-5 py-3">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-sm">☀️</span>
+                      <span className="font-semibold text-sm text-white/80">12:00 – 2:00 PM</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-bold ml-2">{midday.length} student{midday.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    {midday.length === 0 ? (
+                      <p className="text-xs text-white/20 ml-6">No students registered for this slot</p>
+                    ) : (
+                      <div className="space-y-1 ml-6">
+                        {midday.map((s, i) => (
+                          <div key={s.id} className={`flex items-center gap-4 py-2 px-3 rounded-lg text-sm ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
+                            <span className="text-white/70 w-5 text-right text-xs">{i + 1}.</span>
+                            <span className="font-medium text-white/80 min-w-[120px]">{safe(s.studentName) || safe(s.parentName)}</span>
+                            <span className="text-white/30 text-xs">Age {safe(s.studentAge) || '?'}</span>
+                            <span className="text-white/25 text-xs ml-auto">{safe(s.parentName)} · {formatPhone(safe(s.phone))}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
             )}
           </>
         )}
