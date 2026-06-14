@@ -240,43 +240,73 @@ export async function GET(req: Request) {
     });
 
     // Filter — PRIVACY-SAFE: only match on parent identifiers (email or phone),
-    // never on student names. This ensures parents can only see their own family.
+    // never on student names. Cross-links email + phone so the full family always
+    // appears regardless of which identifier the parent searches by.
     let filtered = registrations;
     if (search) {
-      // Normalize phone: strip non-digits for comparison
       const searchDigits = search.replace(/\D/g, "");
       const isPhoneSearch = searchDigits.length >= 7;
       const isEmailSearch = search.includes("@");
 
+      // Step 1: Find initial matches by email or phone
+      let seedMatches: typeof registrations = [];
       if (isEmailSearch) {
-        // Email search: exact match on email field only
-        filtered = filtered.filter(
+        seedMatches = registrations.filter(
           (r) => r.email.toLowerCase().trim() === search.trim()
         );
       } else if (isPhoneSearch) {
-        // Phone search: match on normalized phone digits
-        filtered = filtered.filter((r) => {
+        seedMatches = registrations.filter((r) => {
           const recDigits = r.phone.replace(/\D/g, "");
           return recDigits.includes(searchDigits) || searchDigits.includes(recDigits);
         });
       } else {
         // Name search: match on parent name only (not student name)
-        // Then return ALL records for that parent's email/phone to show complete family
-        const matchingParents = registrations.filter(
+        seedMatches = registrations.filter(
           (r) => r.parentName.toLowerCase().includes(search)
         );
-        // Get unique parent identifiers (email or phone)
-        const parentIds = new Set<string>();
-        for (const r of matchingParents) {
-          const key = r.email.toLowerCase().trim() || r.phone.replace(/\D/g, "");
-          if (key) parentIds.add(key);
-        }
-        // Return all records for those parents
-        filtered = registrations.filter((r) => {
-          const key = r.email.toLowerCase().trim() || r.phone.replace(/\D/g, "");
-          return parentIds.has(key);
-        });
       }
+
+      // Step 2: Expand to full family — collect all emails and phones from seed,
+      // then find all records sharing ANY of those identifiers (transitive closure)
+      const familyEmails = new Set<string>();
+      const familyPhones = new Set<string>();
+      let prevSize = 0;
+
+      for (const r of seedMatches) {
+        const em = r.email.toLowerCase().trim();
+        const ph = r.phone.replace(/\D/g, "");
+        if (em && em.includes("@")) familyEmails.add(em);
+        if (ph.length >= 7) familyPhones.add(ph);
+      }
+
+      // Iterate until no new identifiers are found
+      while (familyEmails.size + familyPhones.size > prevSize) {
+        prevSize = familyEmails.size + familyPhones.size;
+        for (const r of registrations) {
+          const em = r.email.toLowerCase().trim();
+          const ph = r.phone.replace(/\D/g, "");
+          const emailMatch = em && familyEmails.has(em);
+          const phoneMatch = ph.length >= 7 && [...familyPhones].some(
+            (fp) => fp.includes(ph) || ph.includes(fp)
+          );
+          if (emailMatch || phoneMatch) {
+            if (em && em.includes("@")) familyEmails.add(em);
+            if (ph.length >= 7) familyPhones.add(ph);
+          }
+        }
+      }
+
+      // Step 3: Return all records matching any family identifier
+      filtered = registrations.filter((r) => {
+        const em = r.email.toLowerCase().trim();
+        const ph = r.phone.replace(/\D/g, "");
+        return (
+          (em && familyEmails.has(em)) ||
+          (ph.length >= 7 && [...familyPhones].some(
+            (fp) => fp.includes(ph) || ph.includes(fp)
+          ))
+        );
+      });
     }
     if (source) {
       filtered = filtered.filter((r) => r.source === source);
