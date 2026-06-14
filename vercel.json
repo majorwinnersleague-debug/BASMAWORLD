@@ -1,4 +1,0 @@
-{
-  "buildCommand": "echo '=== STARTING NEXT BUILD ===' && npm run build",
-  "installCommand": "echo '=== STARTING NPM INSTALL ===' && npm install"
-}
