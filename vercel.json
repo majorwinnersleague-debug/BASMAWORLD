@@ -1,6 +1,4 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install"
+  "buildCommand": "echo '=== STARTING NEXT BUILD ===' && npm run build",
+  "installCommand": "echo '=== STARTING NPM INSTALL ===' && npm install"
 }
