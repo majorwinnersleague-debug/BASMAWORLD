@@ -4,27 +4,24 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   TYPES
+   TYPES — matches /api/registrations response
    ═══════════════════════════════════════════════════════════════════════════ */
 
 interface Registration {
-  _id: string
-  _creationTime: number
-  studentName: string
-  age: number
-  classType: string
+  id: string
   parentName: string
-  parentEmail: string
-  parentPhone: string
-  paymentStatus: string
-  photoConsent: boolean
-  allergies: string
-  medications: string
-  medicalConditions: string
-  emergencyContactName: string
-  emergencyContactPhone: string
-  liabilityAgreed: boolean
-  createdAt?: number
+  email: string
+  phone: string
+  status: string
+  source: string
+  message: string
+  interests: string
+  studentName: string
+  studentAge: string
+  ageGroup: string
+  experienceLevel: string
+  referralSource: string
+  createdAt: string
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -32,15 +29,11 @@ interface Registration {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const SCHEDULE_BLOCKS = [
-  { time: '8:00–9:40 AM', label: 'Free 1-on-1 Lesson (AM)', month: 'june', ageRange: 'All Ages', duration: '20 min each', maxSlots: 5 },
-  { time: '9:00–9:45 AM', label: 'Tiny Tots Music', month: 'july-aug', ageRange: '2–5', duration: '45 min', maxSlots: 5 },
-  { time: '10:00 AM–12:00 PM', label: 'Group Discovery (AM)', month: 'june', ageRange: 'All Ages', duration: '2 hrs', maxSlots: 20 },
-  { time: '10:00–11:30 AM', label: 'Kids Music (AM)', month: 'july-aug', ageRange: '5–17', duration: '90 min', maxSlots: 15 },
-  { time: '11:30 AM–1:00 PM', label: 'Kids Music (PM)', month: 'july-aug', ageRange: '5–17', duration: '90 min', maxSlots: 15 },
-  { time: '12:00–2:00 PM', label: 'Group Discovery (PM)', month: 'june', ageRange: 'All Ages', duration: '2 hrs', maxSlots: 20 },
-  { time: '1:30–2:45 PM', label: 'Teen Recording (Early)', month: 'july-aug', ageRange: '13–17', duration: '75 min', maxSlots: 10 },
-  { time: '2:20–4:00 PM', label: 'Free 1-on-1 Lesson (PM)', month: 'june', ageRange: 'All Ages', duration: '20 min each', maxSlots: 5 },
-  { time: '2:45–4:00 PM', label: 'Teen Recording (Late)', month: 'july-aug', ageRange: '13–17', duration: '75 min', maxSlots: 10 },
+  { time: '9:00–9:45 AM',       label: 'Tiny Tots Music',         month: 'july-aug', ageRange: '2–5',   duration: '45 min',  maxSlots: 10 },
+  { time: '10:00–11:00 AM',     label: 'Kids Music (5–10)',       month: 'july-aug', ageRange: '5–10',  duration: '60 min',  maxSlots: 15 },
+  { time: '11:00 AM–12:00 PM',  label: 'Kids Music (11–17)',      month: 'july-aug', ageRange: '11–17', duration: '60 min',  maxSlots: 15 },
+  { time: '12:00–1:00 PM',      label: 'Piano Class',             month: 'july-aug', ageRange: 'All',   duration: '60 min',  maxSlots: 10 },
+  { time: '1:00–2:00 PM',       label: 'Teens Recording Studio',  month: 'july-aug', ageRange: '13–17', duration: '60 min',  maxSlots: 10 },
 ]
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
@@ -50,34 +43,45 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 function formatPhone(phone: string): string {
+  if (!phone) return '—'
   const digits = phone.replace(/\D/g, '')
   if (digits.length === 10) return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
   return phone
 }
 
-function formatDate(ts: number): string {
-  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+function safe(val: unknown): string {
+  if (typeof val === 'string') return val
+  if (typeof val === 'number') return String(val)
+  return ''
 }
 
-function matchClassToBlock(classType: string, block: typeof SCHEDULE_BLOCKS[0]): boolean {
-  const ct = classType.toLowerCase()
-  const bl = block.label.toLowerCase()
-  // Direct match
-  if (ct.includes(bl)) return true
-  // Fuzzy matching for variants
-  if (bl.includes('1-on-1') && bl.includes('am') && ct.includes('1-on-1') && ct.includes('am')) return true
-  if (bl.includes('1-on-1') && bl.includes('pm') && ct.includes('1-on-1') && ct.includes('pm')) return true
-  if (bl.includes('1-on-1') && bl.includes('pm') && ct.includes('discovery lesson')) return true
-  if (bl.includes('group discovery') && bl.includes('am') && ct.includes('group discovery') && ct.includes('am')) return true
-  if (bl.includes('group discovery') && bl.includes('pm') && ct.includes('group discovery') && ct.includes('pm')) return true
-  if (bl.includes('group discovery') && ct.includes('group music')) return true
-  if (bl.includes('group discovery') && ct.includes('group classes') && bl.includes('am') && ct.includes('10:00')) return true
-  if (bl.includes('group discovery') && ct.includes('group classes') && bl.includes('pm')) return true
-  if (bl.includes('tiny tots') && ct.includes('tiny tots')) return true
-  if (bl.includes('kids music') && bl.includes('am') && ct.includes('kids music') && ct.includes('am')) return true
-  if (bl.includes('kids music') && bl.includes('pm') && ct.includes('kids music') && ct.includes('pm')) return true
-  if (bl.includes('teen recording') && ct.includes('teen') && (ct.includes('recording') || ct.includes('adult'))) return true
-  return false
+/** Try to classify a registration into a schedule block based on interests/age */
+function classifyRegistration(r: Registration): string {
+  const interests = safe(r.interests).toLowerCase()
+  const age = parseInt(safe(r.studentAge)) || 0
+  const msg = safe(r.message).toLowerCase()
+
+  // Check interests for keywords
+  if (interests.includes('piano')) return 'Piano Class'
+  if (interests.includes('recording') || interests.includes('studio')) return 'Teens Recording Studio'
+  if (interests.includes('tiny tots') || interests.includes('toddler')) return 'Tiny Tots Music'
+
+  // Classify by age
+  if (age >= 2 && age <= 4) return 'Tiny Tots Music'
+  if (age >= 5 && age <= 10) return 'Kids Music (5–10)'
+  if (age >= 11 && age <= 17) return 'Kids Music (11–17)'
+  if (age >= 13) return 'Teens Recording Studio'
+
+  // Check message field for age
+  const ageMatch = msg.match(/age:\s*(\d+)/)
+  if (ageMatch) {
+    const parsedAge = parseInt(ageMatch[1])
+    if (parsedAge >= 2 && parsedAge <= 4) return 'Tiny Tots Music'
+    if (parsedAge >= 5 && parsedAge <= 10) return 'Kids Music (5–10)'
+    if (parsedAge >= 11 && parsedAge <= 17) return 'Kids Music (11–17)'
+  }
+
+  return 'Unassigned'
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -86,7 +90,7 @@ function matchClassToBlock(classType: string, block: typeof SCHEDULE_BLOCKS[0]):
 
 const ACCESS_CODE = '1515'
 
-type TabView = 'roster' | 'calendar' | 'attendance'
+type TabView = 'roster' | 'calendar'
 
 export default function TeacherContent() {
   const [authenticated, setAuthenticated] = useState(false)
@@ -95,7 +99,6 @@ export default function TeacherContent() {
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<TabView>('roster')
-  const [filterMonth, setFilterMonth] = useState<'all' | 'june' | 'july-aug'>('all')
   const [expandedClass, setExpandedClass] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -125,7 +128,7 @@ export default function TeacherContent() {
           <div className="mb-8">
             <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-4">Teacher Portal</p>
             <h1 className="text-3xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-              <span className="gradient-gold">BASMA</span> Teachers
+              <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BASMA</span> Teachers
             </h1>
             <p className="text-white/40 text-sm">Enter your access code to continue.</p>
           </div>
@@ -158,7 +161,6 @@ export default function TeacherContent() {
 
   // Calendar state — teacher availability
   const [availability, setAvailability] = useState<Record<string, Record<string, 'available' | 'busy' | 'off'>>>(() => {
-    // Default: all available
     const init: Record<string, Record<string, 'available' | 'busy' | 'off'>> = {}
     for (const day of DAYS) {
       init[day] = {}
@@ -207,24 +209,20 @@ export default function TeacherContent() {
   /* Group registrations by class block */
   const classBuckets = useMemo(() => {
     const buckets: Record<string, { block: typeof SCHEDULE_BLOCKS[0]; students: Registration[] }> = {}
-
     for (const block of SCHEDULE_BLOCKS) {
       buckets[block.label] = { block, students: [] }
     }
-    // "Other" bucket for unmatched
-    buckets['Other'] = { block: { time: 'Varies', label: 'Other / By Appointment', month: 'june', ageRange: 'All', duration: '', maxSlots: 0 }, students: [] }
+    buckets['Unassigned'] = {
+      block: { time: 'TBD', label: 'Unassigned', month: 'july-aug', ageRange: 'All', duration: '', maxSlots: 0 },
+      students: [],
+    }
 
     for (const reg of registrations) {
-      let matched = false
-      for (const block of SCHEDULE_BLOCKS) {
-        if (matchClassToBlock(reg.classType, block)) {
-          buckets[block.label].students.push(reg)
-          matched = true
-          break
-        }
-      }
-      if (!matched) {
-        buckets['Other'].students.push(reg)
+      const cls = classifyRegistration(reg)
+      if (buckets[cls]) {
+        buckets[cls].students.push(reg)
+      } else {
+        buckets['Unassigned'].students.push(reg)
       }
     }
     return buckets
@@ -233,40 +231,31 @@ export default function TeacherContent() {
   /* Filtered buckets */
   const filteredBuckets = useMemo(() => {
     return Object.entries(classBuckets)
-      .filter(([_, { block, students }]) => {
-        if (filterMonth === 'all') return students.length > 0
-        return block.month === filterMonth && students.length > 0
-      })
-      .filter(([_, { students }]) => {
+      .filter(([, { students }]) => students.length > 0)
+      .filter(([, { students }]) => {
         if (!searchQuery.trim()) return true
         const q = searchQuery.toLowerCase()
         return students.some(s =>
-          s.studentName.toLowerCase().includes(q) ||
-          s.parentName.toLowerCase().includes(q) ||
-          s.parentEmail.toLowerCase().includes(q)
+          safe(s.studentName).toLowerCase().includes(q) ||
+          safe(s.parentName).toLowerCase().includes(q) ||
+          safe(s.email).toLowerCase().includes(q)
         )
       })
-  }, [classBuckets, filterMonth, searchQuery])
+  }, [classBuckets, searchQuery])
 
   /* Summary stats */
   const stats = useMemo(() => {
-    const uniqueStudents = new Set(registrations.map(r => r.studentName.trim().toLowerCase()))
-    const uniqueParents = new Set(registrations.map(r => r.parentEmail.trim().toLowerCase()))
-    const juneCount = registrations.filter(r => {
-      const ct = r.classType.toLowerCase()
-      return ct.includes('june') || ct.includes('group music') || ct.includes('group classes') || ct.includes('discovery') || ct.includes('1-on-1') || ct.includes('by appointment')
-    }).length
-    const julAugCount = registrations.filter(r => {
-      const ct = r.classType.toLowerCase()
-      return ct.includes('jul') || ct.includes('aug') || ct.includes('tiny tots') || ct.includes('kids music') || ct.includes('recording')
-    }).length
+    const uniqueStudents = new Set(registrations.map(r => safe(r.studentName).trim().toLowerCase()).filter(Boolean))
+    const uniqueParents = new Set(registrations.map(r => safe(r.email).trim().toLowerCase()).filter(Boolean))
+    const complete = registrations.filter(r => safe(r.status).toLowerCase() !== 'incomplete').length
+    const incomplete = registrations.filter(r => safe(r.status).toLowerCase() === 'incomplete').length
 
     return {
       total: registrations.length,
       uniqueStudents: uniqueStudents.size,
       uniqueParents: uniqueParents.size,
-      june: juneCount,
-      julAug: julAugCount,
+      complete,
+      incomplete,
     }
   }, [registrations])
 
@@ -295,7 +284,10 @@ export default function TeacherContent() {
         {/* ─── Title & Stats ──────────────────────────────── */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Teacher <span className="gradient-gold">Dashboard</span>
+            Teacher{' '}
+            <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Dashboard
+            </span>
           </h1>
           <p className="text-white/30 text-sm">Summer 2026 · 6787 W Tropicana Ave · Mon–Thu</p>
         </div>
@@ -306,12 +298,12 @@ export default function TeacherContent() {
             { label: 'Total Sign-ups', value: stats.total, emoji: '📋' },
             { label: 'Students', value: stats.uniqueStudents, emoji: '👧' },
             { label: 'Families', value: stats.uniqueParents, emoji: '👨‍👩‍👧' },
-            { label: 'June (Free)', value: stats.june, emoji: '🆓' },
-            { label: 'Jul/Aug ($25)', value: stats.julAug, emoji: '☀️' },
+            { label: 'Complete', value: stats.complete, emoji: '✅' },
+            { label: 'Incomplete', value: stats.incomplete, emoji: '⏳' },
           ].map(s => (
             <div key={s.label} className="p-4 rounded-xl text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
               <div className="text-2xl mb-1">{s.emoji}</div>
-              <div className="text-2xl font-bold gradient-gold">{s.value}</div>
+              <div className="text-2xl font-bold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s.value}</div>
               <div className="text-xs text-white/30 mt-1">{s.label}</div>
             </div>
           ))}
@@ -320,7 +312,7 @@ export default function TeacherContent() {
         {/* ─── Tab navigation ─────────────────────────────── */}
         <div className="flex gap-1 mb-6 p-1 rounded-xl bg-white/[0.03] w-fit">
           {([
-            { id: 'roster' as const, label: '📋 Class Roster', },
+            { id: 'roster' as const, label: '📋 Class Roster' },
             { id: 'calendar' as const, label: '📅 Calendar' },
           ]).map(t => (
             <button
@@ -339,23 +331,8 @@ export default function TeacherContent() {
 
         {tab === 'roster' && (
           <>
-            {/* ─── Filters ────────────────────────────────── */}
+            {/* ─── Search ─────────────────────────────────── */}
             <div className="flex flex-wrap gap-3 mb-6">
-              <div className="flex gap-1 p-1 rounded-lg bg-white/[0.03]">
-                {(['all', 'june', 'july-aug'] as const).map(m => (
-                  <button
-                    key={m}
-                    onClick={() => setFilterMonth(m)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
-                      filterMonth === m
-                        ? 'bg-[#c9a84c]/20 text-[#c9a84c]'
-                        : 'text-white/30 hover:text-white/50'
-                    }`}
-                  >
-                    {m === 'all' ? 'All' : m === 'june' ? '🆓 June' : '☀️ Jul/Aug'}
-                  </button>
-                ))}
-              </div>
               <input
                 type="text"
                 placeholder="Search student or parent..."
@@ -369,7 +346,7 @@ export default function TeacherContent() {
             {filteredBuckets.length === 0 ? (
               <div className="text-center py-12 text-white/30">
                 <p className="text-4xl mb-4">📭</p>
-                <p>No classes match your filters</p>
+                <p>No registrations match your search</p>
               </div>
             ) : (
               filteredBuckets.map(([label, { block, students }]) => {
@@ -377,7 +354,9 @@ export default function TeacherContent() {
                 const filteredStudents = searchQuery.trim()
                   ? students.filter(s => {
                       const q = searchQuery.toLowerCase()
-                      return s.studentName.toLowerCase().includes(q) || s.parentName.toLowerCase().includes(q) || s.parentEmail.toLowerCase().includes(q)
+                      return safe(s.studentName).toLowerCase().includes(q) ||
+                             safe(s.parentName).toLowerCase().includes(q) ||
+                             safe(s.email).toLowerCase().includes(q)
                     })
                   : students
 
@@ -389,13 +368,17 @@ export default function TeacherContent() {
                       className="w-full px-5 py-4 flex items-center justify-between hover:bg-white/[0.02] transition text-left"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: block.month === 'june' ? 'rgba(34,197,94,0.1)' : 'rgba(201,168,76,0.1)' }}>
-                          {block.month === 'june' ? '🆓' : '💰'}
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: 'rgba(201,168,76,0.1)' }}>
+                          {label === 'Tiny Tots Music' ? '👶' :
+                           label.includes('5–10') ? '🎵' :
+                           label.includes('11–17') ? '🎤' :
+                           label === 'Piano Class' ? '🎹' :
+                           label === 'Teens Recording Studio' ? '🎧' : '📋'}
                         </div>
                         <div>
                           <h3 className="font-semibold text-white/90">{block.label}</h3>
                           <p className="text-xs text-white/30">
-                            {block.time} · {block.ageRange} · {block.duration}
+                            {block.time} · Ages {block.ageRange}{block.duration ? ` · ${block.duration}` : ''}
                           </p>
                         </div>
                       </div>
@@ -418,65 +401,53 @@ export default function TeacherContent() {
                           <div className="col-span-1">Age</div>
                           <div className="col-span-3">Parent</div>
                           <div className="col-span-2">Phone</div>
-                          <div className="col-span-2">Medical</div>
-                          <div className="col-span-1">Photo</div>
+                          <div className="col-span-2">Interests</div>
+                          <div className="col-span-1">Status</div>
                         </div>
 
-                        {filteredStudents.map((s, idx) => {
-                          const hasAllergies = s.allergies && s.allergies !== 'None' && s.allergies !== 'No' && s.allergies !== 'N/A' && s.allergies !== 'none'
-                          const hasMedical = s.medicalConditions && s.medicalConditions !== 'None' && s.medicalConditions !== 'No' && s.medicalConditions !== 'N/A' && s.medicalConditions !== 'none' && s.medicalConditions !== 'Ninguno'
-                          const hasMeds = s.medications && s.medications !== 'None' && s.medications !== 'No' && s.medications !== 'N/A' && s.medications !== 'none'
-
-                          return (
-                            <div key={s._id} className={`px-5 py-3 ${idx % 2 === 0 ? 'bg-white/[0.01]' : ''} border-b border-white/[0.03] last:border-0`}>
-                              {/* Desktop row */}
-                              <div className="hidden md:grid grid-cols-12 gap-2 items-center text-sm">
-                                <div className="col-span-3 font-medium text-white/80">{s.studentName}</div>
-                                <div className="col-span-1 text-white/40">{s.age ? Math.floor(s.age) : '—'}</div>
-                                <div className="col-span-3">
-                                  <p className="text-white/60">{s.parentName}</p>
-                                  <p className="text-xs text-white/25">{s.parentEmail}</p>
-                                </div>
-                                <div className="col-span-2 text-white/40 text-xs">{formatPhone(s.parentPhone)}</div>
-                                <div className="col-span-2">
-                                  {hasAllergies && <span className="text-xs text-orange-400">⚠️ {s.allergies}</span>}
-                                  {hasMedical && <span className="text-xs text-red-400 block">🏥 {s.medicalConditions}</span>}
-                                  {hasMeds && <span className="text-xs text-yellow-400 block">💊 {s.medications}</span>}
-                                  {!hasAllergies && !hasMedical && !hasMeds && <span className="text-xs text-green-400/50">✓ Clear</span>}
-                                </div>
-                                <div className="col-span-1">
-                                  <span className={`text-xs ${s.photoConsent ? 'text-green-400' : 'text-red-400'}`}>
-                                    {s.photoConsent ? '📸 Yes' : '🚫 No'}
-                                  </span>
-                                </div>
+                        {filteredStudents.map((s, idx) => (
+                          <div key={s.id} className={`px-5 py-3 ${idx % 2 === 0 ? 'bg-white/[0.01]' : ''} border-b border-white/[0.03] last:border-0`}>
+                            {/* Desktop row */}
+                            <div className="hidden md:grid grid-cols-12 gap-2 items-center text-sm">
+                              <div className="col-span-3 font-medium text-white/80">{safe(s.studentName) || safe(s.parentName)}</div>
+                              <div className="col-span-1 text-white/40">{safe(s.studentAge) || '—'}</div>
+                              <div className="col-span-3">
+                                <p className="text-white/60">{safe(s.parentName)}</p>
+                                <p className="text-xs text-white/25">{safe(s.email)}</p>
                               </div>
-
-                              {/* Mobile card */}
-                              <div className="md:hidden space-y-1">
-                                <div className="flex items-center justify-between">
-                                  <span className="font-medium text-white/80">{s.studentName} <span className="text-white/30">(age {s.age ? Math.floor(s.age) : '?'})</span></span>
-                                  <span className={`text-xs ${s.photoConsent ? 'text-green-400' : 'text-red-400'}`}>
-                                    {s.photoConsent ? '📸' : '🚫'}
-                                  </span>
-                                </div>
-                                <p className="text-xs text-white/40">{s.parentName} · {formatPhone(s.parentPhone)}</p>
-                                {hasAllergies && <p className="text-xs text-orange-400">⚠️ {s.allergies}</p>}
+                              <div className="col-span-2 text-white/40 text-xs">{formatPhone(safe(s.phone))}</div>
+                              <div className="col-span-2 text-xs text-white/40">{safe(s.interests) || '—'}</div>
+                              <div className="col-span-1">
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                  safe(s.status).toLowerCase() === 'incomplete'
+                                    ? 'bg-yellow-500/10 text-yellow-400'
+                                    : 'bg-green-500/10 text-green-400'
+                                }`}>
+                                  {safe(s.status) || 'New'}
+                                </span>
                               </div>
                             </div>
-                          )
-                        })}
 
-                        {/* Emergency contacts summary */}
-                        <div className="px-5 py-3 bg-white/[0.02] border-t border-white/5">
-                          <p className="text-xs text-white/20 uppercase tracking-wider mb-2">Emergency Contacts</p>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
-                            {filteredStudents.map(s => (
-                              <p key={s._id} className="text-xs text-white/40">
-                                {s.studentName}: <span className="text-white/50">{s.emergencyContactName}</span> · {formatPhone(s.emergencyContactPhone)}
-                              </p>
-                            ))}
+                            {/* Mobile card */}
+                            <div className="md:hidden space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium text-white/80">
+                                  {safe(s.studentName) || safe(s.parentName)}
+                                  {safe(s.studentAge) && <span className="text-white/30"> (age {s.studentAge})</span>}
+                                </span>
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                  safe(s.status).toLowerCase() === 'incomplete'
+                                    ? 'bg-yellow-500/10 text-yellow-400'
+                                    : 'bg-green-500/10 text-green-400'
+                                }`}>
+                                  {safe(s.status) || 'New'}
+                                </span>
+                              </div>
+                              <p className="text-xs text-white/40">{safe(s.parentName)} · {formatPhone(safe(s.phone))}</p>
+                              {safe(s.interests) && <p className="text-xs text-white/30">🎵 {s.interests}</p>}
+                            </div>
                           </div>
-                        </div>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -489,17 +460,22 @@ export default function TeacherContent() {
         {tab === 'calendar' && (
           <>
             {/* ─── Calendar View ──────────────────────────── */}
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-2">
               <div>
                 <h2 className="text-xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Weekly <span className="gradient-gold">Schedule</span>
+                  Weekly{' '}
+                  <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    Schedule
+                  </span>
                 </h2>
-                <p className="text-xs text-white/30 mt-1">Click a cell to toggle: <span className="text-green-400">Available</span> → <span className="text-yellow-400">Busy</span> → <span className="text-red-400/60">Off</span></p>
+                <p className="text-xs text-white/30 mt-1">
+                  Click a cell to toggle: <span className="text-green-400">Available</span> → <span className="text-yellow-400">Busy</span> → <span className="text-red-400/60">Off</span>
+                </p>
               </div>
-              <div className="flex gap-2 text-xs">
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-green-500/20 border border-green-500/30" /> Available</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-yellow-500/20 border border-yellow-500/30" /> Busy</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-500/10 border border-red-500/20" /> Off</span>
+              <div className="flex gap-3 text-xs">
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)' }} /> Available</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(234,179,8,0.2)', border: '1px solid rgba(234,179,8,0.3)' }} /> Busy</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }} /> Off</span>
               </div>
             </div>
 
