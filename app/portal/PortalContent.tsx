@@ -382,13 +382,13 @@ export default function PortalContent() {
                   Find Your Registration
                 </h2>
                 <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, margin: 0, maxWidth: 380, marginLeft: "auto", marginRight: "auto" }}>
-                  Enter your email, phone number, or name to look up your child&apos;s enrollment and progress
+                  Enter the email or phone number you used to register
                 </p>
               </div>
               <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
                 <input
                   type="text"
-                  placeholder="Email, phone number, or name..."
+                  placeholder="Your email or phone number..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
