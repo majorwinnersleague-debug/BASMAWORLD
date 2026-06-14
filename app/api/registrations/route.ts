@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || "";
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || "appK3o119Z5r9AY6j";
-const AIRTABLE_TABLE = "tbl1diIEhM9MtKViE"; // BASMA Marketing Leads
+const LEADS_TABLE = "tbl1diIEhM9MtKViE"; // BASMA Marketing Leads
+const ENROLLMENTS_TABLE = "tblelNWN2hed8OclX"; // Enrollments (waivers/medical)
+const PAYMENTS_TABLE = "tblfTQQEciBFqovYU"; // Stripe Payments
 
 interface AirtableRecord {
   id: string;
@@ -25,7 +27,7 @@ function parseStudentInfo(message: string): { studentName: string; studentAge: s
   return null;
 }
 
-async function fetchAllAirtableRecords(): Promise<AirtableRecord[]> {
+async function fetchAllRecords(tableId: string): Promise<AirtableRecord[]> {
   const allRecords: AirtableRecord[] = [];
   let offset: string | undefined;
 
@@ -34,7 +36,7 @@ async function fetchAllAirtableRecords(): Promise<AirtableRecord[]> {
     if (offset) params.set("offset", offset);
 
     const resp = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}?${params}`,
+      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${tableId}?${params}`,
       {
         headers: { Authorization: `Bearer ${AIRTABLE_PAT}` },
         next: { revalidate: 60 },
@@ -54,26 +56,161 @@ async function fetchAllAirtableRecords(): Promise<AirtableRecord[]> {
   return allRecords;
 }
 
+// Determine class recommendations based on student data
+function getRecommendations(age: number, interests: string, experience: string) {
+  const recs: { name: string; description: string; link: string; match: string }[] = [];
+  const interestLower = (interests || "").toLowerCase();
+  const allInterests = interestLower.includes("all of the above") || interestLower.includes("all");
+
+  if (age >= 2 && age <= 4) {
+    recs.push({
+      name: "🎒 Tiny Tots Music (Ages 2-4)",
+      description: "Fun musical exploration with singing, movement, and rhythm for little ones!",
+      link: "/enroll?program=tiny-tots&month=july",
+      match: "Perfect age match",
+    });
+  }
+
+  if (age >= 5 && age <= 10) {
+    if (allInterests || interestLower.includes("voice") || interestLower.includes("sing") || interestLower.includes("performance") || interestLower.includes("dance")) {
+      recs.push({
+        name: "🎤 Kids Music & Performance (Ages 5-10)",
+        description: "Singing, performing, and creative expression for kids!",
+        link: "/enroll?program=kids-5-10&month=july",
+        match: "Age + interest match",
+      });
+    }
+    if (allInterests || interestLower.includes("piano")) {
+      recs.push({
+        name: "🎹 Kids Piano (Ages 5-10)",
+        description: "Learn piano basics with fun songs and exercises.",
+        link: "/enroll?program=piano&month=july",
+        match: "Age + interest match",
+      });
+    }
+    if (recs.length === 0) {
+      recs.push({
+        name: "🎤 Kids Music & Performance (Ages 5-10)",
+        description: "Singing, performing, and creative expression for kids!",
+        link: "/enroll?program=kids-5-10&month=july",
+        match: "Age match",
+      });
+    }
+  }
+
+  if (age >= 11 && age <= 17) {
+    if (allInterests || interestLower.includes("voice") || interestLower.includes("sing") || interestLower.includes("performance")) {
+      recs.push({
+        name: "🎤 Kids Music & Performance (Ages 11-17)",
+        description: "Advanced vocal training and stage performance for teens.",
+        link: "/enroll?program=kids-11-17&month=july",
+        match: "Age + interest match",
+      });
+    }
+    if (allInterests || interestLower.includes("piano")) {
+      recs.push({
+        name: "🎹 Piano Lessons (Ages 11-17)",
+        description: "Piano for intermediate and advanced students.",
+        link: "/enroll?program=piano&month=july",
+        match: "Age + interest match",
+      });
+    }
+    if (allInterests || interestLower.includes("record") || interestLower.includes("produc")) {
+      recs.push({
+        name: "🎧 Teens Recording Studio",
+        description: "Learn music production, recording, and mixing in a real studio!",
+        link: "/enroll?program=teens-recording&month=july",
+        match: "Age + interest match",
+      });
+    }
+    if (recs.length === 0) {
+      recs.push({
+        name: "🎤 Kids Music & Performance (Ages 11-17)",
+        description: "Advanced vocal training and stage performance.",
+        link: "/enroll?program=kids-11-17&month=july",
+        match: "Age match",
+      });
+    }
+  }
+
+  // Weekly bundle recommendation for everyone
+  if (recs.length > 0) {
+    recs.push({
+      name: "💰 Weekly Bundle — Save $$$",
+      description: "Get all classes for the week at a discounted rate ($350/week).",
+      link: "/enroll?program=weekly-bundle",
+      match: "Best value",
+    });
+  }
+
+  return recs;
+}
+
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const search = url.searchParams.get("search")?.toLowerCase() || "";
     const source = url.searchParams.get("source") || "";
 
-    const records = await fetchAllAirtableRecords();
+    // Fetch from all three tables in parallel
+    const [leadRecords, enrollmentRecords, paymentRecords] = await Promise.all([
+      fetchAllRecords(LEADS_TABLE),
+      fetchAllRecords(ENROLLMENTS_TABLE),
+      fetchAllRecords(PAYMENTS_TABLE),
+    ]);
 
-    // Transform records into a cleaner format
-    const registrations = records.map((r) => {
+    // Index enrollments by email for cross-reference
+    const enrollmentsByEmail: Record<string, AirtableRecord[]> = {};
+    for (const e of enrollmentRecords) {
+      const email = (e.fields.Email || "").toLowerCase().trim();
+      if (email) {
+        if (!enrollmentsByEmail[email]) enrollmentsByEmail[email] = [];
+        enrollmentsByEmail[email].push(e);
+      }
+    }
+
+    // Index payments by email
+    const paymentsByEmail: Record<string, AirtableRecord[]> = {};
+    for (const p of paymentRecords) {
+      const email = (p.fields.Email || p.fields.email || "").toLowerCase().trim();
+      if (email) {
+        if (!paymentsByEmail[email]) paymentsByEmail[email] = [];
+        paymentsByEmail[email].push(p);
+      }
+    }
+
+    // Transform lead records
+    const registrations = leadRecords.map((r) => {
       const f = r.fields;
       const parsed = parseStudentInfo(f.Message || "");
-      
+      const email = (f.Email || "").toLowerCase().trim();
+      const studentName = f["Student Name"] || parsed?.studentName || "";
+      const studentAge = f["Student Age"] || parsed?.studentAge || "";
+      const age = parseInt(studentAge) || 0;
+
+      // Compute form completion checklist
+      const forms = {
+        parentInfo: !!(f["Full Name"] && f.Email && f.Phone),
+        studentInfo: !!(studentName && studentAge),
+        interests: !!(f.Interests || f["Experience Level"]),
+        waiver: !!(enrollmentsByEmail[email] && enrollmentsByEmail[email].length > 0),
+        payment: !!(paymentsByEmail[email] && paymentsByEmail[email].length > 0),
+      };
+
+      const completedSteps = Object.values(forms).filter(Boolean).length;
+      const totalSteps = Object.keys(forms).length;
+      const completionPct = Math.round((completedSteps / totalSteps) * 100);
+
+      // Get recommendations
+      const recommendations = getRecommendations(age, f.Interests || "", f["Experience Level"] || "");
+
       return {
         id: r.id,
         parentName: f["Full Name"] || "",
         email: f.Email || "",
         phone: f.Phone || "",
-        studentName: f["Student Name"] || parsed?.studentName || "",
-        studentAge: f["Student Age"] || parsed?.studentAge || "",
+        studentName,
+        studentAge,
         interests: f.Interests || "",
         status: f.Status || "Unknown",
         source: f.Source || "",
@@ -83,6 +220,11 @@ export async function GET(req: Request) {
         message: f.Message || "",
         address: parsed?.address || "",
         createdAt: r.createdTime,
+        forms,
+        completedSteps,
+        totalSteps,
+        completionPct,
+        recommendations,
       };
     });
 
@@ -101,7 +243,7 @@ export async function GET(req: Request) {
       filtered = filtered.filter((r) => r.source === source);
     }
 
-    // Group by parent for the portal view
+    // Group by parent
     const byParent: Record<string, typeof filtered> = {};
     for (const r of filtered) {
       const key = r.email.toLowerCase() || r.phone || r.parentName.toLowerCase();
@@ -120,6 +262,9 @@ export async function GET(req: Request) {
         newLead: registrations.filter((r) => r.status === "New Lead").length,
         incomplete: registrations.filter((r) => r.status === "Incomplete").length,
         withStudent: registrations.filter((r) => r.studentName).length,
+        fullyComplete: registrations.filter((r) => r.completionPct === 100).length,
+        needsWaiver: registrations.filter((r) => !r.forms.waiver).length,
+        needsPayment: registrations.filter((r) => !r.forms.payment).length,
         sources: registrations.reduce((acc, r) => {
           acc[r.source] = (acc[r.source] || 0) + 1;
           return acc;
