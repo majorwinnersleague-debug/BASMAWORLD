@@ -180,6 +180,23 @@ export default function EnrollContent() {
   const [discoveryWeek, setDiscoveryWeek] = useState('')
   const [discoveryTimeSlot, setDiscoveryTimeSlot] = useState('')
 
+  // Live spot counts
+  interface SlotInfo { enrolled: number; spotsLeft: number; maxCapacity: number }
+  interface WeekSpots { week: string; morning: SlotInfo; midday: SlotInfo; totalEnrolled: number; totalSpotsLeft: number }
+  const [campSpots, setCampSpots] = useState<WeekSpots[]>([])
+
+  useEffect(() => {
+    fetch('/api/camp-spots')
+      .then(r => r.json())
+      .then(d => { if (d.weeks) setCampSpots(d.weeks) })
+      .catch(() => {})
+  }, [])
+
+  function getSpotsForWeek(dates: string): WeekSpots | null {
+    return campSpots.find(w => dates.includes(w.week.split(' – ')[0].replace('June ', '').replace('July ', ''))) || 
+           campSpots.find(w => w.week === dates) || null
+  }
+
   const DISCOVERY_WEEKS = [
     { value: 'Week 1: June 16–19', label: 'Week 1', dates: 'June 16 – 19' },
     { value: 'Week 2: June 23–26', label: 'Week 2', dates: 'June 23 – 26' },
@@ -366,22 +383,23 @@ export default function EnrollContent() {
               <p className="text-white/50">Enter your child&apos;s age to see classes just for them.</p>
             </div>
 
-            <div className="max-w-xs mx-auto mb-8">
-              <label className="block text-sm text-white/60 mb-2">How old is your child?</label>
+            <div className="max-w-sm mx-auto mb-8">
+              <label className="block text-sm text-white/60 mb-2 font-medium">How old is your child?</label>
               <div className="flex gap-2">
                 <input
-                  type="number" min="1" max="99" placeholder="Enter age"
+                  type="number" min="1" max="99" placeholder="Enter age..."
                   value={ageFilter} onChange={e => setAgeFilter(e.target.value)}
-                  className="flex-1 px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-yellow-500/50"
+                  className="flex-1 px-5 py-4 rounded-2xl text-lg font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-lg"
+                  style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.3)' }}
                 />
                 {ageFilter && (
                   <button onClick={() => setAgeFilter('')}
-                    className="px-4 py-3 rounded-xl bg-white/5 text-white/60 hover:bg-white/10 text-sm">
+                    className="px-5 py-4 rounded-2xl bg-white/10 text-white/70 hover:bg-white/20 text-sm font-medium transition">
                     Show All
                   </button>
                 )}
               </div>
-              {age !== null && <p className="text-sm mt-2" style={{ color: '#F0C850' }}>✨ Showing classes for age {age}</p>}
+              {age !== null && <p className="text-sm mt-3 font-medium" style={{ color: '#F0C850' }}>✨ Showing classes for age {age}</p>}
             </div>
 
             {/* Free Discovery Camp */}
@@ -476,27 +494,74 @@ export default function EnrollContent() {
             {/* ─── Discovery Camp: Week + Time Slot ─── */}
             {selectedClass.isJuneOnly && (
               <>
-                <h3 className="font-bold mb-3 text-green-400">📅 Which Week?</h3>
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  {DISCOVERY_WEEKS.map(w => (
-                    <button key={w.value} onClick={() => setDiscoveryWeek(w.value)}
-                      className={`p-4 rounded-xl text-left transition ${discoveryWeek === w.value ? 'ring-2 ring-green-400' : 'bg-white/5 border border-white/10 hover:border-green-500/30'}`}
-                      style={discoveryWeek === w.value ? { background: 'rgba(74,222,128,0.1)' } : {}}>
-                      <p className="font-bold text-white">{w.label}</p>
-                      <p className="text-sm text-white/50 mt-1">{w.dates}</p>
-                      <p className="text-xs text-white/30 mt-1">Mon – Thu</p>
+                <h3 className="text-lg font-bold mb-4 text-green-400">📅 Pick Your Week</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                  {DISCOVERY_WEEKS.map(w => {
+                    const spots = campSpots.find(s => s.week === w.dates)
+                    const totalLeft = spots ? spots.totalSpotsLeft : null
+                    const isFull = totalLeft !== null && totalLeft <= 0
+                    const isLow = totalLeft !== null && totalLeft > 0 && totalLeft <= 8
+                    return (
+                    <button key={w.value} onClick={() => !isFull && setDiscoveryWeek(w.value)}
+                      disabled={isFull}
+                      className={`p-5 rounded-2xl text-left transition-all ${isFull ? 'opacity-50 cursor-not-allowed' : ''} ${discoveryWeek === w.value ? 'ring-2 ring-green-400 scale-[1.02] shadow-lg' : isFull ? '' : 'hover:border-green-500/30 hover:scale-[1.01]'}`}
+                      style={discoveryWeek === w.value
+                        ? { background: 'linear-gradient(135deg, rgba(74,222,128,0.15), rgba(34,197,94,0.08))', border: '2px solid rgba(74,222,128,0.5)' }
+                        : { background: 'rgba(255,255,255,0.04)', border: '2px solid rgba(255,255,255,0.08)' }}>
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="font-bold text-white text-lg">{w.label}</p>
+                        {discoveryWeek === w.value && <span className="text-green-400 text-lg">✓</span>}
+                      </div>
+                      <p className="text-base text-white/70 font-medium">{w.dates}</p>
+                      <p className="text-sm text-white/40 mt-1">Mon – Thu · 🍕 Pizza Thursday!</p>
+                      {spots && (
+                        <div className="mt-3">
+                          <div className="flex items-center justify-between text-xs mb-1">
+                            <span className={isFull ? 'text-red-400 font-bold' : isLow ? 'text-amber-400 font-semibold' : 'text-green-400'}>
+                              {isFull ? '❌ FULL' : isLow ? `🔥 Only ${totalLeft} spots left!` : `✅ ${totalLeft} spots available`}
+                            </span>
+                            <span className="text-white/30">{spots.totalEnrolled}/30</span>
+                          </div>
+                          <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                            <div className="h-full rounded-full transition-all" style={{
+                              width: `${Math.min(100, (spots.totalEnrolled / 30) * 100)}%`,
+                              background: isFull ? '#ef4444' : isLow ? '#f59e0b' : '#22c55e'
+                            }} />
+                          </div>
+                        </div>
+                      )}
                     </button>
-                  ))}
+                    )
+                  })}
                 </div>
 
-                <h3 className="font-bold mb-3 text-green-400">🕐 What Time?</h3>
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  {DISCOVERY_TIME_SLOTS.map(t => (
-                    <button key={t.value} onClick={() => setDiscoveryTimeSlot(t.value)}
-                      className={`p-4 rounded-xl text-left transition ${discoveryTimeSlot === t.value ? 'ring-2 ring-green-400' : 'bg-white/5 border border-white/10 hover:border-green-500/30'}`}
-                      style={discoveryTimeSlot === t.value ? { background: 'rgba(74,222,128,0.1)' } : {}}>
-                      <p className="font-bold text-white">{t.icon} {t.label}</p>
+                <h3 className="text-lg font-bold mb-4 text-green-400">🕐 Pick Your Time</h3>
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  {DISCOVERY_TIME_SLOTS.map(t => {
+                    const selectedWeekData = discoveryWeek ? campSpots.find(s => DISCOVERY_WEEKS.find(w => w.value === discoveryWeek)?.dates === s.week) : null
+                    const slotKey = t.value.includes('10:00') ? 'morning' : 'midday'
+                    const slotInfo = selectedWeekData ? selectedWeekData[slotKey] : null
+                    const slotFull = slotInfo ? slotInfo.spotsLeft <= 0 : false
+                    const slotLow = slotInfo ? slotInfo.spotsLeft > 0 && slotInfo.spotsLeft <= 4 : false
+                    return (
+                    <button key={t.value} onClick={() => !slotFull && setDiscoveryTimeSlot(t.value)}
+                      disabled={slotFull}
+                      className={`p-5 rounded-2xl text-left transition-all ${slotFull ? 'opacity-50 cursor-not-allowed' : ''} ${discoveryTimeSlot === t.value ? 'ring-2 ring-green-400 scale-[1.02] shadow-lg' : slotFull ? '' : 'hover:border-green-500/30 hover:scale-[1.01]'}`}
+                      style={discoveryTimeSlot === t.value
+                        ? { background: 'linear-gradient(135deg, rgba(74,222,128,0.15), rgba(34,197,94,0.08))', border: '2px solid rgba(74,222,128,0.5)' }
+                        : { background: 'rgba(255,255,255,0.04)', border: '2px solid rgba(255,255,255,0.08)' }}>
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-white text-lg">{t.icon} {t.label}</p>
+                        {discoveryTimeSlot === t.value && <span className="text-green-400 text-lg">✓</span>}
+                      </div>
+                      {slotInfo && (
+                        <p className={`text-xs mt-2 font-medium ${slotFull ? 'text-red-400' : slotLow ? 'text-amber-400' : 'text-green-400/70'}`}>
+                          {slotFull ? '❌ Full' : slotLow ? `🔥 ${slotInfo.spotsLeft} of 15 spots left` : `${slotInfo.spotsLeft} of 15 spots left`}
+                        </p>
+                      )}
                     </button>
+                    )
+                  }
                   ))}
                 </div>
 
@@ -642,39 +707,44 @@ export default function EnrollContent() {
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm text-white/60 mb-1">Student Name *</label>
+                  <label className="block text-sm text-white/60 mb-2 font-medium">Student Name *</label>
                   <input required value={studentName} onChange={e => setStudentName(e.target.value)}
                     placeholder="Child's full name"
-                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-yellow-500/50" />
+                    className="w-full px-4 py-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm"
+                    style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.2)' }} />
                 </div>
                 <div>
-                  <label className="block text-sm text-white/60 mb-1">Student Age *</label>
+                  <label className="block text-sm text-white/60 mb-2 font-medium">Student Age *</label>
                   <input required type="number" min="1" max="99"
                     value={studentAge} onChange={e => setStudentAge(e.target.value)}
                     placeholder={selectedClass.ageRange.replace('Ages ', '')}
-                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-yellow-500/50" />
+                    className="w-full px-4 py-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm"
+                    style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.2)' }} />
                 </div>
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm text-white/60 mb-1">Parent / Guardian Name *</label>
+                <label className="block text-sm text-white/60 mb-2 font-medium">Parent / Guardian Name *</label>
                 <input required value={parentName} onChange={e => setParentName(e.target.value)}
                   placeholder="Your full name"
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-yellow-500/50" />
+                  className="w-full px-4 py-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm"
+                  style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.2)' }} />
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                  <label className="block text-sm text-white/60 mb-1">Email *</label>
+                  <label className="block text-sm text-white/60 mb-2 font-medium">Email *</label>
                   <input required type="email" value={email} onChange={e => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-yellow-500/50" />
+                    className="w-full px-4 py-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm"
+                    style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.2)' }} />
                 </div>
                 <div>
-                  <label className="block text-sm text-white/60 mb-1">Phone *</label>
+                  <label className="block text-sm text-white/60 mb-2 font-medium">Phone *</label>
                   <input required type="tel" value={phone} onChange={e => setPhone(e.target.value)}
                     placeholder="(555) 123-4567"
-                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-yellow-500/50" />
+                    className="w-full px-4 py-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm"
+                    style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.2)' }} />
                 </div>
               </div>
 
