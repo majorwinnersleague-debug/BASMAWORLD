@@ -27,9 +27,24 @@ interface ClassInfo {
   weeklyStripeLink: string
   description: string
   isJuneOnly?: boolean
+  isPrivateTrial?: boolean
 }
 
 const CLASSES: ClassInfo[] = [
+  {
+    id: 'free-private-lesson',
+    name: 'Free Private Lesson',
+    emoji: '🎤',
+    ageRange: 'All Ages',
+    minAge: 2, maxAge: 99,
+    schedule: '20 minutes · By Appointment',
+    days: 'Schedule after sign-up',
+    julyPrice: 0, augustSinglePrice: 0, augustBundlePrice: 0,
+    augustBundleSave: '',
+    julyStripeLink: '', augustSingleStripeLink: '', augustBundleStripeLink: '', weeklyStripeLink: '',
+    description: 'One free 20-minute private lesson — voice, piano, guitar, or drums. One per student, no commitment!',
+    isPrivateTrial: true,
+  },
   {
     id: 'discovery-camp-11-17',
     name: 'Discovery Camp',
@@ -157,6 +172,8 @@ const CLASS_PARAM_MAP: Record<string, string> = {
   'teens-recording': 'teens-recording',
   'discovery-11-17': 'discovery-camp-11-17',
   'discovery-5-10': 'discovery-camp-5-10',
+  'free-private': 'free-private-lesson',
+  'private-lesson': 'free-private-lesson',
 }
 
 export default function EnrollContent() {
@@ -254,11 +271,12 @@ export default function EnrollContent() {
     return CLASSES.filter(c => age >= c.minAge && age <= c.maxAge)
   }, [age])
 
-  const paidClasses = filteredClasses.filter(c => !c.isJuneOnly)
+  const paidClasses = filteredClasses.filter(c => !c.isJuneOnly && !c.isPrivateTrial)
   const freeClasses = filteredClasses.filter(c => c.isJuneOnly)
+  const privateTrialClass = filteredClasses.find(c => c.isPrivateTrial) || null
 
   function getPrice(): number {
-    if (!selectedClass || selectedClass.isJuneOnly) return 0
+    if (!selectedClass || selectedClass.isJuneOnly || selectedClass.isPrivateTrial) return 0
     if (pkg === 'monthly') return 350
     if (month === 'july') return selectedClass.julyPrice * quantity
     if (pkg === 'bundle') return selectedClass.augustBundlePrice
@@ -266,14 +284,14 @@ export default function EnrollContent() {
   }
 
   function getPriceLabel(): string {
-    if (!selectedClass || selectedClass.isJuneOnly) return 'FREE'
+    if (!selectedClass || selectedClass.isJuneOnly || selectedClass.isPrivateTrial) return 'FREE'
     if (pkg === 'monthly') return '$350/month'
     const p = getPrice()
     return `$${p}`
   }
 
   function getStripeLink(): string {
-    if (!selectedClass || selectedClass.isJuneOnly) return ''
+    if (!selectedClass || selectedClass.isJuneOnly || selectedClass.isPrivateTrial) return ''
     if (pkg === 'monthly') return selectedClass.weeklyStripeLink
     if (month === 'july') {
       const link = selectedClass.julyStripeLink
@@ -319,7 +337,7 @@ export default function EnrollContent() {
     setLoading(true)
 
     const stripeLink = getStripeLink()
-    const isFree = selectedClass.isJuneOnly || !stripeLink
+    const isFree = selectedClass.isJuneOnly || selectedClass.isPrivateTrial || !stripeLink
 
     // Save enrollment data to Airtable (best-effort, non-blocking)
     try {
@@ -332,11 +350,12 @@ export default function EnrollContent() {
           phone,
           studentName,
           studentAge,
-          source: isFree ? 'discovery-camp-enrollment' : 'enrollment-page',
+          source: selectedClass.isPrivateTrial ? 'free-private-lesson' : isFree ? 'discovery-camp-enrollment' : 'enrollment-page',
           status: isFree ? 'New Lead' : 'New Lead',
-          interests: selectedClass.name,
-          ...(isFree && discoveryWeek ? { discoveryWeek } : {}),
-          ...(isFree && discoveryTimeSlot ? { timeSlot: discoveryTimeSlot } : {}),
+          interests: selectedClass.isPrivateTrial ? discoveryTimeSlot : selectedClass.name,
+          ...(selectedClass.isPrivateTrial ? { timeSlot: 'By Appointment', instrument: discoveryTimeSlot } : {}),
+          ...(isFree && !selectedClass.isPrivateTrial && discoveryWeek ? { discoveryWeek } : {}),
+          ...(isFree && !selectedClass.isPrivateTrial && discoveryTimeSlot ? { timeSlot: discoveryTimeSlot } : {}),
           ...(!isFree && paidWeek ? { discoveryWeek: paidWeek } : {}),
         }),
       })
@@ -354,7 +373,7 @@ export default function EnrollContent() {
   /* ─── Step indicator ────────────────────────────────────────── */
   const steps = [
     { num: 1, label: 'Choose Class', done: step !== 'select-class' },
-    { num: 2, label: selectedClass?.isJuneOnly ? 'Week & Time' : 'Schedule', done: step === 'form' },
+    { num: 2, label: selectedClass?.isPrivateTrial ? 'Instrument' : selectedClass?.isJuneOnly ? 'Week & Time' : 'Schedule', done: step === 'form' },
     { num: 3, label: 'Your Info', done: false },
   ]
 
@@ -421,6 +440,29 @@ export default function EnrollContent() {
               </div>
               {age !== null && <p className="text-sm mt-3 font-medium" style={{ color: '#F0C850' }}>✨ Showing classes for age {age}</p>}
             </div>
+
+            {/* Free Private Lesson */}
+            {privateTrialClass && (
+              <div className="mb-8 rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, #1a2a3a, #0D0118)', border: '1px solid rgba(96,165,250,0.25)' }}>
+                <div className="flex items-center gap-3 mb-1">
+                  <span className="text-2xl">🎤</span>
+                  <h2 className="text-2xl font-bold text-blue-400">Free Private Lesson</h2>
+                  <span className="ml-auto px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-bold">FREE</span>
+                </div>
+                <p className="text-white/50 text-sm mb-3">20 minutes · 1-on-1 with an instructor · One per student</p>
+                <p className="text-white/60 text-sm mb-4">Try a free private lesson — voice, piano, guitar, or drums. No commitment, no cost. See if BASMA is right for you!</p>
+                <button onClick={() => selectClass(privateTrialClass)}
+                  className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/40 transition text-left w-full">
+                  <span className="text-2xl">{privateTrialClass.emoji}</span>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{privateTrialClass.name}</h3>
+                    <p className="text-blue-400 text-sm">{privateTrialClass.ageRange}</p>
+                    <p className="text-white/40 text-xs">🕐 {privateTrialClass.schedule}</p>
+                  </div>
+                  <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-bold">Book Free Lesson →</span>
+                </button>
+              </div>
+            )}
 
             {/* Free Discovery Camp */}
             {freeClasses.length > 0 && (
@@ -494,15 +536,15 @@ export default function EnrollContent() {
           <>
             <button onClick={goBack} className="text-sm text-white/50 hover:text-white/80 mb-6 block">← Back to all classes</button>
 
-            <div className="rounded-2xl p-6 mb-6" style={{ background: selectedClass.isJuneOnly ? 'linear-gradient(135deg, #1a3a1a, #0D0118)' : 'rgba(45,27,78,0.6)', border: selectedClass.isJuneOnly ? '1px solid rgba(74,222,128,0.2)' : '1px solid rgba(240,200,80,0.15)' }}>
+            <div className="rounded-2xl p-6 mb-6" style={{ background: selectedClass.isPrivateTrial ? 'linear-gradient(135deg, #1a2a3a, #0D0118)' : selectedClass.isJuneOnly ? 'linear-gradient(135deg, #1a3a1a, #0D0118)' : 'rgba(45,27,78,0.6)', border: selectedClass.isPrivateTrial ? '1px solid rgba(96,165,250,0.25)' : selectedClass.isJuneOnly ? '1px solid rgba(74,222,128,0.2)' : '1px solid rgba(240,200,80,0.15)' }}>
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">{selectedClass.emoji}</span>
                 <div>
                   <h2 className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>{selectedClass.name}</h2>
-                  <p style={{ color: selectedClass.isJuneOnly ? '#4ade80' : '#F0C850' }}>{selectedClass.ageRange}</p>
+                  <p style={{ color: selectedClass.isPrivateTrial ? '#60a5fa' : selectedClass.isJuneOnly ? '#4ade80' : '#F0C850' }}>{selectedClass.ageRange}</p>
                 </div>
-                {selectedClass.isJuneOnly && (
-                  <span className="ml-auto px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">FREE</span>
+                {(selectedClass.isJuneOnly || selectedClass.isPrivateTrial) && (
+                  <span className={`ml-auto px-3 py-1 rounded-full text-xs font-bold ${selectedClass.isPrivateTrial ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400'}`}>FREE</span>
                 )}
               </div>
               <div className="text-white/50 text-sm mt-3 flex flex-wrap gap-4">
@@ -603,8 +645,40 @@ export default function EnrollContent() {
               </>
             )}
 
+            {/* ─── Private Trial: Instrument Picker ─── */}
+            {selectedClass.isPrivateTrial && (
+              <>
+                <h3 className="text-lg font-bold mb-4 text-blue-400">🎵 What instrument do you want to try?</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+                  {[
+                    { value: 'Voice / Singing', icon: '🎤', label: 'Voice' },
+                    { value: 'Piano', icon: '🎹', label: 'Piano' },
+                    { value: 'Guitar', icon: '🎸', label: 'Guitar' },
+                    { value: 'Drums', icon: '🥁', label: 'Drums' },
+                    { value: 'Violin / Viola', icon: '🎻', label: 'Violin' },
+                    { value: 'Not sure yet', icon: '🤔', label: 'Not Sure' },
+                  ].map(inst => (
+                    <button key={inst.value} onClick={() => setDiscoveryTimeSlot(inst.value)}
+                      className={`p-4 rounded-xl text-center transition-all ${discoveryTimeSlot === inst.value ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
+                      style={discoveryTimeSlot === inst.value ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
+                      <span className="text-2xl block mb-1">{inst.icon}</span>
+                      <p className="font-semibold text-sm">{inst.label}</p>
+                      {discoveryTimeSlot === inst.value && <span className="text-blue-400 text-xs">✓ Selected</span>}
+                    </button>
+                  ))}
+                </div>
+
+                <button onClick={goToForm}
+                  disabled={!discoveryTimeSlot}
+                  className="w-full py-4 rounded-full font-bold text-lg transition hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{ background: 'linear-gradient(90deg, #60a5fa, #3b82f6)', color: '#0D0118' }}>
+                  {!discoveryTimeSlot ? 'Pick an instrument to continue' : 'Continue to Your Info →'}
+                </button>
+              </>
+            )}
+
             {/* ─── Paid Classes: Month/Package ─── */}
-            {!selectedClass.isJuneOnly && (
+            {!selectedClass.isJuneOnly && !selectedClass.isPrivateTrial && (
             <>
             {/* Month */}
             <h3 className="font-bold mb-3" style={{ color: '#F0C850' }}>Select Month</h3>
@@ -748,7 +822,9 @@ export default function EnrollContent() {
             <form onSubmit={handleSubmit}>
               <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Student & Parent Info</h2>
               <p className="text-white/50 mb-6">
-                {selectedClass.isJuneOnly
+                {selectedClass.isPrivateTrial
+                  ? "Fill in the details below to book your free 20-minute private lesson. One per student."
+                  : selectedClass.isJuneOnly
                   ? "Fill in the details below to enroll in free trial classes."
                   : "Fill in the details below, then you'll be taken to the secure payment page."}
               </p>
@@ -801,10 +877,16 @@ export default function EnrollContent() {
                 <h4 className="font-bold mb-3" style={{ color: '#F0C850' }}>📋 Enrollment Summary</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between"><span className="text-white/50">Class:</span><span>{selectedClass.emoji} {selectedClass.name}</span></div>
-                  {!selectedClass.isJuneOnly && (
+                  {selectedClass.isPrivateTrial && discoveryTimeSlot && (
+                    <div className="flex justify-between"><span className="text-white/50">Instrument:</span><span>{discoveryTimeSlot}</span></div>
+                  )}
+                  {selectedClass.isPrivateTrial && (
+                    <div className="flex justify-between"><span className="text-white/50">Duration:</span><span>20 minutes</span></div>
+                  )}
+                  {!selectedClass.isJuneOnly && !selectedClass.isPrivateTrial && (
                     <div className="flex justify-between"><span className="text-white/50">Month:</span><span>{month === 'july' ? 'July' : 'August'}</span></div>
                   )}
-                  {!selectedClass.isJuneOnly && paidWeek && (
+                  {!selectedClass.isJuneOnly && !selectedClass.isPrivateTrial && paidWeek && (
                     <div className="flex justify-between"><span className="text-white/50">Week:</span><span>{paidWeek}</span></div>
                   )}
                   {selectedClass.isJuneOnly && discoveryWeek && (
@@ -813,12 +895,15 @@ export default function EnrollContent() {
                   {selectedClass.isJuneOnly && discoveryTimeSlot && (
                     <div className="flex justify-between"><span className="text-white/50">Time:</span><span>{discoveryTimeSlot}</span></div>
                   )}
-                  {!selectedClass.isJuneOnly && (
+                  {!selectedClass.isJuneOnly && !selectedClass.isPrivateTrial && (
                     <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>{selectedClass.days}, {selectedClass.schedule}</span></div>
+                  )}
+                  {selectedClass.isPrivateTrial && (
+                    <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>By appointment — we&apos;ll contact you!</span></div>
                   )}
                   <div className="flex justify-between">
                     <span className="text-white/50">Price:</span>
-                    <span className={`font-semibold ${selectedClass.isJuneOnly ? 'text-green-400' : ''}`} style={selectedClass.isJuneOnly ? {} : { color: '#F0C850' }}>
+                    <span className={`font-semibold ${(selectedClass.isJuneOnly || selectedClass.isPrivateTrial) ? 'text-green-400' : ''}`} style={(selectedClass.isJuneOnly || selectedClass.isPrivateTrial) ? {} : { color: '#F0C850' }}>
                       {getPriceLabel()}
                     </span>
                   </div>
@@ -828,11 +913,14 @@ export default function EnrollContent() {
 
               <button type="submit" disabled={loading}
                 className="w-full py-4 rounded-full font-bold text-lg transition hover:opacity-90 disabled:opacity-50"
-                style={{ background: selectedClass.isJuneOnly ? 'linear-gradient(90deg, #4ade80, #22c55e)' : 'linear-gradient(90deg, #F0C850, #FFE07A)', color: '#0D0118' }}>
-                {loading ? 'Processing...' : selectedClass.isJuneOnly ? 'Enroll — It\'s Free! 🎶' : `Proceed to Payment · ${getPriceLabel()} →`}
+                style={{ background: selectedClass.isPrivateTrial ? 'linear-gradient(90deg, #60a5fa, #3b82f6)' : selectedClass.isJuneOnly ? 'linear-gradient(90deg, #4ade80, #22c55e)' : 'linear-gradient(90deg, #F0C850, #FFE07A)', color: '#0D0118' }}>
+                {loading ? 'Processing...' : selectedClass.isPrivateTrial ? 'Book My Free Private Lesson 🎤' : selectedClass.isJuneOnly ? 'Enroll — It\'s Free! 🎶' : `Proceed to Payment · ${getPriceLabel()} →`}
               </button>
-              {!selectedClass.isJuneOnly && (
+              {!selectedClass.isJuneOnly && !selectedClass.isPrivateTrial && (
                 <p className="text-center text-white/30 text-xs mt-3">You&apos;ll be redirected to Stripe for secure payment</p>
+              )}
+              {selectedClass.isPrivateTrial && (
+                <p className="text-center text-white/30 text-xs mt-3">One free private lesson per student · We&apos;ll call to schedule your time!</p>
               )}
             </form>
           </>

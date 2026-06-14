@@ -627,10 +627,8 @@ export default function PortalContent() {
                     🎉 June — FREE Discovery Camp
                   </p>
                   {[
-                    { ages: "Ages 2–5", time: "9:00 – 9:45 AM" },
-                    { ages: "Ages 5–10", time: "10:00 – 11:30 AM" },
-                    { ages: "Ages 10–17", time: "11:30 AM – 1:00 PM" },
-                    { ages: "All Ages (Piano)", time: "1:30 – 2:45 PM" },
+                    { ages: "Ages 11–17", time: "10:00 AM – 12:00 PM" },
+                    { ages: "Ages 5–10", time: "12:00 – 2:00 PM" },
                   ].map((slot, i) => (
                     <div key={i} style={{
                       display: "flex", justifyContent: "space-between", alignItems: "center",
