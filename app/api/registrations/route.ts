@@ -286,7 +286,7 @@ export async function GET(req: Request) {
           const em = r.email.toLowerCase().trim();
           const ph = r.phone.replace(/\D/g, "");
           const emailMatch = em && familyEmails.has(em);
-          const phoneMatch = ph.length >= 7 && [...familyPhones].some(
+          const phoneMatch = ph.length >= 7 && Array.from(familyPhones).some(
             (fp) => fp.includes(ph) || ph.includes(fp)
           );
           if (emailMatch || phoneMatch) {
@@ -302,7 +302,7 @@ export async function GET(req: Request) {
         const ph = r.phone.replace(/\D/g, "");
         return (
           (em && familyEmails.has(em)) ||
-          (ph.length >= 7 && [...familyPhones].some(
+          (ph.length >= 7 && Array.from(familyPhones).some(
             (fp) => fp.includes(ph) || ph.includes(fp)
           ))
         );
