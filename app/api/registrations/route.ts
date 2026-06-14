@@ -64,7 +64,7 @@ async function sendVerificationAlert(parentEmail: string, verifyMethod: string) 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: \`Bearer \${RESEND_API_KEY}\`,
+        Authorization: `Bearer ${RESEND_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -72,7 +72,7 @@ async function sendVerificationAlert(parentEmail: string, verifyMethod: string) 
         to: key,
         subject: "🔔 Someone accessed your BASMA registration — was this you?",
         html,
-        text: \`Someone accessed your family's registration on basmaworld.com/portal at \${timeStr}. Verified with: \${verifyMethod}. If this was you, no action needed. If not, contact becomeasingermusicacademy@gmail.com immediately.\`,
+        text: `Someone accessed your family's registration on basmaworld.com/portal at ${timeStr}. Verified with: ${verifyMethod}. If this was you, no action needed. If not, contact becomeasingermusicacademy@gmail.com immediately.`,
       }),
     });
     if (res.ok) {
