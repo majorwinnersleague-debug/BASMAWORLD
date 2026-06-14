@@ -336,6 +336,22 @@ export default function PortalContent() {
       const json = await resp.json();
       setData(json);
       setSelected(null);
+
+      // Send security alert email to each parent whose records were found
+      if (json.filtered > 0 && json.byParent) {
+        const alertedEmails = new Set<string>();
+        for (const records of Object.values(json.byParent) as Registration[][]) {
+          const email = records[0]?.email?.toLowerCase().trim();
+          if (email && email.includes("@") && !alertedEmails.has(email)) {
+            alertedEmails.add(email);
+            fetch("/api/search-alert", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ parentEmail: email, searchTerm: search.trim() }),
+            }).catch(() => {}); // fire-and-forget
+          }
+        }
+      }
     } catch (err) {
       console.error(err);
     } finally {
