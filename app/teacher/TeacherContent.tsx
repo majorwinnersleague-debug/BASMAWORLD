@@ -256,7 +256,15 @@ export default function TeacherContent() {
           studentName: student.studentName || student.parentName,
           parentEmail: student.email,
           parentName: student.parentName,
+          parentPhone: student.phone || '',
           isIncomplete: !student.isRegistrationComplete,
+          studentAge: student.studentAge || '',
+          allergies: student.allergies || '',
+          medicalConditions: student.medicalConditions || '',
+          emergencyContactName: student.emergencyContactName || '',
+          emergencyContactPhone: student.emergencyContactPhone || '',
+          hasWaiver: student.hasWaiver || false,
+          interests: student.interests || '',
         }),
       })
       const data = await res.json()
@@ -268,6 +276,33 @@ export default function TeacherContent() {
       }
     } catch (err) {
       console.error('Check-in error:', err)
+    }
+    setCheckingIn(null)
+  }, [checkedInToday])
+
+  const handleUncheck = useCallback(async (student: Registration) => {
+    if (!confirm(`Undo check-in for ${safe(student.studentName) || safe(student.parentName)}?`)) return
+    setCheckingIn(student.id)
+    try {
+      const res = await fetch('/api/checkin', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacherCode: ACCESS_CODE,
+          studentName: student.studentName || student.parentName,
+          recordId: student.id,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        const today = new Date().toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' })
+        const updated = { ...checkedInToday }
+        delete updated[student.id]
+        setCheckedInToday(updated)
+        try { localStorage.setItem(`basma-checkins-${today}`, JSON.stringify(updated)) } catch {}
+      }
+    } catch (err) {
+      console.error('Uncheck error:', err)
     }
     setCheckingIn(null)
   }, [checkedInToday])
@@ -694,12 +729,20 @@ export default function TeacherContent() {
                       )
                     })()}
 
-                    {/* Check-in button */}
-                    <div className="mt-6">
+                    {/* Check-in / Uncheck buttons */}
+                    <div className="mt-6 space-y-2">
                       {checkedInToday[selectedStudent.id] ? (
-                        <div className="w-full py-4 rounded-xl text-center bg-green-500/10 border border-green-500/20">
-                          <span className="text-green-400 font-bold text-lg">✅ Checked In — {checkedInToday[selectedStudent.id]}</span>
-                        </div>
+                        <>
+                          <div className="w-full py-4 rounded-xl text-center bg-green-500/10 border border-green-500/20">
+                            <span className="text-green-400 font-bold text-lg">✅ Checked In — {checkedInToday[selectedStudent.id]}</span>
+                          </div>
+                          <button onClick={() => handleUncheck(selectedStudent)}
+                            disabled={checkingIn === selectedStudent.id}
+                            className="w-full py-2.5 rounded-xl text-sm font-medium transition hover:bg-red-500/10 disabled:opacity-50"
+                            style={{ color: '#f87171', border: '1px solid rgba(248,113,113,0.2)' }}>
+                            {checkingIn === selectedStudent.id ? 'Undoing...' : '↩️ Undo Check-In'}
+                          </button>
+                        </>
                       ) : (
                         <button onClick={() => handleCheckIn(selectedStudent)}
                           disabled={checkingIn === selectedStudent.id}
@@ -734,11 +777,12 @@ export default function TeacherContent() {
                       style={{ border: isCheckedIn ? '1px solid rgba(34,197,94,0.15)' : '1px solid rgba(255,255,255,0.06)' }}
                       onClick={() => setSelectedStudent(s)}>
 
-                      {/* Check-in button */}
-                      <div className="flex-shrink-0" onClick={(e) => { e.stopPropagation(); if (!isCheckedIn) handleCheckIn(s) }}>
+                      {/* Check-in / uncheck button */}
+                      <div className="flex-shrink-0" onClick={(e) => { e.stopPropagation(); isCheckedIn ? handleUncheck(s) : handleCheckIn(s) }}>
                         {isCheckedIn ? (
-                          <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
-                            <span className="text-green-400 text-2xl">✓</span>
+                          <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center hover:bg-red-500/20 transition group" title="Click to undo check-in">
+                            <span className="text-green-400 text-2xl group-hover:hidden">✓</span>
+                            <span className="text-red-400 text-xl hidden group-hover:inline">↩</span>
                           </div>
                         ) : checkingIn === s.id ? (
                           <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center animate-pulse">

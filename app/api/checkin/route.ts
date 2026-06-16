@@ -4,6 +4,7 @@ const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
 const LEADS_TABLE = 'tbl1diIEhM9MtKViE'
 const SUMMER_TABLE = 'tblfOnRDkfgZoCF9X'
+const CHECKIN_TABLE = process.env.CHECKIN_TABLE_ID || '' // Will be set after table creation
 const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
 const FROM_EMAIL = 'BASMA Academy <onboarding@resend.dev>'
 
@@ -21,6 +22,37 @@ async function patchAirtable(tableId: string, recordId: string, fields: Record<s
   return res.json()
 }
 
+async function createAirtableRecord(tableId: string, fields: Record<string, unknown>) {
+  const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${tableId}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${AIRTABLE_PAT}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ records: [{ fields }] }),
+  })
+  return res.json()
+}
+
+async function deleteAirtableRecord(tableId: string, recordId: string) {
+  const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${tableId}/${recordId}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${AIRTABLE_PAT}` },
+  })
+  return res.json()
+}
+
+async function findCheckInRecord(studentName: string, date: string) {
+  if (!CHECKIN_TABLE) return null
+  const formula = `AND({Student Name}="${studentName}",{Check-In Date}="${date}")`
+  const params = new URLSearchParams({ filterByFormula: formula, maxRecords: '1' })
+  const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${CHECKIN_TABLE}?${params}`, {
+    headers: { 'Authorization': `Bearer ${AIRTABLE_PAT}` },
+  })
+  const data = await res.json()
+  return data.records?.[0] || null
+}
+
 async function getRecord(tableId: string, recordId: string) {
   const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${tableId}/${recordId}`, {
     headers: { 'Authorization': `Bearer ${AIRTABLE_PAT}` },
@@ -29,14 +61,10 @@ async function getRecord(tableId: string, recordId: string) {
 }
 
 async function findSummerRecord(studentName: string, parentEmail: string) {
-  // Search Summer 2026 Registrations for matching student
   const formula = parentEmail
     ? `OR({Student Name}="${studentName}",{Parent Email}="${parentEmail}")`
     : `{Student Name}="${studentName}"`
-  const params = new URLSearchParams({
-    filterByFormula: formula,
-    maxRecords: '5',
-  })
+  const params = new URLSearchParams({ filterByFormula: formula, maxRecords: '5' })
   const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${SUMMER_TABLE}?${params}`, {
     headers: { 'Authorization': `Bearer ${AIRTABLE_PAT}` },
   })
@@ -63,7 +91,7 @@ async function sendCheckInEmail(parentEmail: string, parentName: string, student
         It looks like ${studentName}'s registration isn't fully complete yet. Please finish registration so we have all the important information (allergies, emergency contacts, etc).
       </p>
       <p style="margin: 12px 0 0;">
-        <a href="https://basmaworld.com/enroll" 
+        <a href="https://basmaworld.com/enroll"
            style="display: inline-block; background: #f59e0b; color: #fff; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
           Complete Registration →
         </a>
@@ -122,12 +150,16 @@ async function sendCheckInEmail(parentEmail: string, parentName: string, student
   }
 }
 
+// ═══ CHECK IN ═══
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json()
-    const { recordId, teacherCode, studentName, parentEmail, parentName, isIncomplete } = data
+    const {
+      recordId, teacherCode, studentName, parentEmail, parentName,
+      parentPhone, isIncomplete, studentAge, allergies, medicalConditions,
+      emergencyContactName, emergencyContactPhone, hasWaiver, interests
+    } = data
 
-    // Verify teacher auth
     if (teacherCode !== TEACHER_CODE) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
@@ -139,42 +171,56 @@ export async function POST(request: NextRequest) {
     const now = new Date()
     const dateStr = now.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' })
     const timeStr = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', timeStyle: 'short' })
+    const isoDate = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' }) // YYYY-MM-DD
     const checkInNote = `Checked in: ${dateStr} ${timeStr}`
 
-    // Update the Marketing Leads record
+    // 1. Update the Marketing Leads record
     try {
-      // Get current record to append to notes
       const current = await getRecord(LEADS_TABLE, recordId)
       const existingNotes = current?.fields?.['Notes'] || ''
-      const updatedNotes = existingNotes
-        ? `${existingNotes}\n${checkInNote}`
-        : checkInNote
-
-      await patchAirtable(LEADS_TABLE, recordId, {
-        'Notes': updatedNotes,
-      })
+      const updatedNotes = existingNotes ? `${existingNotes}\n${checkInNote}` : checkInNote
+      await patchAirtable(LEADS_TABLE, recordId, { 'Notes': updatedNotes })
     } catch (err) {
       console.error('Marketing Leads check-in update error:', err)
     }
 
-    // Also update Summer 2026 Registrations if there's a matching record
+    // 2. Update Summer 2026 Registrations if matching
     try {
       const summerRec = await findSummerRecord(studentName || '', parentEmail || '')
       if (summerRec) {
         const existingNotes = summerRec.fields?.['Notes'] || ''
-        const updatedNotes = existingNotes
-          ? `${existingNotes}\n${checkInNote}`
-          : checkInNote
-
-        await patchAirtable(SUMMER_TABLE, summerRec.id, {
-          'Notes': updatedNotes,
-        })
+        const updatedNotes = existingNotes ? `${existingNotes}\n${checkInNote}` : checkInNote
+        await patchAirtable(SUMMER_TABLE, summerRec.id, { 'Notes': updatedNotes })
       }
     } catch (err) {
       console.error('Summer table check-in update error:', err)
     }
 
-    // Send check-in confirmation email (with registration reminder if incomplete)
+    // 3. Create record in Check-In Log table
+    if (CHECKIN_TABLE) {
+      try {
+        await createAirtableRecord(CHECKIN_TABLE, {
+          'Student Name': studentName || '',
+          'Parent Name': parentName || '',
+          'Parent Email': parentEmail || '',
+          'Parent Phone': parentPhone || '',
+          'Check-In Date': isoDate,
+          'Check-In Time': timeStr,
+          'Class': interests || '',
+          'Age': studentAge || '',
+          'Allergies': allergies || '',
+          'Medical Conditions': medicalConditions || '',
+          'Emergency Contact': emergencyContactName || '',
+          'Emergency Phone': emergencyContactPhone || '',
+          'Registration Complete': isIncomplete === false,
+          'Waiver Signed': hasWaiver === true,
+        })
+      } catch (err) {
+        console.error('Check-In Log create error:', err)
+      }
+    }
+
+    // 4. Send check-in confirmation email
     await sendCheckInEmail(
       parentEmail || '',
       parentName || '',
@@ -189,5 +235,53 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Check-in error:', error)
     return NextResponse.json({ success: false, error: 'Check-in failed' }, { status: 500 })
+  }
+}
+
+// ═══ UNCHECK (DELETE) ═══
+export async function DELETE(request: NextRequest) {
+  try {
+    const data = await request.json()
+    const { teacherCode, studentName, recordId } = data
+
+    if (teacherCode !== TEACHER_CODE) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const now = new Date()
+    const isoDate = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' })
+
+    // Remove from Check-In Log if table exists
+    if (CHECKIN_TABLE) {
+      try {
+        const checkInRec = await findCheckInRecord(studentName || '', isoDate)
+        if (checkInRec) {
+          await deleteAirtableRecord(CHECKIN_TABLE, checkInRec.id)
+        }
+      } catch (err) {
+        console.error('Check-In Log delete error:', err)
+      }
+    }
+
+    // Update notes in Marketing Leads to reflect unchecking
+    if (recordId) {
+      try {
+        const current = await getRecord(LEADS_TABLE, recordId)
+        const existingNotes = current?.fields?.['Notes'] || ''
+        const dateStr = now.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' })
+        const timeStr = now.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', timeStyle: 'short' })
+        const updatedNotes = existingNotes
+          ? `${existingNotes}\nUnchecked: ${dateStr} ${timeStr}`
+          : `Unchecked: ${dateStr} ${timeStr}`
+        await patchAirtable(LEADS_TABLE, recordId, { 'Notes': updatedNotes })
+      } catch (err) {
+        console.error('Marketing Leads uncheck update error:', err)
+      }
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Uncheck error:', error)
+    return NextResponse.json({ success: false, error: 'Uncheck failed' }, { status: 500 })
   }
 }
