@@ -531,11 +531,21 @@ export default function EnrollContent() {
                   <h2 className="text-2xl font-bold mb-1" style={{ fontFamily: "'Playfair Display', serif", color: '#F0C850' }}>
                     Summer Classes · July & August
                   </h2>
-                  <p className="text-white/50 text-sm">⭐ July: All classes $25 · 🎁 August: Buy 3 Get 1 Free</p>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+                    <span className="text-white/50">⭐ July: All classes $25</span>
+                    <span className="text-white/30">·</span>
+                    <button
+                      onClick={() => document.getElementById('class-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                      className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 decoration-dotted hover:decoration-solid transition cursor-pointer"
+                      style={{ color: '#F0C850' }}
+                    >
+                      🎁 August: Buy 3 Get 1 Free →
+                    </button>
+                  </div>
                   <p className="text-white/40 text-xs mt-1">📍 6787 W Tropicana Ave Suite 260 · Mon – Thu</p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div id="class-grid" className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {paidClasses.map(c => (
                     <button key={c.id} onClick={() => selectClass(c)}
                       className="p-5 rounded-2xl text-left transition hover:scale-[1.02]"
