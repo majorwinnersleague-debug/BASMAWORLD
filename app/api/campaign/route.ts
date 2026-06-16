@@ -22,21 +22,29 @@ async function airtableGet(table: string, formula: string): Promise<LeadRecord[]
   return data.records || [];
 }
 
-async function sendEmail(to: string, subject: string, html: string) {
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "BASMA Academy <onboarding@resend.dev>",
-      to: [to],
-      subject,
-      html,
-    }),
-  });
-  return res.ok;
+async function sendEmail(to: string, subject: string, html: string): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "BASMA Academy <onboarding@resend.dev>",
+        to: [to],
+        subject,
+        html,
+      }),
+    });
+    if (!res.ok) {
+      const errBody = await res.text();
+      return { ok: false, error: `${res.status}: ${errBody}` };
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
 }
 
 export async function POST(request: Request) {
@@ -56,7 +64,7 @@ export async function POST(request: Request) {
     const byEmail: Record<string, { name: string; students: string[]; email: string }> = {};
     for (const r of records) {
       const email = (r.fields["Email"] || "").trim().toLowerCase();
-      if (!email || email.includes("majorwinnersleague")) continue; // skip own test accounts
+      if (!email || email.includes("majorwinnersleague")) continue;
 
       if (!byEmail[email]) {
         byEmail[email] = {
@@ -74,6 +82,7 @@ export async function POST(request: Request) {
     const families = Object.values(byEmail);
     let sent = 0;
     let failed = 0;
+    const errors: string[] = [];
 
     for (const family of families) {
       const firstName = family.name.split(" ")[0] || "there";
@@ -142,14 +151,20 @@ export async function POST(request: Request) {
 </body>
 </html>`;
 
-      const ok = await sendEmail(
+      const result = await sendEmail(
         family.email,
         `🎵 ${firstName}, don't miss free music classes this June!`,
         html
       );
 
-      if (ok) sent++;
-      else failed++;
+      if (result.ok) {
+        sent++;
+      } else {
+        failed++;
+        if (errors.length < 3) {
+          errors.push(`${family.email}: ${result.error}`);
+        }
+      }
 
       // Small delay to avoid rate limiting
       await new Promise((r) => setTimeout(r, 200));
@@ -160,9 +175,12 @@ export async function POST(request: Request) {
       totalFamilies: families.length,
       sent,
       failed,
+      sampleErrors: errors,
+      resendKeyPresent: !!RESEND_API_KEY,
+      resendKeyLength: RESEND_API_KEY.length,
     });
   } catch (error) {
     console.error("Campaign error:", error);
-    return NextResponse.json({ error: "Campaign failed" }, { status: 500 });
+    return NextResponse.json({ error: "Campaign failed", detail: String(error) }, { status: 500 });
   }
 }
