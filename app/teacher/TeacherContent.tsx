@@ -36,6 +36,7 @@ interface Registration {
   waiverFormStatus: string
   lastCheckIn: string | null
   isRegistrationComplete: boolean
+  missingFields?: string[]
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -516,7 +517,10 @@ export default function TeacherContent() {
                           Registration {selectedStudent.isRegistrationComplete ? 'Complete' : 'Incomplete'}
                         </span>
                       </div>
-                      {!selectedStudent.isRegistrationComplete && (
+                      {!selectedStudent.isRegistrationComplete && selectedStudent.missingFields && selectedStudent.missingFields.length > 0 && (
+                        <p className="text-xs text-yellow-400/60 mt-1">Missing: {selectedStudent.missingFields.join(', ')}</p>
+                      )}
+                      {!selectedStudent.isRegistrationComplete && (!selectedStudent.missingFields || selectedStudent.missingFields.length === 0) && (
                         <p className="text-xs text-yellow-400/60 mt-1">Missing information will be highlighted below</p>
                       )}
                     </div>

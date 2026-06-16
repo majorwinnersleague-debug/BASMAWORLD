@@ -290,87 +290,103 @@ export async function GET(req: Request) {
         if (sName) summerByKey[sName] = s.fields; // fallback by name only
       }
 
-      const registrations = leadRecords.map((r) => {
-        const f = r.fields;
-        const parsed = parseStudentInfo(f.Message || "");
-        const em = (f.Email || "").toLowerCase().trim();
-        const src = (f.Source || "").toLowerCase();
-        const studentName = f["Student Name"] || parsed?.studentName || "";
+      // Build registrations — only include records that have a student name
+      // (records without a student name are just marketing leads, not enrolled students)
+      const registrations = leadRecords
+        .map((r) => {
+          const f = r.fields;
+          const parsed = parseStudentInfo(f.Message || "");
+          const em = (f.Email || "").toLowerCase().trim();
+          const src = (f.Source || "").toLowerCase();
+          const studentName = f["Student Name"] || parsed?.studentName || "";
 
-        // Look up enriched data from Summer 2026 Registrations
-        const summerData = summerByKey[`${studentName.toLowerCase().trim()}|${em}`]
-          || summerByKey[studentName.toLowerCase().trim()]
-          || null;
+          // Skip records without a student name — they're marketing leads, not students
+          if (!studentName.trim()) return null;
 
-        // Determine payment status
-        const hasPaid = !!(paymentsByEmail[em] && paymentsByEmail[em].length > 0);
-        const isFreeSource = src.includes("discovery") || src.includes("free");
-        let paymentStatus: string;
-        if (hasPaid) {
-          paymentStatus = "Paid";
-        } else if (summerData?.["Payment Status"] === "Paid") {
-          paymentStatus = "Paid";
-        } else if (isFreeSource) {
-          paymentStatus = "Free";
-        } else {
-          paymentStatus = "Pending";
-        }
+          // Look up enriched data from Summer 2026 Registrations
+          const summerData = summerByKey[`${studentName.toLowerCase().trim()}|${em}`]
+            || summerByKey[studentName.toLowerCase().trim()]
+            || null;
 
-        // Get enrolled class name from enrollment records
-        const enrollments = enrollmentsByEmail[em] || [];
-        const enrolledClass = enrollments.length > 0
-          ? (enrollments[0].fields["Class"] || enrollments[0].fields["Class Name"] || enrollments[0].fields["Selected Class"] || "")
-          : "";
+          // Determine payment status
+          const hasPaid = !!(paymentsByEmail[em] && paymentsByEmail[em].length > 0);
+          const isFreeSource = src.includes("discovery") || src.includes("free") || src.includes("private");
+          let paymentStatus: string;
+          if (hasPaid) {
+            paymentStatus = "Paid";
+          } else if (summerData?.["Payment Status"] === "Paid") {
+            paymentStatus = "Paid";
+          } else if (isFreeSource) {
+            paymentStatus = "Free";
+          } else {
+            paymentStatus = "Pending";
+          }
 
-        // Determine waiver status from multiple sources
-        const waiverForm = f["Waiver Form"] || "";
-        const liabilityAgreed = summerData?.["Liability Agreed"] || "";
-        const hasWaiver = waiverForm.toLowerCase() === "complete" || liabilityAgreed === "Yes" || enrollments.length > 0;
+          // Get enrolled class name from enrollment records
+          const enrollments = enrollmentsByEmail[em] || [];
+          const enrolledClass = enrollments.length > 0
+            ? (enrollments[0].fields["Class"] || enrollments[0].fields["Class Name"] || enrollments[0].fields["Selected Class"] || "")
+            : "";
 
-        // Check-in data from Notes field
-        const notes = summerData?.["Notes"] || f["Notes"] || "";
-        const checkInMatches = notes.match(/Checked in: .+/g) || [];
-        const lastCheckIn = checkInMatches.length > 0 ? checkInMatches[checkInMatches.length - 1] : null;
+          // Determine waiver status from multiple sources
+          const waiverForm = f["Waiver Form"] || "";
+          const liabilityAgreed = summerData?.["Liability Agreed"] || "";
+          const hasWaiver = waiverForm.toLowerCase() === "complete" || liabilityAgreed === "Yes" || enrollments.length > 0;
 
-        // Determine if registration is complete
-        const regStatus = f.Status || "Unknown";
-        const regForm = f["Registration Form"] || "";
-        const isRegistrationComplete = regStatus.toLowerCase() !== "incomplete"
-          && regForm.toLowerCase() !== "partial"
-          && regForm.toLowerCase() !== "not started"
-          && hasWaiver;
+          // Check-in data from Notes field
+          const notes = summerData?.["Notes"] || f["Notes"] || "";
+          const checkInMatches = notes.match(/Checked in: .+/g) || [];
+          const lastCheckIn = checkInMatches.length > 0 ? checkInMatches[checkInMatches.length - 1] : null;
 
-        return {
-          id: r.id,
-          parentName: f["Full Name"] || "",
-          email: f.Email || "",
-          phone: f.Phone || "",
-          studentName,
-          studentAge: f["Student Age"] || parsed?.studentAge || "",
-          interests: f.Interests || "",
-          status: f.Status || "Unknown",
-          source: f.Source || "",
-          ageGroup: f["Age Group"] || "",
-          experienceLevel: f["Experience Level"] || "",
-          referralSource: f["Referral Source"] || "",
-          message: f.Message || "",
-          discoveryWeek: f["Discovery Week"] || "",
-          timeSlot: f["Time Slot"] || "",
-          paymentStatus,
-          enrolledClass: enrolledClass as string,
-          hasWaiver,
-          createdAt: r.createdTime,
-          // Enriched fields from Summer 2026 table
-          allergies: summerData?.["Allergies"] || "",
-          medicalConditions: summerData?.["Medical Conditions"] || "",
-          emergencyContactName: summerData?.["Emergency Contact Name"] || "",
-          emergencyContactPhone: summerData?.["Emergency Contact Phone"] || "",
-          liabilityAgreed: liabilityAgreed === "Yes",
-          waiverFormStatus: waiverForm || (liabilityAgreed === "Yes" ? "Complete" : "Not Started"),
-          lastCheckIn: lastCheckIn || null,
-          isRegistrationComplete,
-        };
-      });
+          // Determine registration completeness:
+          // "Complete" = has parent name + email + phone + student name + waiver signed
+          // These are the essentials. Allergies/emergency contact are tracked separately.
+          const parentName = (f["Full Name"] || "").trim();
+          const hasBasicInfo = !!(parentName && em && (f.Phone || "").trim());
+          const isRegistrationComplete = hasBasicInfo && hasWaiver;
+
+          // Track what's missing for teacher display
+          const missingFields: string[] = [];
+          if (!parentName) missingFields.push("Parent Name");
+          if (!em) missingFields.push("Email");
+          if (!(f.Phone || "").trim()) missingFields.push("Phone");
+          if (!hasWaiver) missingFields.push("Waiver");
+          if (!summerData?.["Allergies"] && !summerData?.["Allergies"]?.trim()) missingFields.push("Allergies");
+          if (!summerData?.["Emergency Contact Name"]) missingFields.push("Emergency Contact");
+
+          return {
+            id: r.id,
+            parentName: f["Full Name"] || "",
+            email: f.Email || "",
+            phone: f.Phone || "",
+            studentName,
+            studentAge: f["Student Age"] || parsed?.studentAge || "",
+            interests: f.Interests || "",
+            status: f.Status || "Unknown",
+            source: f.Source || "",
+            ageGroup: f["Age Group"] || "",
+            experienceLevel: f["Experience Level"] || "",
+            referralSource: f["Referral Source"] || "",
+            message: f.Message || "",
+            discoveryWeek: f["Discovery Week"] || "",
+            timeSlot: f["Time Slot"] || "",
+            paymentStatus,
+            enrolledClass: enrolledClass as string,
+            hasWaiver,
+            createdAt: r.createdTime,
+            // Enriched fields from Summer 2026 table
+            allergies: summerData?.["Allergies"] || "",
+            medicalConditions: summerData?.["Medical Conditions"] || "",
+            emergencyContactName: summerData?.["Emergency Contact Name"] || "",
+            emergencyContactPhone: summerData?.["Emergency Contact Phone"] || "",
+            liabilityAgreed: liabilityAgreed === "Yes",
+            waiverFormStatus: waiverForm || (liabilityAgreed === "Yes" ? "Complete" : "Not Started"),
+            lastCheckIn: lastCheckIn || null,
+            isRegistrationComplete,
+            missingFields,
+          };
+        })
+        .filter((r): r is NonNullable<typeof r> => r !== null);
 
       return NextResponse.json({ registrations });
     }
