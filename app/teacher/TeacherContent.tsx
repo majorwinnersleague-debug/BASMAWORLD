@@ -547,107 +547,152 @@ export default function TeacherContent() {
                       <button onClick={() => setSelectedStudent(null)} className="text-white/30 hover:text-white text-2xl">&times;</button>
                     </div>
 
-                    {/* Registration status */}
-                    <div className={`p-4 rounded-xl mb-4 ${selectedStudent.isRegistrationComplete ? 'bg-green-500/10 border border-green-500/20' : 'bg-yellow-500/10 border border-yellow-500/20'}`}>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">{selectedStudent.isRegistrationComplete ? '✅' : '⚠️'}</span>
-                        <span className={`font-semibold ${selectedStudent.isRegistrationComplete ? 'text-green-400' : 'text-yellow-400'}`}>
-                          Registration {selectedStudent.isRegistrationComplete ? 'Complete' : 'Incomplete'}
-                        </span>
-                      </div>
-                      {!selectedStudent.isRegistrationComplete && selectedStudent.missingFields && selectedStudent.missingFields.length > 0 && (
-                        <p className="text-xs text-yellow-400/60 mt-1">Missing: {selectedStudent.missingFields.join(', ')}</p>
-                      )}
-                      {!selectedStudent.isRegistrationComplete && (!selectedStudent.missingFields || selectedStudent.missingFields.length === 0) && (
-                        <p className="text-xs text-yellow-400/60 mt-1">Missing information will be highlighted below</p>
-                      )}
-                    </div>
+                    {/* ═══ REGISTRATION CHECKLIST ═══ */}
+                    {(() => {
+                      const s = selectedStudent
+                      const checks = [
+                        { label: 'Registration Form', icon: '📝', done: !!(safe(s.parentName) && safe(s.email) && safe(s.phone) && safe(s.studentName)), detail: safe(s.parentName) && safe(s.email) ? `${safe(s.parentName)} · ${safe(s.email)}` : 'Parent name, email, phone needed' },
+                        { label: 'Liability Waiver', icon: '📜', done: s.hasWaiver, detail: s.hasWaiver ? 'Signed' : 'Not signed — required for participation' },
+                        { label: 'Allergy / Dietary Info', icon: '🍕', done: !!(safe(s.allergies)), detail: safe(s.allergies) ? (safe(s.allergies).toLowerCase() === 'none' ? 'None reported' : `⚠️ ${safe(s.allergies)}`) : 'Not provided — needed for safety' },
+                        { label: 'Medical Conditions', icon: '🏥', done: !!(safe(s.medicalConditions)), detail: safe(s.medicalConditions) ? safe(s.medicalConditions) : 'Not provided' },
+                        { label: 'Emergency Contact', icon: '🆘', done: !!(safe(s.emergencyContactName) && safe(s.emergencyContactPhone)), detail: safe(s.emergencyContactName) ? `${safe(s.emergencyContactName)} · ${safe(s.emergencyContactPhone) ? formatPhone(safe(s.emergencyContactPhone)) : 'No phone'}` : 'Not provided — required' },
+                        { label: 'Payment', icon: '💳', done: safe(s.paymentStatus) === 'Paid' || safe(s.paymentStatus) === 'Free', detail: safe(s.paymentStatus) === 'Paid' ? 'Paid ✓' : safe(s.paymentStatus) === 'Free' ? 'Free program' : 'Pending' },
+                      ]
+                      const doneCount = checks.filter(c => c.done).length
+                      const allDone = doneCount === checks.length
+                      const pct = Math.round((doneCount / checks.length) * 100)
 
-                    {/* Info sections */}
-                    <div className="space-y-4">
-                      {/* Parent info */}
-                      <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                        <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">👤 Parent Info</h3>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between"><span className="text-white/40">Name</span><span className="text-white/80">{safe(selectedStudent.parentName) || '—'}</span></div>
-                          <div className="flex justify-between"><span className="text-white/40">Email</span><span className="text-white/80">{safe(selectedStudent.email) || '—'}</span></div>
-                          <div className="flex justify-between"><span className="text-white/40">Phone</span><span className="text-white/80">{formatPhone(safe(selectedStudent.phone))}</span></div>
-                        </div>
-                      </div>
+                      // Build the complete-registration link for this student
+                      const regLink = `https://basmaworld.com/enroll?studentName=${encodeURIComponent(safe(s.studentName))}&studentAge=${encodeURIComponent(safe(s.studentAge))}&parentName=${encodeURIComponent(safe(s.parentName))}&email=${encodeURIComponent(safe(s.email))}&phone=${encodeURIComponent(safe(s.phone))}`
 
-                      {/* Allergies & Medical — PROMINENT */}
-                      <div className={`p-4 rounded-xl ${safe(selectedStudent.allergies) && safe(selectedStudent.allergies).toLowerCase() !== 'none' ? 'bg-red-500/10 border border-red-500/20' : 'bg-white/[0.02] border border-white/[0.06]'}`}>
-                        <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">🏥 Health & Safety</h3>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between items-start">
-                            <span className="text-white/40">Allergies</span>
-                            <span className={`text-right ${
-                              !safe(selectedStudent.allergies) ? 'text-yellow-400 font-semibold' :
-                              safe(selectedStudent.allergies).toLowerCase() === 'none' ? 'text-green-400' :
-                              'text-red-400 font-bold'
-                            }`}>
-                              {safe(selectedStudent.allergies) || '⚠️ NOT PROVIDED'}
-                            </span>
+                      return (
+                        <>
+                          {/* Progress bar */}
+                          <div className={`p-4 rounded-xl mb-4 ${allDone ? 'bg-green-500/10 border border-green-500/20' : 'bg-yellow-500/10 border border-yellow-500/20'}`}>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg">{allDone ? '✅' : '⚠️'}</span>
+                                <span className={`font-semibold ${allDone ? 'text-green-400' : 'text-yellow-400'}`}>
+                                  {allDone ? 'All Forms Complete' : `${doneCount}/${checks.length} Complete`}
+                                </span>
+                              </div>
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${allDone ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>{pct}%</span>
+                            </div>
+                            <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                              <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: allDone ? '#22c55e' : 'linear-gradient(90deg, #F0C850, #c9a84c)' }} />
+                            </div>
                           </div>
-                          <div className="flex justify-between items-start">
-                            <span className="text-white/40">Medical</span>
-                            <span className="text-white/80 text-right">{safe(selectedStudent.medicalConditions) || 'None listed'}</span>
-                          </div>
-                        </div>
-                      </div>
 
-                      {/* Emergency Contact */}
-                      <div className={`p-4 rounded-xl ${!safe(selectedStudent.emergencyContactName) ? 'bg-yellow-500/10 border border-yellow-500/20' : 'bg-white/[0.02] border border-white/[0.06]'}`}>
-                        <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">🆘 Emergency Contact</h3>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-white/40">Name</span>
-                            <span className={!safe(selectedStudent.emergencyContactName) ? 'text-yellow-400 font-semibold' : 'text-white/80'}>
-                              {safe(selectedStudent.emergencyContactName) || '⚠️ NOT PROVIDED'}
-                            </span>
+                          {/* Checklist items */}
+                          <div className="space-y-2 mb-4">
+                            {checks.map(c => (
+                              <div key={c.label} className={`flex items-start gap-3 p-3 rounded-xl ${c.done ? 'bg-white/[0.02]' : 'bg-yellow-500/[0.04]'}`} style={{ border: c.done ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(234,179,8,0.15)' }}>
+                                <span className="text-lg flex-shrink-0 mt-0.5">{c.done ? '✅' : '❌'}</span>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm">{c.icon}</span>
+                                    <span className={`text-sm font-semibold ${c.done ? 'text-white/70' : 'text-yellow-400'}`}>{c.label}</span>
+                                  </div>
+                                  <p className={`text-xs mt-0.5 ${c.done ? 'text-white/40' : 'text-yellow-400/60'}`}>{c.detail}</p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-white/40">Phone</span>
-                            <span className={!safe(selectedStudent.emergencyContactPhone) ? 'text-yellow-400 font-semibold' : 'text-white/80'}>
-                              {safe(selectedStudent.emergencyContactPhone) ? formatPhone(safe(selectedStudent.emergencyContactPhone)) : '⚠️ NOT PROVIDED'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
 
-                      {/* Enrollment details */}
-                      <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                        <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">📋 Enrollment Details</h3>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between"><span className="text-white/40">Interests</span><span className="text-white/80">{safe(selectedStudent.interests) || '—'}</span></div>
-                          <div className="flex justify-between"><span className="text-white/40">Source</span><span className="text-white/80">{safe(selectedStudent.source) || '—'}</span></div>
-                          <div className="flex justify-between"><span className="text-white/40">Time Slot</span><span className="text-white/80">{safe(selectedStudent.timeSlot) || '—'}</span></div>
-                          {safe(selectedStudent.discoveryWeek) && (
-                            <div className="flex justify-between"><span className="text-white/40">Discovery Week</span><span className="text-white/80">{selectedStudent.discoveryWeek}</span></div>
+                          {/* Send registration link button */}
+                          {!allDone && (
+                            <div className="mb-4">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  const text = `Hi! Please complete ${safe(s.studentName)}'s registration for BASMA Academy. It only takes 2 minutes:\n\n${regLink}\n\nThank you! 🎵`
+                                  navigator.clipboard.writeText(text).then(() => {
+                                    alert('Registration link copied to clipboard! Paste it in a text message or email to the parent.')
+                                  }).catch(() => {
+                                    // Fallback: select the link text
+                                    prompt('Copy this registration link to send to the parent:', regLink)
+                                  })
+                                }}
+                                className="w-full py-3 rounded-xl font-semibold text-sm transition hover:opacity-90 flex items-center justify-center gap-2"
+                                style={{ background: 'rgba(240,200,80,0.1)', color: '#F0C850', border: '1px solid rgba(240,200,80,0.3)' }}
+                              >
+                                📋 Copy Registration Link for Parent
+                              </button>
+                              <p className="text-[11px] text-white/25 text-center mt-1">Copies a ready-to-send message with the enrollment link</p>
+                            </div>
                           )}
-                          <div className="flex justify-between">
-                            <span className="text-white/40">Waiver</span>
-                            <span className={selectedStudent.hasWaiver ? 'text-green-400' : 'text-yellow-400 font-semibold'}>
-                              {selectedStudent.hasWaiver ? '✅ Signed' : '⚠️ Not Signed'}
-                            </span>
+
+                          {/* Parent & Student Info */}
+                          <div className="space-y-4">
+                            {/* Parent info */}
+                            <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                              <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">👤 Parent Info</h3>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between"><span className="text-white/40">Name</span><span className="text-white/80">{safe(s.parentName) || '—'}</span></div>
+                                <div className="flex justify-between"><span className="text-white/40">Email</span><span className="text-white/80">{safe(s.email) || '—'}</span></div>
+                                <div className="flex justify-between"><span className="text-white/40">Phone</span><span className="text-white/80">{formatPhone(safe(s.phone))}</span></div>
+                              </div>
+                            </div>
+
+                            {/* Allergies & Medical — PROMINENT */}
+                            <div className={`p-4 rounded-xl ${safe(s.allergies) && safe(s.allergies).toLowerCase() !== 'none' && safe(s.allergies).toLowerCase() !== '' ? 'bg-red-500/10 border border-red-500/20' : 'bg-white/[0.02] border border-white/[0.06]'}`}>
+                              <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">🏥 Health & Safety</h3>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between items-start">
+                                  <span className="text-white/40">Allergies</span>
+                                  <span className={`text-right ${
+                                    !safe(s.allergies) ? 'text-yellow-400 font-semibold' :
+                                    safe(s.allergies).toLowerCase() === 'none' ? 'text-green-400' :
+                                    'text-red-400 font-bold'
+                                  }`}>
+                                    {safe(s.allergies) || '⚠️ NOT PROVIDED'}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between items-start">
+                                  <span className="text-white/40">Medical</span>
+                                  <span className="text-white/80 text-right">{safe(s.medicalConditions) || 'None listed'}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Emergency Contact */}
+                            <div className={`p-4 rounded-xl ${!safe(s.emergencyContactName) ? 'bg-yellow-500/10 border border-yellow-500/20' : 'bg-white/[0.02] border border-white/[0.06]'}`}>
+                              <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">🆘 Emergency Contact</h3>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-white/40">Name</span>
+                                  <span className={!safe(s.emergencyContactName) ? 'text-yellow-400 font-semibold' : 'text-white/80'}>
+                                    {safe(s.emergencyContactName) || '⚠️ NOT PROVIDED'}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-white/40">Phone</span>
+                                  <span className={!safe(s.emergencyContactPhone) ? 'text-yellow-400 font-semibold' : 'text-white/80'}>
+                                    {safe(s.emergencyContactPhone) ? formatPhone(safe(s.emergencyContactPhone)) : '⚠️ NOT PROVIDED'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Enrollment details */}
+                            <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                              <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">📋 Enrollment Details</h3>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between"><span className="text-white/40">Interests</span><span className="text-white/80">{safe(s.interests) || '—'}</span></div>
+                                <div className="flex justify-between"><span className="text-white/40">Source</span><span className="text-white/80">{safe(s.source) || '—'}</span></div>
+                                <div className="flex justify-between"><span className="text-white/40">Time Slot</span><span className="text-white/80">{safe(s.timeSlot) || '—'}</span></div>
+                                {safe(s.discoveryWeek) && (
+                                  <div className="flex justify-between"><span className="text-white/40">Discovery Week</span><span className="text-white/80">{s.discoveryWeek}</span></div>
+                                )}
+                                {s.lastCheckIn && (
+                                  <div className="flex justify-between"><span className="text-white/40">Last Check-In</span><span className="text-green-400">{s.lastCheckIn}</span></div>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-white/40">Payment</span>
-                            <span className={`font-semibold ${
-                              safe(selectedStudent.paymentStatus) === 'Paid' ? 'text-green-400' :
-                              safe(selectedStudent.paymentStatus) === 'Free' ? 'text-blue-400' :
-                              'text-yellow-400'
-                            }`}>
-                              {safe(selectedStudent.paymentStatus) === 'Paid' ? '💰 Paid' :
-                               safe(selectedStudent.paymentStatus) === 'Free' ? '🆓 Free' : '⏳ Pending'}
-                            </span>
-                          </div>
-                          {selectedStudent.lastCheckIn && (
-                            <div className="flex justify-between"><span className="text-white/40">Last Check-In</span><span className="text-green-400">{selectedStudent.lastCheckIn}</span></div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                        </>
+                      )
+                    })()}
 
                     {/* Check-in button */}
                     <div className="mt-6">
@@ -711,14 +756,25 @@ export default function TeacherContent() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-semibold text-white/90">{studentDisplay}</span>
                           {safe(s.studentAge) && <span className="text-xs text-white/30">Age {s.studentAge}</span>}
-                          {!s.isRegistrationComplete && (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 font-semibold">Incomplete</span>
-                          )}
+                          {/* Mini checklist icons */}
+                          {(() => {
+                            const hasReg = !!(safe(s.parentName) && safe(s.email) && safe(s.phone))
+                            const hasWvr = s.hasWaiver
+                            const hasAlg = !!(safe(s.allergies))
+                            const hasEmg = !!(safe(s.emergencyContactName))
+                            const allOk = hasReg && hasWvr && hasAlg && hasEmg
+                            if (allOk) return <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 font-semibold">✅ Complete</span>
+                            return (
+                              <span className="text-xs px-1.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 flex items-center gap-1" title={`Reg:${hasReg?'✓':'✗'} Waiver:${hasWvr?'✓':'✗'} Allergy:${hasAlg?'✓':'✗'} Emergency:${hasEmg?'✓':'✗'}`}>
+                                <span>{hasReg ? '📝' : '❌'}</span>
+                                <span>{hasWvr ? '📜' : '❌'}</span>
+                                <span>{hasAlg ? '🍕' : '❌'}</span>
+                                <span>{hasEmg ? '🆘' : '❌'}</span>
+                              </span>
+                            )
+                          })()}
                           {hasAllergies && (
                             <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 font-semibold">⚠️ {safe(s.allergies)}</span>
-                          )}
-                          {missingInfo && !hasAllergies && (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400">Missing info</span>
                           )}
                         </div>
                         <div className="flex items-center gap-3 mt-1 text-xs text-white/30">
