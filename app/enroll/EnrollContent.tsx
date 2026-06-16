@@ -37,12 +37,14 @@ const CLASSES: ClassInfo[] = [
     emoji: '🎤',
     ageRange: 'All Ages',
     minAge: 2, maxAge: 99,
-    schedule: '20 minutes · By Appointment',
-    days: 'Schedule after sign-up',
+    schedule: new Date().getMonth() === 5 ? '20 min · 8:00–9:40 AM & 2:20–4:00 PM' : '20 min · By Appointment (Fri–Sun)',
+    days: new Date().getMonth() === 5 ? 'Mon – Thu' : 'Fri – Sun · By Appointment',
     julyPrice: 0, augustSinglePrice: 0, augustBundlePrice: 0,
     augustBundleSave: '',
     julyStripeLink: '', augustSingleStripeLink: '', augustBundleStripeLink: '', weeklyStripeLink: '',
-    description: 'One free 20-minute private lesson — voice, piano, guitar, or drums. One per student, no commitment!',
+    description: new Date().getMonth() === 5
+      ? 'One free 20-minute private lesson — voice, piano, guitar, or drums. Mon–Thu, pick your slot!'
+      : 'One free 20-minute private lesson — voice, piano, guitar, or drums. By appointment, Fri–Sun. We\'ll confirm your time!',
     isPrivateTrial: true,
   },
   {
@@ -200,6 +202,24 @@ export default function EnrollContent() {
   // Private lesson day + time
   const [preferredDay, setPreferredDay] = useState('')
   const [preferredTime, setPreferredTime] = useState('')
+
+  // Determine if we're in June (specific time slots Mon-Thu) or after June (by appointment Fri-Sun)
+  const isJune = new Date().getMonth() === 5 // JS months are 0-indexed, 5 = June
+
+  const JUNE_PRIVATE_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
+  const JUNE_PRIVATE_TIMES = [
+    { value: '8:00 AM', label: '8:00 AM', block: 'morning' },
+    { value: '8:20 AM', label: '8:20 AM', block: 'morning' },
+    { value: '8:40 AM', label: '8:40 AM', block: 'morning' },
+    { value: '9:00 AM', label: '9:00 AM', block: 'morning' },
+    { value: '9:20 AM', label: '9:20 AM', block: 'morning' },
+    { value: '2:20 PM', label: '2:20 PM', block: 'afternoon' },
+    { value: '2:40 PM', label: '2:40 PM', block: 'afternoon' },
+    { value: '3:00 PM', label: '3:00 PM', block: 'afternoon' },
+    { value: '3:20 PM', label: '3:20 PM', block: 'afternoon' },
+    { value: '3:40 PM', label: '3:40 PM', block: 'afternoon' },
+  ]
+  const AFTER_JUNE_DAYS = ['Friday', 'Saturday', 'Sunday']
 
   // Waiver & health info
   const [allergies, setAllergies] = useState('')
@@ -359,8 +379,8 @@ export default function EnrollContent() {
           phone,
           studentName,
           studentAge,
-          source: selectedClass.isPrivateTrial ? 'free-private-lesson' : isFree ? 'discovery-camp-enrollment' : 'enrollment-page',
-          status: isFree ? 'New Lead' : 'New Lead',
+          source: selectedClass.isPrivateTrial ? (isJune ? 'free-private-lesson' : 'private-lesson-lead') : isFree ? 'discovery-camp-enrollment' : 'enrollment-page',
+          status: selectedClass.isPrivateTrial && !isJune ? 'Private Lesson Lead' : 'New Lead',
           interests: selectedClass.isPrivateTrial ? discoveryTimeSlot : selectedClass.name,
           ...(selectedClass.isPrivateTrial ? { timeSlot: preferredDay && preferredTime ? `${preferredDay} ${preferredTime}` : 'By Appointment', instrument: discoveryTimeSlot, preferredDay, preferredTime } : {}),
           allergies: allergies || 'None',
@@ -684,54 +704,121 @@ export default function EnrollContent() {
                 {/* ─── Preferred Day & Time ─── */}
                 {discoveryTimeSlot && (
                   <>
-                    <h3 className="text-lg font-bold mb-4 text-blue-400 mt-6">📅 When would you like your lesson?</h3>
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
-                        <button key={day} onClick={() => setPreferredDay(day)}
-                          className={`p-3 rounded-xl text-center transition-all ${preferredDay === day ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
-                          style={preferredDay === day ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
-                          <p className="font-semibold text-sm">{day}</p>
-                          {preferredDay === day && <span className="text-blue-400 text-xs">✓</span>}
-                        </button>
-                      ))}
-                    </div>
+                    {isJune ? (
+                      /* ── JUNE: Mon–Thu, specific 20-min slots ── */
+                      <>
+                        <h3 className="text-lg font-bold mb-2 text-blue-400 mt-6">📅 Pick Your Day</h3>
+                        <p className="text-white/50 text-sm mb-4">Free 20-minute private lessons · Monday – Thursday</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                          {JUNE_PRIVATE_DAYS.map(day => (
+                            <button key={day} onClick={() => { setPreferredDay(day); setPreferredTime('') }}
+                              className={`p-3 rounded-xl text-center transition-all ${preferredDay === day ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
+                              style={preferredDay === day ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
+                              <p className="font-semibold text-sm">{day}</p>
+                              {preferredDay === day && <span className="text-blue-400 text-xs">✓</span>}
+                            </button>
+                          ))}
+                        </div>
 
-                    <h4 className="font-semibold text-sm text-white/60 mb-3">Preferred Time</h4>
-                    <div className="grid grid-cols-3 gap-3 mb-6">
-                      {[
-                        { value: '9:00 AM', label: '9:00 AM' },
-                        { value: '10:00 AM', label: '10:00 AM' },
-                        { value: '11:00 AM', label: '11:00 AM' },
-                        { value: '12:00 PM', label: '12:00 PM' },
-                        { value: '1:00 PM', label: '1:00 PM' },
-                        { value: '2:00 PM', label: '2:00 PM' },
-                        { value: '3:00 PM', label: '3:00 PM' },
-                        { value: '4:00 PM', label: '4:00 PM' },
-                        { value: '5:00 PM', label: '5:00 PM' },
-                      ].map(t => (
-                        <button key={t.value} onClick={() => setPreferredTime(t.value)}
-                          className={`p-3 rounded-xl text-center transition-all ${preferredTime === t.value ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
-                          style={preferredTime === t.value ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
-                          <p className="font-semibold text-sm">{t.label}</p>
-                          {preferredTime === t.value && <span className="text-blue-400 text-xs">✓</span>}
-                        </button>
-                      ))}
-                    </div>
+                        {preferredDay && (
+                          <>
+                            <h4 className="font-semibold text-sm text-white/60 mb-3">🕐 Pick Your Time Slot</h4>
 
-                    {preferredDay && preferredTime && (
-                      <div className="p-3 rounded-xl mb-6" style={{ background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)' }}>
-                        <p className="text-sm text-white/60">Your preferred time:</p>
-                        <span className="text-blue-400 font-semibold">{preferredDay} at {preferredTime}</span>
-                      </div>
+                            <p className="text-xs text-blue-400/70 font-medium mb-2">☀️ Morning (8:00 – 9:40 AM)</p>
+                            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4">
+                              {JUNE_PRIVATE_TIMES.filter(t => t.block === 'morning').map(t => (
+                                <button key={t.value} onClick={() => setPreferredTime(t.value)}
+                                  className={`p-3 rounded-xl text-center transition-all ${preferredTime === t.value ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
+                                  style={preferredTime === t.value ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
+                                  <p className="font-semibold text-sm">{t.label}</p>
+                                  {preferredTime === t.value && <span className="text-blue-400 text-xs">✓</span>}
+                                </button>
+                              ))}
+                            </div>
+
+                            <p className="text-xs text-blue-400/70 font-medium mb-2">🌤️ Afternoon (2:20 – 4:00 PM)</p>
+                            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-6">
+                              {JUNE_PRIVATE_TIMES.filter(t => t.block === 'afternoon').map(t => (
+                                <button key={t.value} onClick={() => setPreferredTime(t.value)}
+                                  className={`p-3 rounded-xl text-center transition-all ${preferredTime === t.value ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
+                                  style={preferredTime === t.value ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
+                                  <p className="font-semibold text-sm">{t.label}</p>
+                                  {preferredTime === t.value && <span className="text-blue-400 text-xs">✓</span>}
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        )}
+
+                        {preferredDay && preferredTime && (
+                          <div className="p-3 rounded-xl mb-6" style={{ background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)' }}>
+                            <p className="text-sm text-white/60">Your lesson:</p>
+                            <span className="text-blue-400 font-semibold">{preferredDay} at {preferredTime} · 20 minutes</span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      /* ── AFTER JUNE: Fri–Sun, by appointment ── */
+                      <>
+                        <h3 className="text-lg font-bold mb-2 text-blue-400 mt-6">📅 Preferred Day & Time</h3>
+                        <div className="p-4 rounded-xl mb-4" style={{ background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.15)' }}>
+                          <p className="text-sm text-white/70">🗓️ Free private lessons are available <span className="text-blue-400 font-semibold">Friday – Sunday by appointment</span>. Pick the day and time that works best for you and we&apos;ll email you to confirm!</p>
+                        </div>
+
+                        <h4 className="font-semibold text-sm text-white/60 mb-3">Which day works best?</h4>
+                        <div className="grid grid-cols-3 gap-3 mb-6">
+                          {AFTER_JUNE_DAYS.map(day => (
+                            <button key={day} onClick={() => setPreferredDay(day)}
+                              className={`p-4 rounded-xl text-center transition-all ${preferredDay === day ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
+                              style={preferredDay === day ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
+                              <p className="font-semibold">{day}</p>
+                              {preferredDay === day && <span className="text-blue-400 text-xs">✓</span>}
+                            </button>
+                          ))}
+                        </div>
+
+                        <h4 className="font-semibold text-sm text-white/60 mb-3">What time works best?</h4>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-6">
+                          {[
+                            { value: '9:00 AM', label: '9:00 AM' },
+                            { value: '10:00 AM', label: '10:00 AM' },
+                            { value: '11:00 AM', label: '11:00 AM' },
+                            { value: '12:00 PM', label: '12:00 PM' },
+                            { value: '1:00 PM', label: '1:00 PM' },
+                            { value: '2:00 PM', label: '2:00 PM' },
+                            { value: '3:00 PM', label: '3:00 PM' },
+                            { value: '4:00 PM', label: '4:00 PM' },
+                          ].map(t => (
+                            <button key={t.value} onClick={() => setPreferredTime(t.value)}
+                              className={`p-3 rounded-xl text-center transition-all ${preferredTime === t.value ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
+                              style={preferredTime === t.value ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
+                              <p className="font-semibold text-sm">{t.label}</p>
+                              {preferredTime === t.value && <span className="text-blue-400 text-xs">✓</span>}
+                            </button>
+                          ))}
+                        </div>
+
+                        {preferredDay && preferredTime && (
+                          <div className="p-3 rounded-xl mb-6" style={{ background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)' }}>
+                            <p className="text-sm text-white/60">Your preferred time:</p>
+                            <span className="text-blue-400 font-semibold">{preferredDay} at {preferredTime}</span>
+                            <p className="text-xs text-white/40 mt-1">We&apos;ll email you to confirm this time!</p>
+                          </div>
+                        )}
+                      </>
                     )}
                   </>
                 )}
 
                 <button onClick={goToForm}
-                  disabled={!discoveryTimeSlot}
+                  disabled={!discoveryTimeSlot || (isJune && (!preferredDay || !preferredTime))}
                   className="w-full py-4 rounded-full font-bold text-lg transition hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{ background: 'linear-gradient(90deg, #60a5fa, #3b82f6)', color: '#0D0118' }}>
-                  {!discoveryTimeSlot ? 'Pick an instrument to continue' : 'Continue to Your Info →'}
+                  {!discoveryTimeSlot
+                    ? 'Pick an instrument to continue'
+                    : isJune && (!preferredDay || !preferredTime)
+                    ? 'Pick a day & time slot to continue'
+                    : 'Continue to Your Info →'}
                 </button>
               </>
             )}
@@ -882,7 +969,9 @@ export default function EnrollContent() {
               <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Student & Parent Info</h2>
               <p className="text-white/50 mb-6">
                 {selectedClass.isPrivateTrial
-                  ? "Fill in the details below to book your free 20-minute private lesson. One per student."
+                  ? (isJune
+                    ? "Fill in the details below to book your free 20-minute private lesson. One per student."
+                    : "Fill in the details below to request your free private lesson. We'll email you to confirm your day and time!")
                   : selectedClass.isJuneOnly
                   ? "Fill in the details below to enroll in free trial classes."
                   : "Fill in the details below, then you'll be taken to the secure payment page."}
@@ -958,10 +1047,13 @@ export default function EnrollContent() {
                     <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>{selectedClass.days}, {selectedClass.schedule}</span></div>
                   )}
                   {selectedClass.isPrivateTrial && preferredDay && preferredTime && (
-                    <div className="flex justify-between"><span className="text-white/50">Preferred Time:</span><span>{preferredDay} at {preferredTime}</span></div>
+                    <div className="flex justify-between">
+                      <span className="text-white/50">{isJune ? 'Lesson Time:' : 'Preferred Time:'}</span>
+                      <span>{preferredDay} at {preferredTime}{!isJune ? ' (to be confirmed)' : ''}</span>
+                    </div>
                   )}
                   {selectedClass.isPrivateTrial && (!preferredDay || !preferredTime) && (
-                    <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>By appointment — we&apos;ll contact you!</span></div>
+                    <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>{isJune ? 'Pick a day & time above' : 'By appointment — we\'ll email to confirm!'}</span></div>
                   )}
                   <div className="flex justify-between">
                     <span className="text-white/50">Price:</span>
@@ -1027,7 +1119,11 @@ export default function EnrollContent() {
                 <p className="text-center text-white/30 text-xs mt-3">You&apos;ll be redirected to Stripe for secure payment</p>
               )}
               {selectedClass.isPrivateTrial && (
-                <p className="text-center text-white/30 text-xs mt-3">One free private lesson per student · We&apos;ll call to schedule your time!</p>
+                <p className="text-center text-white/30 text-xs mt-3">
+                  {isJune
+                    ? 'One free 20-minute private lesson per student · Mon–Thu'
+                    : 'One free private lesson per student · We\'ll email to confirm your appointment!'}
+                </p>
               )}
             </form>
           </>
