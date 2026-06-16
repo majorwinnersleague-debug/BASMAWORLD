@@ -274,7 +274,7 @@ export default function EnrollContent() {
 
   const paidWeeks = month === 'july' ? JULY_WEEKS : AUGUST_WEEKS
 
-  // Auto-select class and month from URL query params
+  // Auto-select class and month from URL query params + pre-fill form fields
   useEffect(() => {
     const classParam = searchParams.get('class')
     const monthParam = searchParams.get('month')
@@ -291,6 +291,18 @@ export default function EnrollContent() {
         setStep('details')
       }
     }
+
+    // Pre-fill form fields from URL (from /start funnel)
+    const sn = searchParams.get('studentName')
+    const sa = searchParams.get('studentAge')
+    const pn = searchParams.get('parentName')
+    const em = searchParams.get('email')
+    const ph = searchParams.get('phone')
+    if (sn) setStudentName(sn)
+    if (sa) { setStudentAge(sa); setAgeFilter(sa) }
+    if (pn) setParentName(pn)
+    if (em) setEmail(em)
+    if (ph) setPhone(ph)
   }, [searchParams])
 
   const age = ageFilter ? parseInt(ageFilter) : null
