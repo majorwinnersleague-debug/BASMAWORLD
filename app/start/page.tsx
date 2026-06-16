@@ -304,7 +304,7 @@ export default function StartPage() {
                         ? 'ring-2 font-semibold'
                         : 'bg-white/5 border border-white/10 hover:border-white/20'
                     }`}
-                    style={interests.includes(opt.value) ? { background: 'rgba(240,200,80,0.12)', borderColor: '#F0C850', ringColor: '#F0C850', color: '#F0C850' } : { color: 'rgba(255,255,255,0.7)' }}
+                    style={interests.includes(opt.value) ? { background: 'rgba(240,200,80,0.12)', borderColor: '#F0C850', color: '#F0C850' } : { color: 'rgba(255,255,255,0.7)' }}
                   >
                     <span>{opt.icon}</span> {opt.value === 'everything' ? 'All of the above!' : opt.value.charAt(0).toUpperCase() + opt.value.slice(1)}
                   </button>

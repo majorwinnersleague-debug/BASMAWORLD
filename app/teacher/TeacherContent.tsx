@@ -148,6 +148,7 @@ export default function TeacherContent() {
   const [checkingIn, setCheckingIn] = useState<string | null>(null)
   const [selectedStudent, setSelectedStudent] = useState<Registration | null>(null)
   const [checkInSearch, setCheckInSearch] = useState('')
+  const [statsFilter, setStatsFilter] = useState<'all' | 'complete' | 'incomplete' | 'checkedin'>('all')
 
   // Calendar
   const [calMonth, setCalMonth] = useState(new Date().getMonth())
@@ -325,17 +326,32 @@ export default function TeacherContent() {
     return groups
   }, [registrations])
 
-  // Check-in filtered list
+  // Check-in filtered list (with stats filter + search)
   const checkInStudents = useMemo(() => {
-    if (!checkInSearch.trim()) return registrations
-    const q = checkInSearch.toLowerCase()
-    return registrations.filter(s =>
-      safe(s.studentName).toLowerCase().includes(q) ||
-      safe(s.parentName).toLowerCase().includes(q) ||
-      safe(s.email).toLowerCase().includes(q) ||
-      safe(s.phone).includes(q)
-    )
-  }, [registrations, checkInSearch])
+    let filtered = registrations
+
+    // Apply stats filter first
+    if (statsFilter === 'complete') {
+      filtered = filtered.filter(s => s.isRegistrationComplete)
+    } else if (statsFilter === 'incomplete') {
+      filtered = filtered.filter(s => !s.isRegistrationComplete)
+    } else if (statsFilter === 'checkedin') {
+      filtered = filtered.filter(s => !!checkedInToday[s.id])
+    }
+
+    // Then apply search
+    if (checkInSearch.trim()) {
+      const q = checkInSearch.toLowerCase()
+      filtered = filtered.filter(s =>
+        safe(s.studentName).toLowerCase().includes(q) ||
+        safe(s.parentName).toLowerCase().includes(q) ||
+        safe(s.email).toLowerCase().includes(q) ||
+        safe(s.phone).includes(q)
+      )
+    }
+
+    return filtered
+  }, [registrations, checkInSearch, statsFilter, checkedInToday])
 
   const stats = useMemo(() => {
     const uniqueStudents = new Set(registrations.map(r => safe(r.studentName).trim().toLowerCase()).filter(Boolean))
@@ -429,23 +445,45 @@ export default function TeacherContent() {
           <p className="text-white/30 text-sm">Summer 2026 · 6787 W Tropicana Ave Suite 260 · Mon–Thu</p>
         </div>
 
-        {/* Stats */}
+        {/* Stats — clickable to filter */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
           {[
-            { label: 'Total Sign-ups', value: stats.total, emoji: '📋' },
-            { label: 'Students', value: stats.uniqueStudents, emoji: '👧' },
-            { label: 'Families', value: stats.uniqueParents, emoji: '👨‍👩‍👧' },
-            { label: 'Complete', value: stats.complete, emoji: '✅' },
-            { label: 'Incomplete', value: stats.incomplete, emoji: '⏳' },
-            { label: 'Checked In', value: stats.checkedIn, emoji: '🟢' },
-          ].map(s => (
-            <div key={s.label} className="p-4 rounded-xl text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <div className="text-2xl mb-1">{s.emoji}</div>
-              <div className="text-2xl font-bold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s.value}</div>
-              <div className="text-xs text-white/30 mt-1">{s.label}</div>
-            </div>
-          ))}
+            { label: 'Total Sign-ups', value: stats.total, emoji: '📋', filter: 'all' as const },
+            { label: 'Students', value: stats.uniqueStudents, emoji: '👧', filter: 'all' as const },
+            { label: 'Families', value: stats.uniqueParents, emoji: '👨‍👩‍👧', filter: 'all' as const },
+            { label: 'Complete', value: stats.complete, emoji: '✅', filter: 'complete' as const },
+            { label: 'Incomplete', value: stats.incomplete, emoji: '⏳', filter: 'incomplete' as const },
+            { label: 'Checked In', value: stats.checkedIn, emoji: '🟢', filter: 'checkedin' as const },
+          ].map(s => {
+            const isActive = statsFilter === s.filter && s.filter !== 'all'
+            return (
+              <button key={s.label}
+                onClick={() => { setStatsFilter(prev => prev === s.filter ? 'all' : s.filter); setTab('checkin') }}
+                className={`p-4 rounded-xl text-center transition cursor-pointer hover:scale-[1.03] ${s.filter !== 'all' ? 'hover:ring-1' : ''}`}
+                style={{
+                  background: isActive ? 'rgba(240,200,80,0.08)' : 'rgba(255,255,255,0.02)',
+                  border: isActive ? '2px solid rgba(240,200,80,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                }}
+              >
+                <div className="text-2xl mb-1">{s.emoji}</div>
+                <div className="text-2xl font-bold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s.value}</div>
+                <div className="text-xs text-white/30 mt-1">{s.label}</div>
+                {s.filter !== 'all' && <div className="text-[10px] mt-1" style={{ color: isActive ? '#F0C850' : 'rgba(255,255,255,0.15)' }}>{isActive ? '✕ Clear filter' : 'Tap to filter'}</div>}
+              </button>
+            )
+          })}
         </div>
+        {/* Active filter indicator */}
+        {statsFilter !== 'all' && (
+          <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg" style={{ background: 'rgba(240,200,80,0.06)', border: '1px solid rgba(240,200,80,0.15)' }}>
+            <span className="text-sm" style={{ color: '#F0C850' }}>
+              Showing: {statsFilter === 'complete' ? '✅ Complete registrations' : statsFilter === 'incomplete' ? '⏳ Incomplete registrations' : '🟢 Checked in today'}
+            </span>
+            <button onClick={() => setStatsFilter('all')} className="ml-auto text-xs px-2 py-1 rounded-lg hover:bg-white/5 transition" style={{ color: '#F0C850' }}>
+              Clear ✕
+            </button>
+          </div>
+        )}
 
         {/* Upcoming Birthdays */}
         {upcomingBirthdays.length > 0 && (
