@@ -197,6 +197,16 @@ export default function EnrollContent() {
   const [discoveryWeek, setDiscoveryWeek] = useState('')
   const [discoveryTimeSlot, setDiscoveryTimeSlot] = useState('')
 
+  // Private lesson day + time
+  const [preferredDay, setPreferredDay] = useState('')
+  const [preferredTime, setPreferredTime] = useState('')
+
+  // Waiver & health info
+  const [allergies, setAllergies] = useState('')
+  const [emergencyName, setEmergencyName] = useState('')
+  const [emergencyPhone, setEmergencyPhone] = useState('')
+  const [liabilityAgreed, setLiabilityAgreed] = useState(false)
+
   // Paid class week selection
   const [paidWeek, setPaidWeek] = useState('')
 
@@ -352,7 +362,11 @@ export default function EnrollContent() {
           source: selectedClass.isPrivateTrial ? 'free-private-lesson' : isFree ? 'discovery-camp-enrollment' : 'enrollment-page',
           status: isFree ? 'New Lead' : 'New Lead',
           interests: selectedClass.isPrivateTrial ? discoveryTimeSlot : selectedClass.name,
-          ...(selectedClass.isPrivateTrial ? { timeSlot: 'By Appointment', instrument: discoveryTimeSlot } : {}),
+          ...(selectedClass.isPrivateTrial ? { timeSlot: preferredDay && preferredTime ? `${preferredDay} ${preferredTime}` : 'By Appointment', instrument: discoveryTimeSlot, preferredDay, preferredTime } : {}),
+          allergies: allergies || 'None',
+          emergencyContactName: emergencyName,
+          emergencyContactPhone: emergencyPhone,
+          liabilityAgreed,
           ...(isFree && !selectedClass.isPrivateTrial && discoveryWeek ? { discoveryWeek } : {}),
           ...(isFree && !selectedClass.isPrivateTrial && discoveryTimeSlot ? { timeSlot: discoveryTimeSlot } : {}),
           ...(!isFree && paidWeek ? { discoveryWeek: paidWeek } : {}),
@@ -667,6 +681,52 @@ export default function EnrollContent() {
                   ))}
                 </div>
 
+                {/* ─── Preferred Day & Time ─── */}
+                {discoveryTimeSlot && (
+                  <>
+                    <h3 className="text-lg font-bold mb-4 text-blue-400 mt-6">📅 When would you like your lesson?</h3>
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
+                        <button key={day} onClick={() => setPreferredDay(day)}
+                          className={`p-3 rounded-xl text-center transition-all ${preferredDay === day ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
+                          style={preferredDay === day ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
+                          <p className="font-semibold text-sm">{day}</p>
+                          {preferredDay === day && <span className="text-blue-400 text-xs">✓</span>}
+                        </button>
+                      ))}
+                    </div>
+
+                    <h4 className="font-semibold text-sm text-white/60 mb-3">Preferred Time</h4>
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                      {[
+                        { value: '9:00 AM', label: '9:00 AM' },
+                        { value: '10:00 AM', label: '10:00 AM' },
+                        { value: '11:00 AM', label: '11:00 AM' },
+                        { value: '12:00 PM', label: '12:00 PM' },
+                        { value: '1:00 PM', label: '1:00 PM' },
+                        { value: '2:00 PM', label: '2:00 PM' },
+                        { value: '3:00 PM', label: '3:00 PM' },
+                        { value: '4:00 PM', label: '4:00 PM' },
+                        { value: '5:00 PM', label: '5:00 PM' },
+                      ].map(t => (
+                        <button key={t.value} onClick={() => setPreferredTime(t.value)}
+                          className={`p-3 rounded-xl text-center transition-all ${preferredTime === t.value ? 'ring-2 ring-blue-400 scale-[1.02]' : 'bg-white/5 border border-white/10 hover:border-blue-500/30'}`}
+                          style={preferredTime === t.value ? { background: 'rgba(96,165,250,0.1)', border: '2px solid rgba(96,165,250,0.5)' } : {}}>
+                          <p className="font-semibold text-sm">{t.label}</p>
+                          {preferredTime === t.value && <span className="text-blue-400 text-xs">✓</span>}
+                        </button>
+                      ))}
+                    </div>
+
+                    {preferredDay && preferredTime && (
+                      <div className="p-3 rounded-xl mb-6" style={{ background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)' }}>
+                        <p className="text-sm text-white/60">Your preferred time:</p>
+                        <span className="text-blue-400 font-semibold">{preferredDay} at {preferredTime}</span>
+                      </div>
+                    )}
+                  </>
+                )}
+
                 <button onClick={goToForm}
                   disabled={!discoveryTimeSlot}
                   className="w-full py-4 rounded-full font-bold text-lg transition hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed"
@@ -897,7 +957,10 @@ export default function EnrollContent() {
                   {!selectedClass.isJuneOnly && !selectedClass.isPrivateTrial && (
                     <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>{selectedClass.days}, {selectedClass.schedule}</span></div>
                   )}
-                  {selectedClass.isPrivateTrial && (
+                  {selectedClass.isPrivateTrial && preferredDay && preferredTime && (
+                    <div className="flex justify-between"><span className="text-white/50">Preferred Time:</span><span>{preferredDay} at {preferredTime}</span></div>
+                  )}
+                  {selectedClass.isPrivateTrial && (!preferredDay || !preferredTime) && (
                     <div className="flex justify-between"><span className="text-white/50">Schedule:</span><span>By appointment — we&apos;ll contact you!</span></div>
                   )}
                   <div className="flex justify-between">
@@ -910,10 +973,55 @@ export default function EnrollContent() {
                 </div>
               </div>
 
-              <button type="submit" disabled={loading}
+              {/* ─── Health & Safety ─── */}
+              <div className="p-5 rounded-xl mb-6" style={{ background: 'rgba(45,27,78,0.4)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <h4 className="font-bold mb-4 text-white">🏥 Health & Safety Info</h4>
+                <div className="mb-4">
+                  <label className="block text-sm text-white/60 mb-2 font-medium">Allergies (if any)</label>
+                  <input value={allergies} onChange={e => setAllergies(e.target.value)}
+                    placeholder="e.g. Peanuts, Latex, None"
+                    className="w-full px-4 py-3 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                    style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.2)' }} />
+                </div>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm text-white/60 mb-2 font-medium">Emergency Contact Name *</label>
+                    <input required value={emergencyName} onChange={e => setEmergencyName(e.target.value)}
+                      placeholder="Contact name"
+                      className="w-full px-4 py-3 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.2)' }} />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-white/60 mb-2 font-medium">Emergency Contact Phone *</label>
+                    <input required type="tel" value={emergencyPhone} onChange={e => setEmergencyPhone(e.target.value)}
+                      placeholder="(555) 123-4567"
+                      className="w-full px-4 py-3 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      style={{ background: '#ffffff', color: '#1a1a2e', border: '2px solid rgba(240,200,80,0.2)' }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* ─── Liability Waiver ─── */}
+              <div className="p-5 rounded-xl mb-6" style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)' }}>
+                <h4 className="font-bold mb-3 text-white">📋 Liability Waiver *</h4>
+                <div className="text-sm text-white/60 mb-4 space-y-2 max-h-32 overflow-y-auto pr-2">
+                  <p>I, the undersigned parent/guardian, hereby grant permission for my child to participate in BASMA — Become A Singer Music Academy activities.</p>
+                  <p>I understand that music lessons and group activities carry inherent risks. I release BASMA, its instructors, and staff from any liability for injuries sustained during academy activities.</p>
+                  <p>I confirm that the health and emergency contact information provided is accurate and up to date. I authorize BASMA staff to seek emergency medical treatment for my child if I cannot be reached.</p>
+                </div>
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" checked={liabilityAgreed} onChange={e => setLiabilityAgreed(e.target.checked)}
+                    className="mt-1 w-5 h-5 rounded accent-yellow-400" />
+                  <span className="text-sm text-white/80 group-hover:text-white transition">
+                    I have read and agree to the liability waiver. I confirm all information provided is accurate. <span className="text-red-400">*</span>
+                  </span>
+                </label>
+              </div>
+
+              <button type="submit" disabled={loading || !liabilityAgreed}
                 className="w-full py-4 rounded-full font-bold text-lg transition hover:opacity-90 disabled:opacity-50"
                 style={{ background: selectedClass.isPrivateTrial ? 'linear-gradient(90deg, #60a5fa, #3b82f6)' : selectedClass.isJuneOnly ? 'linear-gradient(90deg, #4ade80, #22c55e)' : 'linear-gradient(90deg, #F0C850, #FFE07A)', color: '#0D0118' }}>
-                {loading ? 'Processing...' : selectedClass.isPrivateTrial ? 'Book My Free Private Lesson 🎤' : selectedClass.isJuneOnly ? 'Enroll — It\'s Free! 🎶' : `Proceed to Payment · ${getPriceLabel()} →`}
+                {loading ? 'Processing...' : !liabilityAgreed ? '⬆ Please agree to the waiver above' : selectedClass.isPrivateTrial ? 'Book My Free Private Lesson 🎤' : selectedClass.isJuneOnly ? 'Enroll — It\'s Free! 🎶' : `Proceed to Payment · ${getPriceLabel()} →`}
               </button>
               {!selectedClass.isJuneOnly && !selectedClass.isPrivateTrial && (
                 <p className="text-center text-white/30 text-xs mt-3">You&apos;ll be redirected to Stripe for secure payment</p>

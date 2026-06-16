@@ -6,6 +6,8 @@ const LEADS_TABLE = "tbl1diIEhM9MtKViE"; // BASMA Marketing Leads
 const ENROLLMENTS_TABLE = "tblelNWN2hed8OclX"; // Enrollments (waivers/medical)
 const PAYMENTS_TABLE = "tblfTQQEciBFqovYU"; // Stripe Payments
 
+const SUMMER_TABLE = "tblfOnRDkfgZoCF9X"; // Summer 2026 Registrations
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
 // basmaworld.com not yet verified in Resend — use their default sender until DNS records are added
 const FROM_EMAIL = "BASMA Academy <onboarding@resend.dev>";
@@ -254,10 +256,11 @@ export async function GET(req: Request) {
     // Teacher portal: authenticated with code 1515 + source=all → return all records
     const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || "1515";
     if (source === "all" && teacherCode === TEACHER_CODE) {
-      const [leadRecords, enrollmentRecords, paymentRecords] = await Promise.all([
+      const [leadRecords, enrollmentRecords, paymentRecords, summerRecords] = await Promise.all([
         fetchAllRecords(LEADS_TABLE),
         fetchAllRecords(ENROLLMENTS_TABLE),
         fetchAllRecords(PAYMENTS_TABLE),
+        fetchAllRecords(SUMMER_TABLE),
       ]);
 
       const enrollmentsByEmail: Record<string, AirtableRecord[]> = {};
@@ -278,17 +281,34 @@ export async function GET(req: Request) {
         }
       }
 
+      // Index summer records by student+email key for enrichment
+      const summerByKey: Record<string, Record<string, any>> = {};
+      for (const s of summerRecords) {
+        const sName = (s.fields["Student Name"] || "").toLowerCase().trim();
+        const sEmail = (s.fields["Parent Email"] || "").toLowerCase().trim();
+        if (sName) summerByKey[`${sName}|${sEmail}`] = s.fields;
+        if (sName) summerByKey[sName] = s.fields; // fallback by name only
+      }
+
       const registrations = leadRecords.map((r) => {
         const f = r.fields;
         const parsed = parseStudentInfo(f.Message || "");
         const em = (f.Email || "").toLowerCase().trim();
         const src = (f.Source || "").toLowerCase();
+        const studentName = f["Student Name"] || parsed?.studentName || "";
+
+        // Look up enriched data from Summer 2026 Registrations
+        const summerData = summerByKey[`${studentName.toLowerCase().trim()}|${em}`]
+          || summerByKey[studentName.toLowerCase().trim()]
+          || null;
 
         // Determine payment status
         const hasPaid = !!(paymentsByEmail[em] && paymentsByEmail[em].length > 0);
         const isFreeSource = src.includes("discovery") || src.includes("free");
         let paymentStatus: string;
         if (hasPaid) {
+          paymentStatus = "Paid";
+        } else if (summerData?.["Payment Status"] === "Paid") {
           paymentStatus = "Paid";
         } else if (isFreeSource) {
           paymentStatus = "Free";
@@ -302,12 +322,30 @@ export async function GET(req: Request) {
           ? (enrollments[0].fields["Class"] || enrollments[0].fields["Class Name"] || enrollments[0].fields["Selected Class"] || "")
           : "";
 
+        // Determine waiver status from multiple sources
+        const waiverForm = f["Waiver Form"] || "";
+        const liabilityAgreed = summerData?.["Liability Agreed"] || "";
+        const hasWaiver = waiverForm.toLowerCase() === "complete" || liabilityAgreed === "Yes" || enrollments.length > 0;
+
+        // Check-in data from Notes field
+        const notes = summerData?.["Notes"] || f["Notes"] || "";
+        const checkInMatches = notes.match(/Checked in: .+/g) || [];
+        const lastCheckIn = checkInMatches.length > 0 ? checkInMatches[checkInMatches.length - 1] : null;
+
+        // Determine if registration is complete
+        const regStatus = f.Status || "Unknown";
+        const regForm = f["Registration Form"] || "";
+        const isRegistrationComplete = regStatus.toLowerCase() !== "incomplete"
+          && regForm.toLowerCase() !== "partial"
+          && regForm.toLowerCase() !== "not started"
+          && hasWaiver;
+
         return {
           id: r.id,
           parentName: f["Full Name"] || "",
           email: f.Email || "",
           phone: f.Phone || "",
-          studentName: f["Student Name"] || parsed?.studentName || "",
+          studentName,
           studentAge: f["Student Age"] || parsed?.studentAge || "",
           interests: f.Interests || "",
           status: f.Status || "Unknown",
@@ -320,8 +358,17 @@ export async function GET(req: Request) {
           timeSlot: f["Time Slot"] || "",
           paymentStatus,
           enrolledClass: enrolledClass as string,
-          hasWaiver: enrollments.length > 0,
+          hasWaiver,
           createdAt: r.createdTime,
+          // Enriched fields from Summer 2026 table
+          allergies: summerData?.["Allergies"] || "",
+          medicalConditions: summerData?.["Medical Conditions"] || "",
+          emergencyContactName: summerData?.["Emergency Contact Name"] || "",
+          emergencyContactPhone: summerData?.["Emergency Contact Phone"] || "",
+          liabilityAgreed: liabilityAgreed === "Yes",
+          waiverFormStatus: waiverForm || (liabilityAgreed === "Yes" ? "Complete" : "Not Started"),
+          lastCheckIn: lastCheckIn || null,
+          isRegistrationComplete,
         };
       });
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -27,10 +27,19 @@ interface Registration {
   enrolledClass: string
   hasWaiver: boolean
   createdAt: string
+  // Enriched fields
+  allergies: string
+  medicalConditions: string
+  emergencyContactName: string
+  emergencyContactPhone: string
+  liabilityAgreed: boolean
+  waiverFormStatus: string
+  lastCheckIn: string | null
+  isRegistrationComplete: boolean
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   SCHEDULE DATA — correct times per academy schedule
+   SCHEDULE DATA
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const SCHEDULE_BLOCKS = [
@@ -43,7 +52,6 @@ const SCHEDULE_BLOCKS = [
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
 
-/* Pre-set closures */
 const DEFAULT_CLOSURES: { date: string; note: string }[] = [
   { date: '2026-07-03', note: 'Independence Day Weekend' },
   { date: '2026-07-04', note: 'Independence Day 🇺🇸' },
@@ -89,18 +97,15 @@ function classifyRegistration(r: Registration): string {
 function getMonthDays(year: number, month: number) {
   const firstDay = new Date(year, month, 1)
   const lastDay = new Date(year, month + 1, 0)
-  const startPad = firstDay.getDay() // 0=Sun
+  const startPad = firstDay.getDay()
   const days: { date: Date; inMonth: boolean }[] = []
-  // Pad start
   for (let i = startPad - 1; i >= 0; i--) {
     const d = new Date(year, month, -i)
     days.push({ date: d, inMonth: false })
   }
-  // Month days
   for (let d = 1; d <= lastDay.getDate(); d++) {
     days.push({ date: new Date(year, month, d), inMonth: true })
   }
-  // Pad end to 42 (6 rows)
   while (days.length < 42) {
     const d = new Date(year, month + 1, days.length - startPad - lastDay.getDate() + 1)
     days.push({ date: d, inMonth: false })
@@ -114,7 +119,7 @@ function dateKey(d: Date): string {
 
 function isClassDay(d: Date): boolean {
   const dow = d.getDay()
-  return dow >= 1 && dow <= 4 // Mon-Thu
+  return dow >= 1 && dow <= 4
 }
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -125,7 +130,7 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-type TabView = 'roster' | 'discovery' | 'calendar' | 'closures'
+type TabView = 'checkin' | 'roster' | 'discovery' | 'calendar' | 'closures'
 
 export default function TeacherContent() {
   const [authenticated, setAuthenticated] = useState(false)
@@ -133,12 +138,18 @@ export default function TeacherContent() {
   const [codeError, setCodeError] = useState(false)
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState<TabView>('roster')
+  const [tab, setTab] = useState<TabView>('checkin')
   const [expandedClass, setExpandedClass] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Calendar month navigation
-  const [calMonth, setCalMonth] = useState(new Date().getMonth()) // 0-indexed
+  // Check-in state
+  const [checkedInToday, setCheckedInToday] = useState<Record<string, string>>({})
+  const [checkingIn, setCheckingIn] = useState<string | null>(null)
+  const [selectedStudent, setSelectedStudent] = useState<Registration | null>(null)
+  const [checkInSearch, setCheckInSearch] = useState('')
+
+  // Calendar
+  const [calMonth, setCalMonth] = useState(new Date().getMonth())
   const [calYear, setCalYear] = useState(2026)
 
   // Closures
@@ -146,7 +157,7 @@ export default function TeacherContent() {
   const [newClosureDate, setNewClosureDate] = useState('')
   const [newClosureNote, setNewClosureNote] = useState('')
 
-  // Birthdays (local storage)
+  // Birthdays
   const [birthdays, setBirthdays] = useState<Record<string, string>>({})
   const [editingBirthday, setEditingBirthday] = useState<string | null>(null)
   const [birthdayInput, setBirthdayInput] = useState('')
@@ -159,13 +170,17 @@ export default function TeacherContent() {
     } catch {}
   }, [])
 
-  // Load closures & birthdays from localStorage
+  // Load saved data from localStorage
   useEffect(() => {
     try {
       const savedClosures = localStorage.getItem('basma-closures')
       if (savedClosures) setClosures(JSON.parse(savedClosures))
       const savedBdays = localStorage.getItem('basma-birthdays')
       if (savedBdays) setBirthdays(JSON.parse(savedBdays))
+      // Load today's check-ins
+      const today = new Date().toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' })
+      const savedCheckins = localStorage.getItem(`basma-checkins-${today}`)
+      if (savedCheckins) setCheckedInToday(JSON.parse(savedCheckins))
     } catch {}
   }, [])
 
@@ -180,7 +195,6 @@ export default function TeacherContent() {
     }
   }
 
-  // Save closures
   function addClosure() {
     if (!newClosureDate) return
     const updated = [...closures, { date: newClosureDate, note: newClosureNote || 'School Closed' }]
@@ -207,7 +221,6 @@ export default function TeacherContent() {
     }
   }
 
-  // Save birthday
   function saveBirthday(studentId: string) {
     const updated = { ...birthdays, [studentId]: birthdayInput }
     setBirthdays(updated)
@@ -228,9 +241,38 @@ export default function TeacherContent() {
       .catch(() => setLoading(false))
   }, [authenticated])
 
+  // Check-in handler
+  const handleCheckIn = useCallback(async (student: Registration) => {
+    setCheckingIn(student.id)
+    try {
+      const res = await fetch('/api/checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recordId: student.id,
+          teacherCode: ACCESS_CODE,
+          studentName: student.studentName || student.parentName,
+          parentEmail: student.email,
+          parentName: student.parentName,
+          isIncomplete: !student.isRegistrationComplete,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        const today = new Date().toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' })
+        const updated = { ...checkedInToday, [student.id]: data.checkedInAt }
+        setCheckedInToday(updated)
+        try { localStorage.setItem(`basma-checkins-${today}`, JSON.stringify(updated)) } catch {}
+      }
+    } catch (err) {
+      console.error('Check-in error:', err)
+    }
+    setCheckingIn(null)
+  }, [checkedInToday])
+
   const closureSet = useMemo(() => new Set(closures.map(c => c.date)), [closures])
 
-  /* Group registrations by class */
+  // Class buckets for roster
   const classBuckets = useMemo(() => {
     const buckets: Record<string, { block: typeof SCHEDULE_BLOCKS[0]; students: Registration[] }> = {}
     for (const block of SCHEDULE_BLOCKS) {
@@ -262,7 +304,7 @@ export default function TeacherContent() {
       })
   }, [classBuckets, searchQuery])
 
-  /* Group Discovery Camp students by week & time slot */
+  // Discovery camp groups
   const discoveryGroups = useMemo(() => {
     const campStudents = registrations.filter(r =>
       safe(r.source).includes('discovery') || safe(r.interests).toLowerCase().includes('discovery')
@@ -282,17 +324,31 @@ export default function TeacherContent() {
     return groups
   }, [registrations])
 
+  // Check-in filtered list
+  const checkInStudents = useMemo(() => {
+    if (!checkInSearch.trim()) return registrations
+    const q = checkInSearch.toLowerCase()
+    return registrations.filter(s =>
+      safe(s.studentName).toLowerCase().includes(q) ||
+      safe(s.parentName).toLowerCase().includes(q) ||
+      safe(s.email).toLowerCase().includes(q) ||
+      safe(s.phone).includes(q)
+    )
+  }, [registrations, checkInSearch])
+
   const stats = useMemo(() => {
     const uniqueStudents = new Set(registrations.map(r => safe(r.studentName).trim().toLowerCase()).filter(Boolean))
     const uniqueParents = new Set(registrations.map(r => safe(r.email).trim().toLowerCase()).filter(Boolean))
+    const checkedInCount = Object.keys(checkedInToday).length
     return {
       total: registrations.length,
       uniqueStudents: uniqueStudents.size,
       uniqueParents: uniqueParents.size,
-      complete: registrations.filter(r => safe(r.status).toLowerCase() !== 'incomplete').length,
-      incomplete: registrations.filter(r => safe(r.status).toLowerCase() === 'incomplete').length,
+      complete: registrations.filter(r => r.isRegistrationComplete).length,
+      incomplete: registrations.filter(r => !r.isRegistrationComplete).length,
+      checkedIn: checkedInCount,
     }
-  }, [registrations])
+  }, [registrations, checkedInToday])
 
   // Upcoming birthdays
   const upcomingBirthdays = useMemo(() => {
@@ -313,7 +369,7 @@ export default function TeacherContent() {
       .slice(0, 5) as { name: string; birthday: string; daysUntil: number }[]
   }, [birthdays, registrations])
 
-  // Login screen
+  // ─── Login screen ───
   if (!authenticated) {
     return (
       <main className="min-h-screen flex items-center justify-center text-white" style={{ background: '#050505' }}>
@@ -373,13 +429,14 @@ export default function TeacherContent() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
           {[
             { label: 'Total Sign-ups', value: stats.total, emoji: '📋' },
             { label: 'Students', value: stats.uniqueStudents, emoji: '👧' },
             { label: 'Families', value: stats.uniqueParents, emoji: '👨‍👩‍👧' },
             { label: 'Complete', value: stats.complete, emoji: '✅' },
             { label: 'Incomplete', value: stats.incomplete, emoji: '⏳' },
+            { label: 'Checked In', value: stats.checkedIn, emoji: '🟢' },
           ].map(s => (
             <div key={s.label} className="p-4 rounded-xl text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
               <div className="text-2xl mb-1">{s.emoji}</div>
@@ -404,19 +461,254 @@ export default function TeacherContent() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 p-1 rounded-xl bg-white/[0.03] w-fit">
+        <div className="flex gap-1 mb-6 p-1 rounded-xl bg-white/[0.03] w-fit overflow-x-auto">
           {([
+            { id: 'checkin' as const, label: '✅ Check-In' },
             { id: 'roster' as const, label: '📋 Class Roster' },
             { id: 'discovery' as const, label: '🏕️ Discovery Camp' },
             { id: 'calendar' as const, label: '📅 Calendar' },
-            { id: 'closures' as const, label: '🚫 School Closures' },
+            { id: 'closures' as const, label: '🚫 Closures' },
           ]).map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${tab === t.id ? 'bg-[#c9a84c]/20 text-[#c9a84c]' : 'text-white/40 hover:text-white/60'}`}>
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${tab === t.id ? 'bg-[#c9a84c]/20 text-[#c9a84c]' : 'text-white/40 hover:text-white/60'}`}>
               {t.label}
             </button>
           ))}
         </div>
+
+        {/* ═══ CHECK-IN TAB ═══ */}
+        {tab === 'checkin' && (
+          <>
+            {/* Search bar */}
+            <div className="mb-6">
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">🔍</span>
+                <input type="text" placeholder="Search student by name, parent name, email, or phone..."
+                  value={checkInSearch} onChange={(e) => setCheckInSearch(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition text-lg"
+                  autoFocus />
+              </div>
+              {checkInSearch && (
+                <p className="text-sm text-white/30 mt-2">{checkInStudents.length} result{checkInStudents.length !== 1 ? 's' : ''} found</p>
+              )}
+            </div>
+
+            {/* Student detail modal */}
+            {selectedStudent && (
+              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setSelectedStudent(null)}>
+                <div className="bg-[#0a0a0f] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}
+                  style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
+                  <div className="p-6">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h2 className="text-xl font-bold text-white">{safe(selectedStudent.studentName) || safe(selectedStudent.parentName)}</h2>
+                        <p className="text-sm text-white/40">Age {safe(selectedStudent.studentAge) || '?'} · {classifyRegistration(selectedStudent)}</p>
+                      </div>
+                      <button onClick={() => setSelectedStudent(null)} className="text-white/30 hover:text-white text-2xl">&times;</button>
+                    </div>
+
+                    {/* Registration status */}
+                    <div className={`p-4 rounded-xl mb-4 ${selectedStudent.isRegistrationComplete ? 'bg-green-500/10 border border-green-500/20' : 'bg-yellow-500/10 border border-yellow-500/20'}`}>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{selectedStudent.isRegistrationComplete ? '✅' : '⚠️'}</span>
+                        <span className={`font-semibold ${selectedStudent.isRegistrationComplete ? 'text-green-400' : 'text-yellow-400'}`}>
+                          Registration {selectedStudent.isRegistrationComplete ? 'Complete' : 'Incomplete'}
+                        </span>
+                      </div>
+                      {!selectedStudent.isRegistrationComplete && (
+                        <p className="text-xs text-yellow-400/60 mt-1">Missing information will be highlighted below</p>
+                      )}
+                    </div>
+
+                    {/* Info sections */}
+                    <div className="space-y-4">
+                      {/* Parent info */}
+                      <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">👤 Parent Info</h3>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between"><span className="text-white/40">Name</span><span className="text-white/80">{safe(selectedStudent.parentName) || '—'}</span></div>
+                          <div className="flex justify-between"><span className="text-white/40">Email</span><span className="text-white/80">{safe(selectedStudent.email) || '—'}</span></div>
+                          <div className="flex justify-between"><span className="text-white/40">Phone</span><span className="text-white/80">{formatPhone(safe(selectedStudent.phone))}</span></div>
+                        </div>
+                      </div>
+
+                      {/* Allergies & Medical — PROMINENT */}
+                      <div className={`p-4 rounded-xl ${safe(selectedStudent.allergies) && safe(selectedStudent.allergies).toLowerCase() !== 'none' ? 'bg-red-500/10 border border-red-500/20' : 'bg-white/[0.02] border border-white/[0.06]'}`}>
+                        <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">🏥 Health & Safety</h3>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between items-start">
+                            <span className="text-white/40">Allergies</span>
+                            <span className={`text-right ${
+                              !safe(selectedStudent.allergies) ? 'text-yellow-400 font-semibold' :
+                              safe(selectedStudent.allergies).toLowerCase() === 'none' ? 'text-green-400' :
+                              'text-red-400 font-bold'
+                            }`}>
+                              {safe(selectedStudent.allergies) || '⚠️ NOT PROVIDED'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-start">
+                            <span className="text-white/40">Medical</span>
+                            <span className="text-white/80 text-right">{safe(selectedStudent.medicalConditions) || 'None listed'}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Emergency Contact */}
+                      <div className={`p-4 rounded-xl ${!safe(selectedStudent.emergencyContactName) ? 'bg-yellow-500/10 border border-yellow-500/20' : 'bg-white/[0.02] border border-white/[0.06]'}`}>
+                        <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">🆘 Emergency Contact</h3>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-white/40">Name</span>
+                            <span className={!safe(selectedStudent.emergencyContactName) ? 'text-yellow-400 font-semibold' : 'text-white/80'}>
+                              {safe(selectedStudent.emergencyContactName) || '⚠️ NOT PROVIDED'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-white/40">Phone</span>
+                            <span className={!safe(selectedStudent.emergencyContactPhone) ? 'text-yellow-400 font-semibold' : 'text-white/80'}>
+                              {safe(selectedStudent.emergencyContactPhone) ? formatPhone(safe(selectedStudent.emergencyContactPhone)) : '⚠️ NOT PROVIDED'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Enrollment details */}
+                      <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <h3 className="text-sm font-semibold text-white/50 mb-3 uppercase tracking-wider">📋 Enrollment Details</h3>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between"><span className="text-white/40">Interests</span><span className="text-white/80">{safe(selectedStudent.interests) || '—'}</span></div>
+                          <div className="flex justify-between"><span className="text-white/40">Source</span><span className="text-white/80">{safe(selectedStudent.source) || '—'}</span></div>
+                          <div className="flex justify-between"><span className="text-white/40">Time Slot</span><span className="text-white/80">{safe(selectedStudent.timeSlot) || '—'}</span></div>
+                          {safe(selectedStudent.discoveryWeek) && (
+                            <div className="flex justify-between"><span className="text-white/40">Discovery Week</span><span className="text-white/80">{selectedStudent.discoveryWeek}</span></div>
+                          )}
+                          <div className="flex justify-between">
+                            <span className="text-white/40">Waiver</span>
+                            <span className={selectedStudent.hasWaiver ? 'text-green-400' : 'text-yellow-400 font-semibold'}>
+                              {selectedStudent.hasWaiver ? '✅ Signed' : '⚠️ Not Signed'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-white/40">Payment</span>
+                            <span className={`font-semibold ${
+                              safe(selectedStudent.paymentStatus) === 'Paid' ? 'text-green-400' :
+                              safe(selectedStudent.paymentStatus) === 'Free' ? 'text-blue-400' :
+                              'text-yellow-400'
+                            }`}>
+                              {safe(selectedStudent.paymentStatus) === 'Paid' ? '💰 Paid' :
+                               safe(selectedStudent.paymentStatus) === 'Free' ? '🆓 Free' : '⏳ Pending'}
+                            </span>
+                          </div>
+                          {selectedStudent.lastCheckIn && (
+                            <div className="flex justify-between"><span className="text-white/40">Last Check-In</span><span className="text-green-400">{selectedStudent.lastCheckIn}</span></div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Check-in button */}
+                    <div className="mt-6">
+                      {checkedInToday[selectedStudent.id] ? (
+                        <div className="w-full py-4 rounded-xl text-center bg-green-500/10 border border-green-500/20">
+                          <span className="text-green-400 font-bold text-lg">✅ Checked In — {checkedInToday[selectedStudent.id]}</span>
+                        </div>
+                      ) : (
+                        <button onClick={() => handleCheckIn(selectedStudent)}
+                          disabled={checkingIn === selectedStudent.id}
+                          className="w-full py-4 rounded-xl font-bold text-lg transition hover:opacity-90 disabled:opacity-50"
+                          style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff' }}>
+                          {checkingIn === selectedStudent.id ? 'Checking in...' : `✅ Check In ${safe(selectedStudent.studentName) || 'Student'}`}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Student list for check-in */}
+            <div className="space-y-2">
+              {checkInStudents.length === 0 ? (
+                <div className="text-center py-12 text-white/30">
+                  <p className="text-4xl mb-4">🔍</p>
+                  <p>{checkInSearch ? 'No students found matching your search' : 'No registrations yet'}</p>
+                </div>
+              ) : (
+                checkInStudents.map((s) => {
+                  const isCheckedIn = !!checkedInToday[s.id]
+                  const studentDisplay = safe(s.studentName) || safe(s.parentName)
+                  const hasAllergies = safe(s.allergies) && safe(s.allergies).toLowerCase() !== 'none' && safe(s.allergies).toLowerCase() !== ''
+                  const missingInfo = !safe(s.allergies) || !safe(s.emergencyContactName)
+
+                  return (
+                    <div key={s.id}
+                      className={`flex items-center gap-4 p-4 rounded-xl transition cursor-pointer hover:bg-white/[0.04] ${isCheckedIn ? 'bg-green-500/[0.04]' : ''}`}
+                      style={{ border: isCheckedIn ? '1px solid rgba(34,197,94,0.15)' : '1px solid rgba(255,255,255,0.06)' }}
+                      onClick={() => setSelectedStudent(s)}>
+
+                      {/* Check-in button */}
+                      <div className="flex-shrink-0" onClick={(e) => { e.stopPropagation(); if (!isCheckedIn) handleCheckIn(s) }}>
+                        {isCheckedIn ? (
+                          <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                            <span className="text-green-400 text-2xl">✓</span>
+                          </div>
+                        ) : checkingIn === s.id ? (
+                          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center animate-pulse">
+                            <span className="text-white/30">⏳</span>
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-green-500/10 transition group">
+                            <span className="text-white/20 group-hover:text-green-400 text-xl transition">○</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Student info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-white/90">{studentDisplay}</span>
+                          {safe(s.studentAge) && <span className="text-xs text-white/30">Age {s.studentAge}</span>}
+                          {!s.isRegistrationComplete && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 font-semibold">Incomplete</span>
+                          )}
+                          {hasAllergies && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 font-semibold">⚠️ {safe(s.allergies)}</span>
+                          )}
+                          {missingInfo && !hasAllergies && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400">Missing info</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-white/30">
+                          <span>{safe(s.parentName)}</span>
+                          <span>{formatPhone(safe(s.phone))}</span>
+                          <span>{classifyRegistration(s)}</span>
+                        </div>
+                      </div>
+
+                      {/* Waiver + Payment badges */}
+                      <div className="flex-shrink-0 flex items-center gap-2">
+                        <span className={`text-xs px-2 py-1 rounded-full ${s.hasWaiver ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'}`}>
+                          {s.hasWaiver ? '📋✓' : '📋✗'}
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          safe(s.paymentStatus) === 'Paid' ? 'bg-green-500/10 text-green-400' :
+                          safe(s.paymentStatus) === 'Free' ? 'bg-blue-500/10 text-blue-400' :
+                          'bg-yellow-500/10 text-yellow-400'
+                        }`}>
+                          {safe(s.paymentStatus) === 'Paid' ? '💰' : safe(s.paymentStatus) === 'Free' ? '🆓' : '⏳'}
+                        </span>
+                        <svg className="w-4 h-4 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          </>
+        )}
 
         {/* ═══ ROSTER TAB ═══ */}
         {tab === 'roster' && (
@@ -465,20 +757,21 @@ export default function TeacherContent() {
 
                     {isExpanded && (
                       <div className="border-t border-white/5">
-                        {/* Table header */}
                         <div className="hidden md:grid grid-cols-12 gap-2 px-5 py-2 text-xs text-white/25 uppercase tracking-wider border-b border-white/5">
                           <div className="col-span-2">Student</div>
                           <div className="col-span-1">Age</div>
                           <div className="col-span-2">Parent</div>
                           <div className="col-span-2">Phone</div>
-                          <div className="col-span-2">Email</div>
+                          <div className="col-span-2">Allergies</div>
+                          <div className="col-span-1">Waiver</div>
                           <div className="col-span-1">Payment</div>
                           <div className="col-span-1">Status</div>
-                          <div className="col-span-1">Class</div>
                         </div>
 
                         {filteredStudents.map((s, idx) => (
-                          <div key={s.id} className={`px-5 py-3 ${idx % 2 === 0 ? 'bg-white/[0.01]' : ''} border-b border-white/[0.03] last:border-0`}>
+                          <div key={s.id}
+                            className={`px-5 py-3 cursor-pointer hover:bg-white/[0.03] transition ${idx % 2 === 0 ? 'bg-white/[0.01]' : ''} border-b border-white/[0.03] last:border-0`}
+                            onClick={() => setSelectedStudent(s)}>
                             <div className="hidden md:grid grid-cols-12 gap-2 items-center text-sm">
                               <div className="col-span-2 font-medium text-white/80">{safe(s.studentName) || safe(s.parentName)}</div>
                               <div className="col-span-1 text-white/40">{safe(s.studentAge) || '—'}</div>
@@ -486,22 +779,34 @@ export default function TeacherContent() {
                                 <p className="text-white/60 text-xs">{safe(s.parentName)}</p>
                               </div>
                               <div className="col-span-2 text-white/40 text-xs">{formatPhone(safe(s.phone))}</div>
-                              <div className="col-span-2 text-white/30 text-xs truncate">{safe(s.email)}</div>
+                              <div className="col-span-2">
+                                <span className={`text-xs ${
+                                  !safe(s.allergies) ? 'text-yellow-400' :
+                                  safe(s.allergies).toLowerCase() === 'none' ? 'text-green-400' :
+                                  'text-red-400 font-semibold'
+                                }`}>
+                                  {safe(s.allergies) || '⚠️ Missing'}
+                                </span>
+                              </div>
+                              <div className="col-span-1">
+                                <span className={`text-xs ${s.hasWaiver ? 'text-green-400' : 'text-yellow-400'}`}>
+                                  {s.hasWaiver ? '✅' : '❌'}
+                                </span>
+                              </div>
                               <div className="col-span-1">
                                 <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                                   safe(s.paymentStatus) === 'Paid' ? 'bg-green-500/15 text-green-400' :
                                   safe(s.paymentStatus) === 'Free' ? 'bg-blue-500/15 text-blue-400' :
                                   'bg-yellow-500/10 text-yellow-400'
                                 }`}>
-                                  {safe(s.paymentStatus) === 'Paid' ? '💰 Paid' : safe(s.paymentStatus) === 'Free' ? '🆓 Free' : '⏳ Pending'}
+                                  {safe(s.paymentStatus) === 'Paid' ? '💰' : safe(s.paymentStatus) === 'Free' ? '🆓' : '⏳'}
                                 </span>
                               </div>
                               <div className="col-span-1">
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${safe(s.status).toLowerCase() === 'incomplete' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
-                                  {safe(s.status) || 'New'}
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${s.isRegistrationComplete ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'}`}>
+                                  {s.isRegistrationComplete ? '✅' : '⚠️'}
                                 </span>
                               </div>
-                              <div className="col-span-1 text-white/30 text-xs truncate">{safe(s.enrolledClass) || '—'}</div>
                             </div>
                             {/* Mobile card */}
                             <div className="md:hidden space-y-1">
@@ -520,10 +825,12 @@ export default function TeacherContent() {
                               </div>
                               <p className="text-xs text-white/40">{safe(s.parentName)} · {formatPhone(safe(s.phone))}</p>
                               <div className="flex gap-2">
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${safe(s.status).toLowerCase() === 'incomplete' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
-                                  {safe(s.status) || 'New'}
+                                {safe(s.allergies) && safe(s.allergies).toLowerCase() !== 'none' && (
+                                  <span className="text-xs text-red-400">⚠️ {safe(s.allergies)}</span>
+                                )}
+                                <span className={`text-xs ${s.hasWaiver ? 'text-green-400' : 'text-yellow-400'}`}>
+                                  Waiver: {s.hasWaiver ? '✅' : '❌'}
                                 </span>
-                                {safe(s.enrolledClass) && <span className="text-xs text-white/25">{s.enrolledClass}</span>}
                               </div>
                             </div>
                           </div>
@@ -573,10 +880,14 @@ export default function TeacherContent() {
                     ) : (
                       <div className="space-y-1 ml-6">
                         {morning.map((s, i) => (
-                          <div key={s.id} className={`flex items-center gap-4 py-2 px-3 rounded-lg text-sm ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
+                          <div key={s.id} className={`flex items-center gap-4 py-2 px-3 rounded-lg text-sm cursor-pointer hover:bg-white/[0.03] ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}
+                            onClick={() => setSelectedStudent(s)}>
                             <span className="text-white/70 w-5 text-right text-xs">{i + 1}.</span>
                             <span className="font-medium text-white/80 min-w-[120px]">{safe(s.studentName) || safe(s.parentName)}</span>
                             <span className="text-white/30 text-xs">Age {safe(s.studentAge) || '?'}</span>
+                            {safe(s.allergies) && safe(s.allergies).toLowerCase() !== 'none' && (
+                              <span className="text-xs text-red-400">⚠️ {safe(s.allergies)}</span>
+                            )}
                             <span className="text-white/25 text-xs ml-auto">{safe(s.parentName)} · {formatPhone(safe(s.phone))}</span>
                           </div>
                         ))}
@@ -596,10 +907,14 @@ export default function TeacherContent() {
                     ) : (
                       <div className="space-y-1 ml-6">
                         {midday.map((s, i) => (
-                          <div key={s.id} className={`flex items-center gap-4 py-2 px-3 rounded-lg text-sm ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
+                          <div key={s.id} className={`flex items-center gap-4 py-2 px-3 rounded-lg text-sm cursor-pointer hover:bg-white/[0.03] ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}
+                            onClick={() => setSelectedStudent(s)}>
                             <span className="text-white/70 w-5 text-right text-xs">{i + 1}.</span>
                             <span className="font-medium text-white/80 min-w-[120px]">{safe(s.studentName) || safe(s.parentName)}</span>
                             <span className="text-white/30 text-xs">Age {safe(s.studentAge) || '?'}</span>
+                            {safe(s.allergies) && safe(s.allergies).toLowerCase() !== 'none' && (
+                              <span className="text-xs text-red-400">⚠️ {safe(s.allergies)}</span>
+                            )}
                             <span className="text-white/25 text-xs ml-auto">{safe(s.parentName)} · {formatPhone(safe(s.phone))}</span>
                           </div>
                         ))}
@@ -631,11 +946,9 @@ export default function TeacherContent() {
 
             <div className="overflow-x-auto">
               <div className="grid grid-cols-7 gap-1 min-w-[700px]">
-                {/* Day headers */}
                 {DAY_HEADERS.map(d => (
                   <div key={d} className="text-center text-xs text-white/30 uppercase tracking-wider py-2 font-medium">{d}</div>
                 ))}
-                {/* Days */}
                 {calDays.map(({ date, inMonth }, i) => {
                   const dk = dateKey(date)
                   const isClosed = closureSet.has(dk)
@@ -675,7 +988,7 @@ export default function TeacherContent() {
                       ) : isClass && inMonth && !isPast ? (
                         <div className="space-y-0.5">
                           {SCHEDULE_BLOCKS.filter(b => {
-                            if (b.julyAugOnly && calMonth < 6) return false // June = 5, July = 6
+                            if (b.julyAugOnly && calMonth < 6) return false
                             return true
                           }).map(b => (
                             <div key={b.label} className="text-[9px] text-white/25 truncate leading-tight">
@@ -690,7 +1003,6 @@ export default function TeacherContent() {
               </div>
             </div>
 
-            {/* Legend */}
             <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/40">
               <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }} /> Class Day (Mon–Thu)</span>
               <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }} /> Closed</span>
@@ -709,7 +1021,6 @@ export default function TeacherContent() {
               <p className="text-sm text-white/40">Add dates when the school is closed. These will appear on the calendar and parent portal.</p>
             </div>
 
-            {/* Add new closure */}
             <div className="p-5 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
               <h3 className="text-sm font-semibold text-white/70 mb-3">Add Closure Date</h3>
               <div className="flex flex-wrap gap-3">
@@ -729,7 +1040,6 @@ export default function TeacherContent() {
               </div>
             </div>
 
-            {/* Closure list */}
             <div className="space-y-2">
               {closures.sort((a, b) => a.date.localeCompare(b.date)).map(c => {
                 const d = new Date(c.date + 'T12:00:00')
