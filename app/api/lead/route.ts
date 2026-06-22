@@ -24,45 +24,141 @@ async function airtableRequest(tableId: string, method: string, body?: Record<st
   return res.json()
 }
 
+// ── Find existing record by email (and optionally student name) ──
+async function findExistingRecord(
+  tableId: string,
+  email: string,
+  studentName?: string
+): Promise<{ id: string; fields: Record<string, string> } | null> {
+  if (!email) return null
+
+  // Search by email first
+  const formula = `{Email} = '${email.replace(/'/g, "\\'")}'`
+  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${tableId}?filterByFormula=${encodeURIComponent(formula)}&maxRecords=100`
+
+  const res = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${AIRTABLE_PAT}` },
+  })
+  const data = await res.json()
+  const records = data.records || []
+
+  if (records.length === 0) return null
+
+  // If we have a student name, find the matching student record
+  if (studentName) {
+    const match = records.find(
+      (r: { fields: Record<string, string> }) =>
+        (r.fields['Student Name'] || '').toLowerCase().trim() === studentName.toLowerCase().trim()
+    )
+    if (match) return match
+  }
+
+  // If no student name match, return the first record with this email
+  return records[0]
+}
+
+async function findExistingSummerRecord(
+  email: string,
+  studentName?: string
+): Promise<{ id: string; fields: Record<string, string> } | null> {
+  if (!email) return null
+
+  const formula = `{Parent Email} = '${email.replace(/'/g, "\\'")}'`
+  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${SUMMER_TABLE_ID}?filterByFormula=${encodeURIComponent(formula)}&maxRecords=100`
+
+  const res = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${AIRTABLE_PAT}` },
+  })
+  const data = await res.json()
+  const records = data.records || []
+
+  if (records.length === 0) return null
+
+  if (studentName) {
+    const match = records.find(
+      (r: { fields: Record<string, string> }) =>
+        (r.fields['Student Name'] || '').toLowerCase().trim() === studentName.toLowerCase().trim()
+    )
+    if (match) return match
+  }
+
+  return records[0]
+}
+
+// ── Merge fields: only overwrite empty/missing fields ──
+function mergeFields(
+  existing: Record<string, string>,
+  incoming: Record<string, string>
+): Record<string, string> {
+  const merged: Record<string, string> = {}
+  for (const [key, value] of Object.entries(incoming)) {
+    if (!value) continue // skip empty incoming values
+    const existingVal = existing[key]
+    // Only update if existing value is empty/missing or incoming has more info
+    if (!existingVal || existingVal.trim() === '' || existingVal === 'Incomplete') {
+      merged[key] = value
+    }
+  }
+  return merged
+}
+
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json()
     const {
       name, phone, email, source, status, interests, experienceLevel,
       referralSource, studentName, studentAge, discoveryWeek, timeSlot,
-      // New fields for enriched registration
       preferredDay, preferredTime, allergies, medicalConditions,
       emergencyContactName, emergencyContactPhone, liabilityAgreed,
       photoConsent
     } = data
 
-    // Map to BASMA Marketing Leads field names
-    const fields: Record<string, string> = {}
-    if (name) fields['Full Name'] = name
-    if (phone) fields['Phone'] = phone
-    if (email) fields['Email'] = email
-    if (source) fields['Source'] = source
-    fields['Status'] = status || 'Incomplete'
-    if (interests) fields['Interests'] = interests
-    if (experienceLevel) fields['Experience Level'] = experienceLevel
-    if (referralSource) fields['Referral Source'] = referralSource
-    if (studentName) fields['Student Name'] = studentName
-    if (studentAge) fields['Student Age'] = String(studentAge)
-    if (discoveryWeek) fields['Discovery Week'] = discoveryWeek
-    if (timeSlot) fields['Time Slot'] = timeSlot
-    // Set waiver status based on liability agreement
+    // ── Build Marketing Leads fields ──
+    const incomingFields: Record<string, string> = {}
+    if (name) incomingFields['Full Name'] = name
+    if (phone) incomingFields['Phone'] = phone
+    if (email) incomingFields['Email'] = email
+    if (source) incomingFields['Source'] = source
+    incomingFields['Status'] = status || 'Incomplete'
+    if (interests) incomingFields['Interests'] = interests
+    if (experienceLevel) incomingFields['Experience Level'] = experienceLevel
+    if (referralSource) incomingFields['Referral Source'] = referralSource
+    if (studentName) incomingFields['Student Name'] = studentName
+    if (studentAge) incomingFields['Student Age'] = String(studentAge)
+    if (discoveryWeek) incomingFields['Discovery Week'] = discoveryWeek
+    if (timeSlot) incomingFields['Time Slot'] = timeSlot
     if (liabilityAgreed) {
-      fields['Waiver Form'] = 'Complete'
-      fields['Registration Form'] = 'Complete'
+      incomingFields['Waiver Form'] = 'Complete'
+      incomingFields['Registration Form'] = 'Complete'
     }
 
-    const result = await airtableRequest(TABLE_ID, 'POST', {
-      records: [{ fields }],
-    })
+    // ── UPSERT: Check for existing record ──
+    let recordId: string | null = null
+    const existingLead = await findExistingRecord(TABLE_ID, email, studentName)
 
-    const recordId = result?.records?.[0]?.id || null
+    if (existingLead) {
+      // Update existing record — merge only new/missing fields
+      const fieldsToUpdate = mergeFields(existingLead.fields, incomingFields)
+      // Always update status if incoming is more complete
+      if (status && status !== 'Incomplete') {
+        fieldsToUpdate['Status'] = status
+      }
 
-    // Also write to Summer 2026 Registrations (full student data)
+      if (Object.keys(fieldsToUpdate).length > 0) {
+        await airtableRequest(TABLE_ID, 'PATCH', {
+          records: [{ id: existingLead.id, fields: fieldsToUpdate }],
+        })
+      }
+      recordId = existingLead.id
+    } else {
+      // Create new record
+      const result = await airtableRequest(TABLE_ID, 'POST', {
+        records: [{ fields: incomingFields }],
+      })
+      recordId = result?.records?.[0]?.id || null
+    }
+
+    // ── UPSERT: Summer 2026 Registrations ──
     try {
       const summerFields: Record<string, string> = {}
       if (studentName) summerFields['Student Name'] = studentName
@@ -78,27 +174,39 @@ export async function POST(request: NextRequest) {
       if (liabilityAgreed) summerFields['Liability Agreed'] = 'Yes'
       if (photoConsent !== undefined) summerFields['Photo Consent'] = photoConsent ? 'Yes' : 'No'
       summerFields['Payment Status'] = 'Unpaid'
-      summerFields['Registration Date'] = new Date().toISOString().split('T')[0]
 
-      // Include scheduling info
       if (preferredDay) summerFields['Notes'] = `Preferred day: ${preferredDay}, Time: ${preferredTime || 'TBD'}`
       if (timeSlot && timeSlot !== 'By Appointment') summerFields['Notes'] = `Time Slot: ${timeSlot}`
 
-      await airtableRequest(SUMMER_TABLE_ID, 'POST', {
-        records: [{ fields: summerFields }],
-      })
+      const existingSummer = await findExistingSummerRecord(email, studentName)
+
+      if (existingSummer) {
+        // Update existing — only fill in missing fields
+        const fieldsToUpdate = mergeFields(existingSummer.fields, summerFields)
+        if (Object.keys(fieldsToUpdate).length > 0) {
+          await airtableRequest(SUMMER_TABLE_ID, 'PATCH', {
+            records: [{ id: existingSummer.id, fields: fieldsToUpdate }],
+          })
+        }
+      } else {
+        // Create new summer registration
+        summerFields['Registration Date'] = new Date().toISOString().split('T')[0]
+        await airtableRequest(SUMMER_TABLE_ID, 'POST', {
+          records: [{ fields: summerFields }],
+        })
+      }
     } catch (summerErr) {
-      // Don't fail if Summer table write fails
       console.error('Summer 2026 Registration write error:', summerErr)
     }
 
-    // Send email notification to owner via formsubmit
+    // ── Email notification ──
     try {
+      const actionType = existingLead ? 'Updated' : 'New'
       await fetch('https://formsubmit.co/ajax/becomeasingermusicacademy@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          _subject: `🎵 New BASMA Registration: ${name || 'Unknown'}`,
+          _subject: `🎵 ${actionType} BASMA Registration: ${name || 'Unknown'}`,
           'Parent Name': name || '',
           Phone: phone || '',
           Email: email || '',
@@ -114,14 +222,18 @@ export async function POST(request: NextRequest) {
           Source: source || 'website-form',
           'Waiver': liabilityAgreed ? 'Signed ✓' : 'Not signed',
           'Allergies': allergies || 'Not specified',
+          'Action': actionType,
         }),
       })
     } catch (emailErr) {
-      // Don't fail the request if notification fails
       console.error('Email notification error:', emailErr)
     }
 
-    return NextResponse.json({ success: true, recordId })
+    return NextResponse.json({
+      success: true,
+      recordId,
+      action: existingLead ? 'updated' : 'created',
+    })
   } catch (error) {
     console.error('Lead POST error:', error)
     return NextResponse.json({ success: false, error: 'Failed to create lead' }, { status: 500 })
@@ -137,7 +249,6 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'recordId required' }, { status: 400 })
     }
 
-    // Map to BASMA Marketing Leads field names
     const fields: Record<string, string> = {}
     if (rest.name) fields['Full Name'] = rest.name
     if (rest.phone) fields['Phone'] = rest.phone
@@ -158,5 +269,34 @@ export async function PATCH(request: NextRequest) {
   } catch (error) {
     console.error('Lead PATCH error:', error)
     return NextResponse.json({ success: false, error: 'Failed to update lead' }, { status: 500 })
+  }
+}
+
+// ── GET: Lookup registration by email ──
+// Used by enrollment page to show what's already complete
+export async function GET(request: NextRequest) {
+  try {
+    const url = new URL(request.url)
+    const email = url.searchParams.get('email')
+    const studentName = url.searchParams.get('student')
+
+    if (!email) {
+      return NextResponse.json({ success: false, error: 'email required' }, { status: 400 })
+    }
+
+    // Look up in both tables
+    const [lead, summer] = await Promise.all([
+      findExistingRecord(TABLE_ID, email, studentName || undefined),
+      findExistingSummerRecord(email, studentName || undefined),
+    ])
+
+    return NextResponse.json({
+      success: true,
+      lead: lead ? { id: lead.id, ...lead.fields } : null,
+      registration: summer ? { id: summer.id, ...summer.fields } : null,
+    })
+  } catch (error) {
+    console.error('Lead GET error:', error)
+    return NextResponse.json({ success: false, error: 'Lookup failed' }, { status: 500 })
   }
 }
