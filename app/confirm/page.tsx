@@ -10,19 +10,19 @@ const CLASSES = [
   { id: 'teens-recording', name: 'Teens Recording (Teens Only)', time: '2:45 – 4:00 PM', color: '#ffb347' },
 ]
 
-// This week: Mon/Tue/Wed only (no Thu June 26)
+// This week: Mon/Tue/Wed only (no Thu June 25)
 const THIS_WEEK_DAYS = [
-  { id: 'monday', name: 'Monday, June 23' },
-  { id: 'tuesday', name: 'Tuesday, June 24' },
-  { id: 'wednesday', name: 'Wednesday, June 25 🍕 Pizza Day!' },
+  { id: 'monday', name: 'Monday, June 22' },
+  { id: 'tuesday', name: 'Tuesday, June 23' },
+  { id: 'wednesday', name: 'Wednesday, June 24 🍕 Pizza Day!' },
 ]
 
 // Next week (last week of June): Mon-Thu
 const NEXT_WEEK_DAYS = [
-  { id: 'monday', name: 'Monday, June 30' },
-  { id: 'tuesday', name: 'Tuesday, July 1' },
-  { id: 'wednesday', name: 'Wednesday, July 2' },
-  { id: 'thursday', name: 'Thursday, July 3' },
+  { id: 'monday', name: 'Monday, June 29' },
+  { id: 'tuesday', name: 'Tuesday, June 30' },
+  { id: 'wednesday', name: 'Wednesday, July 1' },
+  { id: 'thursday', name: 'Thursday, July 2' },
 ]
 
 interface Student {
@@ -122,14 +122,14 @@ export default function ConfirmPage() {
           allConfirmations.push({
             studentName: c.studentName,
             className: c.className,
-            daysAttending: c.thisWeekDays.map(d => `${d} (June 23-25)`),
+            daysAttending: c.thisWeekDays.map(d => `${d} (June 22-24)`),
           })
         }
         if (c.nextWeekDays.length > 0) {
           allConfirmations.push({
             studentName: c.studentName,
             className: c.className,
-            daysAttending: c.nextWeekDays.map(d => `${d} (June 30-July 3)`),
+            daysAttending: c.nextWeekDays.map(d => `${d} (June 29-July 2)`),
           })
         }
       }
@@ -169,8 +169,8 @@ export default function ConfirmPage() {
           <div style={{ background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.3)', borderRadius: 12, padding: 16, marginBottom: 24 }}>
             <p style={{ margin: 0, fontSize: 14, color: '#ffd700' }}>
               🍕 <strong>Pizza Day is Wednesday!</strong><br />
-              ❌ <strong>No school Thursday, June 26</strong><br />
-              📅 <strong>Last week of June:</strong> Mon–Thu, June 30 – July 3
+              ❌ <strong>No school Thursday, June 25</strong><br />
+              📅 <strong>Last week of June:</strong> Mon–Thu, June 29 – July 2
             </p>
           </div>
           <a href="/" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c9a84c, #f5d07a)', color: '#0a0a0f', padding: '12px 32px', borderRadius: 8, textDecoration: 'none', fontWeight: 'bold', fontSize: 14 }}>
@@ -194,9 +194,9 @@ export default function ConfirmPage() {
         <div style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.25)', borderRadius: 12, padding: 20 }}>
           <p style={{ margin: '0 0 8px', fontSize: 15, color: '#ffd700', fontWeight: 'bold' }}>📢 This Week&apos;s Announcements</p>
           <p style={{ margin: 0, fontSize: 14, color: '#d0d0e0', lineHeight: 1.7 }}>
-            🍕 <strong style={{ color: '#ffd700' }}>Pizza Day</strong> — Wednesday, June 25!<br />
-            ❌ <strong style={{ color: '#ff6b6b' }}>No School</strong> — Thursday, June 26<br />
-            📅 <strong style={{ color: '#50c878' }}>Last Week of June</strong> — Mon–Thu, June 30 – July 3
+            🍕 <strong style={{ color: '#ffd700' }}>Pizza Day</strong> — Wednesday, June 24!<br />
+            ❌ <strong style={{ color: '#ff6b6b' }}>No School</strong> — Thursday, June 25<br />
+            📅 <strong style={{ color: '#50c878' }}>Last Week of June</strong> — Mon–Thu, June 29 – July 2
           </p>
         </div>
       </div>
@@ -294,7 +294,7 @@ export default function ConfirmPage() {
 
             {/* This Week Days */}
             <p style={{ margin: '0 0 10px', fontSize: 14, color: '#c0c0d0', fontWeight: 'bold' }}>
-              📅 This Week <span style={{ color: '#a0a0b0', fontWeight: 'normal' }}>(June 23–25)</span>
+              📅 This Week <span style={{ color: '#a0a0b0', fontWeight: 'normal' }}>(June 22–24)</span>
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
               {THIS_WEEK_DAYS.map(day => (
@@ -317,7 +317,7 @@ export default function ConfirmPage() {
 
             {/* Next Week Days */}
             <p style={{ margin: '0 0 10px', fontSize: 14, color: '#c0c0d0', fontWeight: 'bold' }}>
-              📅 Last Week of June <span style={{ color: '#a0a0b0', fontWeight: 'normal' }}>(June 30 – July 3)</span>
+              📅 Last Week of June <span style={{ color: '#a0a0b0', fontWeight: 'normal' }}>(June 29 – July 2)</span>
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {NEXT_WEEK_DAYS.map(day => (

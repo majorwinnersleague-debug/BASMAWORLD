@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
           'Parent Phone': parentPhone || '',
           'Student Name': c.studentName,
           'Class': c.className,
-          'Week Of': 'June 23-25, 2026',
+          'Week Of': 'June 22-25, 2026',
           'Days Attending': c.daysAttending.join(', '),
           'Confirmed At': now,
           'Status': 'Confirmed',
