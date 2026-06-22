@@ -627,6 +627,7 @@ export default function PortalContent() {
                     🎉 June — FREE Discovery Camp
                   </p>
                   {[
+                    { ages: "Ages 2–5 (Tiny Tots)", time: "9:00 – 9:45 AM", note: "Last 2 weeks only" },
                     { ages: "Ages 11–17", time: "10:00 AM – 12:00 PM" },
                     { ages: "Ages 5–10", time: "12:00 – 2:00 PM" },
                   ].map((slot, i) => (
