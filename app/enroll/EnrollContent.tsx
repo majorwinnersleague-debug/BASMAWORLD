@@ -675,7 +675,7 @@ export default function EnrollContent() {
                   <div className="flex justify-between text-white/60"><span>2 classes/day</span><span className="font-semibold text-white">$50 → <span className="text-purple-400">$42.50</span> <span className="text-green-400">(save $7.50)</span></span></div>
                   <div className="flex justify-between text-white/60"><span>3 classes/day</span><span className="font-semibold text-white">$75 → <span className="text-purple-400">$63.75</span> <span className="text-green-400">(save $11.25)</span></span></div>
                 </div>
-                <p className="text-white/40 text-xs mt-2">Discount applies per day when purchasing multiple class registrations. Contact us for custom combinations!</p>
+                <p className="text-white/40 text-xs mt-2">Use code <strong className="text-purple-300">MULTI15</strong> at checkout when registering for multiple classes. Contact us for custom combinations!</p>
               </div>
 
               <p className="text-center text-white/30 text-xs mt-4">
