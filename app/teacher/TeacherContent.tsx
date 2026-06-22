@@ -131,7 +131,25 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-type TabView = 'checkin' | 'roster' | 'discovery' | 'calendar' | 'closures'
+type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat'
+
+interface ChatMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+interface EditFields {
+  studentName: string
+  studentAge: string
+  parentName: string
+  email: string
+  phone: string
+  allergies: string
+  medicalConditions: string
+  emergencyContactName: string
+  emergencyContactPhone: string
+  interests: string
+}
 
 export default function TeacherContent() {
   const [authenticated, setAuthenticated] = useState(false)
@@ -163,6 +181,22 @@ export default function TeacherContent() {
   const [birthdays, setBirthdays] = useState<Record<string, string>>({})
   const [editingBirthday, setEditingBirthday] = useState<string | null>(null)
   const [birthdayInput, setBirthdayInput] = useState('')
+
+  // Edit student mode
+  const [editMode, setEditMode] = useState(false)
+  const [editCodeInput, setEditCodeInput] = useState('')
+  const [editCodeVerified, setEditCodeVerified] = useState(false)
+  const [editFields, setEditFields] = useState<EditFields | null>(null)
+  const [editSaving, setEditSaving] = useState(false)
+  const [editSuccess, setEditSuccess] = useState(false)
+
+  // Admin chat
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
+  const [chatInput, setChatInput] = useState('')
+  const [chatLoading, setChatLoading] = useState(false)
+  const chatEndRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) node.scrollIntoView({ behavior: 'smooth' })
+  }, [])
 
   // Auth check
   useEffect(() => {
@@ -308,6 +342,167 @@ export default function TeacherContent() {
   }, [checkedInToday])
 
   const closureSet = useMemo(() => new Set(closures.map(c => c.date)), [closures])
+
+  // Edit student handlers
+  const startEdit = useCallback((student: Registration) => {
+    setEditMode(true)
+    setEditCodeVerified(false)
+    setEditCodeInput('')
+    setEditSuccess(false)
+    setEditFields({
+      studentName: safe(student.studentName),
+      studentAge: safe(student.studentAge),
+      parentName: safe(student.parentName),
+      email: safe(student.email),
+      phone: safe(student.phone),
+      allergies: safe(student.allergies),
+      medicalConditions: safe(student.medicalConditions),
+      emergencyContactName: safe(student.emergencyContactName),
+      emergencyContactPhone: safe(student.emergencyContactPhone),
+      interests: safe(student.interests),
+    })
+  }, [])
+
+  const verifyEditCode = useCallback((code: string) => {
+    if (code.trim() === ACCESS_CODE) {
+      setEditCodeVerified(true)
+      return true
+    }
+    return false
+  }, [])
+
+  const saveEdit = useCallback(async (student: Registration) => {
+    if (!editFields) return
+    setEditSaving(true)
+    try {
+      const res = await fetch('/api/family', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recordId: student.id,
+          teacherCode: ACCESS_CODE,
+          studentName: editFields.studentName,
+          studentAge: editFields.studentAge,
+          parentName: editFields.parentName,
+          email: editFields.email,
+          phone: editFields.phone,
+          interests: editFields.interests,
+          allergies: editFields.allergies,
+          medicalConditions: editFields.medicalConditions,
+          emergencyContactName: editFields.emergencyContactName,
+          emergencyContactPhone: editFields.emergencyContactPhone,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setEditSuccess(true)
+        // Update local state
+        setRegistrations(prev => prev.map(r => r.id === student.id ? {
+          ...r,
+          studentName: editFields.studentName,
+          studentAge: editFields.studentAge,
+          parentName: editFields.parentName,
+          email: editFields.email,
+          phone: editFields.phone,
+          interests: editFields.interests,
+          allergies: editFields.allergies,
+          medicalConditions: editFields.medicalConditions,
+          emergencyContactName: editFields.emergencyContactName,
+          emergencyContactPhone: editFields.emergencyContactPhone,
+        } : r))
+        // Update the selected student too
+        setSelectedStudent(prev => prev && prev.id === student.id ? {
+          ...prev,
+          studentName: editFields.studentName,
+          studentAge: editFields.studentAge,
+          parentName: editFields.parentName,
+          email: editFields.email,
+          phone: editFields.phone,
+          interests: editFields.interests,
+          allergies: editFields.allergies,
+          medicalConditions: editFields.medicalConditions,
+          emergencyContactName: editFields.emergencyContactName,
+          emergencyContactPhone: editFields.emergencyContactPhone,
+        } : prev)
+        setTimeout(() => {
+          setEditMode(false)
+          setEditSuccess(false)
+        }, 1500)
+      }
+    } catch (err) {
+      console.error('Save edit error:', err)
+      alert('Failed to save. Please try again.')
+    }
+    setEditSaving(false)
+  }, [editFields])
+
+  // Admin chat handler
+  const sendChatMessage = useCallback(async () => {
+    if (!chatInput.trim()) return
+    const userMsg: ChatMessage = { role: 'user', content: chatInput.trim() }
+    const newMessages = [...chatMessages, userMsg]
+    setChatMessages(newMessages)
+    setChatInput('')
+    setChatLoading(true)
+
+    try {
+      const res = await fetch('/api/teacher-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages,
+          teacherCode: ACCESS_CODE,
+        }),
+      })
+      const data = await res.json()
+      if (data.reply) {
+        setChatMessages(prev => [...prev, { role: 'assistant', content: data.reply }])
+        // If updates were made, refresh registrations
+        if (data.updates && data.updates.length > 0 && data.updates.some((u: any) => u.success)) {
+          fetch('/api/registrations?source=all&teacherCode=1515')
+            .then(r => r.json())
+            .then(d => setRegistrations(d.registrations || []))
+            .catch(() => {})
+        }
+      }
+    } catch (err) {
+      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }])
+    }
+    setChatLoading(false)
+  }, [chatInput, chatMessages])
+
+  // This Week data
+  const thisWeekData = useMemo(() => {
+    const today = new Date()
+    const dayOfWeek = today.getDay() // 0=Sun ... 6=Sat
+    // Find Monday of current week
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+    const monday = new Date(today)
+    monday.setDate(today.getDate() + mondayOffset)
+
+    const weekDays: { date: Date; dateStr: string; dayName: string; isClosed: boolean; isToday: boolean; isPast: boolean }[] = []
+    for (let i = 0; i < 4; i++) { // Mon-Thu
+      const d = new Date(monday)
+      d.setDate(monday.getDate() + i)
+      const ds = dateKey(d)
+      weekDays.push({
+        date: d,
+        dateStr: ds,
+        dayName: DAYS[i],
+        isClosed: closureSet.has(ds),
+        isToday: d.toDateString() === today.toDateString(),
+        isPast: d < new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+      })
+    }
+
+    // Group students by class
+    const classBucketsList = SCHEDULE_BLOCKS.map(block => {
+      const students = registrations.filter(r => classifyRegistration(r) === block.label)
+      return { block, students }
+    })
+
+    return { weekDays, classBuckets: classBucketsList, totalStudents: registrations.length }
+  }, [registrations, closureSet])
 
   // Class buckets for roster
   const classBuckets = useMemo(() => {
@@ -538,10 +733,12 @@ export default function TeacherContent() {
         <div className="flex gap-1 mb-6 p-1 rounded-xl bg-white/[0.03] w-fit overflow-x-auto">
           {([
             { id: 'checkin' as const, label: '✅ Check-In' },
+            { id: 'thisweek' as const, label: '📅 This Week' },
             { id: 'roster' as const, label: '📋 Class Roster' },
             { id: 'discovery' as const, label: '🏕️ Discovery Camp' },
-            { id: 'calendar' as const, label: '📅 Calendar' },
+            { id: 'calendar' as const, label: '🗓️ Calendar' },
             { id: 'closures' as const, label: '🚫 Closures' },
+            { id: 'chat' as const, label: '🤖 Assistant' },
           ]).map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${tab === t.id ? 'bg-[#c9a84c]/20 text-[#c9a84c]' : 'text-white/40 hover:text-white/60'}`}>
@@ -569,7 +766,7 @@ export default function TeacherContent() {
 
             {/* Student detail modal */}
             {selectedStudent && (
-              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setSelectedStudent(null)}>
+              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => { setSelectedStudent(null); setEditMode(false) }}>
                 <div className="bg-[#0a0a0f] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}
                   style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
                   <div className="p-6">
@@ -579,7 +776,7 @@ export default function TeacherContent() {
                         <h2 className="text-xl font-bold text-white">{safe(selectedStudent.studentName) || safe(selectedStudent.parentName)}</h2>
                         <p className="text-sm text-white/40">Age {safe(selectedStudent.studentAge) || '?'} · {classifyRegistration(selectedStudent)}</p>
                       </div>
-                      <button onClick={() => setSelectedStudent(null)} className="text-white/30 hover:text-white text-2xl">&times;</button>
+                      <button onClick={() => { setSelectedStudent(null); setEditMode(false) }} className="text-white/30 hover:text-white text-2xl">&times;</button>
                     </div>
 
                     {/* ═══ QUICK ACTIONS ═══ */}
@@ -784,6 +981,74 @@ export default function TeacherContent() {
                         </>
                       )
                     })()}
+
+                    {/* ═══ EDIT INFO SECTION ═══ */}
+                    <div className="mt-4">
+                      {!editMode ? (
+                        <button
+                          onClick={() => startEdit(selectedStudent)}
+                          className="w-full py-3 rounded-xl font-semibold text-sm transition hover:opacity-90 flex items-center justify-center gap-2"
+                          style={{ background: 'rgba(167,139,250,0.1)', color: '#a78bfa', border: '1px solid rgba(167,139,250,0.3)' }}>
+                          ✏️ Edit Student Info
+                        </button>
+                      ) : !editCodeVerified ? (
+                        <div className="p-4 rounded-xl" style={{ background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)' }}>
+                          <p className="text-sm text-purple-400 mb-3 font-semibold">🔒 Enter teacher code to edit:</p>
+                          <form onSubmit={(e) => { e.preventDefault(); if (!verifyEditCode(editCodeInput)) { setEditCodeInput(''); alert('Incorrect code') } }} className="flex gap-2">
+                            <input type="password" value={editCodeInput} onChange={e => setEditCodeInput(e.target.value)}
+                              className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-center text-xl tracking-[0.3em] placeholder-white/25 focus:border-purple-400/50 focus:outline-none"
+                              placeholder="••••" autoFocus />
+                            <button type="submit" className="px-4 py-2 rounded-lg font-semibold text-sm" style={{ background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', color: '#fff' }}>
+                              Verify
+                            </button>
+                            <button type="button" onClick={() => setEditMode(false)} className="px-3 py-2 rounded-lg text-white/40 hover:text-white/60 text-sm">
+                              Cancel
+                            </button>
+                          </form>
+                        </div>
+                      ) : editSuccess ? (
+                        <div className="p-4 rounded-xl text-center" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)' }}>
+                          <span className="text-green-400 text-lg font-bold">✅ Saved successfully!</span>
+                        </div>
+                      ) : editFields ? (
+                        <div className="p-4 rounded-xl space-y-3" style={{ background: 'rgba(167,139,250,0.04)', border: '1px solid rgba(167,139,250,0.15)' }}>
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-semibold text-purple-400">✏️ Edit Info</h3>
+                            <button onClick={() => setEditMode(false)} className="text-xs text-white/30 hover:text-white/60">Cancel</button>
+                          </div>
+                          {([
+                            { key: 'studentName' as const, label: 'Student Name', icon: '👧' },
+                            { key: 'studentAge' as const, label: 'Age', icon: '🎂' },
+                            { key: 'parentName' as const, label: 'Parent Name', icon: '👤' },
+                            { key: 'email' as const, label: 'Email', icon: '📧' },
+                            { key: 'phone' as const, label: 'Phone', icon: '📱' },
+                            { key: 'interests' as const, label: 'Interests', icon: '🎵' },
+                            { key: 'allergies' as const, label: 'Allergies', icon: '🍕' },
+                            { key: 'medicalConditions' as const, label: 'Medical Conditions', icon: '🏥' },
+                            { key: 'emergencyContactName' as const, label: 'Emergency Contact', icon: '🆘' },
+                            { key: 'emergencyContactPhone' as const, label: 'Emergency Phone', icon: '📞' },
+                          ]).map(({ key, label, icon }) => (
+                            <div key={key} className="flex items-center gap-2">
+                              <span className="text-sm w-5">{icon}</span>
+                              <label className="text-xs text-white/40 w-28 flex-shrink-0">{label}</label>
+                              <input
+                                type="text"
+                                value={editFields[key]}
+                                onChange={(e) => setEditFields(prev => prev ? { ...prev, [key]: e.target.value } : prev)}
+                                className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-purple-400/50 focus:outline-none transition"
+                              />
+                            </div>
+                          ))}
+                          <button
+                            onClick={() => saveEdit(selectedStudent)}
+                            disabled={editSaving}
+                            className="w-full py-3 rounded-xl font-semibold text-sm transition hover:opacity-90 disabled:opacity-50 mt-2"
+                            style={{ background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', color: '#fff' }}>
+                            {editSaving ? '⏳ Saving...' : '💾 Save Changes'}
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
 
                     {/* Check-in / Uncheck buttons */}
                     <div className="mt-6 space-y-2">
@@ -1151,6 +1416,139 @@ export default function TeacherContent() {
           </>
         )}
 
+        {/* ═══ THIS WEEK TAB ═══ */}
+        {tab === 'thisweek' && (
+          <>
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  This Week&apos;s Schedule
+                </span>
+              </h2>
+              <p className="text-sm text-white/30">Who to expect each day — {MONTH_NAMES[thisWeekData.weekDays[0]?.date.getMonth() || 0]} {thisWeekData.weekDays[0]?.date.getFullYear() || 2026}</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {thisWeekData.weekDays.map((day) => (
+                <div key={day.dateStr}
+                  className={`rounded-xl overflow-hidden ${day.isClosed ? 'opacity-60' : ''}`}
+                  style={{
+                    background: day.isToday ? 'rgba(201,168,76,0.06)' : 'rgba(255,255,255,0.02)',
+                    border: day.isToday ? '2px solid rgba(201,168,76,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                  {/* Day header */}
+                  <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold ${day.isToday ? 'bg-[#c9a84c]/20 text-[#c9a84c]' : day.isPast ? 'bg-white/5 text-white/20' : 'bg-white/5 text-white/60'}`}>
+                        {day.date.getDate()}
+                      </div>
+                      <div>
+                        <h3 className={`font-semibold ${day.isToday ? 'text-[#c9a84c]' : 'text-white/80'}`}>{day.dayName}</h3>
+                        <p className="text-xs text-white/30">{MONTH_NAMES[day.date.getMonth()]} {day.date.getDate()}</p>
+                      </div>
+                    </div>
+                    {day.isToday && <span className="text-xs px-2 py-1 rounded-full bg-[#c9a84c]/20 text-[#c9a84c] font-bold">TODAY</span>}
+                    {day.isClosed && <span className="text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400 font-bold">🚫 CLOSED</span>}
+                    {day.isPast && !day.isToday && <span className="text-xs text-white/20">Past</span>}
+                  </div>
+
+                  {day.isClosed ? (
+                    <div className="px-5 py-6 text-center">
+                      <p className="text-red-400/60 text-sm">No classes — school closed</p>
+                      <p className="text-xs text-white/20 mt-1">{closures.find(c => c.date === day.dateStr)?.note || ''}</p>
+                    </div>
+                  ) : (
+                    <div className="px-4 py-3 space-y-2">
+                      {thisWeekData.classBuckets
+                        .filter(({ block }) => {
+                          if (block.julyAugOnly && day.date.getMonth() < 6) return false
+                          return true
+                        })
+                        .map(({ block, students }) => (
+                        <div key={block.label} className="flex items-center gap-3 py-2 px-3 rounded-lg" style={{ background: `${block.color}08` }}>
+                          <span className="text-lg">{block.emoji}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-white/70 truncate">{block.label}</p>
+                            <p className="text-[11px] text-white/30">{block.time}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold" style={{ color: block.color }}>{students.length}</span>
+                            <span className="text-xs text-white/25">students</span>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Total for the day */}
+                      <div className="flex items-center justify-between pt-2 mt-1" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                        <span className="text-xs text-white/30">Total expected</span>
+                        <span className="text-sm font-bold" style={{ color: '#c9a84c' }}>
+                          {thisWeekData.classBuckets
+                            .filter(({ block }) => !(block.julyAugOnly && day.date.getMonth() < 6))
+                            .reduce((sum, { students }) => sum + students.length, 0)} students
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Detailed student list per class */}
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold text-white/80 mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Students by Class
+              </h3>
+              <div className="space-y-3">
+                {thisWeekData.classBuckets
+                  .filter(({ students }) => students.length > 0)
+                  .map(({ block, students }) => (
+                  <div key={block.label} className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div className="px-5 py-3 flex items-center justify-between" style={{ background: `${block.color}08`, borderBottom: `1px solid ${block.color}15` }}>
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{block.emoji}</span>
+                        <div>
+                          <h4 className="font-semibold text-white/80 text-sm">{block.label}</h4>
+                          <p className="text-xs text-white/30">{block.time} · Ages {block.ageRange}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-bold" style={{ color: block.color }}>{students.length}</span>
+                    </div>
+                    <div className="divide-y divide-white/[0.04]">
+                      {students.map((s, i) => (
+                        <div key={s.id} className="flex items-center gap-3 px-5 py-2.5 hover:bg-white/[0.03] cursor-pointer transition"
+                          onClick={() => setSelectedStudent(s)}>
+                          <span className="text-xs text-white/20 w-5 text-right">{i + 1}.</span>
+                          <span className="font-medium text-white/80 text-sm flex-1">{safe(s.studentName) || safe(s.parentName)}</span>
+                          <span className="text-xs text-white/30">Age {safe(s.studentAge) || '?'}</span>
+                          {safe(s.allergies) && safe(s.allergies).toLowerCase() !== 'none' && (
+                            <span className="text-xs text-red-400">⚠️ {safe(s.allergies)}</span>
+                          )}
+                          <div className="flex gap-1">
+                            {safe(s.phone) && (
+                              <a href={`sms:${safe(s.phone).replace(/\D/g, '')}?body=${encodeURIComponent('Hi! This is BASMA Academy regarding ' + safe(s.studentName) + '. ')}`}
+                                onClick={e => e.stopPropagation()}
+                                className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-green-500/10 transition" title="Text parent">
+                                <span className="text-xs">💬</span>
+                              </a>
+                            )}
+                            {safe(s.phone) && (
+                              <a href={`tel:${safe(s.phone).replace(/\D/g, '')}`}
+                                onClick={e => e.stopPropagation()}
+                                className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-purple-500/10 transition" title="Call parent">
+                                <span className="text-xs">📞</span>
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
         {/* ═══ CALENDAR TAB ═══ */}
         {tab === 'calendar' && (
           <>
@@ -1296,6 +1694,101 @@ export default function TeacherContent() {
             </div>
           </>
         )}
+
+        {/* ═══ ADMIN CHAT TAB ═══ */}
+        {tab === 'chat' && (
+          <>
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  Admin Assistant
+                </span>
+              </h2>
+              <p className="text-sm text-white/30">Chat to look up or update student info. Changes require the teacher code.</p>
+            </div>
+
+            {/* Quick help */}
+            <div className="mb-4 p-4 rounded-xl" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
+              <p className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider mb-2">Try saying:</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "What's Sarah's phone number?",
+                  "Change Amir's allergies to none",
+                  "Update the phone for the Smith family to 702-555-1234",
+                  "Show me all students age 5",
+                  "Who has allergies?",
+                ].map((example, i) => (
+                  <button key={i}
+                    onClick={() => { setChatInput(example) }}
+                    className="text-xs px-3 py-1.5 rounded-full hover:bg-white/[0.05] transition"
+                    style={{ color: '#c9a84c', border: '1px solid rgba(201,168,76,0.2)' }}>
+                    &quot;{example}&quot;
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Chat messages */}
+            <div className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="h-[400px] overflow-y-auto p-4 space-y-3">
+                {chatMessages.length === 0 && (
+                  <div className="text-center py-12">
+                    <span className="text-4xl mb-3 block">🤖</span>
+                    <p className="text-white/30 text-sm">Hi Miss Basma! Ask me anything about your students.</p>
+                    <p className="text-white/20 text-xs mt-1">I can look up info, update records, and help manage your roster.</p>
+                  </div>
+                )}
+                {chatMessages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${
+                      msg.role === 'user'
+                        ? 'bg-[#c9a84c]/20 text-white/90 rounded-br-none'
+                        : 'bg-white/[0.05] text-white/80 rounded-bl-none'
+                    }`} style={{
+                      border: msg.role === 'user' ? '1px solid rgba(201,168,76,0.2)' : '1px solid rgba(255,255,255,0.06)',
+                    }}>
+                      {msg.role === 'assistant' && <span className="text-xs text-[#c9a84c]/50 block mb-1">🤖 Assistant</span>}
+                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                    </div>
+                  </div>
+                ))}
+                {chatLoading && (
+                  <div className="flex justify-start">
+                    <div className="px-4 py-3 rounded-2xl rounded-bl-none bg-white/[0.05]" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <span className="text-xs text-[#c9a84c]/50 block mb-1">🤖 Assistant</span>
+                      <div className="flex gap-1">
+                        <span className="w-2 h-2 rounded-full bg-[#c9a84c] animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-2 h-2 rounded-full bg-[#c9a84c] animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-2 h-2 rounded-full bg-[#c9a84c] animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              {/* Input */}
+              <div className="p-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <form onSubmit={(e) => { e.preventDefault(); sendChatMessage() }} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder="Ask about a student or request a change..."
+                    disabled={chatLoading}
+                    className="flex-1 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition disabled:opacity-50"
+                  />
+                  <button type="submit" disabled={chatLoading || !chatInput.trim()}
+                    className="px-5 py-3 rounded-xl font-semibold text-sm transition disabled:opacity-30"
+                    style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+                    Send
+                  </button>
+                </form>
+              </div>
+            </div>
+          </>
+        )}
+
       </div>
 
       <footer className="mt-20 py-6 border-t border-white/5 text-center">

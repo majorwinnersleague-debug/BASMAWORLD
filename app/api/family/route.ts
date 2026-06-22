@@ -198,10 +198,16 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const data = await request.json()
-    const { recordId, studentName, studentAge, interests, allergies, medicalConditions, emergencyContactName, emergencyContactPhone, parentName, phone } = data
+    const { recordId, studentName, studentAge, interests, allergies, medicalConditions, emergencyContactName, emergencyContactPhone, parentName, phone, email: newEmail, teacherCode } = data
 
     if (!recordId) {
       return NextResponse.json({ error: 'Record ID required' }, { status: 400 })
+    }
+
+    // If teacherCode is provided, verify it
+    const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || '1515'
+    if (teacherCode && teacherCode !== TEACHER_CODE) {
+      return NextResponse.json({ error: 'Invalid teacher code' }, { status: 403 })
     }
 
     // Update Marketing Leads
@@ -211,6 +217,7 @@ export async function PATCH(request: NextRequest) {
     if (interests !== undefined) leadsFields['Interests'] = interests
     if (parentName !== undefined) leadsFields['Full Name'] = parentName
     if (phone !== undefined) leadsFields['Phone'] = phone
+    if (newEmail !== undefined) leadsFields['Email'] = newEmail
 
     if (Object.keys(leadsFields).length > 0) {
       await airtablePatch(LEADS_TABLE, recordId, leadsFields)
