@@ -518,7 +518,7 @@ export default function ScheduleContent() {
             <p style={{ margin: "0 0 8px", fontSize: 13, color: "rgba(255,255,255,0.5)" }}>Pay for a full week (Mon–Thu) and save!</p>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>
               <div>👶 Tiny Tots: <strong>$25/class</strong> → 4 classes = $75 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $25)</span></div>
-              <div>🎵 Kids: <strong>$30/class</strong> → 4 classes = $105 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $35!)</span></div>
+              <div>🎵 Kids: <strong>$35/class</strong> → 4 classes = $105 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $35!)</span></div>
               <div>🎹 Piano: <strong>$35/class</strong> → 4 classes = $105 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $35!)</span></div>
               <div>🎧 Teens Recording: <strong>$40/class</strong> → 4 classes = $120</div>
             </div>
