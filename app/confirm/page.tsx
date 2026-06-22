@@ -3,11 +3,11 @@
 import { useState } from 'react'
 
 const JUNE_CLASSES = [
-  { id: 'tiny-tots', name: 'Tiny Tots (Ages 2–5)', time: '9:00 – 10:00 AM', color: '#ff69b4', emoji: '🧸' },
-  { id: 'kids-5-10', name: 'Kids Music (Ages 5–10)', time: '10:00 – 11:30 AM', color: '#4da6ff', emoji: '🎵' },
-  { id: 'kids-10-17', name: 'Kids Music (Ages 10–17)', time: '11:30 AM – 1:00 PM', color: '#50c878', emoji: '🎵' },
-  { id: 'piano', name: 'Piano Class', time: '1:30 – 2:45 PM', color: '#b388ff', emoji: '🎹' },
-  { id: 'teens-recording', name: 'Teens Recording (Teens Only)', time: '2:45 – 4:00 PM', color: '#ffb347', emoji: '🎤' },
+  { id: 'tiny-tots', name: 'Tiny Tots Music & Fun (Ages 2–5)', time: '9:00 – 10:00 AM', color: '#ff69b4', emoji: '🧸' },
+  { id: 'kids-5-10', name: 'Kids Music & Fun (Ages 5–10)', time: '10:00 AM – 12:00 PM', color: '#4da6ff', emoji: '🎵' },
+  { id: 'kids-10-17', name: 'Kids Music & Fun (Ages 10–17)', time: '12:00 – 2:00 PM', color: '#50c878', emoji: '🎵' },
+  { id: 'private-am', name: 'Free 20-Min Private Lesson (Morning)', time: '8:00 – 9:40 AM', color: '#b388ff', emoji: '🎸' },
+  { id: 'private-pm', name: 'Free 20-Min Private Lesson (Afternoon)', time: '2:20 – 4:00 PM', color: '#b388ff', emoji: '🎸' },
 ]
 
 const THIS_WEEK = [
@@ -127,7 +127,6 @@ export default function ConfirmPage() {
     }
   }
 
-  // ─── SUCCESS SCREEN ───
   if (submitted) {
     return (
       <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #1a0533 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
@@ -144,6 +143,10 @@ export default function ConfirmPage() {
               📅 <strong>Last week of June:</strong> Mon–Thu, June 29 – July 2
             </p>
           </div>
+          <p style={{ fontSize: 14, color: '#c0c0d0', marginBottom: 20 }}>
+            📸 Follow us on Instagram!<br />
+            <a href="https://www.instagram.com/becomeasingermusicacademy?igsh=MWw1MGNtczNkOW5oaw==" style={{ color: '#c9a84c' }}>@becomeasingermusicacademy</a>
+          </p>
           <a href="/" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c9a84c, #f5d07a)', color: '#0a0a0f', padding: '12px 32px', borderRadius: 8, textDecoration: 'none', fontWeight: 'bold' }}>
             Back to BASMA Academy
           </a>
@@ -162,11 +165,14 @@ export default function ConfirmPage() {
 
       {/* Announcements */}
       <div style={{ maxWidth: 540, margin: '20px auto', padding: '0 16px' }}>
+        <div style={{ background: 'rgba(80,200,120,0.08)', border: '1px solid rgba(80,200,120,0.25)', borderRadius: 12, padding: 16, marginBottom: 12, textAlign: 'center' }}>
+          <p style={{ margin: 0, fontSize: 16, color: '#50c878', fontWeight: 'bold' }}>🎉 All June classes are FREE!</p>
+        </div>
         <div style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.25)', borderRadius: 12, padding: 16 }}>
           <p style={{ margin: 0, fontSize: 14, color: '#d0d0e0', lineHeight: 1.8 }}>
             🍕 <strong style={{ color: '#ffd700' }}>Pizza Day</strong> — Wednesday, June 24<br />
             ❌ <strong style={{ color: '#ff6b6b' }}>No School</strong> — Thursday, June 25<br />
-            📅 <strong style={{ color: '#50c878' }}>Last week of FREE June classes:</strong> Mon–Thu, June 29 – July 2
+            📅 <strong style={{ color: '#50c878' }}>Last week of June:</strong> Mon–Thu, June 29 – July 2
           </p>
         </div>
       </div>
@@ -204,16 +210,12 @@ export default function ConfirmPage() {
         {/* Student Cards */}
         {found && (
           <>
-            <div style={{ background: 'rgba(80,200,120,0.1)', border: '1px solid rgba(80,200,120,0.3)', borderRadius: 12, padding: 14, marginBottom: 20, textAlign: 'center' }}>
-              <p style={{ margin: 0, fontSize: 15, color: '#50c878', fontWeight: 'bold' }}>🎉 June classes are FREE! Just confirm which days you&apos;ll attend.</p>
-            </div>
-
             {confirmations.map((conf, idx) => (
               <div key={idx} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: 24, marginBottom: 16 }}>
                 <h3 style={{ margin: '0 0 16px', fontSize: 20, color: '#ffd700' }}>🎵 {students[idx].name} {students[idx].age ? `(Age ${students[idx].age})` : ''}</h3>
 
                 {/* Class */}
-                <p style={{ margin: '0 0 8px', fontSize: 14, color: '#a0a0b0', fontWeight: 'bold' }}>Pick a class:</p>
+                <p style={{ margin: '0 0 8px', fontSize: 14, color: '#a0a0b0', fontWeight: 'bold' }}>Which class? (all FREE in June)</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 18 }}>
                   {JUNE_CLASSES.map(cls => {
                     const label = `${cls.name} — ${cls.time}`
@@ -227,7 +229,7 @@ export default function ConfirmPage() {
                         <span style={{ fontSize: 18 }}>{cls.emoji}</span>
                         <div>
                           <div style={{ fontSize: 14, color: selected ? '#fff' : '#c0c0d0', fontWeight: selected ? 600 : 400 }}>{cls.name}</div>
-                          <div style={{ fontSize: 12, color: '#888' }}>{cls.time}</div>
+                          <div style={{ fontSize: 12, color: '#888' }}>{cls.time} · FREE</div>
                         </div>
                       </button>
                     )
@@ -285,6 +287,9 @@ export default function ConfirmPage() {
 
         {/* Footer */}
         <div style={{ textAlign: 'center', marginTop: 40, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          <p style={{ margin: '0 0 8px', fontSize: 13, color: '#c9a84c' }}>
+            📸 <a href="https://www.instagram.com/becomeasingermusicacademy?igsh=MWw1MGNtczNkOW5oaw==" style={{ color: '#c9a84c' }}>Follow us on Instagram @becomeasingermusicacademy</a>
+          </p>
           <p style={{ margin: 0, fontSize: 12, color: '#666' }}>
             🎵 Become A Singer Music Academy · 6787 W Tropicana Ave Suite 260, Las Vegas<br />
             <a href="tel:7027887369" style={{ color: '#c9a84c', textDecoration: 'none' }}>(702) 788-7369</a> · <a href="https://basmaworld.com" style={{ color: '#c9a84c', textDecoration: 'none' }}>basmaworld.com</a>
