@@ -53,7 +53,7 @@ const CLASSES: ClassInfo[] = [
     emoji: '👶',
     ageRange: 'Ages 2–5',
     minAge: 2, maxAge: 5,
-    schedule: '9:00 – 9:45 AM',
+    schedule: '9:00 – 10:00 AM',
     days: 'Mon – Thu (Last 2 weeks of June)',
     julyPrice: 0, augustSinglePrice: 0, augustBundlePrice: 0,
     augustBundleSave: '',
