@@ -1,42 +1,38 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
-const CLASSES = [
-  { id: 'tiny-tots', name: 'Tiny Tots (Ages 2–5)', time: '9:00 – 10:00 AM', color: '#ff69b4' },
-  { id: 'kids-5-10', name: 'Kids Music (Ages 5–10)', time: '10:00 – 11:30 AM', color: '#4da6ff' },
-  { id: 'kids-10-17', name: 'Kids Music (Ages 10–17)', time: '11:30 AM – 1:00 PM', color: '#50c878' },
-  { id: 'piano', name: 'Piano Class Lecture', time: '1:30 – 2:45 PM', color: '#b388ff' },
-  { id: 'teens-recording', name: 'Teens Recording (Teens Only)', time: '2:45 – 4:00 PM', color: '#ffb347' },
+const JUNE_CLASSES = [
+  { id: 'tiny-tots', name: 'Tiny Tots (Ages 2–5)', time: '9:00 – 10:00 AM', color: '#ff69b4', emoji: '🧸' },
+  { id: 'kids-5-10', name: 'Kids Music (Ages 5–10)', time: '10:00 – 11:30 AM', color: '#4da6ff', emoji: '🎵' },
+  { id: 'kids-10-17', name: 'Kids Music (Ages 10–17)', time: '11:30 AM – 1:00 PM', color: '#50c878', emoji: '🎵' },
+  { id: 'piano', name: 'Piano Class', time: '1:30 – 2:45 PM', color: '#b388ff', emoji: '🎹' },
+  { id: 'teens-recording', name: 'Teens Recording (Teens Only)', time: '2:45 – 4:00 PM', color: '#ffb347', emoji: '🎤' },
 ]
 
-// This week: Mon/Tue/Wed only (no Thu June 25)
-const THIS_WEEK_DAYS = [
-  { id: 'monday', name: 'Monday, June 22' },
-  { id: 'tuesday', name: 'Tuesday, June 23' },
-  { id: 'wednesday', name: 'Wednesday, June 24 🍕 Pizza Day!' },
+const THIS_WEEK = [
+  { id: 'mon', name: 'Mon, June 22' },
+  { id: 'tue', name: 'Tue, June 23' },
+  { id: 'wed', name: 'Wed, June 24 🍕' },
 ]
 
-// Next week (last week of June): Mon-Thu
-const NEXT_WEEK_DAYS = [
-  { id: 'monday', name: 'Monday, June 29' },
-  { id: 'tuesday', name: 'Tuesday, June 30' },
-  { id: 'wednesday', name: 'Wednesday, July 1' },
-  { id: 'thursday', name: 'Thursday, July 2' },
+const NEXT_WEEK = [
+  { id: 'mon2', name: 'Mon, June 29' },
+  { id: 'tue2', name: 'Tue, June 30' },
+  { id: 'wed2', name: 'Wed, July 1' },
+  { id: 'thu2', name: 'Thu, July 2' },
 ]
 
 interface Student {
   name: string
   age: string
-  class: string
-  source: string
 }
 
-interface StudentConfirmation {
+interface Confirmation {
   studentName: string
-  className: string
-  thisWeekDays: string[]
-  nextWeekDays: string[]
+  selectedClass: string
+  thisWeek: string[]
+  nextWeek: string[]
 }
 
 export default function ConfirmPage() {
@@ -47,7 +43,7 @@ export default function ConfirmPage() {
   const [parentPhone, setParentPhone] = useState('')
   const [found, setFound] = useState(false)
   const [notFound, setNotFound] = useState(false)
-  const [confirmations, setConfirmations] = useState<StudentConfirmation[]>([])
+  const [confirmations, setConfirmations] = useState<Confirmation[]>([])
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -60,22 +56,19 @@ export default function ConfirmPage() {
     try {
       const res = await fetch(`/api/confirm?email=${encodeURIComponent(email.trim().toLowerCase())}`)
       const data = await res.json()
-      if (data.success && data.students && data.students.length > 0) {
+      if (data.success && data.students?.length > 0) {
         setStudents(data.students)
         setParentName(data.parentName || '')
         setParentPhone(data.parentPhone || '')
         setFound(true)
-        // Initialize confirmations
         setConfirmations(data.students.map((s: Student) => ({
           studentName: s.name,
-          className: '',
-          thisWeekDays: [],
-          nextWeekDays: [],
+          selectedClass: '',
+          thisWeek: [],
+          nextWeek: [],
         })))
       } else {
-        setFound(false)
         setNotFound(true)
-        setStudents([])
       }
     } catch {
       setError('Something went wrong. Please try again.')
@@ -84,30 +77,25 @@ export default function ConfirmPage() {
     }
   }
 
-  const updateConfirmation = (index: number, field: string, value: string | string[]) => {
+  const selectClass = (idx: number, cls: string) => {
     setConfirmations(prev => {
-      const updated = [...prev]
-      updated[index] = { ...updated[index], [field]: value }
-      return updated
+      const u = [...prev]
+      u[idx] = { ...u[idx], selectedClass: cls }
+      return u
     })
   }
 
-  const toggleDay = (index: number, week: 'thisWeekDays' | 'nextWeekDays', day: string) => {
+  const toggleDay = (idx: number, week: 'thisWeek' | 'nextWeek', day: string) => {
     setConfirmations(prev => {
-      const updated = [...prev]
-      const current = updated[index][week]
-      if (current.includes(day)) {
-        updated[index] = { ...updated[index], [week]: current.filter(d => d !== day) }
-      } else {
-        updated[index] = { ...updated[index], [week]: [...current, day] }
-      }
-      return updated
+      const u = [...prev]
+      const cur = u[idx][week]
+      u[idx] = { ...u[idx], [week]: cur.includes(day) ? cur.filter(d => d !== day) : [...cur, day] }
+      return u
     })
   }
 
   const handleSubmit = async () => {
-    // Validate
-    const valid = confirmations.filter(c => c.className && (c.thisWeekDays.length > 0 || c.nextWeekDays.length > 0))
+    const valid = confirmations.filter(c => c.selectedClass && (c.thisWeek.length > 0 || c.nextWeek.length > 0))
     if (valid.length === 0) {
       setError('Please select a class and at least one day for each student.')
       return
@@ -115,41 +103,23 @@ export default function ConfirmPage() {
     setSubmitting(true)
     setError('')
     try {
-      // Submit this week and next week as separate entries
-      const allConfirmations: Array<{ studentName: string; className: string; daysAttending: string[] }> = []
+      const allConf: Array<{ studentName: string; className: string; daysAttending: string[] }> = []
       for (const c of valid) {
-        if (c.thisWeekDays.length > 0) {
-          allConfirmations.push({
-            studentName: c.studentName,
-            className: c.className,
-            daysAttending: c.thisWeekDays.map(d => `${d} (June 22-24)`),
-          })
+        if (c.thisWeek.length > 0) {
+          allConf.push({ studentName: c.studentName, className: c.selectedClass, daysAttending: c.thisWeek.map(d => `${d} (this week)`) })
         }
-        if (c.nextWeekDays.length > 0) {
-          allConfirmations.push({
-            studentName: c.studentName,
-            className: c.className,
-            daysAttending: c.nextWeekDays.map(d => `${d} (June 29-July 2)`),
-          })
+        if (c.nextWeek.length > 0) {
+          allConf.push({ studentName: c.studentName, className: c.selectedClass, daysAttending: c.nextWeek.map(d => `${d} (last week of June)`) })
         }
       }
-
       const res = await fetch('/api/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          parentEmail: email.trim().toLowerCase(),
-          parentName,
-          parentPhone,
-          confirmations: allConfirmations,
-        }),
+        body: JSON.stringify({ parentEmail: email.trim().toLowerCase(), parentName, parentPhone, confirmations: allConf }),
       })
       const data = await res.json()
-      if (data.success) {
-        setSubmitted(true)
-      } else {
-        setError('Failed to confirm. Please try again or call us at (702) 788-7369.')
-      }
+      if (data.success) setSubmitted(true)
+      else setError('Failed to confirm. Please call us at (702) 788-7369.')
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {
@@ -157,6 +127,7 @@ export default function ConfirmPage() {
     }
   }
 
+  // ─── SUCCESS SCREEN ───
   if (submitted) {
     return (
       <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #1a0533 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
@@ -164,16 +135,16 @@ export default function ConfirmPage() {
           <div style={{ fontSize: 64, marginBottom: 16 }}>✅</div>
           <h1 style={{ fontSize: 28, color: '#ffd700', marginBottom: 12 }}>You&apos;re All Set!</h1>
           <p style={{ fontSize: 16, color: '#c0c0d0', lineHeight: 1.7, marginBottom: 24 }}>
-            Thank you for confirming! We can&apos;t wait to see your family this week. 🎶
+            Thank you for confirming! We can&apos;t wait to see your family. 🎶
           </p>
           <div style={{ background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.3)', borderRadius: 12, padding: 16, marginBottom: 24 }}>
             <p style={{ margin: 0, fontSize: 14, color: '#ffd700' }}>
-              🍕 <strong>Pizza Day is Wednesday!</strong><br />
-              ❌ <strong>No school Thursday, June 25</strong><br />
+              🍕 <strong>Pizza Day — Wednesday, June 24!</strong><br />
+              ❌ <strong>No school — Thursday, June 25</strong><br />
               📅 <strong>Last week of June:</strong> Mon–Thu, June 29 – July 2
             </p>
           </div>
-          <a href="/" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c9a84c, #f5d07a)', color: '#0a0a0f', padding: '12px 32px', borderRadius: 8, textDecoration: 'none', fontWeight: 'bold', fontSize: 14 }}>
+          <a href="/" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c9a84c, #f5d07a)', color: '#0a0a0f', padding: '12px 32px', borderRadius: 8, textDecoration: 'none', fontWeight: 'bold' }}>
             Back to BASMA Academy
           </a>
         </div>
@@ -184,69 +155,45 @@ export default function ConfirmPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #1a0533 100%)', color: '#fff' }}>
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, #4a0e78, #1a0533)', padding: '32px 24px', textAlign: 'center', borderBottom: '1px solid rgba(255,215,0,0.2)' }}>
-        <h1 style={{ margin: 0, fontSize: 28, color: '#ffd700', fontFamily: 'Georgia, serif' }}>🎵 Confirm Attendance</h1>
-        <p style={{ margin: '8px 0 0', color: '#e0d0ff', fontSize: 14 }}>BASMA Academy — Summer Music Program</p>
+      <div style={{ background: 'linear-gradient(135deg, #4a0e78, #1a0533)', padding: '28px 24px', textAlign: 'center', borderBottom: '1px solid rgba(255,215,0,0.2)' }}>
+        <h1 style={{ margin: 0, fontSize: 26, color: '#ffd700', fontFamily: 'Georgia, serif' }}>🎵 Confirm Attendance</h1>
+        <p style={{ margin: '6px 0 0', color: '#e0d0ff', fontSize: 14 }}>June FREE Classes — BASMA Academy</p>
       </div>
 
-      {/* Important Notices */}
-      <div style={{ maxWidth: 600, margin: '24px auto', padding: '0 16px' }}>
-        <div style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.25)', borderRadius: 12, padding: 20 }}>
-          <p style={{ margin: '0 0 8px', fontSize: 15, color: '#ffd700', fontWeight: 'bold' }}>📢 This Week&apos;s Announcements</p>
-          <p style={{ margin: 0, fontSize: 14, color: '#d0d0e0', lineHeight: 1.7 }}>
-            🍕 <strong style={{ color: '#ffd700' }}>Pizza Day</strong> — Wednesday, June 24!<br />
+      {/* Announcements */}
+      <div style={{ maxWidth: 540, margin: '20px auto', padding: '0 16px' }}>
+        <div style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.25)', borderRadius: 12, padding: 16 }}>
+          <p style={{ margin: 0, fontSize: 14, color: '#d0d0e0', lineHeight: 1.8 }}>
+            🍕 <strong style={{ color: '#ffd700' }}>Pizza Day</strong> — Wednesday, June 24<br />
             ❌ <strong style={{ color: '#ff6b6b' }}>No School</strong> — Thursday, June 25<br />
-            📅 <strong style={{ color: '#50c878' }}>Last Week of June</strong> — Mon–Thu, June 29 – July 2
+            📅 <strong style={{ color: '#50c878' }}>Last week of FREE June classes:</strong> Mon–Thu, June 29 – July 2
           </p>
         </div>
       </div>
 
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 16px 48px' }}>
+      <div style={{ maxWidth: 540, margin: '0 auto', padding: '0 16px 48px' }}>
         {/* Email Lookup */}
         {!found && (
-          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: 28, marginBottom: 24 }}>
-            <h2 style={{ margin: '0 0 16px', fontSize: 20, color: '#e0e0e0' }}>Enter your email to confirm</h2>
-            <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: 24, marginBottom: 20 }}>
+            <h2 style={{ margin: '0 0 14px', fontSize: 18, color: '#e0e0e0' }}>Enter your email to confirm</h2>
+            <div style={{ display: 'flex', gap: 10 }}>
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && lookupEmail()}
                 placeholder="parent@email.com"
-                style={{
-                  flex: 1, padding: '14px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)',
-                  background: 'rgba(255,255,255,0.06)', color: '#fff', fontSize: 16, outline: 'none',
-                }}
+                style={{ flex: 1, padding: '14px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.06)', color: '#fff', fontSize: 16, outline: 'none' }}
               />
-              <button
-                onClick={lookupEmail}
-                disabled={loading || !email.includes('@')}
-                style={{
-                  padding: '14px 24px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                  background: 'linear-gradient(135deg, #c9a84c, #f5d07a)', color: '#0a0a0f',
-                  fontWeight: 'bold', fontSize: 14, opacity: loading ? 0.6 : 1,
-                }}
-              >
+              <button onClick={lookupEmail} disabled={loading || !email.includes('@')} style={{ padding: '14px 24px', borderRadius: 8, border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #c9a84c, #f5d07a)', color: '#0a0a0f', fontWeight: 'bold', fontSize: 14, opacity: loading ? 0.6 : 1 }}>
                 {loading ? '...' : 'Look Up'}
               </button>
             </div>
-
             {notFound && (
-              <div style={{ marginTop: 20, background: 'rgba(255,107,107,0.1)', border: '1px solid rgba(255,107,107,0.3)', borderRadius: 12, padding: 20 }}>
-                <p style={{ margin: '0 0 12px', fontSize: 15, color: '#ff6b6b', fontWeight: 'bold' }}>
-                  We couldn&apos;t find a registration with that email.
-                </p>
-                <p style={{ margin: '0 0 16px', fontSize: 14, color: '#c0c0d0', lineHeight: 1.6 }}>
-                  Please complete your registration first before attending class:
-                </p>
-                <a
-                  href="/enroll"
-                  style={{
-                    display: 'inline-block', background: 'linear-gradient(135deg, #c9a84c, #f5d07a)',
-                    color: '#0a0a0f', padding: '12px 28px', borderRadius: 8, textDecoration: 'none',
-                    fontWeight: 'bold', fontSize: 14,
-                  }}
-                >
+              <div style={{ marginTop: 16, background: 'rgba(255,107,107,0.1)', border: '1px solid rgba(255,107,107,0.3)', borderRadius: 12, padding: 20 }}>
+                <p style={{ margin: '0 0 8px', fontSize: 15, color: '#ff6b6b', fontWeight: 'bold' }}>Email not found</p>
+                <p style={{ margin: '0 0 14px', fontSize: 14, color: '#c0c0d0' }}>Please complete registration before attending class:</p>
+                <a href="/enroll" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c9a84c, #f5d07a)', color: '#0a0a0f', padding: '12px 28px', borderRadius: 8, textDecoration: 'none', fontWeight: 'bold', fontSize: 14 }}>
                   Complete Registration →
                 </a>
               </div>
@@ -254,117 +201,92 @@ export default function ConfirmPage() {
           </div>
         )}
 
-        {/* Student Confirmation Cards */}
-        {found && confirmations.map((conf, idx) => (
-          <div key={idx} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: 24, marginBottom: 20 }}>
-            <h3 style={{ margin: '0 0 4px', fontSize: 20, color: '#ffd700' }}>
-              🎵 {students[idx].name}
-            </h3>
-            {students[idx].age && (
-              <p style={{ margin: '0 0 16px', fontSize: 13, color: '#a0a0b0' }}>Age: {students[idx].age}</p>
-            )}
-
-            {/* Class Selection */}
-            <p style={{ margin: '0 0 10px', fontSize: 14, color: '#c0c0d0', fontWeight: 'bold' }}>Which class?</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
-              {CLASSES.map(cls => (
-                <label
-                  key={cls.id}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 10,
-                    border: conf.className === `${cls.name} — ${cls.time}` ? `2px solid ${cls.color}` : '1px solid rgba(255,255,255,0.1)',
-                    background: conf.className === `${cls.name} — ${cls.time}` ? `${cls.color}15` : 'transparent',
-                    cursor: 'pointer', transition: 'all 0.2s',
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name={`class-${idx}`}
-                    checked={conf.className === `${cls.name} — ${cls.time}`}
-                    onChange={() => updateConfirmation(idx, 'className', `${cls.name} — ${cls.time}`)}
-                    style={{ accentColor: cls.color }}
-                  />
-                  <div>
-                    <div style={{ fontSize: 14, color: '#e0e0e0', fontWeight: 500 }}>{cls.name}</div>
-                    <div style={{ fontSize: 12, color: '#a0a0b0' }}>{cls.time}</div>
-                  </div>
-                </label>
-              ))}
-            </div>
-
-            {/* This Week Days */}
-            <p style={{ margin: '0 0 10px', fontSize: 14, color: '#c0c0d0', fontWeight: 'bold' }}>
-              📅 This Week <span style={{ color: '#a0a0b0', fontWeight: 'normal' }}>(June 22–24)</span>
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
-              {THIS_WEEK_DAYS.map(day => (
-                <button
-                  key={day.id}
-                  type="button"
-                  onClick={() => toggleDay(idx, 'thisWeekDays', day.name)}
-                  style={{
-                    padding: '10px 16px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 13,
-                    background: conf.thisWeekDays.includes(day.name) ? 'linear-gradient(135deg, #c9a84c, #f5d07a)' : 'rgba(255,255,255,0.08)',
-                    color: conf.thisWeekDays.includes(day.name) ? '#0a0a0f' : '#c0c0d0',
-                    fontWeight: conf.thisWeekDays.includes(day.name) ? 'bold' : 'normal',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  {day.name}
-                </button>
-              ))}
-            </div>
-
-            {/* Next Week Days */}
-            <p style={{ margin: '0 0 10px', fontSize: 14, color: '#c0c0d0', fontWeight: 'bold' }}>
-              📅 Last Week of June <span style={{ color: '#a0a0b0', fontWeight: 'normal' }}>(June 29 – July 2)</span>
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {NEXT_WEEK_DAYS.map(day => (
-                <button
-                  key={day.id}
-                  type="button"
-                  onClick={() => toggleDay(idx, 'nextWeekDays', day.name)}
-                  style={{
-                    padding: '10px 16px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 13,
-                    background: conf.nextWeekDays.includes(day.name) ? 'linear-gradient(135deg, #50c878, #7dde9a)' : 'rgba(255,255,255,0.08)',
-                    color: conf.nextWeekDays.includes(day.name) ? '#0a0a0f' : '#c0c0d0',
-                    fontWeight: conf.nextWeekDays.includes(day.name) ? 'bold' : 'normal',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  {day.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {/* Submit Button */}
+        {/* Student Cards */}
         {found && (
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            {error && (
-              <p style={{ color: '#ff6b6b', fontSize: 14, marginBottom: 12 }}>{error}</p>
-            )}
-            <button
-              onClick={handleSubmit}
-              disabled={submitting}
-              style={{
+          <>
+            <div style={{ background: 'rgba(80,200,120,0.1)', border: '1px solid rgba(80,200,120,0.3)', borderRadius: 12, padding: 14, marginBottom: 20, textAlign: 'center' }}>
+              <p style={{ margin: 0, fontSize: 15, color: '#50c878', fontWeight: 'bold' }}>🎉 June classes are FREE! Just confirm which days you&apos;ll attend.</p>
+            </div>
+
+            {confirmations.map((conf, idx) => (
+              <div key={idx} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: 24, marginBottom: 16 }}>
+                <h3 style={{ margin: '0 0 16px', fontSize: 20, color: '#ffd700' }}>🎵 {students[idx].name} {students[idx].age ? `(Age ${students[idx].age})` : ''}</h3>
+
+                {/* Class */}
+                <p style={{ margin: '0 0 8px', fontSize: 14, color: '#a0a0b0', fontWeight: 'bold' }}>Pick a class:</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 18 }}>
+                  {JUNE_CLASSES.map(cls => {
+                    const label = `${cls.name} — ${cls.time}`
+                    const selected = conf.selectedClass === label
+                    return (
+                      <button key={cls.id} type="button" onClick={() => selectClass(idx, label)} style={{
+                        display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 10, cursor: 'pointer', textAlign: 'left',
+                        border: selected ? `2px solid ${cls.color}` : '1px solid rgba(255,255,255,0.1)',
+                        background: selected ? `${cls.color}20` : 'transparent', transition: 'all 0.15s',
+                      }}>
+                        <span style={{ fontSize: 18 }}>{cls.emoji}</span>
+                        <div>
+                          <div style={{ fontSize: 14, color: selected ? '#fff' : '#c0c0d0', fontWeight: selected ? 600 : 400 }}>{cls.name}</div>
+                          <div style={{ fontSize: 12, color: '#888' }}>{cls.time}</div>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* This Week */}
+                <p style={{ margin: '0 0 8px', fontSize: 14, color: '#a0a0b0', fontWeight: 'bold' }}>This week (June 22–24):</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+                  {THIS_WEEK.map(d => {
+                    const sel = conf.thisWeek.includes(d.name)
+                    return (
+                      <button key={d.id} type="button" onClick={() => toggleDay(idx, 'thisWeek', d.name)} style={{
+                        padding: '10px 16px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 13, transition: 'all 0.15s',
+                        background: sel ? 'linear-gradient(135deg, #c9a84c, #f5d07a)' : 'rgba(255,255,255,0.08)',
+                        color: sel ? '#0a0a0f' : '#c0c0d0', fontWeight: sel ? 'bold' : 'normal',
+                      }}>
+                        {d.name}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Next Week */}
+                <p style={{ margin: '0 0 8px', fontSize: 14, color: '#a0a0b0', fontWeight: 'bold' }}>Last week of June (June 29 – July 2):</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {NEXT_WEEK.map(d => {
+                    const sel = conf.nextWeek.includes(d.name)
+                    return (
+                      <button key={d.id} type="button" onClick={() => toggleDay(idx, 'nextWeek', d.name)} style={{
+                        padding: '10px 16px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 13, transition: 'all 0.15s',
+                        background: sel ? 'linear-gradient(135deg, #50c878, #7dde9a)' : 'rgba(255,255,255,0.08)',
+                        color: sel ? '#0a0a0f' : '#c0c0d0', fontWeight: sel ? 'bold' : 'normal',
+                      }}>
+                        {d.name}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+
+            {error && <p style={{ color: '#ff6b6b', fontSize: 14, textAlign: 'center', margin: '0 0 12px' }}>{error}</p>}
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <button onClick={handleSubmit} disabled={submitting} style={{
                 padding: '16px 48px', borderRadius: 12, border: 'none', cursor: 'pointer', fontSize: 18,
                 background: 'linear-gradient(135deg, #c9a84c, #f5d07a)', color: '#0a0a0f',
-                fontWeight: 'bold', opacity: submitting ? 0.6 : 1, transition: 'all 0.2s',
-                boxShadow: '0 4px 24px rgba(201,168,76,0.3)',
-              }}
-            >
-              {submitting ? 'Confirming...' : '✅ Confirm — We\'ll Be There!'}
-            </button>
-          </div>
+                fontWeight: 'bold', opacity: submitting ? 0.6 : 1, boxShadow: '0 4px 24px rgba(201,168,76,0.3)',
+              }}>
+                {submitting ? 'Confirming...' : '✅ Confirm — We\'ll Be There!'}
+              </button>
+            </div>
+          </>
         )}
 
         {/* Footer */}
-        <div style={{ textAlign: 'center', marginTop: 40, padding: '20px 0', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ textAlign: 'center', marginTop: 40, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
           <p style={{ margin: 0, fontSize: 12, color: '#666' }}>
-            🎵 Become A Singer Music Academy · 6787 W Tropicana Ave Suite 260, Las Vegas, NV<br />
+            🎵 Become A Singer Music Academy · 6787 W Tropicana Ave Suite 260, Las Vegas<br />
             <a href="tel:7027887369" style={{ color: '#c9a84c', textDecoration: 'none' }}>(702) 788-7369</a> · <a href="https://basmaworld.com" style={{ color: '#c9a84c', textDecoration: 'none' }}>basmaworld.com</a>
           </p>
         </div>
