@@ -48,6 +48,20 @@ const CLASSES: ClassInfo[] = [
     isPrivateTrial: true,
   },
   {
+    id: 'discovery-tiny-tots',
+    name: 'Tiny Tots Discovery (FREE)',
+    emoji: '👶',
+    ageRange: 'Ages 2–5',
+    minAge: 2, maxAge: 5,
+    schedule: '9:00 – 9:45 AM',
+    days: 'Mon – Thu (Last 2 weeks of June)',
+    julyPrice: 0, augustSinglePrice: 0, augustBundlePrice: 0,
+    augustBundleSave: '',
+    julyStripeLink: '', augustSingleStripeLink: '', augustBundleStripeLink: '', weeklyStripeLink: '',
+    description: 'A special free trial class for our littlest musicians! Last 2 weeks of June only.',
+    isJuneOnly: true,
+  },
+  {
     id: 'discovery-camp-11-17',
     name: 'Discovery Camp',
     emoji: '🌟',
@@ -99,8 +113,8 @@ const CLASSES: ClassInfo[] = [
     minAge: 5, maxAge: 10,
     schedule: '10:00 – 11:30 AM',
     days: 'Mon – Thu',
-    julyPrice: 25, augustSinglePrice: 30, augustBundlePrice: 90,
-    augustBundleSave: 'save $30',
+    julyPrice: 25, augustSinglePrice: 35, augustBundlePrice: 105,
+    augustBundleSave: 'save $35',
     julyStripeLink: 'https://buy.stripe.com/28E9ASfKdd8H8NGcQDeEo0h',
     augustSingleStripeLink: 'https://buy.stripe.com/7sY28qfKdgkT4xqcQDeEo0k',
     augustBundleStripeLink: 'https://buy.stripe.com/6oU00iapTc4D7JC7wjeEo0i',
@@ -115,8 +129,8 @@ const CLASSES: ClassInfo[] = [
     minAge: 11, maxAge: 17,
     schedule: '11:30 AM – 1:00 PM',
     days: 'Mon – Thu',
-    julyPrice: 25, augustSinglePrice: 30, augustBundlePrice: 90,
-    augustBundleSave: 'save $30',
+    julyPrice: 25, augustSinglePrice: 35, augustBundlePrice: 105,
+    augustBundleSave: 'save $35',
     julyStripeLink: 'https://buy.stripe.com/28E9ASfKdd8H8NGcQDeEo0h',
     augustSingleStripeLink: 'https://buy.stripe.com/7sY28qfKdgkT4xqcQDeEo0k',
     augustBundleStripeLink: 'https://buy.stripe.com/6oU00iapTc4D7JC7wjeEo0i',
@@ -143,9 +157,9 @@ const CLASSES: ClassInfo[] = [
     id: 'teens-recording',
     name: 'Teens Recording Studio',
     emoji: '🎙️',
-    ageRange: 'Ages 13–17',
+    ageRange: 'Teens Only (13–17)',
     minAge: 13, maxAge: 17,
-    schedule: '3:00 – 4:15 PM',
+    schedule: '2:45 – 4:00 PM',
     days: 'Mon – Thu',
     julyPrice: 25, augustSinglePrice: 40, augustBundlePrice: 120,
     augustBundleSave: 'save $40',
@@ -172,6 +186,7 @@ const CLASS_PARAM_MAP: Record<string, string> = {
   'kids-music': 'kids-music-5-10',
   'piano': 'piano',
   'teens-recording': 'teens-recording',
+  'discovery-tiny-tots': 'discovery-tiny-tots',
   'discovery-11-17': 'discovery-camp-11-17',
   'discovery-5-10': 'discovery-camp-5-10',
   'free-private': 'free-private-lesson',
@@ -583,6 +598,108 @@ export default function EnrollContent() {
                 </div>
               </>
             )}
+
+            {/* ─── Package Deals Section ─── */}
+            <div className="mt-10 rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, #2D1B4E, #1a0d30)', border: '2px solid rgba(240,200,80,0.3)' }}>
+              <div className="text-center mb-6">
+                <span className="inline-block px-4 py-1 rounded-full text-xs font-bold mb-3" style={{ background: 'rgba(240,200,80,0.2)', color: '#F0C850' }}>
+                  🔥 50% OFF ALL PACKAGES — JULY &amp; AUGUST ONLY
+                </span>
+                <h2 className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif", color: '#F0C850' }}>
+                  Summer Package Deals
+                </h2>
+                <p className="text-white/50 text-sm mt-1">Save big when you commit to a full month!</p>
+              </div>
+
+              <div className="mb-4 p-4 rounded-xl" style={{ background: 'rgba(240,200,80,0.08)', border: '1px solid rgba(240,200,80,0.2)' }}>
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">📅 Monthly Class Pass — $350</h3>
+                    <p className="text-white/50 text-sm">Pick 1 class, attend Mon–Thu every week for the full month</p>
+                  </div>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap" style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>
+                    50% OFF
+                  </span>
+                </div>
+                <p className="text-white/40 text-xs">That&apos;s 16–20 classes per month! Best value for dedicated students.</p>
+              </div>
+
+              <div className="mb-4 p-4 rounded-xl" style={{ background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.15)' }}>
+                <h3 className="text-lg font-bold text-white mb-2">👨‍👩‍👧‍👦 Multi-Child Family Discount</h3>
+                <div className="grid grid-cols-3 gap-3 mb-2">
+                  <div className="text-center p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                    <p className="text-xs text-white/40">1st Child</p>
+                    <p className="text-xl font-bold" style={{ color: '#F0C850' }}>$350</p>
+                  </div>
+                  <div className="text-center p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                    <p className="text-xs text-white/40">2nd Child</p>
+                    <p className="text-xl font-bold" style={{ color: '#60a5fa' }}>$250</p>
+                  </div>
+                  <div className="text-center p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                    <p className="text-xs text-white/40">3rd+ Child</p>
+                    <p className="text-xl font-bold" style={{ color: '#a78bfa' }}>$150</p>
+                  </div>
+                </div>
+                <p className="text-white/40 text-xs">Each child picks 1 class for the full month (Mon–Thu). More kids = more savings!</p>
+              </div>
+
+              <div className="mb-4 p-4 rounded-xl" style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)' }}>
+                <h3 className="text-lg font-bold text-white mb-2">🎁 Weekly Pass — Buy 3 Get 1 Free (August)</h3>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between text-white/60"><span>👶 Tiny Tots (2–5)</span><span className="font-semibold text-white">4 classes = $75 <span className="text-green-400">(save $25)</span></span></div>
+                  <div className="flex justify-between text-white/60"><span>🎵 Kids (5–10)</span><span className="font-semibold text-white">4 classes = $105 <span className="text-green-400">(save $35)</span></span></div>
+                  <div className="flex justify-between text-white/60"><span>🎹 Piano (All Ages)</span><span className="font-semibold text-white">4 classes = $105 <span className="text-green-400">(save $35)</span></span></div>
+                  <div className="flex justify-between text-white/60"><span>🎧 Teens Recording</span><span className="font-semibold text-white">4 classes = $120 <span className="text-green-400">(save $40)</span></span></div>
+                </div>
+              </div>
+
+              <p className="text-center text-white/30 text-xs mt-4">
+                To purchase a package deal, select a class above and choose &quot;Monthly Pass&quot; or &quot;Bundle&quot; at checkout.
+              </p>
+            </div>
+
+            {/* ─── Private Lessons Section ─── */}
+            <div className="mt-6 rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, #1a2a3a, #0D0118)', border: '1px solid rgba(96,165,250,0.2)' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl">🎤</span>
+                <div>
+                  <h2 className="text-xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>Private Lessons</h2>
+                  <p className="text-blue-400 text-sm">1-on-1 instruction · $50/hour</p>
+                </div>
+              </div>
+              <div className="space-y-3 mb-4">
+                <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                  <p className="font-semibold text-white text-sm">🎵 Miss Basma</p>
+                  <p className="text-white/50 text-xs">Singing · Piano · Guitar · Bass · Ukulele</p>
+                </div>
+                <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                  <p className="font-semibold text-white text-sm">🎻 Miss Sarah</p>
+                  <p className="text-white/50 text-xs">Violin · Viola · Cello · Piano</p>
+                </div>
+              </div>
+              <div className="text-sm text-white/50 space-y-1 mb-4">
+                <p>✅ Must purchase 4 lessons ($200 total)</p>
+                <p>✅ 1 makeup lesson allowed within 2 weeks after the month</p>
+                <p>✅ <strong className="text-blue-400">FREE 20-minute trial lesson</strong> — Fri–Sun by appointment</p>
+              </div>
+              <a href="/enroll?class=free-private" className="block w-full text-center py-3 rounded-xl font-bold text-sm transition hover:opacity-90" style={{ background: 'rgba(96,165,250,0.2)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.3)' }}>
+                Book Your Free Trial Lesson →
+              </a>
+            </div>
+
+            {/* ─── Reviews CTA ─── */}
+            <div className="mt-6 rounded-2xl p-5 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <p className="text-lg mb-2">⭐ Love BASMA? Help us grow!</p>
+              <p className="text-white/50 text-sm mb-4">Your reviews help other families find us. Thank you to everyone who already left a review! 🙏</p>
+              <div className="flex justify-center gap-3 flex-wrap">
+                <a href="https://g.page/r/basma-music-academy/review" target="_blank" rel="noopener noreferrer" className="px-5 py-2 rounded-full text-sm font-bold transition hover:opacity-80" style={{ background: 'rgba(66,133,244,0.2)', color: '#4285f4', border: '1px solid rgba(66,133,244,0.3)' }}>
+                  📝 Leave a Google Review
+                </a>
+                <a href="https://www.yelp.com/writeareview/biz/become-a-singer-music-academy-las-vegas" target="_blank" rel="noopener noreferrer" className="px-5 py-2 rounded-full text-sm font-bold transition hover:opacity-80" style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.25)' }}>
+                  📝 Leave a Yelp Review
+                </a>
+              </div>
+            </div>
           </>
         )}
 
