@@ -388,7 +388,45 @@ export async function GET(req: Request) {
         })
         .filter((r): r is NonNullable<typeof r> => r !== null);
 
-      return NextResponse.json({ registrations });
+      // ── Deduplicate: keep the most complete record per student+email ──
+      const deduped: typeof registrations = [];
+      const seen = new Map<string, number>(); // key → index in deduped
+
+      for (const r of registrations) {
+        const key = `${r.studentName.trim().toLowerCase()}|${r.email.trim().toLowerCase()}`;
+        const existingIdx = seen.get(key);
+
+        if (existingIdx === undefined) {
+          // First time seeing this student
+          seen.set(key, deduped.length);
+          deduped.push(r);
+        } else {
+          // Duplicate — keep whichever has more filled fields
+          const existing = deduped[existingIdx];
+          const scoreFields = (rec: typeof r) => {
+            let s = 0;
+            if (rec.parentName) s++;
+            if (rec.phone) s++;
+            if (rec.studentAge) s++;
+            if (rec.interests) s++;
+            if (rec.ageGroup) s++;
+            if (rec.experienceLevel) s++;
+            if (rec.discoveryWeek) s++;
+            if (rec.timeSlot) s++;
+            if (rec.hasWaiver) s += 2; // waiver is important
+            if (rec.allergies) s++;
+            if (rec.emergencyContactName) s++;
+            if (rec.isRegistrationComplete) s += 2;
+            if (rec.paymentStatus === "Paid" || rec.paymentStatus === "Free") s++;
+            return s;
+          };
+          if (scoreFields(r) > scoreFields(existing)) {
+            deduped[existingIdx] = r;
+          }
+        }
+      }
+
+      return NextResponse.json({ registrations: deduped });
     }
 
     // Legacy single-search param — block it entirely

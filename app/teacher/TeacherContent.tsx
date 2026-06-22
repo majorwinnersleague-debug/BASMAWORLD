@@ -582,6 +582,62 @@ export default function TeacherContent() {
                       <button onClick={() => setSelectedStudent(null)} className="text-white/30 hover:text-white text-2xl">&times;</button>
                     </div>
 
+                    {/* ═══ QUICK ACTIONS ═══ */}
+                    <div className="grid grid-cols-2 gap-2 mb-5">
+                      {safe(selectedStudent.email) && (
+                        <a href={`mailto:${safe(selectedStudent.email)}?subject=${encodeURIComponent('BASMA Academy — ' + safe(selectedStudent.studentName))}`}
+                          className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition hover:opacity-90"
+                          style={{ background: 'rgba(96,165,250,0.1)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.25)' }}>
+                          📧 Email Parent
+                        </a>
+                      )}
+                      {safe(selectedStudent.phone) && (
+                        <a href={`sms:${safe(selectedStudent.phone).replace(/\D/g, '')}?body=${encodeURIComponent('Hi ' + (safe(selectedStudent.parentName).split(' ')[0] || '') + '! This is BASMA Academy regarding ' + safe(selectedStudent.studentName) + '. ')}`}
+                          className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition hover:opacity-90"
+                          style={{ background: 'rgba(52,211,153,0.1)', color: '#34d399', border: '1px solid rgba(52,211,153,0.25)' }}>
+                          💬 Text Parent
+                        </a>
+                      )}
+                      {safe(selectedStudent.phone) && (
+                        <a href={`tel:${safe(selectedStudent.phone).replace(/\D/g, '')}`}
+                          className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition hover:opacity-90"
+                          style={{ background: 'rgba(167,139,250,0.1)', color: '#a78bfa', border: '1px solid rgba(167,139,250,0.25)' }}>
+                          📞 Call Parent
+                        </a>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          const parentFirst = safe(selectedStudent.parentName).split(' ')[0] || 'Parent'
+                          const student = safe(selectedStudent.studentName)
+                          const body = `Hi ${parentFirst}! We'd love to schedule ${student}'s next session at BASMA Academy. What days/times work best for your family this week? We have openings Mon–Thu.\n\nReply to this message or call us at (702) 788-7369.\n\n— Miss Basma 🎵`
+                          if (safe(selectedStudent.email)) {
+                            window.open(`mailto:${safe(selectedStudent.email)}?subject=${encodeURIComponent('Schedule ' + student + "'s Session — BASMA Academy")}&body=${encodeURIComponent(body)}`, '_blank')
+                          } else if (safe(selectedStudent.phone)) {
+                            window.open(`sms:${safe(selectedStudent.phone).replace(/\D/g, '')}?body=${encodeURIComponent(body)}`, '_blank')
+                          }
+                        }}
+                        className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition hover:opacity-90"
+                        style={{ background: 'rgba(244,114,182,0.1)', color: '#f472b6', border: '1px solid rgba(244,114,182,0.25)' }}>
+                        📅 Schedule Session
+                      </button>
+                    </div>
+
+                    {/* Enrolled class — prominent display */}
+                    <div className="p-4 rounded-xl mb-4" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🎵</span>
+                        <span className="text-xs text-[#c9a84c]/60 uppercase tracking-wider font-semibold">Registered For</span>
+                      </div>
+                      <p className="text-white/90 font-semibold">{classifyRegistration(selectedStudent)}</p>
+                      {safe(selectedStudent.enrolledClass) && safe(selectedStudent.enrolledClass) !== classifyRegistration(selectedStudent) && (
+                        <p className="text-xs text-white/40 mt-1">Enrolled: {safe(selectedStudent.enrolledClass)}</p>
+                      )}
+                      {safe(selectedStudent.discoveryWeek) && (
+                        <p className="text-xs text-white/40 mt-1">📅 {safe(selectedStudent.discoveryWeek)} · {safe(selectedStudent.timeSlot) || 'No time selected'}</p>
+                      )}
+                    </div>
+
                     {/* ═══ REGISTRATION CHECKLIST ═══ */}
                     {(() => {
                       const s = selectedStudent
@@ -824,12 +880,38 @@ export default function TeacherContent() {
                         <div className="flex items-center gap-3 mt-1 text-xs text-white/30">
                           <span>{safe(s.parentName)}</span>
                           <span>{formatPhone(safe(s.phone))}</span>
-                          <span>{classifyRegistration(s)}</span>
+                        </div>
+                        <div className="mt-0.5">
+                          <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'rgba(201,168,76,0.08)', color: '#c9a84c', border: '1px solid rgba(201,168,76,0.15)' }}>
+                            🎵 {classifyRegistration(s)}
+                          </span>
                         </div>
                       </div>
 
-                      {/* Waiver + Payment badges */}
-                      <div className="flex-shrink-0 flex items-center gap-2">
+                      {/* Quick action buttons + badges */}
+                      <div className="flex-shrink-0 flex items-center gap-1.5">
+                        {safe(s.email) && (
+                          <a href={`mailto:${safe(s.email)}?subject=${encodeURIComponent('BASMA Academy — ' + safe(s.studentName))}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-blue-500/10 transition" title="Email parent">
+                            <span className="text-sm">📧</span>
+                          </a>
+                        )}
+                        {safe(s.phone) && (
+                          <a href={`sms:${safe(s.phone).replace(/\D/g, '')}?body=${encodeURIComponent('Hi! This is BASMA Academy regarding ' + safe(s.studentName) + '. ')}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-green-500/10 transition" title="Text parent">
+                            <span className="text-sm">💬</span>
+                          </a>
+                        )}
+                        {safe(s.phone) && (
+                          <a href={`tel:${safe(s.phone).replace(/\D/g, '')}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-purple-500/10 transition" title="Call parent">
+                            <span className="text-sm">📞</span>
+                          </a>
+                        )}
+                        <span className="w-px h-5 bg-white/10 mx-1" />
                         <span className={`text-xs px-2 py-1 rounded-full ${s.hasWaiver ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'}`}>
                           {s.hasWaiver ? '📋✓' : '📋✗'}
                         </span>
