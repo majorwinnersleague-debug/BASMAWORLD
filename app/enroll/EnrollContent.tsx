@@ -26,6 +26,7 @@ interface ClassInfo {
   augustBundleStripeLink: string
   weeklyStripeLink: string
   description: string
+  disclaimer?: string
   isJuneOnly?: boolean
   isPrivateTrial?: boolean
 }
@@ -152,6 +153,7 @@ const CLASSES: ClassInfo[] = [
     augustBundleStripeLink: 'https://buy.stripe.com/6oU5kC55zb0z4xq3g3eEo0o',
     weeklyStripeLink: 'https://buy.stripe.com/bJebJ055z3y7e806sfeEo07',
     description: 'Focused piano instruction for all skill levels.',
+    disclaimer: '⚠️ Piano Class requires students to sit still and focus. Students who are unable to do so may be removed from the class and refunded.',
   },
   {
     id: 'teens-recording',
@@ -593,6 +595,11 @@ export default function EnrollContent() {
                         <span className="px-2 py-1 rounded-full bg-white/5 text-white/50">Aug: ${c.augustSinglePrice}+</span>
                         <span className="px-2 py-1 rounded-full bg-white/5 text-white/50">Monthly: $350</span>
                       </div>
+                      {c.disclaimer && (
+                        <p className="mt-3 text-xs px-3 py-2 rounded-lg" style={{ background: 'rgba(239,68,68,0.1)', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.2)' }}>
+                          {c.disclaimer}
+                        </p>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -651,6 +658,24 @@ export default function EnrollContent() {
                   <div className="flex justify-between text-white/60"><span>🎹 Piano (All Ages)</span><span className="font-semibold text-white">4 classes = $105 <span className="text-green-400">(save $35)</span></span></div>
                   <div className="flex justify-between text-white/60"><span>🎧 Teens Recording</span><span className="font-semibold text-white">4 classes = $120 <span className="text-green-400">(save $40)</span></span></div>
                 </div>
+              </div>
+
+              <div className="mb-4 p-4 rounded-xl" style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.15)' }}>
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">🎯 Multi-Class Daily Discount — 15% OFF</h3>
+                    <p className="text-white/50 text-sm">Register for 2+ classes in the same day and save!</p>
+                  </div>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap" style={{ background: 'rgba(168,85,247,0.15)', color: '#a78bfa' }}>
+                    SPECIAL
+                  </span>
+                </div>
+                <div className="space-y-1 text-sm mt-3">
+                  <p className="text-white/50 font-semibold text-xs mb-1">July examples ($25/class):</p>
+                  <div className="flex justify-between text-white/60"><span>2 classes/day</span><span className="font-semibold text-white">$50 → <span className="text-purple-400">$42.50</span> <span className="text-green-400">(save $7.50)</span></span></div>
+                  <div className="flex justify-between text-white/60"><span>3 classes/day</span><span className="font-semibold text-white">$75 → <span className="text-purple-400">$63.75</span> <span className="text-green-400">(save $11.25)</span></span></div>
+                </div>
+                <p className="text-white/40 text-xs mt-2">Discount applies per day when purchasing multiple class registrations. Contact us for custom combinations!</p>
               </div>
 
               <p className="text-center text-white/30 text-xs mt-4">
