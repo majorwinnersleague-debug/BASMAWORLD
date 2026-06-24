@@ -72,8 +72,13 @@ async function sendOTPEmail(email: string, code: string, name: string): Promise<
         `,
       }),
     })
+    if (!res.ok) {
+      const errorBody = await res.text()
+      console.error('[RESEND ERROR]', res.status, errorBody)
+    }
     return res.ok
-  } catch {
+  } catch (err) {
+    console.error('[RESEND EXCEPTION]', err)
     return false
   }
 }

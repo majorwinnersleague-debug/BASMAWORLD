@@ -200,12 +200,10 @@ export default function TeacherContent() {
     if (node) node.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
-  // Auth check
+  // Auth check — code required every time (no saved sessions)
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('basma-teacher-auth')
-      if (saved === 'true') setAuthenticated(true)
-    } catch {}
+    // Clear any old saved auth so code is always required
+    try { localStorage.removeItem('basma-teacher-auth') } catch {}
   }, [])
 
   // Load saved data from localStorage
@@ -227,7 +225,7 @@ export default function TeacherContent() {
     if (codeInput.trim() === ACCESS_CODE) {
       setAuthenticated(true)
       setCodeError(false)
-      try { localStorage.setItem('basma-teacher-auth', 'true') } catch {}
+      // No localStorage persistence — code required every visit
     } else {
       setCodeError(true)
     }

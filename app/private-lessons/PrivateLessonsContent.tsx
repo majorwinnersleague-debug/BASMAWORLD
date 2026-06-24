@@ -42,9 +42,9 @@ const INSTRUMENTS = [
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const LESSON_PHOTOS = [
-  { src: '/images/camp/teacher-whiteboard.jpg', alt: 'BASMA instructor teaching music theory at the whiteboard' },
-  { src: '/images/camp/kids-piano-duo.jpg', alt: 'Two young students enjoying their piano lesson together' },
+  { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Basma teaching a virtual piano class to students' },
   { src: '/images/camp/boy-keyboard.jpg', alt: 'Student concentrating during a keyboard lesson' },
+  { src: '/images/camp/teacher-whiteboard.jpg', alt: 'BASMA instructor teaching music theory at the whiteboard' },
   { src: '/images/camp/little-girl-piano.jpg', alt: 'Young girl learning piano at BASMA' },
   { src: '/images/guitar-lesson.jpg', alt: 'Guitar instruction at BASMA Music Academy' },
   { src: '/images/camp/classroom-piano-lesson.jpg', alt: 'Piano lessons in the BASMA studio' },
@@ -235,10 +235,10 @@ export default function PrivateLessonsContent() {
           <div className="grid md:grid-cols-2 gap-6 mb-16 items-center max-w-4xl mx-auto">
             <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '4/3' }}>
               <Image
-                src="/images/camp/teacher-whiteboard.jpg"
-                alt="BASMA instructor teaching music theory"
+                src="/images/camp/students-guitar-duo.jpg"
+                alt="Two students playing guitar at BASMA Music Academy"
                 fill
-                className="object-cover object-top"
+                className="object-cover object-center"
                 sizes="(max-width: 768px) 100vw, 500px"
               />
             </div>
@@ -356,32 +356,33 @@ export default function PrivateLessonsContent() {
               <div className="p-5">
                 <h3 className="text-white font-semibold text-base mb-1">Basma</h3>
                 <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">Founder &amp; Lead Instructor</p>
-                <p className="text-white/30 text-xs leading-relaxed">
+                <p className="text-white/30 text-xs leading-relaxed mb-3">
                   Singer, songwriter, and music educator with years of performance and teaching experience.
                   Basma founded the academy to make music education accessible and joyful for every child in Las Vegas.
-                  She teaches voice, piano, and songwriting.
                 </p>
+                <p className="text-white/20 text-xs">🎹 Piano · 🎸 Guitar · 🎤 Voice · 🎸 Bass</p>
               </div>
             </div>
 
-            {/* Instructor 2 */}
+            {/* Instructor 2 - Sarah */}
             <div className="card-minimal rounded-xl overflow-hidden">
               <div className="relative w-full" style={{ aspectRatio: '4/5' }}>
                 <Image
-                  src="/images/camp/group-music-class.jpg"
-                  alt="BASMA Music Academy instructor leading a group class"
+                  src="/images/camp/teacher-whiteboard.jpg"
+                  alt="Sarah — Music Instructor at BASMA Music Academy"
                   fill
                   className="object-cover object-top"
                   sizes="(max-width: 768px) 100vw, 300px"
                 />
               </div>
               <div className="p-5">
-                <h3 className="text-white font-semibold text-base mb-1">Our Teaching Team</h3>
-                <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">Multi-Instrument Instructors</p>
-                <p className="text-white/30 text-xs leading-relaxed">
-                  Our instructors are working musicians who specialize in piano, guitar, drums, violin, ukulele, recording,
-                  and music theory. Every teacher is vetted, experienced, and genuinely passionate about helping students grow.
+                <h3 className="text-white font-semibold text-base mb-1">Sarah</h3>
+                <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">Music Instructor</p>
+                <p className="text-white/30 text-xs leading-relaxed mb-3">
+                  A versatile multi-instrumentalist with a passion for classical and contemporary music.
+                  Sarah brings warmth, patience, and expertise to every lesson — from beginners to advanced students.
                 </p>
+                <p className="text-white/20 text-xs">🎹 Piano · 🎻 Violin · 🎻 Viola · 🎻 Cello</p>
               </div>
             </div>
 
