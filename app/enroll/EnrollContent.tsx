@@ -252,26 +252,28 @@ export default function EnrollContent() {
       const data = await res.json()
       if (data.url) {
         try {
-          await fetch('/api/lead', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name: parentName, email, phone,
-              studentName: students.map(s => s.name).join(', '),
-              studentAge: students.map(s => s.age).join(', '),
-              source: 'enrollment-page',
-              status: 'New Lead',
-              interests: students.map(s => {
-                const cls = CLASSES.find(c => c.id === s.classId)
-                return cls?.name || s.classId
-              }).join(', '),
-              allergies: allergies || 'None',
-              emergencyContactName: emergencyName,
-              emergencyContactPhone: emergencyPhone,
-              liabilityAgreed,
-              discoveryWeek: getDaysSummary(),
-            }),
-          })
+          // Create one Airtable record per student so every child shows up
+          await Promise.all(students.map(async (s) => {
+            const cls = CLASSES.find(c => c.id === s.classId)
+            await fetch('/api/lead', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: parentName, email, phone,
+                studentName: s.name,
+                studentAge: s.age,
+                source: 'enrollment-page',
+                status: 'New Lead',
+                interests: cls?.name || s.classId,
+                allergies: allergies || 'None',
+                emergencyContactName: emergencyName,
+                emergencyContactPhone: emergencyPhone,
+                liabilityAgreed,
+                discoveryWeek: getDaysSummary(),
+                timeSlot: cls?.time || '',
+              }),
+            })
+          }))
         } catch { /* non-blocking */ }
         window.location.href = data.url
       } else {

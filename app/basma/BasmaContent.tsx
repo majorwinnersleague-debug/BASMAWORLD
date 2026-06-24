@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import ExpandableSection from '@/components/ExpandableSection'
-import BotPackageCard from '@/components/BotPackageCard'
+// BotPackageCard removed — summer camp focus
 import StripeCheckoutButton from '@/components/StripeCheckoutButton'
 
 export default function BasmaContent() {
@@ -371,7 +371,26 @@ export default function BasmaContent() {
           </ExpandableSection>
         </section>
 
-        {/* Bot package removed — summer camp focus */}
+        {/* ── Free Private Lesson ──────────────────────────── */}
+        <section className="max-w-3xl mx-auto px-6 pb-20">
+          <div className="card-premium rounded-2xl p-8 text-center">
+            <span className="text-3xl mb-4 block">🎵</span>
+            <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Free 20-Minute Private Lesson
+            </h3>
+            <p className="text-white/40 text-sm mb-6 max-w-md mx-auto">
+              Try a one-on-one lesson by appointment. Call to pick a day and time (outside of class hours, before 9 AM or after 4 PM). We&apos;ll confirm via email.
+            </p>
+            <a
+              href="tel:+17027887369"
+              className="inline-block px-8 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
+              style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
+            >
+              📞 Call (702) 788-7369 to Book
+            </a>
+            <p className="text-white/20 text-xs mt-3">Available by appointment only · Las Vegas studio</p>
+          </div>
+        </section>
 
         {/* ── Location + CTA ──────────────────────────────────── */}
         <section className="max-w-3xl mx-auto px-6 pb-20 text-center">

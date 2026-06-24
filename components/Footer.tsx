@@ -33,7 +33,7 @@ export default function Footer() {
           <div>
             <h4 className="text-white/40 text-xs uppercase tracking-widest mb-3">More</h4>
             <div className="flex flex-col gap-2 text-sm">
-              <Link href="/basma" className="text-white/25 hover:text-white/50 transition-colors">Book a Lesson</Link>
+              <Link href="/enroll" className="text-white/25 hover:text-white/50 transition-colors">Enroll Now</Link>
               <Link href="/hopes" className="text-white/25 hover:text-white/50 transition-colors">Hopes Chance</Link>
               <Link href="/mwl" className="text-white/25 hover:text-white/50 transition-colors">Major Winners League</Link>
               <Link href="/privacy" className="text-white/25 hover:text-white/50 transition-colors">Privacy</Link>
