@@ -559,7 +559,7 @@ export default function ScheduleContent() {
           <span style={{ fontSize: 18, display: "block" }}>📅</span> Schedule
         </a>
         <a href="/portal" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: 12, textAlign: "center" }}>
-          <span style={{ fontSize: 18, display: "block" }}>👨‍👩‍👧</span> Portal
+          <span style={{ fontSize: 18, display: "block" }}>👨‍👩‍👧</span> Parent Portal
         </a>
       </div>
     </div>

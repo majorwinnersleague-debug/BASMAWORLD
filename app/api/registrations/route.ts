@@ -426,6 +426,63 @@ export async function GET(req: Request) {
         }
       }
 
+      // ── Also include Summer 2026 records not already in Leads ──
+      // Students who registered directly (e.g. via enrollment form) may only be
+      // in the Summer 2026 table, not in the Leads table.
+      // Build a secondary index by first-name + email for fuzzy dedup
+      // (e.g. "Saul Acevedo" in Leads matches "Saul" in Summer 2026)
+      const seenFirstNameEmail = new Set<string>();
+      for (const r of deduped) {
+        const firstName = r.studentName.trim().toLowerCase().split(/\s+/)[0];
+        const em = r.email.trim().toLowerCase();
+        if (firstName && em) seenFirstNameEmail.add(`${firstName}|${em}`);
+      }
+
+      for (const s of summerRecords) {
+        const f = s.fields;
+        const studentName = (f["Student Name"] || "").trim();
+        const email = (f["Parent Email"] || "").toLowerCase().trim();
+        if (!studentName) continue;
+
+        const key = `${studentName.toLowerCase()}|${email}`;
+        const firstNameKey = `${studentName.toLowerCase().split(/\s+/)[0]}|${email}`;
+        if (seen.has(key) || seenFirstNameEmail.has(firstNameKey)) continue; // already included from Leads
+
+        seen.set(key, deduped.length);
+        seenFirstNameEmail.add(firstNameKey);
+        const payStatus = f["Payment Status"] || "Free";
+        deduped.push({
+          id: s.id,
+          parentName: f["Parent Name"] || "",
+          email: f["Parent Email"] || "",
+          phone: f["Parent Phone"] || "",
+          studentName,
+          studentAge: String(f["Age"] || ""),
+          interests: f["Class"] || "",
+          status: payStatus === "Paid" ? "Enrolled" : payStatus === "Free" ? "Free Trial" : "Registered",
+          source: "Summer Camp 2026",
+          message: "",
+          ageGroup: "",
+          experienceLevel: "",
+          referralSource: "",
+          discoveryWeek: "",
+          timeSlot: "",
+          paymentStatus: payStatus,
+          enrolledClass: f["Class"] || "",
+          hasWaiver: f["Liability Agreed"] === "Yes",
+          createdAt: s.createdTime,
+          allergies: f["Allergies"] || "",
+          medicalConditions: f["Medical Conditions"] || "",
+          emergencyContactName: f["Emergency Contact"] || "",
+          emergencyContactPhone: f["Emergency Phone"] || "",
+          liabilityAgreed: f["Liability Agreed"] === "Yes",
+          waiverFormStatus: f["Liability Agreed"] === "Yes" ? "Complete" : "Not Started",
+          lastCheckIn: null,
+          isRegistrationComplete: !!(studentName && email && (f["Parent Phone"] || "").trim()),
+          missingFields: [],
+        });
+      }
+
       return NextResponse.json({ registrations: deduped });
     }
 
