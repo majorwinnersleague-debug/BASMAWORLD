@@ -220,12 +220,12 @@ function getRecommendations(age: number, interests: string, experience: string) 
     }
   }
 
-  // Weekly bundle recommendation for everyone
+  // Weekly discount recommendation for everyone
   if (recs.length > 0) {
     recs.push({
-      name: "💰 Weekly Bundle — Save $$$",
-      description: "Get all classes for the week at a discounted rate ($350/week).",
-      link: "/enroll?program=weekly-bundle",
+      name: "💰 Weekly Pass — 15% Off",
+      description: "Select a full week (Mon–Thu) to save 15%. Full month saves 25%.",
+      link: "/enroll",
       match: "Best value",
     });
   }
