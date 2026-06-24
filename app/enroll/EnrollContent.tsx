@@ -8,8 +8,8 @@ const CLASSES = [
   { id: 'tiny-tots', name: 'Tiny Tots', emoji: '👶', age: '5 & Under', time: '9:00 – 9:45 AM', desc: 'Explore instruments, sounds, and learn about music.', julyRate: 25, augustRate: 25 },
   { id: 'kids-5-10', name: 'Kids Music', emoji: '🎵', age: '5–10', time: '10:00 – 11:30 AM', desc: 'Learn instruments, songs as a group, and have fun!', julyRate: 25, augustRate: 30 },
   { id: 'kids-10-17', name: 'Kids Music', emoji: '🎤', age: '10–17', time: '11:30 AM – 1:00 PM', desc: 'Learn instruments, songs as a group, and have fun!', julyRate: 25, augustRate: 30 },
-  { id: 'piano', name: 'Piano', emoji: '🎹', age: 'All Ages', time: '1:30 – 2:45 PM', desc: 'Play your favorite songs, music theory, and more.', julyRate: 25, augustRate: 35 },
-  { id: 'recording', name: 'Recording', emoji: '🎙️', age: 'All Ages', time: '2:45 – 4:00 PM', desc: 'Learn to record yourself and build your artist image.', julyRate: 25, augustRate: 40 },
+  { id: 'piano', name: 'Piano', emoji: '🎹', age: 'All Ages', time: '1:30 – 2:45 PM', desc: 'Play your favorite songs, music theory, and more. ⚠️ Child must be able to pay attention and sit still.', julyRate: 25, augustRate: 35 },
+  { id: 'recording', name: 'Recording', emoji: '🎙️', age: 'All Ages', time: '2:45 – 4:00 PM', desc: 'Learn to record yourself and build your artist image. ⚠️ Child must be able to pay attention and sit still.', julyRate: 25, augustRate: 40 },
 ]
 
 const ALL_DAYS = [
