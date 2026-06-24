@@ -38,10 +38,10 @@ const mwmJsonLd = {
   telephone: '+1-702-788-7369',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '9205 W Russell Rd Building 3',
+    streetAddress: '6787 W Tropicana Ave Suite 260',
     addressLocality: 'Las Vegas',
     addressRegion: 'NV',
-    postalCode: '89148',
+    postalCode: '89103',
     addressCountry: 'US',
   },
   parentOrganization: {

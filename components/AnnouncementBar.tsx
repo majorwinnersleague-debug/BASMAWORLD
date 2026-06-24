@@ -2,52 +2,47 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-const DISMISSED_KEY = 'basmaworld_announcement_dismissed'
-const BAR_HEIGHT = '32px'
+const BAR_HEIGHT = '0px' // dynamic
 
 export default function AnnouncementBar() {
-  const [dismissed, setDismissed] = useState(true)
+  const [barRef, setBarRef] = useState<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const saved = localStorage.getItem(DISMISSED_KEY)
-    if (saved !== 'true') {
-      setDismissed(false)
-      document.documentElement.style.setProperty('--ann-bar-height', BAR_HEIGHT)
-    } else {
+    if (barRef) {
+      const h = barRef.offsetHeight + 'px'
+      document.documentElement.style.setProperty('--ann-bar-height', h)
+    }
+    return () => {
       document.documentElement.style.setProperty('--ann-bar-height', '0px')
     }
-  }, [])
-
-  function dismiss() {
-    localStorage.setItem(DISMISSED_KEY, 'true')
-    document.documentElement.style.setProperty('--ann-bar-height', '0px')
-    setDismissed(true)
-  }
-
-  if (dismissed) return null
+  }, [barRef])
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-center gap-3 px-4"
-      style={{
-        background: '#0a0a0a',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-        height: BAR_HEIGHT,
-      }}
+      ref={setBarRef}
+      className="fixed top-0 left-0 right-0 z-[60]"
+      style={{ background: 'linear-gradient(90deg, #b91c1c, #dc2626)', borderBottom: '2px solid #fbbf24' }}
     >
-      <span className="text-white/30 text-xs">
-        Book a <span className="text-[#c9a84c]">free</span> trial lesson
-      </span>
-      <Link href="/basma" className="text-[#c9a84c] text-xs hover:text-[#e4cc7a] transition-colors">
-        Reserve →
-      </Link>
-      <button
-        onClick={dismiss}
-        aria-label="Dismiss"
-        className="absolute right-3 text-white/15 hover:text-white/30 text-xs transition-colors"
-      >
-        ✕
-      </button>
+      {/* Line 1: Address correction */}
+      <div className="flex items-center justify-center gap-2 px-4 py-1.5"
+           style={{ background: 'rgba(0,0,0,0.3)' }}>
+        <span className="text-white text-xs md:text-sm font-bold text-center">
+          📍 We are <span className="underline">NOT</span> at 330 W Washington Ave.{' '}
+          <span className="text-yellow-300">New location: 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103</span>
+        </span>
+      </div>
+      {/* Line 2: Camp info */}
+      <div className="flex items-center justify-center gap-2 px-4 py-1.5"
+           style={{ background: 'rgba(0,0,0,0.15)' }}>
+        <span className="text-white text-xs md:text-sm text-center">
+          🏕️ Starting June 29 — ALL camps at <strong className="text-yellow-300">Synergy Dance: 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147</strong>{' '}
+          · First week FREE for new paid camp!{' '}
+          · <span className="text-yellow-200 font-semibold">Limited spots for free program!</span>{' '}
+          <Link href="/enroll" className="underline text-yellow-300 hover:text-white transition font-bold ml-1">
+            Sign Up Now →
+          </Link>
+        </span>
+      </div>
     </div>
   )
 }

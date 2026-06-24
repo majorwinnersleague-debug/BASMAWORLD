@@ -33,7 +33,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-white font-bold text-lg mb-3">1. Who We Are</h2>
-            <p>BasmaWorld is operated by BASMA LLC, located at 9205 W Russell Rd Building 3, Las Vegas, NV 89148. We operate basmaworld.com, Become A Singer Music Academy, Hopes Chance, and the Gateway Festival.</p>
+            <p>BasmaWorld is operated by BASMA LLC, located at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. We operate basmaworld.com, Become A Singer Music Academy, Hopes Chance, and the Gateway Festival.</p>
           </section>
 
           <section>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-white font-bold text-lg mb-3">7. Contact</h2>
-            <p>BASMA LLC · 9205 W Russell Rd Building 3 · Las Vegas, NV 89148 · (702) 788-7369</p>
+            <p>BASMA LLC · 6787 W Tropicana Ave Suite 260 · Las Vegas, NV 89103 · (702) 788-7369</p>
           </section>
 
         </div>
