@@ -38,9 +38,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // Update Leads table — only allowed fields
+    // Update Leads table — all student info fields
     const leadFields: Record<string, string> = {}
+    if (allergies !== undefined) leadFields['Allergies'] = allergies || 'None'
+    if (medicalConditions !== undefined) leadFields['Medical Conditions'] = medicalConditions || 'None'
+    if (emergencyContactName !== undefined) leadFields['Emergency Contact Name'] = emergencyContactName
+    if (emergencyContactPhone !== undefined) leadFields['Emergency Contact Phone'] = emergencyContactPhone
     if (liabilityAgreed !== undefined) {
+      leadFields['Liability Agreed'] = liabilityAgreed ? 'Yes' : 'No'
       leadFields['Waiver Form'] = liabilityAgreed ? 'Complete' : 'Not Started'
       leadFields['Registration Form'] = 'Complete'
     }
