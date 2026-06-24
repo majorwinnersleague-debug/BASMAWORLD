@@ -116,7 +116,7 @@ export default function Home() {
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
-                <Image src="/images/camp/private-lesson-studio.jpg" alt="Private music lesson at BASMA studio" fill className="object-cover object-center" sizes="300px" />
+                <Image src="/images/camp/kids-piano-duo.jpg" alt="Two students smiling during a private piano lesson" fill className="object-cover" sizes="300px" />
               </div>
               <div className="p-5 text-center">
                 <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Private Lessons</h3>
