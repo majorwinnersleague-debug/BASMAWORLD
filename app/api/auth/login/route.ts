@@ -32,7 +32,7 @@ async function findParent(email: string, phone: string) {
         id: record.id,
         email: record.fields?.['Email'] || email,
         phone: record.fields?.['Phone'] || phone,
-        parentName: record.fields?.['Name'] || record.fields?.['Parent Name'] || '',
+        parentName: record.fields?.['Full Name'] || record.fields?.['Name'] || record.fields?.['Parent Name'] || '',
       }
     }
   }

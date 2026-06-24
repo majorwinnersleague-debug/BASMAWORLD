@@ -51,9 +51,11 @@ async function findExistingRecord(
         (r.fields['Student Name'] || '').toLowerCase().trim() === studentName.toLowerCase().trim()
     )
     if (match) return match
+    // Different student name = different child → create a NEW record
+    return null
   }
 
-  // If no student name match, return the first record with this email
+  // No student name provided — return first record with this email
   return records[0]
 }
 
@@ -80,6 +82,8 @@ async function findExistingSummerRecord(
         (r.fields['Student Name'] || '').toLowerCase().trim() === studentName.toLowerCase().trim()
     )
     if (match) return match
+    // Different student name = different child → create a NEW record
+    return null
   }
 
   return records[0]
