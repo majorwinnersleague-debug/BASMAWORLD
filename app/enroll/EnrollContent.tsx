@@ -281,6 +281,26 @@ export default function EnrollContent() {
         <Link href="/" className="text-sm text-white/40">← Home</Link>
       </nav>
 
+      {/* ── 🎉 FREE FIRST WEEK Banner ── */}
+      {!success && (
+        <div className="max-w-lg mx-auto px-6 mb-4">
+          <div
+            className="rounded-xl p-4 text-center"
+            style={{
+              background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(52,211,153,0.08))',
+              border: '2px solid rgba(16,185,129,0.3)',
+            }}
+          >
+            <p className="text-emerald-400 font-bold text-sm md:text-base">
+              🎉 FIRST WEEK FREE — June 29 – July 1
+            </p>
+            <p className="text-white/40 text-xs mt-1">
+              Select Week 1 below — no payment required for your first week!
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Progress */}
       {!success && <div className="max-w-lg mx-auto px-6 mb-6">
         <div className="flex gap-2">

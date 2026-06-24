@@ -77,18 +77,10 @@ export default function PortalContent() {
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Check if already logged in
+  // Always require fresh login — clear any existing session first
   useEffect(() => {
-    fetch('/api/auth/me')
-      .then(r => r.json())
-      .then(data => {
-        if (data.user) {
-          setAuthState('dashboard')
-          loadDashboard()
-        } else {
-          setAuthState('login')
-        }
-      })
+    fetch('/api/auth/logout', { method: 'POST' })
+      .then(() => setAuthState('login'))
       .catch(() => setAuthState('login'))
   }, [])
 
