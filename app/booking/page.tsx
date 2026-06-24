@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
 export default function BookingRedirect() {
-  redirect('/enroll')
+  redirect('/private-lessons')
 }

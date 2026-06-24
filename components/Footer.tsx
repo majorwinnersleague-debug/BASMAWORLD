@@ -14,7 +14,10 @@ export default function Footer() {
 
         <div className="flex flex-wrap gap-4 justify-center text-sm text-white/25 mb-6">
           <Link href="/" className="hover:text-white/50 transition-colors">Home</Link>
-          <Link href="/enroll" className="hover:text-white/50 transition-colors">Enroll Now</Link>
+          <Link href="/enroll" className="hover:text-white/50 transition-colors">Summer Camp</Link>
+          <Link href="/private-lessons" className="hover:text-white/50 transition-colors">Private Lessons</Link>
+          <Link href="/portal" className="hover:text-white/50 transition-colors">Parent Portal</Link>
+          <Link href="/teacher" className="hover:text-white/50 transition-colors">Teacher Portal</Link>
           <Link href="/contact" className="hover:text-white/50 transition-colors">Contact</Link>
           <Link href="/privacy" className="hover:text-white/50 transition-colors">Privacy</Link>
         </div>
