@@ -20,7 +20,7 @@ export default function BasmaContent() {
             <span className="gradient-gold">Music Academy</span>
           </h1>
           <p className="text-white/45 text-lg max-w-2xl mx-auto leading-relaxed mb-4">
-            Professional music lessons in Las Vegas. Singing, piano, guitar &amp; more. Gamified learning with XP. <strong className="text-[#c9a84c]">$29 trial lesson.</strong>
+            Professional music lessons in Las Vegas. Summer camp classes starting June 29 at Synergy Dance.
           </p>
           <p className="text-white/25 text-sm mb-12">
             Founded by Basma Awada · 300K+ TikTok · 100+ students taught · In-person &amp; online
@@ -244,7 +244,7 @@ export default function BasmaContent() {
             <div className="space-y-4">
               <div className="grid sm:grid-cols-3 gap-4">
                 {[
-                  { step: '1', title: 'Book a Trial', desc: '$29 · 30 min · Any instrument', color: '#c9a84c' },
+                  { step: '1', title: 'Pick a Class', desc: 'Choose your class and schedule', color: '#c9a84c' },
                   { step: '2', title: 'Get Your Skill Tree', desc: 'Personalized path based on your level and goals', color: '#c9a84c' },
                   { step: '3', title: 'Earn XP & Level Up', desc: 'Complete quests, unlock nodes, perform at the Gateway Festival', color: '#c9a84c' },
                 ].map((s) => (
@@ -268,31 +268,27 @@ export default function BasmaContent() {
           </ExpandableSection>
 
           <ExpandableSection
-            title="Pricing & Packages"
-            preview="Trial lesson $29. Monthly packages for ongoing lessons."
+            title="Summer Camp Pricing"
+            preview="July $25/day all classes · August tiered pricing · Discounts available"
             icon="✦"
             accentColor="#c9a84c"
           >
             <div className="space-y-4">
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="card-premium rounded-xl p-5 text-center">
-                  <h4 className="text-sm font-semibold text-white">Trial Lesson</h4>
-                  <p className="text-3xl font-bold text-[#c9a84c] mt-2">$29</p>
-                  <p className="text-white/30 text-xs mt-1">One 30-min lesson · Any instrument</p>
-                </div>
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div className="glass-gold rounded-xl p-5 text-center">
-                  <span className="inline-block bg-[#c9a84c] text-black text-xs font-bold px-2 py-0.5 rounded-full mb-2">Popular</span>
-                  <h4 className="text-sm font-semibold text-white">Monthly (4 lessons)</h4>
-                  <p className="text-3xl font-bold text-[#c9a84c] mt-2">$120</p>
-                  <p className="text-white/30 text-xs mt-1">4 × 30-min lessons · $30/lesson</p>
+                  <h4 className="text-sm font-semibold text-white">July — All Classes</h4>
+                  <p className="text-3xl font-bold text-[#c9a84c] mt-2">$25</p>
+                  <p className="text-white/30 text-xs mt-1">per day · per student · per class</p>
                 </div>
                 <div className="card-premium rounded-xl p-5 text-center">
-                  <h4 className="text-sm font-semibold text-white">Monthly (4 lessons)</h4>
-                  <p className="text-3xl font-bold text-[#c9a84c] mt-2">$220</p>
-                  <p className="text-white/30 text-xs mt-1">4 × 60-min lessons · $55/lesson</p>
+                  <h4 className="text-sm font-semibold text-white">August — Tiered</h4>
+                  <p className="text-white/50 text-xs mt-2 leading-relaxed">Tiny Tots $25 · Kids Music $30<br/>Piano $35 · Recording $40</p>
+                  <p className="text-white/30 text-xs mt-1">per day · per student</p>
                 </div>
               </div>
-              <p className="text-center text-white/25 text-xs">In-person (Las Vegas) or online · All ages · No experience needed</p>
+              <div className="text-center text-white/40 text-xs">
+                15% off weekly · 25% off monthly · $5 off each additional child
+              </div>
               <div className="text-center pt-2">
                 <StripeCheckoutButton />
               </div>
@@ -375,57 +371,7 @@ export default function BasmaContent() {
           </ExpandableSection>
         </section>
 
-        {/* ── BASMA Bot Package ───────────────────────────────── */}
-        <section className="max-w-4xl mx-auto px-6 pb-20">
-          <BotPackageCard
-            botName="Become A Singer Bot"
-            botEmoji="✦"
-            description="Your AI music mentor. Practice guidance, lesson recommendations, and vocal coaching — available 24/7."
-            accentColor="#c9a84c"
-            tiers={[
-              {
-                name: 'Student',
-                price: '$19',
-                period: '/mo',
-                features: [
-                  'AI vocal coaching tips',
-                  'XP tracking & skill tree',
-                  'Practice reminders',
-                  'Song suggestions by level',
-                  'Basic progress reports',
-                ],
-              },
-              {
-                name: 'Performer',
-                price: '$49',
-                period: '/mo',
-                highlight: true,
-                badge: 'Most Popular',
-                features: [
-                  'Everything in Student',
-                  'AI warmup routines',
-                  'Performance prep coaching',
-                  'Video lesson library access',
-                  'Weekly AI progress analysis',
-                  'Community challenges',
-                ],
-              },
-              {
-                name: 'Academy Pro',
-                price: '$99',
-                period: '/mo',
-                features: [
-                  'Everything in Performer',
-                  'Live lesson scheduling AI',
-                  'Custom curriculum generator',
-                  'Parent dashboard (for kids)',
-                  'Priority booking',
-                  'Gateway Festival prep track',
-                ],
-              },
-            ]}
-          />
-        </section>
+        {/* Bot package removed — summer camp focus */}
 
         {/* ── Location + CTA ──────────────────────────────────── */}
         <section className="max-w-3xl mx-auto px-6 pb-20 text-center">
@@ -434,7 +380,7 @@ export default function BasmaContent() {
           <h2 className="text-2xl font-semibold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
             Your music journey starts <span className="gradient-gold">here</span>
           </h2>
-          <p className="text-white/30 mb-8 text-sm">$29 trial · No experience needed · All ages welcome</p>
+          <p className="text-white/30 mb-8 text-sm">Summer camp starting June 29 · No experience needed · All ages welcome</p>
           <StripeCheckoutButton />
         </section>
 

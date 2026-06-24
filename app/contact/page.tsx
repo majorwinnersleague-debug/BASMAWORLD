@@ -57,7 +57,7 @@ export default function ContactPage() {
 
               {[
                 { title: 'Marketing Consultation', desc: 'Grow your brand with MWL', href: '/mwl', accent: 'border-[#c9a84c]/20 hover:border-[#c9a84c]/40' },
-                { title: 'Book a Music Lesson', desc: '$29 trial — voice, piano, guitar & more', href: '/basma', accent: 'border-white/[0.06] hover:border-white/15' },
+                { title: 'Enroll in Music Camp', desc: 'Summer classes from $25/day — all ages', href: '/enroll', accent: 'border-white/[0.06] hover:border-white/15' },
                 { title: 'Community Partnership', desc: 'Work with Major Winners League', href: '/mwl', accent: 'border-white/[0.06] hover:border-white/15' },
                 { title: 'Youth Resources', desc: 'Hopes Chance — free help for ages 16–30', href: '/hopes', accent: 'border-white/[0.06] hover:border-white/15' },
               ].map((item) => (

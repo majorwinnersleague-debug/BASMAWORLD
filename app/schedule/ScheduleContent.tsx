@@ -522,14 +522,17 @@ export default function ScheduleContent() {
 
           {/* August */}
           <div style={{ padding: "14px 16px", background: "rgba(168,85,247,0.08)", border: "1px solid rgba(168,85,247,0.2)", borderRadius: 14 }}>
-            <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: "#a855f7" }}>🎓 August — Regular Pricing + Buy 3 Get 1 Free</h4>
-            <p style={{ margin: "0 0 8px", fontSize: 13, color: "rgba(255,255,255,0.5)" }}>Pay for a full week (Mon–Thu) and save!</p>
+            <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: "#a855f7" }}>🎓 August — Per Day Pricing</h4>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>
-              <div>👶 Tiny Tots: <strong>$25/class</strong> → 4 classes = $75 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $25)</span></div>
-              <div>🎵 Kids: <strong>$35/class</strong> → 4 classes = $105 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $35!)</span></div>
-              <div>🎹 Piano: <strong>$35/class</strong> → 4 classes = $105 <span style={{ color: "#22c55e", fontWeight: 700 }}>(save $35!)</span></div>
-              <div>🎧 Teens Recording: <strong>$40/class</strong> → 4 classes = $120</div>
+              <div>👶 Tiny Tots: <strong>$25/day</strong></div>
+              <div>🎵 Kids Music (5–10): <strong>$30/day</strong></div>
+              <div>🎤 Kids Music (10–17): <strong>$30/day</strong></div>
+              <div>🎹 Piano: <strong>$35/day</strong></div>
+              <div>🎙️ Recording: <strong>$40/day</strong></div>
             </div>
+            <p style={{ margin: "8px 0 0", fontSize: 12, color: "rgba(34,197,94,0.8)" }}>
+              15% off weekly · 25% off monthly · $5 off each additional child
+            </p>
           </div>
         </div>
 
