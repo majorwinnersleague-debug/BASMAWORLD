@@ -20,7 +20,7 @@ const faqs = [
   {
     question: 'Are lessons in-person or online?',
     answer:
-      'Both! We offer in-person lessons at our Las Vegas studio (9205 W Russell Rd Building 3) and live online lessons for students anywhere in the world. Same great quality, your choice of format.',
+      'Both! We offer in-person lessons at our Las Vegas studio (6787 W Tropicana Ave Suite 260) and live online lessons for students anywhere in the world. Same great quality, your choice of format.',
   },
   {
     question: 'How long is each lesson?',
@@ -40,7 +40,7 @@ const faqs = [
   {
     question: 'Where are you located?',
     answer:
-      'Our studio is at 9205 W Russell Rd Building 3, Las Vegas, NV 89148. We also serve students worldwide through online lessons. Give us a call at (702) 788-7369 or book your trial online.',
+      'Our studio is at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. We also serve students worldwide through online lessons. Give us a call at (702) 788-7369 or book your trial online.',
   },
 ]
 

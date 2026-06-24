@@ -429,7 +429,7 @@ export default function BasmaContent() {
 
         {/* ── Location + CTA ──────────────────────────────────── */}
         <section className="max-w-3xl mx-auto px-6 pb-20 text-center">
-          <p className="text-white/25 text-sm mb-2">9205 W Russell Rd Bldg 3, Las Vegas NV 89148</p>
+          <p className="text-white/25 text-sm mb-2">6787 W Tropicana Ave Suite 260, Las Vegas NV 89103</p>
           <p className="text-white/25 text-sm mb-8">(702) 788-7369 · In-person &amp; online</p>
           <h2 className="text-2xl font-semibold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
             Your music journey starts <span className="gradient-gold">here</span>

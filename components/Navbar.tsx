@@ -47,8 +47,8 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <a href="/basma" className="text-sm text-[#c9a84c] hover:text-[#e4cc7a] transition-colors">
-            Book a Lesson
+          <a href="/enroll" className="text-sm text-[#c9a84c] hover:text-[#e4cc7a] transition-colors font-semibold">
+            Enroll Now
           </a>
         </div>
 
@@ -89,11 +89,11 @@ export default function Navbar() {
             </Link>
           ))}
           <a
-            href="/basma"
+            href="/enroll"
             onClick={() => setOpen(false)}
-            className="block text-[#c9a84c] py-2.5 text-sm mt-2 border-t border-white/[0.04] pt-4"
+            className="block text-[#c9a84c] py-2.5 text-sm mt-2 border-t border-white/[0.04] pt-4 font-semibold"
           >
-            Book a Lesson
+            Enroll Now
           </a>
         </div>
       )}

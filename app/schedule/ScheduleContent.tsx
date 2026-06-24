@@ -29,6 +29,12 @@ const CLASSES = [
     times: { Mon: "1:30 – 2:45 PM", Tue: "1:30 – 2:45 PM", Wed: "1:30 – 2:45 PM", Thu: "1:30 – 2:45 PM" },
   },
   {
+    name: "Recording Class (All Ages)",
+    emoji: "🎙️",
+    color: "#f59e0b",
+    times: { Mon: "2:45 – 4:00 PM", Tue: "2:45 – 4:00 PM", Wed: "2:45 – 4:00 PM", Thu: "2:45 – 4:00 PM" },
+  },
+  {
     name: "Private Lessons (By Appointment)",
     emoji: "🎼",
     color: "#c9a84c",
@@ -39,10 +45,12 @@ const CLASSES = [
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const IMPORTANT_DATES = [
-  { date: "June 9 – June 30", label: "FREE Discovery Camp — All Classes Free!", type: "free" },
-  { date: "July 1 – July 31", label: "July — $25/class for ALL classes (one-month special!)", type: "paid" },
+  { date: "June 29+", label: "ALL camps at Synergy Dance — 9512 W Flamingo Rd STE 100", type: "free" },
+  { date: "June 29 – July 5", label: "First week FREE at Synergy Dance! Limited spots!", type: "free" },
+  { date: "July 2026", label: "July — $25/day for ALL classes", type: "paid" },
   { date: "July 4", label: "🇺🇸 Independence Day — Closed", type: "closed" },
-  { date: "August 1 – August 31", label: "August — Regular Pricing + Buy 3 Get 1 Free", type: "paid" },
+  { date: "August 2026", label: "August — Tiny Tots $25, Kids Music $30, Piano $35, Recording $40/day", type: "paid" },
+  { date: "Discounts", label: "15% off weekly · 25% off monthly · $5 off per additional child", type: "paid" },
 ];
 
 /* ── June Discovery Camp Enrollment Data ───────────────── */
