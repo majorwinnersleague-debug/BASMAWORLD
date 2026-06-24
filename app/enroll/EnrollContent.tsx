@@ -12,8 +12,10 @@ const CLASSES = [
   { id: 'recording', name: 'Recording', emoji: '🎙️', age: 'All Ages', time: '2:45 – 4:00 PM', desc: 'Learn to record yourself and build your artist image. ⚠️ Child must be able to pay attention and sit still.', julyRate: 25, augustRate: 40 },
 ]
 
+const FREE_TRIAL_WEEK = 1 // Week 1 is free trial — no charge
+
 const ALL_DAYS = [
-  // July (camp starts Mon Jun 29; CLOSED Thu Jul 2 & Mon Jul 6)
+  // Week 1: FREE TRIAL (camp starts Mon Jun 29; CLOSED Thu Jul 2 & Mon Jul 6)
   { day: 'Mon Jun 29', month: 'july' as const, week: 1 },
   { day: 'Tue Jun 30', month: 'july' as const, week: 1 },
   { day: 'Wed Jul 1', month: 'july' as const, week: 1 },
@@ -97,13 +99,19 @@ export default function EnrollContent() {
 
   // Pricing: figure out discount automatically
   const pricing = useMemo(() => {
-    if (!cls || pickedDays.length === 0) return { perDay: 0, subtotal: 0, discount: '', total: 0 }
+    if (!cls || pickedDays.length === 0) return { perDay: 0, subtotal: 0, discount: '', freeTrialDays: 0, total: 0 }
 
-    // Group by month
-    const julyDays = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.month === 'july').length
+    // Group by month — exclude free trial week from paid count
+    const paidJulyDays = pickedDays.filter(d => {
+      const entry = ALL_DAYS.find(x => x.day === d)
+      return entry?.month === 'july' && entry.week !== FREE_TRIAL_WEEK
+    }).length
+    const freeTrialDays = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.week === FREE_TRIAL_WEEK).length
     const augDays = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.month === 'august').length
+    const julyDays = paidJulyDays // only paid July days for pricing
 
-    let rawTotal = (julyDays * cls.julyRate) + (augDays * cls.augustRate)
+    let rawTotal = (paidJulyDays * cls.julyRate) + (augDays * cls.augustRate)
+    // freeTrialDays cost $0 — just noted for display
     let discount = ''
 
     // Check for full weeks (all available days in a week) → 15% off those
@@ -126,25 +134,21 @@ export default function EnrollContent() {
       rawTotal = rawTotal * 0.85
     }
 
-    // Multi-child: $5 off per day per additional child
+    // Multi-child: $5 off per paid day per additional child
     const totalChildren = children.length
-    let multiChildDiscount = 0
-    if (totalChildren > 1) {
-      multiChildDiscount = (totalChildren - 1) * pickedDays.length * 5
-      rawTotal -= multiChildDiscount
-    }
+    const paidDaysCount = paidJulyDays + augDays
 
     // Multiply by number of children
     const perChildTotal = rawTotal / (totalChildren || 1)
     const total = Math.max(rawTotal * totalChildren / totalChildren, 0) // already accounted for
 
-    // Actually recalculate properly
+    // Recalculate properly per child
     let finalTotal = 0
     for (let i = 0; i < totalChildren; i++) {
-      let childJuly = julyDays * cls.julyRate
+      let childJuly = paidJulyDays * cls.julyRate
       let childAug = augDays * cls.augustRate
       if (i > 0) {
-        childJuly = julyDays * Math.max(cls.julyRate - 5, 0)
+        childJuly = paidJulyDays * Math.max(cls.julyRate - 5, 0)
         childAug = augDays * Math.max(cls.augustRate - 5, 0)
       }
       let childTotal = childJuly + childAug
@@ -154,14 +158,17 @@ export default function EnrollContent() {
     }
 
     return {
-      perDay: cls.julyRate, // for display
-      subtotal: (julyDays * cls.julyRate + augDays * cls.augustRate) * totalChildren,
+      perDay: cls.julyRate,
+      subtotal: (paidJulyDays * cls.julyRate + augDays * cls.augustRate) * totalChildren,
       discount,
+      freeTrialDays: freeTrialDays || 0,
       total: Math.round(finalTotal * 100) / 100,
     }
   }, [cls, pickedDays, children.length])
 
   const infoValid = children.every(c => c.name && c.age) && parentName && email && phone && emergencyName && emergencyPhone && waiver
+
+  const [success, setSuccess] = useState(false)
 
   async function handlePay() {
     if (!cls || pickedDays.length === 0 || !infoValid) return
@@ -169,9 +176,37 @@ export default function EnrollContent() {
     setError('')
 
     try {
+      // If total is $0 (free trial only), skip Stripe and register directly
+      if (pricing.total === 0) {
+        // Save each child to Airtable
+        await Promise.all(children.map(async (c) => {
+          await fetch('/api/lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: parentName, email, phone,
+              studentName: c.name, studentAge: c.age,
+              source: 'free-trial-week', status: 'Free Trial',
+              interests: cls.name, allergies: allergies || 'None',
+              emergencyContactName: emergencyName,
+              emergencyContactPhone: emergencyPhone,
+              liabilityAgreed: true,
+              discoveryWeek: pickedDays.join(', '),
+              timeSlot: cls.time,
+            }),
+          })
+        }))
+        setLoading(false)
+        setSuccess(true)
+        return
+      }
+
       // Determine dominant month for pricing label
-      const julyCount = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.month === 'july').length
-      const augCount = pickedDays.length - julyCount
+      const julyCount = pickedDays.filter(d => {
+        const entry = ALL_DAYS.find(x => x.day === d)
+        return entry?.month === 'july' && entry.week !== FREE_TRIAL_WEEK
+      }).length
+      const augCount = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.month === 'august').length
       const month = augCount > julyCount ? 'august' : 'july'
 
       const res = await fetch('/api/stripe/checkout', {
@@ -247,7 +282,7 @@ export default function EnrollContent() {
       </nav>
 
       {/* Progress */}
-      <div className="max-w-lg mx-auto px-6 mb-6">
+      {!success && <div className="max-w-lg mx-auto px-6 mb-6">
         <div className="flex gap-2">
           {[1, 2, 3, 4].map(s => (
             <div key={s} className="flex-1 h-1 rounded-full transition-all" style={{ background: s <= step ? gold : 'rgba(255,255,255,0.1)' }} />
@@ -256,12 +291,37 @@ export default function EnrollContent() {
         <p className="text-center text-white/30 text-xs mt-2">
           Step {step} of 4: {step === 1 ? 'Pick a Class' : step === 2 ? 'Pick Your Days' : step === 3 ? 'Your Info' : 'Review & Pay'}
         </p>
-      </div>
+      </div>}
 
       <div className="max-w-lg mx-auto px-6 pb-24">
 
+        {/* ═══ FREE TRIAL SUCCESS ═══ */}
+        {success && (
+          <div className="text-center py-16">
+            <div className="text-6xl mb-4">🎉</div>
+            <h1 className="text-2xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif", color: gold }}>
+              You&apos;re Registered!
+            </h1>
+            <p className="text-white/60 mb-2">
+              Free trial spot claimed for <strong className="text-white">{cls?.name}</strong>
+            </p>
+            <p className="text-white/40 text-sm mb-1">
+              {pickedDays.join(', ')} · {cls?.time}
+            </p>
+            <p className="text-white/30 text-sm mb-8">
+              📍 Synergy Dance · 9512 W Flamingo Rd STE 100
+            </p>
+            <div className="p-4 rounded-xl mb-6 mx-auto max-w-sm" style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.15)' }}>
+              <p className="text-green-400 text-sm">✅ Limited spot secured! See you there.</p>
+            </div>
+            <Link href="/" className="text-sm font-medium" style={{ color: gold }}>
+              ← Back to Home
+            </Link>
+          </div>
+        )}
+
         {/* ═══ STEP 1: PICK A CLASS ═══ */}
-        {step === 1 && (
+        {!success && step === 1 && (
           <div>
             <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
               Pick a Class
@@ -298,7 +358,7 @@ export default function EnrollContent() {
         )}
 
         {/* ═══ STEP 2: PICK YOUR DAYS ═══ */}
-        {step === 2 && cls && (
+        {!success && step === 2 && cls && (
           <div>
             <h1 className="text-2xl font-bold text-center mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
               Pick Your Days
@@ -312,7 +372,8 @@ export default function EnrollContent() {
 
             {/* Month sections */}
             {[
-              { label: 'July — $' + cls.julyRate + '/day', weeks: [1, 2, 3, 4, 5], monthKey: 'july' },
+              { label: '🆓 Free Trial Week', weeks: [1], monthKey: 'trial' },
+              { label: 'July — $' + cls.julyRate + '/day', weeks: [2, 3, 4, 5], monthKey: 'july' },
               { label: 'August — $' + cls.augustRate + '/day', weeks: [6, 7, 8, 9], monthKey: 'august' },
             ].map(section => (
               <div key={section.monthKey} className="mb-6">
@@ -366,8 +427,13 @@ export default function EnrollContent() {
               <div className="p-4 rounded-xl mb-6" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.15)' }}>
                 <div className="flex justify-between text-sm">
                   <span className="text-white/60">{pickedDays.length} day{pickedDays.length !== 1 ? 's' : ''} selected</span>
-                  <span className="font-bold" style={{ color: gold }}>${pricing.total.toFixed(2)}</span>
+                  <span className="font-bold" style={{ color: gold }}>
+                    {pricing.total === 0 ? 'FREE' : `$${pricing.total.toFixed(2)}`}
+                  </span>
                 </div>
+                {pricing.freeTrialDays > 0 && (
+                  <p className="text-green-400 text-xs mt-1">🆓 {pricing.freeTrialDays} free trial day{pricing.freeTrialDays !== 1 ? 's' : ''} included</p>
+                )}
                 {pricing.discount && <p className="text-green-400 text-xs mt-1">🎉 {pricing.discount}</p>}
               </div>
             )}
@@ -390,7 +456,7 @@ export default function EnrollContent() {
         )}
 
         {/* ═══ STEP 3: YOUR INFO ═══ */}
-        {step === 3 && (
+        {!success && step === 3 && (
           <div>
             <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
               Your Info
@@ -449,7 +515,7 @@ export default function EnrollContent() {
         )}
 
         {/* ═══ STEP 4: REVIEW & PAY ═══ */}
-        {step === 4 && cls && (
+        {!success && step === 4 && cls && (
           <div>
             <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
               Review & Pay
@@ -504,8 +570,13 @@ export default function EnrollContent() {
               {/* Total */}
               <div className="flex justify-between items-baseline">
                 <span className="text-white/60 text-sm">Total</span>
-                <span className="text-2xl font-bold" style={{ color: gold }}>${pricing.total.toFixed(2)}</span>
+                <span className="text-2xl font-bold" style={{ color: gold }}>
+                  {pricing.total === 0 ? 'FREE' : `$${pricing.total.toFixed(2)}`}
+                </span>
               </div>
+              {pricing.freeTrialDays > 0 && (
+                <p className="text-green-400 text-xs">🆓 {pricing.freeTrialDays} free trial day{pricing.freeTrialDays !== 1 ? 's' : ''}</p>
+              )}
               {pricing.discount && <p className="text-green-400 text-xs">🎉 {pricing.discount}</p>}
             </div>
 
@@ -524,10 +595,12 @@ export default function EnrollContent() {
                 className="flex-1 py-4 rounded-full text-base font-bold transition hover:scale-[1.02] disabled:opacity-50"
                 style={{ background: `linear-gradient(90deg, ${gold}, #FFE07A)`, color: '#0D0118' }}
               >
-                {loading ? 'Processing…' : `Pay $${pricing.total.toFixed(2)}`}
+                {loading ? 'Processing…' : pricing.total === 0 ? 'Register for Free Trial' : `Pay $${pricing.total.toFixed(2)}`}
               </button>
             </div>
-            <p className="text-center text-white/20 text-xs mt-3">Secure payment via Stripe · Card or Klarna</p>
+            <p className="text-center text-white/20 text-xs mt-3">
+              {pricing.total === 0 ? 'Free trial — limited spots available!' : 'Secure payment via Stripe · Card or Klarna'}
+            </p>
           </div>
         )}
       </div>
