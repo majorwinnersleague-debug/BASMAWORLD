@@ -23,32 +23,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
 
-    // Support both legacy ($29 trial) and new dynamic checkout
-    if (!body.students) {
-      // Legacy: $29 trial lesson
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card', 'klarna'],
-        line_items: [
-          {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: 'Academy Music Lessons - Trial',
-                description: 'One trial music lesson with BASMA — Become A Singer Music Academy. Las Vegas, NV & online.',
-              },
-              unit_amount: 2900,
-            },
-            quantity: 1,
-          },
-        ],
-        mode: 'payment',
-        success_url: 'https://basmaworld.com/academy?success=true',
-        cancel_url: 'https://basmaworld.com/academy',
-      })
-      return NextResponse.json({ url: session.url })
-    }
-
-    // New dynamic checkout
     const {
       students,
       month,

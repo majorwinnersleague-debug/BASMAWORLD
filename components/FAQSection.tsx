@@ -40,7 +40,7 @@ const faqs = [
   {
     question: 'Where are you located?',
     answer:
-      'Our studio is at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. We also serve students worldwide through online lessons. Give us a call at (702) 788-7369 or book your trial online.',
+      'Our studio is at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. Summer camp is at 9512 W Flamingo Rd STE 100. Give us a call at (702) 788-7369 or enroll online.',
   },
 ]
 
