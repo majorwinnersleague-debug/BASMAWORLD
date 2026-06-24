@@ -6,7 +6,7 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/enroll', label: 'Enroll' },
   { href: '/private-lessons', label: 'Private Lessons' },
-  { href: '/portal', label: 'Portal' },
+  { href: '/portal', label: 'Parent Portal' },
   { href: '/teacher', label: 'Teacher Portal' },
   { href: '/contact', label: 'Contact' },
 ]

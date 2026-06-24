@@ -168,7 +168,7 @@ export default function TeacherContent() {
   const [checkingIn, setCheckingIn] = useState<string | null>(null)
   const [selectedStudent, setSelectedStudent] = useState<Registration | null>(null)
   const [checkInSearch, setCheckInSearch] = useState('')
-  const [statsFilter, setStatsFilter] = useState<'all' | 'paid' | 'complete' | 'incomplete' | 'checkedin'>('paid')
+  const [statsFilter, setStatsFilter] = useState<'all' | 'paid' | 'complete' | 'incomplete' | 'checkedin'>('all')
 
   // Calendar
   const [calMonth, setCalMonth] = useState(new Date().getMonth())
@@ -684,16 +684,16 @@ export default function TeacherContent() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
           {[
             { label: 'Total Sign-ups', value: stats.total, emoji: '📋', filter: 'all' as const },
-            { label: 'Confirmed', value: stats.paid, emoji: '💰', filter: 'paid' as const },
-            { label: 'All Leads', value: stats.uniqueStudents, emoji: '👧', filter: 'all' as const },
+            { label: 'Paid / Free', value: stats.paid, emoji: '💰', filter: 'paid' as const },
+            { label: 'All Students', value: stats.uniqueStudents, emoji: '👧', filter: 'all' as const },
             { label: 'Families', value: stats.uniqueParents, emoji: '👨‍👩‍👧', filter: 'all' as const },
             { label: 'Checked In', value: stats.checkedIn, emoji: '🟢', filter: 'checkedin' as const },
           ].map(s => {
-            const isActive = statsFilter === s.filter && s.filter !== 'all'
+            const isActive = statsFilter === s.filter
             return (
               <button key={s.label}
                 onClick={() => { setStatsFilter(prev => prev === s.filter ? 'all' : s.filter); setTab('checkin') }}
-                className={`p-4 rounded-xl text-center transition cursor-pointer hover:scale-[1.03] ${s.filter !== 'all' ? 'hover:ring-1' : ''}`}
+                className="p-4 rounded-xl text-center transition cursor-pointer hover:scale-[1.03] hover:ring-1 hover:ring-[#c9a84c]/30"
                 style={{
                   background: isActive ? 'rgba(240,200,80,0.08)' : 'rgba(255,255,255,0.02)',
                   border: isActive ? '2px solid rgba(240,200,80,0.4)' : '1px solid rgba(255,255,255,0.06)',
@@ -702,7 +702,7 @@ export default function TeacherContent() {
                 <div className="text-2xl mb-1">{s.emoji}</div>
                 <div className="text-2xl font-bold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s.value}</div>
                 <div className="text-xs text-white/30 mt-1">{s.label}</div>
-                {s.filter !== 'all' && <div className="text-[10px] mt-1" style={{ color: isActive ? '#F0C850' : 'rgba(255,255,255,0.15)' }}>{isActive ? '✕ Clear filter' : 'Tap to filter'}</div>}
+                <div className="text-[10px] mt-1" style={{ color: isActive ? '#F0C850' : 'rgba(255,255,255,0.15)' }}>{isActive ? '✕ Clear filter' : 'Tap to filter'}</div>
               </button>
             )
           })}
@@ -711,7 +711,7 @@ export default function TeacherContent() {
         {statsFilter !== 'all' && (
           <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg" style={{ background: 'rgba(240,200,80,0.06)', border: '1px solid rgba(240,200,80,0.15)' }}>
             <span className="text-sm" style={{ color: '#F0C850' }}>
-              Showing: {statsFilter === 'paid' ? '💰 Confirmed (Paid / Free Trial)' : statsFilter === 'complete' ? '✅ Complete registrations' : statsFilter === 'incomplete' ? '⏳ Incomplete registrations' : '🟢 Checked in today'}
+              Showing: {statsFilter === 'paid' ? '💰 Paid / Free students' : statsFilter === 'complete' ? '✅ Complete registrations' : statsFilter === 'incomplete' ? '⏳ Incomplete registrations' : statsFilter === 'checkedin' ? '🟢 Checked in today' : '📋 All sign-ups'}
             </span>
             <button onClick={() => setStatsFilter('all')} className="ml-auto text-xs px-2 py-1 rounded-lg hover:bg-white/5 transition" style={{ color: '#F0C850' }}>
               Clear ✕
