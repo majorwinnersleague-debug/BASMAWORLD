@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
@@ -34,6 +35,19 @@ const PACKAGES = [
 
 const INSTRUMENTS = [
   'Piano', 'Voice / Singing', 'Guitar', 'Drums', 'Ukulele', 'Recording / Production', 'Other',
+]
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GALLERY PHOTOS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const LESSON_PHOTOS = [
+  { src: '/images/camp/teacher-whiteboard.jpg', alt: 'BASMA instructor teaching music theory at the whiteboard' },
+  { src: '/images/camp/kids-piano-duo.jpg', alt: 'Two young students enjoying their piano lesson together' },
+  { src: '/images/camp/boy-keyboard.jpg', alt: 'Student concentrating during a keyboard lesson' },
+  { src: '/images/camp/little-girl-piano.jpg', alt: 'Young girl learning piano at BASMA' },
+  { src: '/images/guitar-lesson.jpg', alt: 'Guitar instruction at BASMA Music Academy' },
+  { src: '/images/camp/classroom-piano-lesson.jpg', alt: 'Piano lessons in the BASMA studio' },
 ]
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -158,12 +172,7 @@ export default function PrivateLessonsContent() {
                 <li>📋 1 makeup lesson included — use by 2nd week of next month</li>
               </ul>
             </div>
-            <a
-              href="/private-lessons"
-              className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors"
-            >
-              ← Back to Private Lessons
-            </a>
+            <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
           </section>
         </div>
         <Footer />
@@ -193,12 +202,7 @@ export default function PrivateLessonsContent() {
                 <li>🎵 Show up and enjoy your lesson!</li>
               </ul>
             </div>
-            <a
-              href="/private-lessons"
-              className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors"
-            >
-              ← Back to Private Lessons
-            </a>
+            <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
           </section>
         </div>
         <Footer />
@@ -213,7 +217,7 @@ export default function PrivateLessonsContent() {
         <section className="max-w-5xl mx-auto px-6 pt-16 pb-20">
 
           {/* ── Header ── */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-4">One-on-One Instruction</p>
             <h1
               className="text-4xl md:text-5xl font-semibold text-white mb-5 tracking-tight"
@@ -227,7 +231,51 @@ export default function PrivateLessonsContent() {
             </p>
           </div>
 
+          {/* ── Hero Photo + Free Trial CTA ── */}
+          <div className="grid md:grid-cols-2 gap-6 mb-16 items-center max-w-4xl mx-auto">
+            <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '4/3' }}>
+              <Image
+                src="/images/camp/teacher-whiteboard.jpg"
+                alt="BASMA instructor teaching music theory"
+                fill
+                className="object-cover object-top"
+                sizes="(max-width: 768px) 100vw, 500px"
+              />
+            </div>
+            <div className="text-center md:text-left">
+              <div
+                className="inline-block px-3 py-1 rounded-full text-xs uppercase tracking-widest font-bold mb-4"
+                style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', border: '1px solid rgba(16,185,129,0.3)' }}
+              >
+                Try Before You Commit
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Your First Lesson is <span className="text-emerald-400">Free</span>
+              </h2>
+              <p className="text-white/40 text-sm leading-relaxed mb-4">
+                Book a free 20-minute trial lesson to meet your instructor, explore your instrument, and see if BASMA
+                is the right fit. No payment needed — just show up and play.
+              </p>
+              <ul className="text-white/30 text-sm space-y-2 mb-6">
+                <li>✅ 20-minute one-on-one session</li>
+                <li>✅ Any instrument — piano, guitar, voice, drums & more</li>
+                <li>✅ Meet your instructor before committing</li>
+                <li>✅ Flexible scheduling — before 9 AM or after 4 PM</li>
+              </ul>
+              <button
+                onClick={() => { setMode('trial'); setSelectedPkg(null); document.getElementById('lesson-form')?.scrollIntoView({ behavior: 'smooth' }) }}
+                className="inline-block px-8 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', color: '#0D0118' }}
+              >
+                Book Free Trial →
+              </button>
+            </div>
+          </div>
+
           {/* ── How It Works ── */}
+          <div className="text-center mb-8">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">How It Works</h2>
+          </div>
           <div className="grid md:grid-cols-3 gap-6 mb-16">
             {[
               { step: '1', title: 'Free Trial', desc: 'Book a free 20-minute private lesson to meet your instructor and get started.', emoji: '🎵' },
@@ -243,8 +291,124 @@ export default function PrivateLessonsContent() {
             ))}
           </div>
 
-          {/* ── Pricing Cards ── */}
+          {/* ── What You'll Learn ── */}
           <div className="text-center mb-8">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Instruments We Teach</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-16 max-w-3xl mx-auto">
+            {[
+              { emoji: '🎹', name: 'Piano', desc: 'Classical, pop, jazz' },
+              { emoji: '🎸', name: 'Guitar', desc: 'Acoustic & electric' },
+              { emoji: '🎤', name: 'Voice', desc: 'Singing & technique' },
+              { emoji: '🥁', name: 'Drums', desc: 'Rhythm & percussion' },
+              { emoji: '🎻', name: 'Violin', desc: 'Classical & fiddle' },
+              { emoji: '🪕', name: 'Ukulele', desc: 'Fun & beginner-friendly' },
+              { emoji: '🎙️', name: 'Recording', desc: 'Production & mixing' },
+              { emoji: '📝', name: 'Music Theory', desc: 'Reading & composing' },
+            ].map(inst => (
+              <div key={inst.name} className="card-minimal rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">{inst.emoji}</div>
+                <h3 className="text-white text-sm font-medium">{inst.name}</h3>
+                <p className="text-white/25 text-xs">{inst.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Photo Gallery ── */}
+          <div className="text-center mb-8">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Inside Our Lessons</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16 max-w-4xl mx-auto">
+            {LESSON_PHOTOS.map((photo, i) => (
+              <div key={i} className="relative rounded-xl overflow-hidden shadow-lg" style={{ aspectRatio: i === 0 || i === 5 ? '16/10' : '4/3' }}>
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 50vw, 300px"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* ── Meet the Team ── */}
+          <div className="text-center mb-8">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-4">Meet Our Instructors</h2>
+            <p className="text-white/25 text-sm max-w-lg mx-auto">
+              Our team of passionate musicians and educators brings real-world performance experience
+              into every lesson. Whether your child is picking up an instrument for the first time or
+              preparing for a recital, they&apos;re in expert hands.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-16 max-w-4xl mx-auto">
+            {/* Instructor 1 - Basma (founder) */}
+            <div className="card-minimal rounded-xl overflow-hidden">
+              <div className="relative w-full" style={{ aspectRatio: '4/5' }}>
+                <Image
+                  src="/images/basma-headshot.jpg"
+                  alt="Basma — Founder & Lead Instructor at BASMA Music Academy"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 300px"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-white font-semibold text-base mb-1">Basma</h3>
+                <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">Founder &amp; Lead Instructor</p>
+                <p className="text-white/30 text-xs leading-relaxed">
+                  Singer, songwriter, and music educator with years of performance and teaching experience.
+                  Basma founded the academy to make music education accessible and joyful for every child in Las Vegas.
+                  She teaches voice, piano, and songwriting.
+                </p>
+              </div>
+            </div>
+
+            {/* Instructor 2 */}
+            <div className="card-minimal rounded-xl overflow-hidden">
+              <div className="relative w-full" style={{ aspectRatio: '4/5' }}>
+                <Image
+                  src="/images/camp/group-music-class.jpg"
+                  alt="BASMA Music Academy instructor leading a group class"
+                  fill
+                  className="object-cover object-top"
+                  sizes="(max-width: 768px) 100vw, 300px"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-white font-semibold text-base mb-1">Our Teaching Team</h3>
+                <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">Multi-Instrument Instructors</p>
+                <p className="text-white/30 text-xs leading-relaxed">
+                  Our instructors are working musicians who specialize in piano, guitar, drums, violin, ukulele, recording,
+                  and music theory. Every teacher is vetted, experienced, and genuinely passionate about helping students grow.
+                </p>
+              </div>
+            </div>
+
+            {/* Why BASMA */}
+            <div className="card-minimal rounded-xl overflow-hidden">
+              <div className="relative w-full" style={{ aspectRatio: '4/5' }}>
+                <Image
+                  src="/images/camp/students-guitar-duo.jpg"
+                  alt="Students learning guitar at BASMA Music Academy"
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 768px) 100vw, 300px"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-white font-semibold text-base mb-1">Why BASMA?</h3>
+                <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">What Sets Us Apart</p>
+                <p className="text-white/30 text-xs leading-relaxed">
+                  Small class sizes (5–7 students max), real instruments from day one, performance opportunities,
+                  and a warm community that feels like family. We believe every child has a song inside them.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Pricing Cards ── */}
+          <div id="lesson-form" className="text-center mb-8">
             <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Lesson Packages</h2>
             <p className="text-white/20 text-xs mt-2">4 lessons per package · 1 makeup included</p>
           </div>
@@ -321,10 +485,7 @@ export default function PrivateLessonsContent() {
           {mode && (
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-8">
-                <h2
-                  className="text-2xl font-semibold text-white"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                >
+                <h2 className="text-2xl font-semibold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
                   {mode === 'trial' ? 'Book Your Free Trial' : 'Purchase Lesson Package'}
                 </h2>
                 <p className="text-white/30 text-sm mt-2">
@@ -335,70 +496,48 @@ export default function PrivateLessonsContent() {
                 </p>
               </div>
 
-              <form
-                onSubmit={mode === 'trial' ? handleTrialSubmit : handlePackagePurchase}
-                className="space-y-4"
-              >
+              <form onSubmit={mode === 'trial' ? handleTrialSubmit : handlePackagePurchase} className="space-y-4">
                 {/* Parent / Contact */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Parent / Guardian Name *</label>
-                    <input
-                      type="text" required value={parentName} onChange={e => setParentName(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition"
-                      placeholder="Full name"
-                    />
+                    <input type="text" required value={parentName} onChange={e => setParentName(e.target.value)}
+                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition" placeholder="Full name" />
                   </div>
                   <div>
                     <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Email *</label>
-                    <input
-                      type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition"
-                      placeholder="you@email.com"
-                    />
+                    <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition" placeholder="you@email.com" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Phone *</label>
-                  <input
-                    type="tel" required value={phone} onChange={e => setPhone(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition"
-                    placeholder="(702) 555-1234"
-                  />
+                  <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)}
+                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition" placeholder="(702) 555-1234" />
                 </div>
 
                 {/* Student Info */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Student Name *</label>
-                    <input
-                      type="text" required value={studentName} onChange={e => setStudentName(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition"
-                      placeholder="Student's first & last name"
-                    />
+                    <input type="text" required value={studentName} onChange={e => setStudentName(e.target.value)}
+                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition" placeholder="Student's first & last name" />
                   </div>
                   <div>
                     <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Student Age</label>
-                    <input
-                      type="text" value={studentAge} onChange={e => setStudentAge(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition"
-                      placeholder="e.g. 8"
-                    />
+                    <input type="text" value={studentAge} onChange={e => setStudentAge(e.target.value)}
+                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition" placeholder="e.g. 8" />
                   </div>
                 </div>
 
                 {/* Instrument */}
                 <div>
                   <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Instrument / Focus</label>
-                  <select
-                    value={instrument} onChange={e => setInstrument(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#c9a84c]/40 transition appearance-none"
-                  >
+                  <select value={instrument} onChange={e => setInstrument(e.target.value)}
+                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#c9a84c]/40 transition appearance-none">
                     <option value="" className="bg-[#111]">Select an instrument...</option>
-                    {INSTRUMENTS.map(i => (
-                      <option key={i} value={i} className="bg-[#111]">{i}</option>
-                    ))}
+                    {INSTRUMENTS.map(i => (<option key={i} value={i} className="bg-[#111]">{i}</option>))}
                   </select>
                 </div>
 
@@ -406,10 +545,8 @@ export default function PrivateLessonsContent() {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Preferred Day</label>
-                    <select
-                      value={preferredDay} onChange={e => setPreferredDay(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#c9a84c]/40 transition appearance-none"
-                    >
+                    <select value={preferredDay} onChange={e => setPreferredDay(e.target.value)}
+                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#c9a84c]/40 transition appearance-none">
                       <option value="" className="bg-[#111]">Flexible</option>
                       {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(d => (
                         <option key={d} value={d} className="bg-[#111]">{d}</option>
@@ -418,10 +555,8 @@ export default function PrivateLessonsContent() {
                   </div>
                   <div>
                     <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Preferred Time</label>
-                    <select
-                      value={preferredTime} onChange={e => setPreferredTime(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#c9a84c]/40 transition appearance-none"
-                    >
+                    <select value={preferredTime} onChange={e => setPreferredTime(e.target.value)}
+                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#c9a84c]/40 transition appearance-none">
                       <option value="" className="bg-[#111]">Flexible</option>
                       {['Morning (9–12)', 'Afternoon (12–3)', 'Late Afternoon (3–5)', 'Evening (5–7)'].map(t => (
                         <option key={t} value={t} className="bg-[#111]">{t}</option>
@@ -433,58 +568,51 @@ export default function PrivateLessonsContent() {
                 {/* Notes */}
                 <div>
                   <label className="block text-white/40 text-xs uppercase tracking-widest mb-2">Notes</label>
-                  <textarea
-                    value={notes} onChange={e => setNotes(e.target.value)}
-                    rows={3}
+                  <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3}
                     className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#c9a84c]/40 transition resize-none"
-                    placeholder="Any special requests, experience level, or goals..."
-                  />
+                    placeholder="Any special requests, experience level, or goals..." />
                 </div>
 
                 {error && (
-                  <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm">
-                    {error}
-                  </div>
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm">{error}</div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={loading}
+                <button type="submit" disabled={loading}
                   className={`w-full py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 ${
                     mode === 'trial'
                       ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30'
                       : 'bg-[#c9a84c]/20 text-[#c9a84c] hover:bg-[#c9a84c]/30 border border-[#c9a84c]/30'
-                  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  {loading
-                    ? 'Processing...'
-                    : mode === 'trial'
-                    ? 'Request Free Trial Lesson'
-                    : `Pay $${PACKAGES.find(p => p.id === selectedPkg)?.total} — Proceed to Checkout`
-                  }
+                  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                  {loading ? 'Processing...' : mode === 'trial' ? 'Request Free Trial Lesson' : `Pay $${PACKAGES.find(p => p.id === selectedPkg)?.total} — Proceed to Checkout`}
                 </button>
 
                 {mode === 'package' && (
-                  <p className="text-white/20 text-xs text-center">
-                    Secure payment via Stripe · You&apos;ll be redirected to complete your purchase
-                  </p>
+                  <p className="text-white/20 text-xs text-center">Secure payment via Stripe · You&apos;ll be redirected to complete your purchase</p>
                 )}
               </form>
             </div>
           )}
 
+          {/* ── Testimonial / Parent Assurance ── */}
+          <div className="max-w-3xl mx-auto mt-16">
+            <div className="card-minimal rounded-xl p-8 text-center" style={{ border: '1px solid rgba(201,168,76,0.1)' }}>
+              <p className="text-[#c9a84c] text-xl mb-4">&quot;🎵&quot;</p>
+              <p className="text-white/50 text-sm leading-relaxed italic max-w-md mx-auto mb-4">
+                Every child deserves the chance to discover their musical gift.
+                At BASMA, we don&apos;t just teach music — we build confidence, creativity, and lifelong skills.
+              </p>
+              <p className="text-white/30 text-xs">— Basma, Founder &amp; Lead Instructor</p>
+            </div>
+          </div>
+
           {/* ── Location / Contact ── */}
-          <div className="max-w-3xl mx-auto mt-16 text-center">
+          <div className="max-w-3xl mx-auto mt-12 text-center">
             <p className="text-white/20 text-xs uppercase tracking-widest mb-4">Questions?</p>
-            <p className="text-white/40 text-sm">
-              📍 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103
-            </p>
+            <p className="text-white/40 text-sm">📍 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103</p>
             <p className="text-white/40 text-sm mt-1">
               📞 <a href="tel:+17027887369" className="text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">(702) 788-7369</a>
               {' · '}
-              <a href="https://wa.me/17027887369" target="_blank" rel="noopener noreferrer" className="text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">
-                WhatsApp
-              </a>
+              <a href="https://wa.me/17027887369" target="_blank" rel="noopener noreferrer" className="text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">WhatsApp</a>
             </p>
           </div>
 
