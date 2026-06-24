@@ -81,7 +81,7 @@ export default function PortalContent() {
       ])
       const studentsData = await studentsRes.json()
       const paymentsData = await paymentsRes.json()
-      if (studentsData.parentName) setPortalData(studentsData)
+      if (studentsData.students) setPortalData(studentsData)
       if (paymentsData.payments) setPayments(paymentsData.payments)
     } catch { /* ignore */ }
   }, [])
