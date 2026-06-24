@@ -100,7 +100,7 @@ export default function Home() {
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
-                <Image src="/images/camp/kids-guitar-drums.jpg" alt="Summer camp group music class" fill className="object-cover" sizes="300px" />
+                <Image src="/images/camp/summer-camp-bubbles.jpg" alt="Kids having fun at BASMA summer camp with bubbles and instruments" fill className="object-cover object-top" sizes="300px" />
               </div>
               <div className="p-5 text-center">
                 <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Summer Camp</h3>
@@ -116,7 +116,7 @@ export default function Home() {
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
-                <Image src="/images/camp/teacher-whiteboard.jpg" alt="Private music lesson instruction" fill className="object-cover object-top" sizes="300px" />
+                <Image src="/images/camp/private-lesson-studio.jpg" alt="Private music lesson at BASMA studio" fill className="object-cover object-center" sizes="300px" />
               </div>
               <div className="p-5 text-center">
                 <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Private Lessons</h3>
@@ -166,7 +166,7 @@ export default function Home() {
               {
                 emoji: '🎙️', title: 'Recording', sub: 'All Ages · 2:45 PM', price: 'From $25/day',
                 desc: 'Become a real recording artist! Use a mic, record tracks, edit music, and build your artist image.',
-                img: '/images/studio/studio-setup-1.jpg',
+                img: '/images/studio-session.jpg',
               },
             ].map(c => (
               <Link key={c.title + c.sub} href="/enroll" className="group flex gap-4 p-4 rounded-xl transition hover:scale-[1.02] cursor-pointer" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
