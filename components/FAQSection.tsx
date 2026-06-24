@@ -5,7 +5,7 @@ const faqs = [
   {
     question: 'How much do music lessons cost?',
     answer:
-      'Your first trial lesson is just $29 — that\'s it! After your trial you can choose from our flexible monthly lesson packages. We\'ll help you find the best fit for your goals and budget.',
+      'Summer camp classes start at $25/day in July. August has tiered pricing from $25–$40 per day depending on the class. Save 15% with a weekly pass or 25% with a monthly pass. Each additional child gets $5 off per day. Visit our enrollment page for full details.',
   },
   {
     question: 'What ages do you teach?',

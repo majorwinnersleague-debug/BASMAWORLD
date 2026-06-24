@@ -5,11 +5,11 @@ import BasmaContent from './BasmaContent'
 
 export const metadata: Metadata = {
   title: 'BASMA Music Academy — Singing, Piano & Guitar Lessons | Las Vegas',
-  description: 'BASMA Music Academy: professional singing, piano, guitar, and vocal coaching in Las Vegas. Gamified learning with XP. $29 trial lesson. All ages. Founded by Basma Awada (300K+ TikTok).',
+  description: 'BASMA Music Academy: professional singing, piano, guitar, and vocal coaching in Las Vegas. Summer camp classes starting June 29. All ages. Founded by Basma Awada (300K+ TikTok).',
   keywords: ['music lessons las vegas', 'singing lessons', 'piano lessons', 'guitar lessons', 'vocal coach las vegas', 'basma awada', 'music academy', 'kids music lessons', 'basmaworld', 'become a singer'],
   openGraph: {
     title: 'BASMA Music Academy — Singing, Piano & Guitar Lessons | Las Vegas',
-    description: 'Professional music lessons. Gamified learning. $29 trial. All ages.',
+    description: 'Professional music lessons. Summer camp from $25/day. All ages.',
     url: 'https://basmaworld.com/basma',
     siteName: 'BasmaWorld',
     type: 'website',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     site: '@basma_singer',
     creator: '@basma_singer',
     title: 'BASMA Music Academy — Las Vegas',
-    description: 'Singing, piano, guitar lessons. $29 trial. All ages.',
+    description: 'Singing, piano, guitar lessons. Summer camp. All ages.',
     images: ['/images/basma-academy.jpg'],
   },
   alternates: {
@@ -38,7 +38,7 @@ const basmaJsonLd = [
     url: 'https://basmaworld.com/basma',
     telephone: '+1-702-788-7369',
     description: 'Professional singing, piano, guitar, and vocal coaching in Las Vegas. Gamified learning with XP. All ages.',
-    priceRange: '$29-$220',
+    priceRange: '$25-$40',
     address: {
       '@type': 'PostalAddress',
       streetAddress: '6787 W Tropicana Ave Suite 260',

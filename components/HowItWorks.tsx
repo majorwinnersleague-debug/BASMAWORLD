@@ -3,8 +3,8 @@ export default function HowItWorks() {
     {
       step: '01',
       emoji: '📅',
-      title: 'Book Your $29 Trial',
-      desc: 'Choose your instrument and preferred time. In-person in Las Vegas or online from anywhere in the world.',
+      title: 'Pick Your Class',
+      desc: 'Choose your class and time slot. Enroll online in minutes — in-person at our Las Vegas location.',
       color: 'text-[#8B5CF6]',
     },
     {

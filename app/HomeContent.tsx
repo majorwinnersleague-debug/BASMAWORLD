@@ -154,7 +154,7 @@ export default function HomeContent() {
               </p>
               <ul className="space-y-1.5 text-sm text-white/55">
                 <li>✅ Voice, piano, guitar, drums</li>
-                <li>✅ $29 trial lesson</li>
+                <li>✅ Summer camp from $25/day</li>
                 <li>✅ AI music mentor (Billy)</li>
               </ul>
               <p className="text-purple-400 text-sm font-bold mt-5 group-hover:translate-x-1 transition-transform">
