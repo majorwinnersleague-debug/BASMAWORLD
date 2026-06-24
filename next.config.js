@@ -1,44 +1,30 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ── Rewrites ──────────────────────────────────────────────────────────────
-  async rewrites() {
-    return {
-      beforeFiles: [
-        // Serve the static homepage at /
-        { source: '/', destination: '/home.html' },
-      ],
-    }
-  },
-
   // ── Redirects ──────────────────────────────────────────────────────────────
   async redirects() {
     return [
-      // Phase 5: Consolidate to 5 pages — all old pages 301 redirect
-      // Academy, wins, blog → /basma
-      { source: '/academy', destination: '/basma', permanent: true },
-      { source: '/wins', destination: '/basma', permanent: true },
-      { source: '/blog', destination: '/basma', permanent: true },
-      { source: '/blog/how-to-sing-better', destination: '/basma', permanent: true },
-      { source: '/blog/kids-music-lessons', destination: '/basma', permanent: true },
-      { source: '/blog/vocal-warmup', destination: '/basma', permanent: true },
-
-      // Gateway → home
+      // Old pages → enroll
+      { source: '/academy', destination: '/enroll', permanent: true },
+      { source: '/wins', destination: '/enroll', permanent: true },
+      { source: '/blog', destination: '/enroll', permanent: true },
+      { source: '/blog/:slug', destination: '/enroll', permanent: true },
+      { source: '/start', destination: '/enroll', permanent: true },
+      { source: '/register', destination: '/enroll', permanent: true },
+      { source: '/signup', destination: '/enroll', permanent: true },
+      { source: '/booking', destination: '/enroll', permanent: true },
+      { source: '/schedule', destination: '/enroll', permanent: true },
       { source: '/gateway', destination: '/', permanent: true },
-
-      // Hopes, MWL subpages → /mwl
-      { source: '/hopes', destination: '/mwl', permanent: true },
-      { source: '/mwl/hopes-chance', destination: '/mwl', permanent: true },
-      { source: '/mwl/basmateachme', destination: '/mwl', permanent: true },
-      { source: '/mwl/podcast', destination: '/mwl', permanent: true },
-
-      // Legacy redirects from Phase 2
+      { source: '/hopes', destination: '/', permanent: true },
+      { source: '/navigator', destination: '/', permanent: true },
+      { source: '/game', destination: '/', permanent: true },
+      { source: '/game/:path*', destination: '/', permanent: true },
+      { source: '/mwl', destination: '/', permanent: true },
+      { source: '/mwl/:path*', destination: '/', permanent: true },
+      { source: '/mwm', destination: '/', permanent: true },
+      { source: '/family', destination: '/', permanent: true },
       { source: '/basma/academy', destination: '/basma', permanent: true },
       { source: '/basma/lessons', destination: '/basma', permanent: true },
       { source: '/basma/artist', destination: '/basma', permanent: true },
-      { source: '/vegan-survivors', destination: '/mwl', permanent: true },
-      { source: '/mwl/vegan-survivors', destination: '/mwl', permanent: true },
-      { source: '/mwl/gaming', destination: '/mwl', permanent: true },
-      { source: '/mwl/i-am-positive', destination: '/mwl', permanent: true },
     ]
   },
 

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export async function GET() {
+  return NextResponse.json({ status: 'Private lesson request endpoint active', method: 'POST / PATCH' })
+}
+
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
 const LESSON_TABLE = 'Private Lesson Requests' // Will auto-create or use existing

@@ -684,10 +684,10 @@ export default function PortalContent() {
                   background: "rgba(240,200,80,0.03)", border: "1px solid rgba(240,200,80,0.1)",
                 }}>
                   <p style={{ margin: "0 0 4px", fontSize: 14, fontWeight: 700, color: "#F0C850" }}>
-                    🎁 August — Buy 3 Get 1 Free!
+                    🎵 August — Tiered Pricing
                   </p>
                   <p style={{ margin: 0, fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
-                    Same classes as July · Regular pricing with bundle discounts · Monthly pass: $350/month
+                    Tiny Tots $25 · Kids Music $30 · Piano $35 · Recording $40 per day · 15% weekly / 25% monthly discount
                   </p>
                 </div>
               </div>

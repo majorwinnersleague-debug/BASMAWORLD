@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
+export async function GET() {
+  return NextResponse.json({ status: 'Stripe webhook endpoint active', method: 'POST only' })
+}
+
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
 const SUMMER_TABLE = 'tblfOnRDkfgZoCF9X' // Summer 2026 Registrations
