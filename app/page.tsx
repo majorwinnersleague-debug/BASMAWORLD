@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import AnnouncementBar from '@/components/AnnouncementBar'
 import Footer from '@/components/Footer'
@@ -10,19 +11,33 @@ export default function Home() {
       <Navbar />
       <main className="min-h-screen text-white pt-16">
 
-        {/* ── Hero ── */}
-        <section className="max-w-3xl mx-auto px-6 pt-20 pb-16 text-center">
+        {/* ── Hero Banner ── */}
+        <section className="max-w-4xl mx-auto px-4 pt-8">
+          <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '16/9' }}>
+            <Image
+              src="/images/basma-banner-hero.jpg"
+              alt="B.A.S.M.A. — Become A Singer Music Academy — Where Music Meets Passion"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 896px"
+            />
+          </div>
+        </section>
+
+        {/* ── CTA ── */}
+        <section className="max-w-3xl mx-auto px-6 pt-10 pb-6 text-center">
           <h1
-            className="text-5xl md:text-7xl font-bold mb-6 leading-tight tracking-tight"
+            className="text-4xl md:text-6xl font-bold mb-4 leading-tight tracking-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            <span className="gradient-gold">BASMA</span>
-            <span className="text-white"> Summer Camp</span>
+            <span className="gradient-gold">Summer Camp</span>
+            <span className="text-white"> 2026</span>
           </h1>
           <p className="text-lg text-white/40 mb-2 max-w-xl mx-auto">
             Music classes for all ages · Mon–Thu · Starting June 29
           </p>
-          <p className="text-sm text-white/25 mb-10">
+          <p className="text-sm text-white/25 mb-8">
             📍 Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147
           </p>
           <Link
@@ -35,7 +50,7 @@ export default function Home() {
         </section>
 
         {/* ── What We Offer ── */}
-        <section className="max-w-3xl mx-auto px-6 pb-16">
+        <section className="max-w-3xl mx-auto px-6 pb-12">
           <div className="grid sm:grid-cols-2 gap-3">
             {[
               { emoji: '👶', title: 'Tiny Tots', sub: '5 & Under · 9:00 AM', price: '$25/day' },
@@ -43,19 +58,28 @@ export default function Home() {
               { emoji: '🎹', title: 'Piano', sub: 'All Ages · 1:30 PM', price: 'From $25/day' },
               { emoji: '🎙️', title: 'Recording', sub: 'All Ages · 2:45 PM', price: 'From $25/day' },
             ].map(c => (
-              <div key={c.title} className="flex items-center gap-3 p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <Link key={c.title} href="/enroll" className="flex items-center gap-3 p-4 rounded-xl transition hover:scale-[1.02] cursor-pointer" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <span className="text-2xl">{c.emoji}</span>
                 <div className="flex-1">
                   <div className="font-semibold text-white text-sm">{c.title}</div>
                   <div className="text-white/30 text-xs">{c.sub}</div>
                 </div>
                 <span className="text-sm font-bold" style={{ color: '#c9a84c' }}>{c.price}</span>
-              </div>
+              </Link>
             ))}
           </div>
           <p className="text-center text-white/25 text-xs mt-4">
             15% off weekly · 25% off monthly · $5 off each additional child
           </p>
+        </section>
+
+        {/* ── Closure Notice ── */}
+        <section className="max-w-3xl mx-auto px-6 pb-8">
+          <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
+            <p className="text-red-400/80 text-sm">
+              🚫 <strong>School Closed:</strong> Thu June 25 & July 2–6 (No classes)
+            </p>
+          </div>
         </section>
 
         {/* ── Free Lesson ── */}

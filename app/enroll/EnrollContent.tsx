@@ -13,49 +13,49 @@ const CLASSES = [
 ]
 
 const ALL_DAYS = [
-  // July (starts Jun 30)
-  { day: 'Mon Jun 30', month: 'july' as const, week: 1 },
-  { day: 'Tue Jul 1', month: 'july' as const, week: 1 },
-  { day: 'Wed Jul 2', month: 'july' as const, week: 1 },
-  { day: 'Thu Jul 3', month: 'july' as const, week: 1 },
-  { day: 'Mon Jul 7', month: 'july' as const, week: 2 },
-  { day: 'Tue Jul 8', month: 'july' as const, week: 2 },
-  { day: 'Wed Jul 9', month: 'july' as const, week: 2 },
-  { day: 'Thu Jul 10', month: 'july' as const, week: 2 },
-  { day: 'Mon Jul 14', month: 'july' as const, week: 3 },
-  { day: 'Tue Jul 15', month: 'july' as const, week: 3 },
-  { day: 'Wed Jul 16', month: 'july' as const, week: 3 },
-  { day: 'Thu Jul 17', month: 'july' as const, week: 3 },
-  { day: 'Mon Jul 21', month: 'july' as const, week: 4 },
-  { day: 'Tue Jul 22', month: 'july' as const, week: 4 },
-  { day: 'Wed Jul 23', month: 'july' as const, week: 4 },
-  { day: 'Thu Jul 24', month: 'july' as const, week: 4 },
-  { day: 'Mon Jul 28', month: 'july' as const, week: 5 },
-  { day: 'Tue Jul 29', month: 'july' as const, week: 5 },
-  { day: 'Wed Jul 30', month: 'july' as const, week: 5 },
-  { day: 'Thu Jul 31', month: 'july' as const, week: 5 },
+  // July (camp starts Mon Jun 29; CLOSED Thu Jul 2 & Mon Jul 6)
+  { day: 'Mon Jun 29', month: 'july' as const, week: 1 },
+  { day: 'Tue Jun 30', month: 'july' as const, week: 1 },
+  { day: 'Wed Jul 1', month: 'july' as const, week: 1 },
+  // Thu Jul 2 – CLOSED
+  // Mon Jul 6 – CLOSED
+  { day: 'Tue Jul 7', month: 'july' as const, week: 2 },
+  { day: 'Wed Jul 8', month: 'july' as const, week: 2 },
+  { day: 'Thu Jul 9', month: 'july' as const, week: 2 },
+  { day: 'Mon Jul 13', month: 'july' as const, week: 3 },
+  { day: 'Tue Jul 14', month: 'july' as const, week: 3 },
+  { day: 'Wed Jul 15', month: 'july' as const, week: 3 },
+  { day: 'Thu Jul 16', month: 'july' as const, week: 3 },
+  { day: 'Mon Jul 20', month: 'july' as const, week: 4 },
+  { day: 'Tue Jul 21', month: 'july' as const, week: 4 },
+  { day: 'Wed Jul 22', month: 'july' as const, week: 4 },
+  { day: 'Thu Jul 23', month: 'july' as const, week: 4 },
+  { day: 'Mon Jul 27', month: 'july' as const, week: 5 },
+  { day: 'Tue Jul 28', month: 'july' as const, week: 5 },
+  { day: 'Wed Jul 29', month: 'july' as const, week: 5 },
+  { day: 'Thu Jul 30', month: 'july' as const, week: 5 },
   // August
-  { day: 'Mon Aug 4', month: 'august' as const, week: 6 },
-  { day: 'Tue Aug 5', month: 'august' as const, week: 6 },
-  { day: 'Wed Aug 6', month: 'august' as const, week: 6 },
-  { day: 'Thu Aug 7', month: 'august' as const, week: 6 },
-  { day: 'Mon Aug 11', month: 'august' as const, week: 7 },
-  { day: 'Tue Aug 12', month: 'august' as const, week: 7 },
-  { day: 'Wed Aug 13', month: 'august' as const, week: 7 },
-  { day: 'Thu Aug 14', month: 'august' as const, week: 7 },
-  { day: 'Mon Aug 18', month: 'august' as const, week: 8 },
-  { day: 'Tue Aug 19', month: 'august' as const, week: 8 },
-  { day: 'Wed Aug 20', month: 'august' as const, week: 8 },
-  { day: 'Thu Aug 21', month: 'august' as const, week: 8 },
-  { day: 'Mon Aug 25', month: 'august' as const, week: 9 },
-  { day: 'Tue Aug 26', month: 'august' as const, week: 9 },
-  { day: 'Wed Aug 27', month: 'august' as const, week: 9 },
-  { day: 'Thu Aug 28', month: 'august' as const, week: 9 },
+  { day: 'Mon Aug 3', month: 'august' as const, week: 6 },
+  { day: 'Tue Aug 4', month: 'august' as const, week: 6 },
+  { day: 'Wed Aug 5', month: 'august' as const, week: 6 },
+  { day: 'Thu Aug 6', month: 'august' as const, week: 6 },
+  { day: 'Mon Aug 10', month: 'august' as const, week: 7 },
+  { day: 'Tue Aug 11', month: 'august' as const, week: 7 },
+  { day: 'Wed Aug 12', month: 'august' as const, week: 7 },
+  { day: 'Thu Aug 13', month: 'august' as const, week: 7 },
+  { day: 'Mon Aug 17', month: 'august' as const, week: 8 },
+  { day: 'Tue Aug 18', month: 'august' as const, week: 8 },
+  { day: 'Wed Aug 19', month: 'august' as const, week: 8 },
+  { day: 'Thu Aug 20', month: 'august' as const, week: 8 },
+  { day: 'Mon Aug 24', month: 'august' as const, week: 9 },
+  { day: 'Tue Aug 25', month: 'august' as const, week: 9 },
+  { day: 'Wed Aug 26', month: 'august' as const, week: 9 },
+  { day: 'Thu Aug 27', month: 'august' as const, week: 9 },
 ]
 
 const WEEK_LABELS: Record<number, string> = {
-  1: 'Jun 30 – Jul 3', 2: 'Jul 7 – 10', 3: 'Jul 14 – 17', 4: 'Jul 21 – 24', 5: 'Jul 28 – 31',
-  6: 'Aug 4 – 7', 7: 'Aug 11 – 14', 8: 'Aug 18 – 21', 9: 'Aug 25 – 28',
+  1: 'Jun 29 – Jul 1 (first week free!)', 2: 'Jul 7 – 9', 3: 'Jul 13 – 16', 4: 'Jul 20 – 23', 5: 'Jul 27 – 30',
+  6: 'Aug 3 – 6', 7: 'Aug 10 – 13', 8: 'Aug 17 – 20', 9: 'Aug 24 – 27',
 }
 
 /* ═══ COMPONENT ═══ */
@@ -106,12 +106,13 @@ export default function EnrollContent() {
     let rawTotal = (julyDays * cls.julyRate) + (augDays * cls.augustRate)
     let discount = ''
 
-    // Check for full weeks (4 consecutive days) → 15% off those
+    // Check for full weeks (all available days in a week) → 15% off those
     const weeks = new Set(pickedDays.map(d => ALL_DAYS.find(x => x.day === d)?.week).filter(Boolean))
     let fullWeeks = 0
     weeks.forEach(w => {
-      const weekDayCount = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.week === w).length
-      if (weekDayCount === 4) fullWeeks++
+      const totalDaysInWeek = ALL_DAYS.filter(d => d.week === w).length
+      const selectedDaysInWeek = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.week === w).length
+      if (selectedDaysInWeek === totalDaysInWeek && totalDaysInWeek >= 3) fullWeeks++
     })
 
     // All July or all August full month → 25% off
@@ -302,8 +303,11 @@ export default function EnrollContent() {
             <h1 className="text-2xl font-bold text-center mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
               Pick Your Days
             </h1>
-            <p className="text-center text-white/40 text-sm mb-6">
+            <p className="text-center text-white/40 text-sm mb-4">
               {cls.emoji} {cls.name} ({cls.age}) · {cls.time}
+            </p>
+            <p className="text-center text-red-400/60 text-xs mb-6">
+              🚫 School closed Thu Jun 26 & Jul 2–6
             </p>
 
             {/* Month sections */}
@@ -325,7 +329,7 @@ export default function EnrollContent() {
                         style={{ color: allSelected ? '#22c55e' : 'rgba(255,255,255,0.3)' }}
                       >
                         {allSelected ? '✓' : '○'} {WEEK_LABELS[w]}
-                        {allSelected && <span className="text-green-400 text-[10px]">full week — 15% off</span>}
+                        {allSelected && <span className="text-green-400 text-[10px]">all days — 15% off</span>}
                       </button>
                       <div className="grid grid-cols-4 gap-1.5">
                         {weekDays.map(d => {
