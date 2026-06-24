@@ -131,7 +131,13 @@ export async function POST(request: NextRequest) {
     if (studentAge) incomingFields['Student Age'] = String(studentAge)
     if (discoveryWeek) incomingFields['Discovery Week'] = discoveryWeek
     if (timeSlot) incomingFields['Time Slot'] = timeSlot
+    if (allergies) incomingFields['Allergies'] = allergies
+    if (medicalConditions) incomingFields['Medical Conditions'] = medicalConditions
+    if (emergencyContactName) incomingFields['Emergency Contact Name'] = emergencyContactName
+    if (emergencyContactPhone) incomingFields['Emergency Contact Phone'] = emergencyContactPhone
+    if (interests) incomingFields['Enrolled Class'] = interests
     if (liabilityAgreed) {
+      incomingFields['Liability Agreed'] = 'Yes'
       incomingFields['Waiver Form'] = 'Complete'
       incomingFields['Registration Form'] = 'Complete'
     }
