@@ -274,7 +274,7 @@ export default function EnrollContent() {
   const inputCss: React.CSSProperties = { background: '#fff', color: '#1a1a2e', border: '1px solid rgba(200,180,100,0.3)', borderRadius: 10, padding: '10px 14px', fontSize: 14, width: '100%', outline: 'none' }
 
   return (
-    <main className="min-h-screen text-white" style={{ background: '#0D0118' }}>
+    <main className="min-h-screen text-white" style={{ background: '#0D0118', paddingTop: 'calc(var(--ann-bar-height, 0px) + 60px)' }}>
       {/* Nav */}
       <nav className="flex justify-between items-center px-6 py-4 max-w-lg mx-auto">
         <Link href="/" className="text-lg font-bold" style={{ color: gold, fontFamily: "'Playfair Display', serif" }}>BASMA</Link>
@@ -283,20 +283,28 @@ export default function EnrollContent() {
 
       {/* ── 🎉 FREE FIRST WEEK Banner ── */}
       {!success && (
-        <div className="max-w-lg mx-auto px-6 mb-4">
+        <div className="max-w-lg mx-auto px-6 mb-6">
           <div
-            className="rounded-xl p-4 text-center"
+            className="rounded-2xl p-6 md:p-8 text-center"
             style={{
-              background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(52,211,153,0.08))',
-              border: '2px solid rgba(16,185,129,0.3)',
+              background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(52,211,153,0.1))',
+              border: '3px solid rgba(16,185,129,0.4)',
+              boxShadow: '0 0 30px rgba(16,185,129,0.15)',
             }}
           >
-            <p className="text-emerald-400 font-bold text-sm md:text-base">
-              🎉 FIRST WEEK FREE — June 29 – July 1
+            <p className="text-4xl mb-2">🎉</p>
+            <h2 className="text-emerald-400 font-bold text-xl md:text-2xl mb-2">
+              FIRST WEEK FREE!
+            </h2>
+            <p className="text-emerald-300/80 font-semibold text-base md:text-lg mb-2">
+              June 29 – July 1
             </p>
-            <p className="text-white/40 text-xs mt-1">
+            <p className="text-white/50 text-sm md:text-base">
               Select Week 1 below — no payment required for your first week!
             </p>
+            <div className="mt-3 inline-block bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Limited Spots Available
+            </div>
           </div>
         </div>
       )}

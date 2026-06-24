@@ -55,24 +55,50 @@ export default function ContactPage() {
             <div className="space-y-3">
               <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-5">How Can We Help</h2>
 
-              {[
-                { title: 'Marketing Consultation', desc: 'Grow your brand with MWL', href: '/mwl', accent: 'border-[#c9a84c]/20 hover:border-[#c9a84c]/40' },
-                { title: 'Enroll in Music Camp', desc: 'Summer classes from $25/day — all ages', href: '/enroll', accent: 'border-white/[0.06] hover:border-white/15' },
-                { title: 'Community Partnership', desc: 'Work with Major Winners League', href: '/mwl', accent: 'border-white/[0.06] hover:border-white/15' },
-                { title: 'Youth Resources', desc: 'Hopes Chance — free help for ages 16–30', href: '/hopes', accent: 'border-white/[0.06] hover:border-white/15' },
-              ].map((item) => (
-                <Link
-                  key={item.title}
-                  href={item.href}
-                  className={`flex items-center gap-4 card-minimal border ${item.accent} rounded-xl p-5 transition-all duration-200 group`}
-                >
-                  <div className="flex-1">
-                    <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">{item.title}</p>
-                    <p className="text-white/25 text-xs mt-0.5">{item.desc}</p>
-                  </div>
-                  <span className="text-white/15 group-hover:text-white/40 transition-colors text-sm">→</span>
-                </Link>
-              ))}
+              {/* Marketing Consultation */}
+              <Link
+                href="/marketing"
+                className="flex items-center gap-4 card-minimal border border-[#c9a84c]/20 hover:border-[#c9a84c]/40 rounded-xl p-5 transition-all duration-200 group"
+              >
+                <div className="flex-1">
+                  <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">Marketing Consultation</p>
+                  <p className="text-white/25 text-xs mt-0.5">Tell us about your marketing needs</p>
+                </div>
+                <span className="text-white/15 group-hover:text-white/40 transition-colors text-sm">→</span>
+              </Link>
+
+              {/* Enroll in Music Camp */}
+              <Link
+                href="/enroll"
+                className="flex items-center gap-4 card-minimal border border-white/[0.06] hover:border-white/15 rounded-xl p-5 transition-all duration-200 group"
+              >
+                <div className="flex-1">
+                  <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">Enroll in Music Camp</p>
+                  <p className="text-white/25 text-xs mt-0.5">Summer classes from $25/day — all ages</p>
+                </div>
+                <span className="text-white/15 group-hover:text-white/40 transition-colors text-sm">→</span>
+              </Link>
+
+              {/* Community Partnership — EVO Tickets */}
+              <div className="card-minimal border border-white/[0.06] rounded-xl p-5">
+                <p className="font-medium text-white text-sm">Community Partnership</p>
+                <p className="text-white/40 text-xs mt-1.5 leading-relaxed">
+                  🎮 We are proudly offering <span className="text-[#c9a84c] font-semibold">FREE EVO Convention tickets</span> to all of our students! A huge thank you to <span className="text-white/60 font-semibold">EVO Convention</span> for this amazing opportunity.
+                </p>
+                <p className="text-white/30 text-xs mt-2">
+                  Interested? Email us at{' '}
+                  <a href="mailto:becomeasingermusicacademy@gmail.com" className="text-[#c9a84c]/70 hover:text-[#c9a84c] transition-colors underline">
+                    becomeasingermusicacademy@gmail.com
+                  </a>{' '}
+                  for details.
+                </p>
+              </div>
+
+              {/* Youth Resources — Coming Soon */}
+              <div className="card-minimal border border-white/[0.06] rounded-xl p-5 opacity-60">
+                <p className="font-medium text-white text-sm">Youth Resources</p>
+                <p className="text-white/25 text-xs mt-0.5">🚧 Coming Soon</p>
+              </div>
 
               {/* Direct contact */}
               <div className="card-minimal rounded-xl p-5 mt-4">

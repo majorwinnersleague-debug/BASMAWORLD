@@ -57,6 +57,7 @@ const LESSON_PHOTOS = [
 export default function PrivateLessonsContent() {
   // Form mode: 'trial' | 'package'
   const [mode, setMode] = useState<'trial' | 'package' | null>(null)
+  const [trialSuccess, setTrialSuccess] = useState(false)
   const [selectedPkg, setSelectedPkg] = useState<string | null>(null)
 
   // Shared form fields
@@ -102,6 +103,7 @@ export default function PrivateLessonsContent() {
       const data = await res.json()
       if (data.success) {
         setSuccess(true)
+        setTrialSuccess(true)
       } else {
         setError(data.error || 'Something went wrong. Please try again.')
       }
@@ -263,12 +265,54 @@ export default function PrivateLessonsContent() {
                 <li>✅ Flexible scheduling — before 9 AM or after 4 PM</li>
               </ul>
               <button
-                onClick={() => { setMode('trial'); setSelectedPkg(null); document.getElementById('lesson-form')?.scrollIntoView({ behavior: 'smooth' }) }}
+                onClick={() => { setMode('trial'); setSelectedPkg(null); setTimeout(() => document.getElementById('quick-trial-form')?.scrollIntoView({ behavior: 'smooth' }), 100) }}
                 className="inline-block px-8 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
                 style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', color: '#0D0118' }}
               >
                 Book Free Trial →
               </button>
+
+              {/* Quick inline trial form */}
+              {mode === 'trial' && (
+                <div id="quick-trial-form" className="mt-6 text-left bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-5">
+                  <h3 className="text-emerald-400 font-semibold text-sm mb-3">📝 Quick Registration</h3>
+                  {trialSuccess ? (
+                    <div className="text-center py-4">
+                      <p className="text-emerald-400 text-lg font-bold mb-1">✅ You&apos;re booked!</p>
+                      <p className="text-white/40 text-sm">We&apos;ll contact you within 24 hours to confirm your lesson time.</p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleTrialSubmit} className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="text" required value={parentName} onChange={e => setParentName(e.target.value)}
+                          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 transition"
+                          placeholder="Your name *" />
+                        <input type="text" required value={studentName} onChange={e => setStudentName(e.target.value)}
+                          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 transition"
+                          placeholder="Student name *" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 transition"
+                          placeholder="Email *" />
+                        <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)}
+                          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 transition"
+                          placeholder="Phone *" />
+                      </div>
+                      <select value={instrument} onChange={e => setInstrument(e.target.value)}
+                        className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/40 transition appearance-none">
+                        <option value="" className="bg-[#111]">Choose an instrument...</option>
+                        {INSTRUMENTS.map(i => (<option key={i} value={i} className="bg-[#111]">{i}</option>))}
+                      </select>
+                      {error && <p className="text-red-400 text-xs">{error}</p>}
+                      <button type="submit" disabled={loading}
+                        className="w-full py-3 rounded-lg font-semibold text-sm bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30 transition disabled:opacity-50">
+                        {loading ? 'Submitting...' : 'Book My Free Trial →'}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
