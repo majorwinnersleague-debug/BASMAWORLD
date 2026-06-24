@@ -100,7 +100,7 @@ export default function Home() {
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
-                <Image src="/images/camp/summer-camp-bubbles.jpg" alt="Kids having fun at BASMA summer camp with bubbles and instruments" fill className="object-cover object-top" sizes="300px" />
+                <Image src="/images/camp/summer-camp-bubbles.jpg" alt="Kids having fun at BASMA summer camp with bubbles and instruments" fill className="object-cover object-[center_30%]" style={{ objectPosition: 'center 70%' }} sizes="300px" />
               </div>
               <div className="p-5 text-center">
                 <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Summer Camp</h3>
