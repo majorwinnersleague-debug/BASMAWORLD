@@ -54,8 +54,10 @@ const SCHEDULE_BLOCKS = [
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
 
 const DEFAULT_CLOSURES: { date: string; note: string }[] = [
-  { date: '2026-07-03', note: 'Independence Day Weekend' },
-  { date: '2026-07-04', note: 'Independence Day 🇺🇸' },
+  { date: '2026-06-25', note: 'School Closed' },
+  { date: '2026-07-02', note: 'School Closed (Jul 2–6)' },
+  { date: '2026-07-03', note: 'School Closed (Jul 2–6)' },
+  { date: '2026-07-06', note: 'School Closed (Jul 2–6)' },
 ]
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -166,7 +168,7 @@ export default function TeacherContent() {
   const [checkingIn, setCheckingIn] = useState<string | null>(null)
   const [selectedStudent, setSelectedStudent] = useState<Registration | null>(null)
   const [checkInSearch, setCheckInSearch] = useState('')
-  const [statsFilter, setStatsFilter] = useState<'all' | 'complete' | 'incomplete' | 'checkedin'>('all')
+  const [statsFilter, setStatsFilter] = useState<'all' | 'paid' | 'complete' | 'incomplete' | 'checkedin'>('paid')
 
   // Calendar
   const [calMonth, setCalMonth] = useState(new Date().getMonth())
@@ -501,7 +503,8 @@ export default function TeacherContent() {
       return { block, students }
     })
 
-    return { weekDays, classBuckets: classBucketsList, totalStudents: registrations.length }
+    const confirmedStudents = registrations.filter(r => safe(r.paymentStatus) === 'Paid' || safe(r.paymentStatus) === 'Free' || safe(r.status) === 'Free Trial')
+    return { weekDays, classBuckets: classBucketsList, totalStudents: confirmedStudents.length }
   }, [registrations, closureSet])
 
   // Class buckets for roster
@@ -561,7 +564,9 @@ export default function TeacherContent() {
     let filtered = registrations
 
     // Apply stats filter first
-    if (statsFilter === 'complete') {
+    if (statsFilter === 'paid') {
+      filtered = filtered.filter(s => safe(s.paymentStatus) === 'Paid' || safe(s.paymentStatus) === 'Free' || safe(s.status) === 'Free Trial')
+    } else if (statsFilter === 'complete') {
       filtered = filtered.filter(s => s.isRegistrationComplete)
     } else if (statsFilter === 'incomplete') {
       filtered = filtered.filter(s => !s.isRegistrationComplete)
@@ -587,10 +592,12 @@ export default function TeacherContent() {
     const uniqueStudents = new Set(registrations.map(r => safe(r.studentName).trim().toLowerCase()).filter(Boolean))
     const uniqueParents = new Set(registrations.map(r => safe(r.email).trim().toLowerCase()).filter(Boolean))
     const checkedInCount = Object.keys(checkedInToday).length
+    const paidCount = registrations.filter(r => safe(r.paymentStatus) === 'Paid' || safe(r.paymentStatus) === 'Free' || safe(r.status) === 'Free Trial').length
     return {
       total: registrations.length,
       uniqueStudents: uniqueStudents.size,
       uniqueParents: uniqueParents.size,
+      paid: paidCount,
       complete: registrations.filter(r => r.isRegistrationComplete).length,
       incomplete: registrations.filter(r => !r.isRegistrationComplete).length,
       checkedIn: checkedInCount,
@@ -679,10 +686,9 @@ export default function TeacherContent() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
           {[
             { label: 'Total Sign-ups', value: stats.total, emoji: '📋', filter: 'all' as const },
-            { label: 'Students', value: stats.uniqueStudents, emoji: '👧', filter: 'all' as const },
+            { label: 'Confirmed', value: stats.paid, emoji: '💰', filter: 'paid' as const },
+            { label: 'All Leads', value: stats.uniqueStudents, emoji: '👧', filter: 'all' as const },
             { label: 'Families', value: stats.uniqueParents, emoji: '👨‍👩‍👧', filter: 'all' as const },
-            { label: 'Complete', value: stats.complete, emoji: '✅', filter: 'complete' as const },
-            { label: 'Incomplete', value: stats.incomplete, emoji: '⏳', filter: 'incomplete' as const },
             { label: 'Checked In', value: stats.checkedIn, emoji: '🟢', filter: 'checkedin' as const },
           ].map(s => {
             const isActive = statsFilter === s.filter && s.filter !== 'all'
@@ -707,7 +713,7 @@ export default function TeacherContent() {
         {statsFilter !== 'all' && (
           <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg" style={{ background: 'rgba(240,200,80,0.06)', border: '1px solid rgba(240,200,80,0.15)' }}>
             <span className="text-sm" style={{ color: '#F0C850' }}>
-              Showing: {statsFilter === 'complete' ? '✅ Complete registrations' : statsFilter === 'incomplete' ? '⏳ Incomplete registrations' : '🟢 Checked in today'}
+              Showing: {statsFilter === 'paid' ? '💰 Confirmed (Paid / Free Trial)' : statsFilter === 'complete' ? '✅ Complete registrations' : statsFilter === 'incomplete' ? '⏳ Incomplete registrations' : '🟢 Checked in today'}
             </span>
             <button onClick={() => setStatsFilter('all')} className="ml-auto text-xs px-2 py-1 rounded-lg hover:bg-white/5 transition" style={{ color: '#F0C850' }}>
               Clear ✕
