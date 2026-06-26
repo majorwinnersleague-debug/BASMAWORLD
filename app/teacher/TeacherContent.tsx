@@ -206,6 +206,14 @@ export default function TeacherContent() {
   const [announceSentContacts, setAnnounceSentContacts] = useState<Set<string>>(new Set())
   const [announceActive, setAnnounceActive] = useState(false)
 
+  // Block contacts state
+  const [blockPhone, setBlockPhone] = useState('')
+  const [blockName, setBlockName] = useState('')
+  const [blockedList, setBlockedList] = useState<{id: string; phone: string; name: string; blockedAt: string}[]>([])
+  const [blockLoading, setBlockLoading] = useState(false)
+  const [blockMsg, setBlockMsg] = useState('')
+  const [showBlockSection, setShowBlockSection] = useState(false)
+
   // Auth check — code required every time (no saved sessions)
   useEffect(() => {
     // Clear any old saved auth so code is always required
@@ -283,6 +291,71 @@ export default function TeacherContent() {
       })
       .catch(() => setLoading(false))
   }, [authenticated])
+
+  // Fetch blocked contacts list
+  const fetchBlockedList = useCallback(async () => {
+    try {
+      const res = await fetch('/api/contacts/block')
+      const data = await res.json()
+      setBlockedList(data.blocked || [])
+    } catch (_) {}
+  }, [])
+
+  useEffect(() => {
+    if (authenticated) fetchBlockedList()
+  }, [authenticated, fetchBlockedList])
+
+  // Block a phone number
+  const handleBlockPhone = async () => {
+    const digits = blockPhone.replace(/\D/g, '')
+    if (digits.length < 7) {
+      setBlockMsg('⚠️ Please enter a valid phone number')
+      return
+    }
+    setBlockLoading(true)
+    setBlockMsg('')
+    try {
+      const res = await fetch('/api/contacts/block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: blockPhone, name: blockName }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setBlockMsg(`⚠️ ${data.error}`)
+      } else {
+        setBlockMsg('✅ Number blocked — they won\'t appear in Text All anymore')
+        setBlockPhone('')
+        setBlockName('')
+        fetchBlockedList()
+        // Re-fetch contacts to update the Text All list
+        fetch('/api/registrations?source=all&teacherCode=1515')
+          .then(r => r.json())
+          .then(d => { setRegistrations(d.registrations || []); setAllContacts(d.allContacts || []) })
+      }
+    } catch (e: any) {
+      setBlockMsg(`⚠️ Error: ${e.message}`)
+    }
+    setBlockLoading(false)
+  }
+
+  // Unblock a phone number
+  const handleUnblock = async (recordId: string) => {
+    setBlockLoading(true)
+    try {
+      await fetch('/api/contacts/block', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recordId }),
+      })
+      fetchBlockedList()
+      // Re-fetch contacts
+      fetch('/api/registrations?source=all&teacherCode=1515')
+        .then(r => r.json())
+        .then(d => { setRegistrations(d.registrations || []); setAllContacts(d.allContacts || []) })
+    } catch (_) {}
+    setBlockLoading(false)
+  }
 
   // Check-in handler
   const handleCheckIn = useCallback(async (student: Registration) => {
@@ -2003,6 +2076,84 @@ export default function TeacherContent() {
                   </div>
                 </div>
               </details>
+
+              {/* ── REMOVE FROM LEADS (BLOCK) SECTION ── */}
+              <div className="mt-8 rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <button
+                  onClick={() => setShowBlockSection(!showBlockSection)}
+                  className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/5 transition"
+                >
+                  <span className="text-sm font-semibold text-white/70">🚫 Remove from Leads</span>
+                  <span className="text-xs text-white/30">{showBlockSection ? '▲' : '▼'} {blockedList.length > 0 && `(${blockedList.length} blocked)`}</span>
+                </button>
+
+                {showBlockSection && (
+                  <div className="px-5 pb-5 border-t border-white/5">
+                    <p className="text-xs text-white/30 mt-3 mb-4">
+                      Type a phone number to remove someone from the Text All list. They won&apos;t appear in future texts.
+                    </p>
+
+                    {/* Input form */}
+                    <div className="flex flex-col gap-3 mb-4">
+                      <div className="flex gap-2">
+                        <input
+                          type="tel"
+                          placeholder="Phone number (e.g. 702-555-1234)"
+                          value={blockPhone}
+                          onChange={(e) => setBlockPhone(e.target.value)}
+                          className="flex-1 px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#c9a84c]/50"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Name (optional, for your reference)"
+                          value={blockName}
+                          onChange={(e) => setBlockName(e.target.value)}
+                          className="flex-1 px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#c9a84c]/50"
+                        />
+                        <button
+                          onClick={handleBlockPhone}
+                          disabled={blockLoading || !blockPhone.trim()}
+                          className="px-5 py-3 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-semibold hover:bg-red-500/30 transition disabled:opacity-30"
+                        >
+                          {blockLoading ? '...' : '🚫 Block'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {blockMsg && (
+                      <p className={`text-sm mb-4 ${blockMsg.startsWith('✅') ? 'text-green-400/80' : 'text-red-400/80'}`}>
+                        {blockMsg}
+                      </p>
+                    )}
+
+                    {/* Blocked list */}
+                    {blockedList.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs text-white/40 font-semibold uppercase tracking-wider mb-2">Blocked Numbers</p>
+                        <div className="space-y-1 max-h-[200px] overflow-y-auto">
+                          {blockedList.map((b) => (
+                            <div key={b.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-black/20 border border-white/5">
+                              <div>
+                                <span className="text-sm text-white/60 font-mono">{b.phone}</span>
+                                {b.name && <span className="text-xs text-white/30 ml-2">({b.name})</span>}
+                              </div>
+                              <button
+                                onClick={() => handleUnblock(b.id)}
+                                disabled={blockLoading}
+                                className="text-xs px-3 py-1 rounded-lg bg-white/5 text-white/40 hover:text-white/70 hover:bg-white/10 transition disabled:opacity-30"
+                              >
+                                Unblock
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </>
           )
         })()}
