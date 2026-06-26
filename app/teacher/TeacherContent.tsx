@@ -202,8 +202,8 @@ export default function TeacherContent() {
 
   // Announcement state
   const [announceMsg, setAnnounceMsg] = useState('')
-  const [announceSentBatches, setAnnounceSentBatches] = useState<number[]>([])
-  const ANNOUNCE_BATCH_SIZE = 15
+  const [announceSentContacts, setAnnounceSentContacts] = useState<Set<string>>(new Set())
+  const [announceActive, setAnnounceActive] = useState(false)
 
   // Auth check — code required every time (no saved sessions)
   useEffect(() => {
@@ -1805,14 +1805,18 @@ export default function TeacherContent() {
             const ph = safe(r.phone).replace(/\D/g, '')
             return ph.length >= 7
           })
-          const uniquePhones = Array.from(new Map(
+          // De-duplicate by phone number, keep first occurrence
+          const uniqueContacts = Array.from(new Map(
             withPhone.map(r => [safe(r.phone).replace(/\D/g, ''), r])
-          ).entries())
-          const batches: [string, Registration][][] = []
-          for (let i = 0; i < uniquePhones.length; i += ANNOUNCE_BATCH_SIZE) {
-            batches.push(uniquePhones.slice(i, i + ANNOUNCE_BATCH_SIZE))
-          }
-          const allSent = batches.length > 0 && announceSentBatches.length >= batches.length
+          ).values())
+          const sentCount = uniqueContacts.filter(r => announceSentContacts.has(safe(r.phone).replace(/\D/g, ''))).length
+          const allDone = uniqueContacts.length > 0 && sentCount >= uniqueContacts.length
+          // Next unsent contact
+          const nextContact = uniqueContacts.find(r => !announceSentContacts.has(safe(r.phone).replace(/\D/g, '')))
+          const nextPhone = nextContact ? safe(nextContact.phone).replace(/\D/g, '') : ''
+          const nextPhoneFormatted = nextPhone.length === 10 ? '1' + nextPhone : nextPhone
+          const nextName = nextContact ? (safe(nextContact.parentName).split(' ')[0] || safe(nextContact.studentName).split(' ')[0] || 'Contact') : ''
+          const smsUri = nextContact ? `sms:${nextPhoneFormatted}?body=${encodeURIComponent(announceMsg)}` : '#'
 
           return (
             <>
@@ -1822,7 +1826,7 @@ export default function TeacherContent() {
                     📢 Text Announcement
                   </span>
                 </h2>
-                <p className="text-sm text-white/30">Compose a message and send it to all contacts via text from your phone.</p>
+                <p className="text-sm text-white/30">Compose a message and text every contact individually from your phone — one tap at a time.</p>
               </div>
 
               {/* Compose */}
@@ -1830,130 +1834,167 @@ export default function TeacherContent() {
                 <label className="text-xs text-white/40 uppercase tracking-wider font-semibold mb-2 block">Your Message</label>
                 <textarea
                   value={announceMsg}
-                  onChange={(e) => setAnnounceMsg(e.target.value)}
+                  onChange={(e) => { setAnnounceMsg(e.target.value); if (!announceActive) setAnnounceSentContacts(new Set()) }}
                   placeholder="Type your announcement here... e.g. Hi BASMA family! We have complimentary EVO tickets for you..."
                   rows={5}
                   className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition resize-none"
                 />
                 <div className="flex justify-between mt-2">
                   <span className="text-xs text-white/20">{announceMsg.length} characters</span>
-                  <span className="text-xs text-white/30">{uniquePhones.length} contacts with phone numbers</span>
+                  <span className="text-xs text-white/30">{uniqueContacts.length} contacts with phone numbers</span>
                 </div>
               </div>
 
               {/* Quick Templates */}
-              <div className="rounded-xl p-4 mb-5" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
-                <p className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider mb-3">Quick Templates</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: '🎟️ EVO Tickets', text: 'Hi! This is BASMA Academy 🎵 We have complimentary FREE EVO Convention tickets for you for being part of the BASMA family! Reply to this text if you\'d like tickets. Also don\'t forget to register for our NEW Summer Camp at basmaworld.com — spots are very limited! 🎶' },
-                    { label: '🏕️ Camp Reminder', text: 'Hi! This is BASMA Academy 🎵 Just a reminder — our FREE Summer Dance & Music Camp starts June 29 at Synergy Dance Studio! Spots are LIMITED. Register now at basmaworld.com 🎶' },
-                    { label: '🎹 Free Trial', text: 'Hi! This is BASMA Academy 🎵 Did you know every new student gets a FREE 20-minute private lesson? Piano, guitar, voice & more! Book yours at basmaworld.com/private-lessons 🎶' },
-                  ].map((tmpl, i) => (
-                    <button key={i}
-                      onClick={() => setAnnounceMsg(tmpl.text)}
-                      className="text-xs px-3 py-2 rounded-lg hover:bg-white/[0.05] transition text-left"
-                      style={{ color: '#c9a84c', border: '1px solid rgba(201,168,76,0.2)' }}>
-                      {tmpl.label}
-                    </button>
-                  ))}
+              {!announceActive && (
+                <div className="rounded-xl p-4 mb-5" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
+                  <p className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider mb-3">Quick Templates</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: '🎟️ EVO Tickets', text: 'Hi! This is BASMA Academy 🎵 We have complimentary FREE EVO Convention tickets for you for being part of the BASMA family! Reply to this text if you\'d like tickets. Also don\'t forget to register for our NEW Summer Camp at basmaworld.com — spots are very limited! 🎶' },
+                      { label: '🏕️ Camp Reminder', text: 'Hi! This is BASMA Academy 🎵 Just a reminder — our FREE Summer Dance & Music Camp starts June 29 at Synergy Dance Studio! Spots are LIMITED. Register now at basmaworld.com 🎶' },
+                      { label: '🎹 Free Trial', text: 'Hi! This is BASMA Academy 🎵 Did you know every new student gets a FREE 20-minute private lesson? Piano, guitar, voice & more! Book yours at basmaworld.com/private-lessons 🎶' },
+                    ].map((tmpl, i) => (
+                      <button key={i}
+                        onClick={() => setAnnounceMsg(tmpl.text)}
+                        className="text-xs px-3 py-2 rounded-lg hover:bg-white/[0.05] transition text-left"
+                        style={{ color: '#c9a84c', border: '1px solid rgba(201,168,76,0.2)' }}>
+                        {tmpl.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Batch Send Buttons */}
+              {/* Send Flow */}
               {announceMsg.trim() && (
                 <div className="rounded-xl p-5 mb-5" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+
+                  {/* Progress header */}
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-sm font-semibold text-white/80">Send in {batches.length} batch{batches.length !== 1 ? 'es' : ''}</p>
-                      <p className="text-xs text-white/30 mt-1">Each button opens your Messages app. Hit send, then come back for the next batch.</p>
+                      <p className="text-sm font-semibold text-white/80">
+                        {allDone ? '🎉 All done!' : announceActive ? `Texting — ${sentCount} of ${uniqueContacts.length} sent` : `Ready to text ${uniqueContacts.length} contacts`}
+                      </p>
+                      <p className="text-xs text-white/30 mt-1">
+                        {allDone ? 'Every contact has been texted!' : announceActive ? 'Tap the button below → send in Messages → come back & tap "Sent, Next →"' : 'Each contact gets their own individual text from your number.'}
+                      </p>
                     </div>
-                    {announceSentBatches.length > 0 && (
-                      <button onClick={() => setAnnounceSentBatches([])}
+                    {sentCount > 0 && (
+                      <button onClick={() => { setAnnounceSentContacts(new Set()); setAnnounceActive(false) }}
                         className="text-xs text-white/30 hover:text-white/60 transition">
-                        Reset progress
+                        Reset
                       </button>
                     )}
                   </div>
 
                   {/* Progress bar */}
-                  <div className="w-full h-2 rounded-full bg-white/5 mb-4 overflow-hidden">
+                  <div className="w-full h-2.5 rounded-full bg-white/5 mb-5 overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
-                        width: `${batches.length > 0 ? (announceSentBatches.length / batches.length) * 100 : 0}%`,
-                        background: allSent ? '#22c55e' : 'linear-gradient(135deg, #c9a84c, #e4cc7a)',
+                        width: `${uniqueContacts.length > 0 ? (sentCount / uniqueContacts.length) * 100 : 0}%`,
+                        background: allDone ? '#22c55e' : 'linear-gradient(135deg, #c9a84c, #e4cc7a)',
                       }}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    {batches.map((batch, i) => {
-                      const isSent = announceSentBatches.includes(i)
-                      const phones = batch.map(([ph]) => {
-                        const d = ph.length === 10 ? '1' + ph : ph
-                        return d
-                      })
-                      const smsUri = `sms:${phones.join(',')}?body=${encodeURIComponent(announceMsg)}`
-                      const names = batch.slice(0, 3).map(([, r]) => safe(r.parentName).split(' ')[0] || safe(r.studentName).split(' ')[0] || 'Contact').join(', ')
-                      const moreCount = batch.length - 3
+                  {!announceActive && !allDone && (
+                    <button
+                      onClick={() => setAnnounceActive(true)}
+                      className="w-full py-4 rounded-xl font-bold text-base transition hover:scale-[1.01]"
+                      style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+                      📱 Start Texting All ({uniqueContacts.length} contacts)
+                    </button>
+                  )}
 
-                      return (
-                        <div key={i} className="flex items-center gap-3">
-                          <a
-                            href={smsUri}
-                            onClick={() => {
-                              if (!announceSentBatches.includes(i)) {
-                                setAnnounceSentBatches(prev => [...prev, i])
-                              }
-                            }}
-                            className={`flex-1 flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition ${
-                              isSent
-                                ? 'bg-green-500/10 text-green-400 cursor-default'
-                                : 'hover:scale-[1.01]'
-                            }`}
-                            style={isSent ? { border: '1px solid rgba(34,197,94,0.2)' } : {
-                              background: 'linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.08))',
-                              border: '1px solid rgba(201,168,76,0.25)',
-                              color: '#e4cc7a',
-                            }}
-                          >
-                            <span>
-                              {isSent ? '✅' : '📱'} Batch {i + 1} — {batch.length} contacts
-                              <span className="text-xs ml-2 opacity-60">({names}{moreCount > 0 ? `, +${moreCount} more` : ''})</span>
-                            </span>
-                            <span className="text-xs opacity-60">
-                              {isSent ? 'Sent' : 'Tap to open Messages →'}
-                            </span>
-                          </a>
+                  {/* Active sending flow */}
+                  {announceActive && !allDone && nextContact && (
+                    <div className="space-y-3">
+                      {/* Current contact card */}
+                      <div className="rounded-xl p-4" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider">Next Contact ({sentCount + 1}/{uniqueContacts.length})</span>
                         </div>
-                      )
-                    })}
-                  </div>
+                        <p className="text-lg font-semibold text-white/90 mb-1">{safe(nextContact.parentName) || safe(nextContact.studentName) || 'Contact'}</p>
+                        <p className="text-sm text-white/40 font-mono mb-1">{formatPhone(nextPhone)}</p>
+                        {safe(nextContact.studentName) && safe(nextContact.parentName) && (
+                          <p className="text-xs text-white/30">Student: {safe(nextContact.studentName)}</p>
+                        )}
+                      </div>
 
-                  {allSent && (
-                    <div className="mt-4 p-4 rounded-xl text-center" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
-                      <span className="text-2xl block mb-1">🎉</span>
-                      <p className="text-green-400 font-semibold text-sm">All batches sent!</p>
-                      <p className="text-green-400/50 text-xs mt-1">{uniquePhones.length} contacts reached</p>
+                      {/* Action buttons */}
+                      <div className="flex gap-2">
+                        <a
+                          href={smsUri}
+                          className="flex-1 py-4 rounded-xl font-bold text-center text-base transition hover:scale-[1.01] block"
+                          style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+                          📱 Open in Messages
+                        </a>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setAnnounceSentContacts(prev => {
+                            const next = new Set(prev)
+                            next.add(nextPhone)
+                            return next
+                          })
+                        }}
+                        className="w-full py-3 rounded-xl font-semibold text-sm transition hover:bg-green-500/20"
+                        style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>
+                        ✅ Sent, Next →
+                      </button>
+                      <button
+                        onClick={() => {
+                          // Skip this contact
+                          setAnnounceSentContacts(prev => {
+                            const next = new Set(prev)
+                            next.add(nextPhone)
+                            return next
+                          })
+                        }}
+                        className="w-full py-2 rounded-lg text-xs text-white/25 hover:text-white/50 transition">
+                        Skip this contact
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Completion */}
+                  {allDone && (
+                    <div className="p-5 rounded-xl text-center" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                      <span className="text-3xl block mb-2">🎉</span>
+                      <p className="text-green-400 font-bold text-lg">All texts sent!</p>
+                      <p className="text-green-400/50 text-sm mt-1">{uniqueContacts.length} individual texts from your number</p>
+                      <button
+                        onClick={() => { setAnnounceSentContacts(new Set()); setAnnounceActive(false); setAnnounceMsg('') }}
+                        className="mt-4 px-6 py-2 rounded-lg text-sm font-medium transition"
+                        style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        New Announcement
+                      </button>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Recipient Preview */}
+              {/* Recipient list */}
               <details className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <summary className="px-5 py-3 cursor-pointer text-sm text-white/40 hover:text-white/60 transition select-none">
-                  👥 Preview all {uniquePhones.length} recipients
+                  👥 All {uniqueContacts.length} recipients {sentCount > 0 && `(${sentCount} sent)`}
                 </summary>
                 <div className="px-5 pb-4 max-h-[300px] overflow-y-auto">
                   <div className="space-y-1 mt-2">
-                    {uniquePhones.map(([ph, r], i) => (
-                      <div key={i} className="flex items-center justify-between py-1.5 text-xs border-b border-white/5">
-                        <span className="text-white/60">{safe(r.parentName) || safe(r.studentName) || 'Unknown'}</span>
-                        <span className="text-white/30 font-mono">{formatPhone(ph)}</span>
-                      </div>
-                    ))}
+                    {uniqueContacts.map((r, i) => {
+                      const ph = safe(r.phone).replace(/\D/g, '')
+                      const isSent = announceSentContacts.has(ph)
+                      return (
+                        <div key={i} className="flex items-center justify-between py-1.5 text-xs border-b border-white/5">
+                          <span className={isSent ? 'text-green-400/60' : 'text-white/60'}>
+                            {isSent && '✅ '}{safe(r.parentName) || safe(r.studentName) || 'Unknown'}
+                          </span>
+                          <span className="text-white/30 font-mono">{formatPhone(ph)}</span>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               </details>
