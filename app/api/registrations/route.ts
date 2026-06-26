@@ -7,6 +7,7 @@ const ENROLLMENTS_TABLE = "tblelNWN2hed8OclX"; // Enrollments (waivers/medical)
 const PAYMENTS_TABLE = "tblfTQQEciBFqovYU"; // Stripe Payments
 
 const SUMMER_TABLE = "tblfOnRDkfgZoCF9X"; // Summer 2026 Registrations
+const BLOCKED_TABLE = process.env.BLOCKED_TABLE_ID || "tbleV623dZRhgmULJ"; // Blocked Contacts (teacher portal removals)
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
 // basmaworld.com not yet verified in Resend — use their default sender until DNS records are added
@@ -489,7 +490,24 @@ export async function GET(req: Request) {
       const EXCLUDED_PHONES_RAW = ['7028846787'];
       // Normalize: strip leading '1' for 11-digit US numbers so both 7028846787 and 17028846787 match
       const normalizePhone = (p: string) => { const d = p.replace(/\D/g, ''); return d.length === 11 && d.startsWith('1') ? d.slice(1) : d; };
-      const EXCLUDED_PHONES = new Set(EXCLUDED_PHONES_RAW);
+
+      // Fetch blocked phones from Airtable Blocked Contacts table
+      const blockedFromAirtable: string[] = [];
+      if (BLOCKED_TABLE) {
+        try {
+          const blockedRes = await fetch(
+            `https://api.airtable.com/v0/${AIRTABLE_BASE}/${BLOCKED_TABLE}?fields%5B%5D=Phone`,
+            { headers: { Authorization: `Bearer ${AIRTABLE_PAT}` }, cache: 'no-store' }
+          );
+          const blockedData = await blockedRes.json();
+          for (const rec of (blockedData.records || [])) {
+            const ph = normalizePhone(rec.fields?.Phone || '');
+            if (ph.length >= 7) blockedFromAirtable.push(ph);
+          }
+        } catch (_) { /* ignore — hardcoded list still applies */ }
+      }
+
+      const EXCLUDED_PHONES = new Set([...EXCLUDED_PHONES_RAW, ...blockedFromAirtable]);
       const allContactsMap = new Map<string, { name: string; phone: string; studentName: string; email: string; source: string }>();
 
       for (const r of leadRecords) {
