@@ -483,7 +483,46 @@ export async function GET(req: Request) {
         });
       }
 
-      return NextResponse.json({ registrations: deduped });
+      // ── Build allContacts: every lead/contact with a phone number ──
+      // Used by the Text All announcements tab (includes marketing leads without student names)
+      const EXCLUDED_NAMES = ['mitzi', 'frank vecchio'];
+      const allContactsMap = new Map<string, { name: string; phone: string; studentName: string; email: string; source: string }>();
+
+      for (const r of leadRecords) {
+        const f = r.fields;
+        const ph = (f.Phone || '').replace(/\D/g, '');
+        if (ph.length < 7) continue;
+        const name = (f['Full Name'] || '').trim();
+        if (EXCLUDED_NAMES.includes(name.toLowerCase())) continue;
+        if (allContactsMap.has(ph)) continue;
+        allContactsMap.set(ph, {
+          name: name || f['Student Name'] || '',
+          phone: f.Phone || '',
+          studentName: f['Student Name'] || '',
+          email: f.Email || '',
+          source: f.Source || '',
+        });
+      }
+
+      for (const s of summerRecords) {
+        const f = s.fields;
+        const ph = (f['Parent Phone'] || '').replace(/\D/g, '');
+        if (ph.length < 7) continue;
+        const name = (f['Parent Name'] || '').trim();
+        if (EXCLUDED_NAMES.includes(name.toLowerCase())) continue;
+        if (allContactsMap.has(ph)) continue;
+        allContactsMap.set(ph, {
+          name: name || f['Student Name'] || '',
+          phone: f['Parent Phone'] || '',
+          studentName: f['Student Name'] || '',
+          email: f['Parent Email'] || '',
+          source: 'Summer Camp 2026',
+        });
+      }
+
+      const allContacts = Array.from(allContactsMap.values());
+
+      return NextResponse.json({ registrations: deduped, allContacts });
     }
 
     // Legacy single-search param — block it entirely

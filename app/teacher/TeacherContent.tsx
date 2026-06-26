@@ -158,6 +158,7 @@ export default function TeacherContent() {
   const [codeInput, setCodeInput] = useState('')
   const [codeError, setCodeError] = useState(false)
   const [registrations, setRegistrations] = useState<Registration[]>([])
+  const [allContacts, setAllContacts] = useState<{ name: string; phone: string; studentName: string; email: string; source: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<TabView>('checkin')
   const [expandedClass, setExpandedClass] = useState<string | null>(null)
@@ -277,6 +278,7 @@ export default function TeacherContent() {
       .then(r => r.json())
       .then(data => {
         setRegistrations(data.registrations || [])
+        setAllContacts(data.allContacts || [])
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -466,7 +468,7 @@ export default function TeacherContent() {
         if (data.updates && data.updates.length > 0 && data.updates.some((u: any) => u.success)) {
           fetch('/api/registrations?source=all&teacherCode=1515')
             .then(r => r.json())
-            .then(d => setRegistrations(d.registrations || []))
+            .then(d => { setRegistrations(d.registrations || []); setAllContacts(d.allContacts || []) })
             .catch(() => {})
         }
       }
@@ -1801,21 +1803,15 @@ export default function TeacherContent() {
 
         {/* ═══ TEXT ALL / ANNOUNCEMENTS TAB ═══ */}
         {tab === 'announce' && (() => {
-          const withPhone = registrations.filter(r => {
-            const ph = safe(r.phone).replace(/\D/g, '')
-            return ph.length >= 7
-          })
-          // De-duplicate by phone number, keep first occurrence
-          const uniqueContacts = Array.from(new Map(
-            withPhone.map(r => [safe(r.phone).replace(/\D/g, ''), r])
-          ).values())
-          const sentCount = uniqueContacts.filter(r => announceSentContacts.has(safe(r.phone).replace(/\D/g, ''))).length
-          const allDone = uniqueContacts.length > 0 && sentCount >= uniqueContacts.length
+          // Use allContacts (all leads + summer records with phones, de-duped by phone, excludes blocked names)
+          const contactsList = allContacts.length > 0 ? allContacts : []
+          const sentCount = contactsList.filter(c => announceSentContacts.has(c.phone.replace(/\D/g, ''))).length
+          const allDone = contactsList.length > 0 && sentCount >= contactsList.length
           // Next unsent contact
-          const nextContact = uniqueContacts.find(r => !announceSentContacts.has(safe(r.phone).replace(/\D/g, '')))
-          const nextPhone = nextContact ? safe(nextContact.phone).replace(/\D/g, '') : ''
+          const nextContact = contactsList.find(c => !announceSentContacts.has(c.phone.replace(/\D/g, '')))
+          const nextPhone = nextContact ? nextContact.phone.replace(/\D/g, '') : ''
           const nextPhoneFormatted = nextPhone.length === 10 ? '1' + nextPhone : nextPhone
-          const nextName = nextContact ? (safe(nextContact.parentName).split(' ')[0] || safe(nextContact.studentName).split(' ')[0] || '') : ''
+          const nextName = nextContact ? (nextContact.name.split(' ')[0] || nextContact.studentName.split(' ')[0] || '') : ''
           const personalizedMsg = nextName ? announceMsg.replace(/\{name\}/gi, nextName) : announceMsg.replace(/\{name\}/gi, '')
           const smsUri = nextContact ? `sms:${nextPhoneFormatted}?body=${encodeURIComponent(personalizedMsg)}` : '#'
 
@@ -1842,7 +1838,7 @@ export default function TeacherContent() {
                 />
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-xs text-white/20">{announceMsg.length} chars · Use <code className="text-[#c9a84c]/60 bg-white/5 px-1 rounded">{'{name}'}</code> to personalize</span>
-                  <span className="text-xs text-white/30">{uniqueContacts.length} contacts</span>
+                  <span className="text-xs text-white/30">{contactsList.length} contacts</span>
                 </div>
               </div>
 
@@ -1875,7 +1871,7 @@ export default function TeacherContent() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className="text-sm font-semibold text-white/80">
-                        {allDone ? '🎉 All done!' : announceActive ? `Texting — ${sentCount} of ${uniqueContacts.length} sent` : `Ready to text ${uniqueContacts.length} contacts`}
+                        {allDone ? '🎉 All done!' : announceActive ? `Texting — ${sentCount} of ${contactsList.length} sent` : `Ready to text ${contactsList.length} contacts`}
                       </p>
                       <p className="text-xs text-white/30 mt-1">
                         {allDone ? 'Every contact has been texted!' : announceActive ? 'Tap the button below → send in Messages → come back & tap "Sent, Next →"' : 'Each contact gets their own individual text from your number.'}
@@ -1894,7 +1890,7 @@ export default function TeacherContent() {
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
-                        width: `${uniqueContacts.length > 0 ? (sentCount / uniqueContacts.length) * 100 : 0}%`,
+                        width: `${contactsList.length > 0 ? (sentCount / contactsList.length) * 100 : 0}%`,
                         background: allDone ? '#22c55e' : 'linear-gradient(135deg, #c9a84c, #e4cc7a)',
                       }}
                     />
@@ -1905,7 +1901,7 @@ export default function TeacherContent() {
                       onClick={() => setAnnounceActive(true)}
                       className="w-full py-4 rounded-xl font-bold text-base transition hover:scale-[1.01]"
                       style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
-                      📱 Start Texting All ({uniqueContacts.length} contacts)
+                      📱 Start Texting All ({contactsList.length} contacts)
                     </button>
                   )}
 
@@ -1915,12 +1911,12 @@ export default function TeacherContent() {
                       {/* Current contact card */}
                       <div className="rounded-xl p-4" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider">Next Contact ({sentCount + 1}/{uniqueContacts.length})</span>
+                          <span className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider">Next Contact ({sentCount + 1}/{contactsList.length})</span>
                         </div>
-                        <p className="text-lg font-semibold text-white/90 mb-1">{safe(nextContact.parentName) || safe(nextContact.studentName) || 'Contact'}</p>
+                        <p className="text-lg font-semibold text-white/90 mb-1">{nextContact.name || nextContact.studentName || 'Contact'}</p>
                         <p className="text-sm text-white/40 font-mono mb-1">{formatPhone(nextPhone)}</p>
-                        {safe(nextContact.studentName) && safe(nextContact.parentName) && (
-                          <p className="text-xs text-white/30">Student: {safe(nextContact.studentName)}</p>
+                        {nextContact.studentName && nextContact.name && nextContact.studentName !== nextContact.name && (
+                          <p className="text-xs text-white/30">Student: {nextContact.studentName}</p>
                         )}
                       </div>
 
@@ -1973,7 +1969,7 @@ export default function TeacherContent() {
                     <div className="p-5 rounded-xl text-center" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
                       <span className="text-3xl block mb-2">🎉</span>
                       <p className="text-green-400 font-bold text-lg">All texts sent!</p>
-                      <p className="text-green-400/50 text-sm mt-1">{uniqueContacts.length} individual texts from your number</p>
+                      <p className="text-green-400/50 text-sm mt-1">{contactsList.length} individual texts from your number</p>
                       <button
                         onClick={() => { setAnnounceSentContacts(new Set()); setAnnounceActive(false); setAnnounceMsg('') }}
                         className="mt-4 px-6 py-2 rounded-lg text-sm font-medium transition"
@@ -1988,17 +1984,17 @@ export default function TeacherContent() {
               {/* Recipient list */}
               <details className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <summary className="px-5 py-3 cursor-pointer text-sm text-white/40 hover:text-white/60 transition select-none">
-                  👥 All {uniqueContacts.length} recipients {sentCount > 0 && `(${sentCount} sent)`}
+                  👥 All {contactsList.length} recipients {sentCount > 0 && `(${sentCount} sent)`}
                 </summary>
                 <div className="px-5 pb-4 max-h-[300px] overflow-y-auto">
                   <div className="space-y-1 mt-2">
-                    {uniqueContacts.map((r, i) => {
-                      const ph = safe(r.phone).replace(/\D/g, '')
+                    {contactsList.map((c, i) => {
+                      const ph = c.phone.replace(/\D/g, '')
                       const isSent = announceSentContacts.has(ph)
                       return (
                         <div key={i} className="flex items-center justify-between py-1.5 text-xs border-b border-white/5">
                           <span className={isSent ? 'text-green-400/60' : 'text-white/60'}>
-                            {isSent && '✅ '}{safe(r.parentName) || safe(r.studentName) || 'Unknown'}
+                            {isSent && '✅ '}{c.name || c.studentName || 'Unknown'}
                           </span>
                           <span className="text-white/30 font-mono">{formatPhone(ph)}</span>
                         </div>
