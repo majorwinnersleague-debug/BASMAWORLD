@@ -133,7 +133,7 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat'
+type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -199,6 +199,11 @@ export default function TeacherContent() {
   const chatEndRef = useCallback((node: HTMLDivElement | null) => {
     if (node) node.scrollIntoView({ behavior: 'smooth' })
   }, [])
+
+  // Announcement state
+  const [announceMsg, setAnnounceMsg] = useState('')
+  const [announceSentContacts, setAnnounceSentContacts] = useState<Set<string>>(new Set())
+  const [announceActive, setAnnounceActive] = useState(false)
 
   // Auth check — code required every time (no saved sessions)
   useEffect(() => {
@@ -743,6 +748,7 @@ export default function TeacherContent() {
             { id: 'calendar' as const, label: '🗓️ Calendar' },
             { id: 'closures' as const, label: '🚫 Closures' },
             { id: 'chat' as const, label: '🤖 Assistant' },
+            { id: 'announce' as const, label: '📢 Text All' },
           ]).map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${tab === t.id ? 'bg-[#c9a84c]/20 text-[#c9a84c]' : 'text-white/40 hover:text-white/60'}`}>
@@ -1792,6 +1798,209 @@ export default function TeacherContent() {
             </div>
           </>
         )}
+
+        {/* ═══ TEXT ALL / ANNOUNCEMENTS TAB ═══ */}
+        {tab === 'announce' && (() => {
+          const withPhone = registrations.filter(r => {
+            const ph = safe(r.phone).replace(/\D/g, '')
+            return ph.length >= 7
+          })
+          // De-duplicate by phone number, keep first occurrence
+          const uniqueContacts = Array.from(new Map(
+            withPhone.map(r => [safe(r.phone).replace(/\D/g, ''), r])
+          ).values())
+          const sentCount = uniqueContacts.filter(r => announceSentContacts.has(safe(r.phone).replace(/\D/g, ''))).length
+          const allDone = uniqueContacts.length > 0 && sentCount >= uniqueContacts.length
+          // Next unsent contact
+          const nextContact = uniqueContacts.find(r => !announceSentContacts.has(safe(r.phone).replace(/\D/g, '')))
+          const nextPhone = nextContact ? safe(nextContact.phone).replace(/\D/g, '') : ''
+          const nextPhoneFormatted = nextPhone.length === 10 ? '1' + nextPhone : nextPhone
+          const nextName = nextContact ? (safe(nextContact.parentName).split(' ')[0] || safe(nextContact.studentName).split(' ')[0] || 'Contact') : ''
+          const smsUri = nextContact ? `sms:${nextPhoneFormatted}?body=${encodeURIComponent(announceMsg)}` : '#'
+
+          return (
+            <>
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    📢 Text Announcement
+                  </span>
+                </h2>
+                <p className="text-sm text-white/30">Compose a message and text every contact individually from your phone — one tap at a time.</p>
+              </div>
+
+              {/* Compose */}
+              <div className="rounded-xl p-5 mb-5" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <label className="text-xs text-white/40 uppercase tracking-wider font-semibold mb-2 block">Your Message</label>
+                <textarea
+                  value={announceMsg}
+                  onChange={(e) => { setAnnounceMsg(e.target.value); if (!announceActive) setAnnounceSentContacts(new Set()) }}
+                  placeholder="Type your announcement here... e.g. Hi BASMA family! We have complimentary EVO tickets for you..."
+                  rows={5}
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition resize-none"
+                />
+                <div className="flex justify-between mt-2">
+                  <span className="text-xs text-white/20">{announceMsg.length} characters</span>
+                  <span className="text-xs text-white/30">{uniqueContacts.length} contacts with phone numbers</span>
+                </div>
+              </div>
+
+              {/* Quick Templates */}
+              {!announceActive && (
+                <div className="rounded-xl p-4 mb-5" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
+                  <p className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider mb-3">Quick Templates</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: '🎟️ EVO Tickets', text: 'Hi! This is BASMA Academy 🎵 We have complimentary FREE EVO Convention tickets for you for being part of the BASMA family! Reply to this text if you\'d like tickets. Also don\'t forget to register for our NEW Summer Camp at basmaworld.com — spots are very limited! 🎶' },
+                      { label: '🏕️ Camp Reminder', text: 'Hi! This is BASMA Academy 🎵 Just a reminder — our FREE Summer Dance & Music Camp starts June 29 at Synergy Dance Studio! Spots are LIMITED. Register now at basmaworld.com 🎶' },
+                      { label: '🎹 Free Trial', text: 'Hi! This is BASMA Academy 🎵 Did you know every new student gets a FREE 20-minute private lesson? Piano, guitar, voice & more! Book yours at basmaworld.com/private-lessons 🎶' },
+                    ].map((tmpl, i) => (
+                      <button key={i}
+                        onClick={() => setAnnounceMsg(tmpl.text)}
+                        className="text-xs px-3 py-2 rounded-lg hover:bg-white/[0.05] transition text-left"
+                        style={{ color: '#c9a84c', border: '1px solid rgba(201,168,76,0.2)' }}>
+                        {tmpl.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Send Flow */}
+              {announceMsg.trim() && (
+                <div className="rounded-xl p-5 mb-5" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+
+                  {/* Progress header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-sm font-semibold text-white/80">
+                        {allDone ? '🎉 All done!' : announceActive ? `Texting — ${sentCount} of ${uniqueContacts.length} sent` : `Ready to text ${uniqueContacts.length} contacts`}
+                      </p>
+                      <p className="text-xs text-white/30 mt-1">
+                        {allDone ? 'Every contact has been texted!' : announceActive ? 'Tap the button below → send in Messages → come back & tap "Sent, Next →"' : 'Each contact gets their own individual text from your number.'}
+                      </p>
+                    </div>
+                    {sentCount > 0 && (
+                      <button onClick={() => { setAnnounceSentContacts(new Set()); setAnnounceActive(false) }}
+                        className="text-xs text-white/30 hover:text-white/60 transition">
+                        Reset
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Progress bar */}
+                  <div className="w-full h-2.5 rounded-full bg-white/5 mb-5 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${uniqueContacts.length > 0 ? (sentCount / uniqueContacts.length) * 100 : 0}%`,
+                        background: allDone ? '#22c55e' : 'linear-gradient(135deg, #c9a84c, #e4cc7a)',
+                      }}
+                    />
+                  </div>
+
+                  {!announceActive && !allDone && (
+                    <button
+                      onClick={() => setAnnounceActive(true)}
+                      className="w-full py-4 rounded-xl font-bold text-base transition hover:scale-[1.01]"
+                      style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+                      📱 Start Texting All ({uniqueContacts.length} contacts)
+                    </button>
+                  )}
+
+                  {/* Active sending flow */}
+                  {announceActive && !allDone && nextContact && (
+                    <div className="space-y-3">
+                      {/* Current contact card */}
+                      <div className="rounded-xl p-4" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider">Next Contact ({sentCount + 1}/{uniqueContacts.length})</span>
+                        </div>
+                        <p className="text-lg font-semibold text-white/90 mb-1">{safe(nextContact.parentName) || safe(nextContact.studentName) || 'Contact'}</p>
+                        <p className="text-sm text-white/40 font-mono mb-1">{formatPhone(nextPhone)}</p>
+                        {safe(nextContact.studentName) && safe(nextContact.parentName) && (
+                          <p className="text-xs text-white/30">Student: {safe(nextContact.studentName)}</p>
+                        )}
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="flex gap-2">
+                        <a
+                          href={smsUri}
+                          className="flex-1 py-4 rounded-xl font-bold text-center text-base transition hover:scale-[1.01] block"
+                          style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+                          📱 Open in Messages
+                        </a>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setAnnounceSentContacts(prev => {
+                            const next = new Set(prev)
+                            next.add(nextPhone)
+                            return next
+                          })
+                        }}
+                        className="w-full py-3 rounded-xl font-semibold text-sm transition hover:bg-green-500/20"
+                        style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>
+                        ✅ Sent, Next →
+                      </button>
+                      <button
+                        onClick={() => {
+                          // Skip this contact
+                          setAnnounceSentContacts(prev => {
+                            const next = new Set(prev)
+                            next.add(nextPhone)
+                            return next
+                          })
+                        }}
+                        className="w-full py-2 rounded-lg text-xs text-white/25 hover:text-white/50 transition">
+                        Skip this contact
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Completion */}
+                  {allDone && (
+                    <div className="p-5 rounded-xl text-center" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                      <span className="text-3xl block mb-2">🎉</span>
+                      <p className="text-green-400 font-bold text-lg">All texts sent!</p>
+                      <p className="text-green-400/50 text-sm mt-1">{uniqueContacts.length} individual texts from your number</p>
+                      <button
+                        onClick={() => { setAnnounceSentContacts(new Set()); setAnnounceActive(false); setAnnounceMsg('') }}
+                        className="mt-4 px-6 py-2 rounded-lg text-sm font-medium transition"
+                        style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        New Announcement
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Recipient list */}
+              <details className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <summary className="px-5 py-3 cursor-pointer text-sm text-white/40 hover:text-white/60 transition select-none">
+                  👥 All {uniqueContacts.length} recipients {sentCount > 0 && `(${sentCount} sent)`}
+                </summary>
+                <div className="px-5 pb-4 max-h-[300px] overflow-y-auto">
+                  <div className="space-y-1 mt-2">
+                    {uniqueContacts.map((r, i) => {
+                      const ph = safe(r.phone).replace(/\D/g, '')
+                      const isSent = announceSentContacts.has(ph)
+                      return (
+                        <div key={i} className="flex items-center justify-between py-1.5 text-xs border-b border-white/5">
+                          <span className={isSent ? 'text-green-400/60' : 'text-white/60'}>
+                            {isSent && '✅ '}{safe(r.parentName) || safe(r.studentName) || 'Unknown'}
+                          </span>
+                          <span className="text-white/30 font-mono">{formatPhone(ph)}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </details>
+            </>
+          )
+        })()}
 
       </div>
 
