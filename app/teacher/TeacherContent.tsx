@@ -133,7 +133,7 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat'
+type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -199,6 +199,11 @@ export default function TeacherContent() {
   const chatEndRef = useCallback((node: HTMLDivElement | null) => {
     if (node) node.scrollIntoView({ behavior: 'smooth' })
   }, [])
+
+  // Announcement state
+  const [announceMsg, setAnnounceMsg] = useState('')
+  const [announceSentBatches, setAnnounceSentBatches] = useState<number[]>([])
+  const ANNOUNCE_BATCH_SIZE = 15
 
   // Auth check — code required every time (no saved sessions)
   useEffect(() => {
@@ -743,6 +748,7 @@ export default function TeacherContent() {
             { id: 'calendar' as const, label: '🗓️ Calendar' },
             { id: 'closures' as const, label: '🚫 Closures' },
             { id: 'chat' as const, label: '🤖 Assistant' },
+            { id: 'announce' as const, label: '📢 Text All' },
           ]).map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${tab === t.id ? 'bg-[#c9a84c]/20 text-[#c9a84c]' : 'text-white/40 hover:text-white/60'}`}>
@@ -1792,6 +1798,168 @@ export default function TeacherContent() {
             </div>
           </>
         )}
+
+        {/* ═══ TEXT ALL / ANNOUNCEMENTS TAB ═══ */}
+        {tab === 'announce' && (() => {
+          const withPhone = registrations.filter(r => {
+            const ph = safe(r.phone).replace(/\D/g, '')
+            return ph.length >= 7
+          })
+          const uniquePhones = Array.from(new Map(
+            withPhone.map(r => [safe(r.phone).replace(/\D/g, ''), r])
+          ).entries())
+          const batches: [string, Registration][][] = []
+          for (let i = 0; i < uniquePhones.length; i += ANNOUNCE_BATCH_SIZE) {
+            batches.push(uniquePhones.slice(i, i + ANNOUNCE_BATCH_SIZE))
+          }
+          const allSent = batches.length > 0 && announceSentBatches.length >= batches.length
+
+          return (
+            <>
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    📢 Text Announcement
+                  </span>
+                </h2>
+                <p className="text-sm text-white/30">Compose a message and send it to all contacts via text from your phone.</p>
+              </div>
+
+              {/* Compose */}
+              <div className="rounded-xl p-5 mb-5" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <label className="text-xs text-white/40 uppercase tracking-wider font-semibold mb-2 block">Your Message</label>
+                <textarea
+                  value={announceMsg}
+                  onChange={(e) => setAnnounceMsg(e.target.value)}
+                  placeholder="Type your announcement here... e.g. Hi BASMA family! We have complimentary EVO tickets for you..."
+                  rows={5}
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition resize-none"
+                />
+                <div className="flex justify-between mt-2">
+                  <span className="text-xs text-white/20">{announceMsg.length} characters</span>
+                  <span className="text-xs text-white/30">{uniquePhones.length} contacts with phone numbers</span>
+                </div>
+              </div>
+
+              {/* Quick Templates */}
+              <div className="rounded-xl p-4 mb-5" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
+                <p className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider mb-3">Quick Templates</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: '🎟️ EVO Tickets', text: 'Hi! This is BASMA Academy 🎵 We have complimentary FREE EVO Convention tickets for you for being part of the BASMA family! Reply to this text if you\'d like tickets. Also don\'t forget to register for our NEW Summer Camp at basmaworld.com — spots are very limited! 🎶' },
+                    { label: '🏕️ Camp Reminder', text: 'Hi! This is BASMA Academy 🎵 Just a reminder — our FREE Summer Dance & Music Camp starts June 29 at Synergy Dance Studio! Spots are LIMITED. Register now at basmaworld.com 🎶' },
+                    { label: '🎹 Free Trial', text: 'Hi! This is BASMA Academy 🎵 Did you know every new student gets a FREE 20-minute private lesson? Piano, guitar, voice & more! Book yours at basmaworld.com/private-lessons 🎶' },
+                  ].map((tmpl, i) => (
+                    <button key={i}
+                      onClick={() => setAnnounceMsg(tmpl.text)}
+                      className="text-xs px-3 py-2 rounded-lg hover:bg-white/[0.05] transition text-left"
+                      style={{ color: '#c9a84c', border: '1px solid rgba(201,168,76,0.2)' }}>
+                      {tmpl.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Batch Send Buttons */}
+              {announceMsg.trim() && (
+                <div className="rounded-xl p-5 mb-5" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-sm font-semibold text-white/80">Send in {batches.length} batch{batches.length !== 1 ? 'es' : ''}</p>
+                      <p className="text-xs text-white/30 mt-1">Each button opens your Messages app. Hit send, then come back for the next batch.</p>
+                    </div>
+                    {announceSentBatches.length > 0 && (
+                      <button onClick={() => setAnnounceSentBatches([])}
+                        className="text-xs text-white/30 hover:text-white/60 transition">
+                        Reset progress
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Progress bar */}
+                  <div className="w-full h-2 rounded-full bg-white/5 mb-4 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${batches.length > 0 ? (announceSentBatches.length / batches.length) * 100 : 0}%`,
+                        background: allSent ? '#22c55e' : 'linear-gradient(135deg, #c9a84c, #e4cc7a)',
+                      }}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    {batches.map((batch, i) => {
+                      const isSent = announceSentBatches.includes(i)
+                      const phones = batch.map(([ph]) => {
+                        const d = ph.length === 10 ? '1' + ph : ph
+                        return d
+                      })
+                      const smsUri = `sms:${phones.join(',')}?body=${encodeURIComponent(announceMsg)}`
+                      const names = batch.slice(0, 3).map(([, r]) => safe(r.parentName).split(' ')[0] || safe(r.studentName).split(' ')[0] || 'Contact').join(', ')
+                      const moreCount = batch.length - 3
+
+                      return (
+                        <div key={i} className="flex items-center gap-3">
+                          <a
+                            href={smsUri}
+                            onClick={() => {
+                              if (!announceSentBatches.includes(i)) {
+                                setAnnounceSentBatches(prev => [...prev, i])
+                              }
+                            }}
+                            className={`flex-1 flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition ${
+                              isSent
+                                ? 'bg-green-500/10 text-green-400 cursor-default'
+                                : 'hover:scale-[1.01]'
+                            }`}
+                            style={isSent ? { border: '1px solid rgba(34,197,94,0.2)' } : {
+                              background: 'linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.08))',
+                              border: '1px solid rgba(201,168,76,0.25)',
+                              color: '#e4cc7a',
+                            }}
+                          >
+                            <span>
+                              {isSent ? '✅' : '📱'} Batch {i + 1} — {batch.length} contacts
+                              <span className="text-xs ml-2 opacity-60">({names}{moreCount > 0 ? `, +${moreCount} more` : ''})</span>
+                            </span>
+                            <span className="text-xs opacity-60">
+                              {isSent ? 'Sent' : 'Tap to open Messages →'}
+                            </span>
+                          </a>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {allSent && (
+                    <div className="mt-4 p-4 rounded-xl text-center" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                      <span className="text-2xl block mb-1">🎉</span>
+                      <p className="text-green-400 font-semibold text-sm">All batches sent!</p>
+                      <p className="text-green-400/50 text-xs mt-1">{uniquePhones.length} contacts reached</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Recipient Preview */}
+              <details className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <summary className="px-5 py-3 cursor-pointer text-sm text-white/40 hover:text-white/60 transition select-none">
+                  👥 Preview all {uniquePhones.length} recipients
+                </summary>
+                <div className="px-5 pb-4 max-h-[300px] overflow-y-auto">
+                  <div className="space-y-1 mt-2">
+                    {uniquePhones.map(([ph, r], i) => (
+                      <div key={i} className="flex items-center justify-between py-1.5 text-xs border-b border-white/5">
+                        <span className="text-white/60">{safe(r.parentName) || safe(r.studentName) || 'Unknown'}</span>
+                        <span className="text-white/30 font-mono">{formatPhone(ph)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </details>
+            </>
+          )
+        })()}
 
       </div>
 
