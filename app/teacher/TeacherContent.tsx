@@ -1815,8 +1815,9 @@ export default function TeacherContent() {
           const nextContact = uniqueContacts.find(r => !announceSentContacts.has(safe(r.phone).replace(/\D/g, '')))
           const nextPhone = nextContact ? safe(nextContact.phone).replace(/\D/g, '') : ''
           const nextPhoneFormatted = nextPhone.length === 10 ? '1' + nextPhone : nextPhone
-          const nextName = nextContact ? (safe(nextContact.parentName).split(' ')[0] || safe(nextContact.studentName).split(' ')[0] || 'Contact') : ''
-          const smsUri = nextContact ? `sms:${nextPhoneFormatted}?body=${encodeURIComponent(announceMsg)}` : '#'
+          const nextName = nextContact ? (safe(nextContact.parentName).split(' ')[0] || safe(nextContact.studentName).split(' ')[0] || '') : ''
+          const personalizedMsg = nextName ? announceMsg.replace(/\{name\}/gi, nextName) : announceMsg.replace(/\{name\}/gi, '')
+          const smsUri = nextContact ? `sms:${nextPhoneFormatted}?body=${encodeURIComponent(personalizedMsg)}` : '#'
 
           return (
             <>
@@ -1839,9 +1840,9 @@ export default function TeacherContent() {
                   rows={5}
                   className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition resize-none"
                 />
-                <div className="flex justify-between mt-2">
-                  <span className="text-xs text-white/20">{announceMsg.length} characters</span>
-                  <span className="text-xs text-white/30">{uniqueContacts.length} contacts with phone numbers</span>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-xs text-white/20">{announceMsg.length} chars · Use <code className="text-[#c9a84c]/60 bg-white/5 px-1 rounded">{'{name}'}</code> to personalize</span>
+                  <span className="text-xs text-white/30">{uniqueContacts.length} contacts</span>
                 </div>
               </div>
 
@@ -1851,9 +1852,9 @@ export default function TeacherContent() {
                   <p className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider mb-3">Quick Templates</p>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { label: '🎟️ EVO Tickets', text: 'Hi! This is BASMA Academy 🎵 We have complimentary FREE EVO Convention tickets for you for being part of the BASMA family! Reply to this text if you\'d like tickets. Also don\'t forget to register for our NEW Summer Camp at basmaworld.com — spots are very limited! 🎶' },
-                      { label: '🏕️ Camp Reminder', text: 'Hi! This is BASMA Academy 🎵 Just a reminder — our FREE Summer Dance & Music Camp starts June 29 at Synergy Dance Studio! Spots are LIMITED. Register now at basmaworld.com 🎶' },
-                      { label: '🎹 Free Trial', text: 'Hi! This is BASMA Academy 🎵 Did you know every new student gets a FREE 20-minute private lesson? Piano, guitar, voice & more! Book yours at basmaworld.com/private-lessons 🎶' },
+                      { label: '🎟️ EVO Tickets', text: 'Hi {name}! This is BASMA Academy 🎵 We have complimentary FREE EVO Convention tickets for you for being part of the BASMA family! Reply to this text if you\'d like tickets. Also don\'t forget to register for our NEW Summer Camp at basmaworld.com — spots are very limited! 🎶' },
+                      { label: '🏕️ Camp Reminder', text: 'Hi {name}! This is BASMA Academy 🎵 Just a reminder — our FREE Summer Dance & Music Camp starts June 29 at Synergy Dance Studio! Spots are LIMITED. Register now at basmaworld.com 🎶' },
+                      { label: '🎹 Free Trial', text: 'Hi {name}! This is BASMA Academy 🎵 Did you know every new student gets a FREE 20-minute private lesson? Piano, guitar, voice & more! Book yours at basmaworld.com/private-lessons 🎶' },
                     ].map((tmpl, i) => (
                       <button key={i}
                         onClick={() => setAnnounceMsg(tmpl.text)}
@@ -1922,6 +1923,14 @@ export default function TeacherContent() {
                           <p className="text-xs text-white/30">Student: {safe(nextContact.studentName)}</p>
                         )}
                       </div>
+
+                      {/* Message preview */}
+                      {announceMsg.includes('{name}') && (
+                        <div className="rounded-lg p-3 mt-1" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                          <p className="text-xs text-white/30 mb-1">Preview:</p>
+                          <p className="text-sm text-white/60 italic">{personalizedMsg.slice(0, 120)}{personalizedMsg.length > 120 ? '…' : ''}</p>
+                        </div>
+                      )}
 
                       {/* Action buttons */}
                       <div className="flex gap-2">
