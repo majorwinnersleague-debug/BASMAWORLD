@@ -486,12 +486,17 @@ export async function GET(req: Request) {
       // ── Build allContacts: every lead/contact with a phone number ──
       // Used by the Text All announcements tab (includes marketing leads without student names)
       const EXCLUDED_NAMES = ['mitzi', 'frank vecchio'];
+      const EXCLUDED_PHONES_RAW = ['7028846787'];
+      // Normalize: strip leading '1' for 11-digit US numbers so both 7028846787 and 17028846787 match
+      const normalizePhone = (p: string) => { const d = p.replace(/\D/g, ''); return d.length === 11 && d.startsWith('1') ? d.slice(1) : d; };
+      const EXCLUDED_PHONES = new Set(EXCLUDED_PHONES_RAW);
       const allContactsMap = new Map<string, { name: string; phone: string; studentName: string; email: string; source: string }>();
 
       for (const r of leadRecords) {
         const f = r.fields;
-        const ph = (f.Phone || '').replace(/\D/g, '');
+        const ph = normalizePhone(f.Phone || '');
         if (ph.length < 7) continue;
+        if (EXCLUDED_PHONES.has(ph)) continue;
         const name = (f['Full Name'] || '').trim();
         if (EXCLUDED_NAMES.includes(name.toLowerCase())) continue;
         if (allContactsMap.has(ph)) continue;
@@ -506,8 +511,9 @@ export async function GET(req: Request) {
 
       for (const s of summerRecords) {
         const f = s.fields;
-        const ph = (f['Parent Phone'] || '').replace(/\D/g, '');
+        const ph = normalizePhone(f['Parent Phone'] || '');
         if (ph.length < 7) continue;
+        if (EXCLUDED_PHONES.has(ph)) continue;
         const name = (f['Parent Name'] || '').trim();
         if (EXCLUDED_NAMES.includes(name.toLowerCase())) continue;
         if (allContactsMap.has(ph)) continue;
@@ -522,7 +528,16 @@ export async function GET(req: Request) {
 
       const allContacts = Array.from(allContactsMap.values());
 
-      return NextResponse.json({ registrations: deduped, allContacts });
+      // Filter excluded contacts from registrations too
+      const filteredRegistrations = deduped.filter(r => {
+        const ph = normalizePhone(r.phone || '');
+        if (EXCLUDED_PHONES.has(ph)) return false;
+        const name = (r.parentName || '').trim().toLowerCase();
+        if (EXCLUDED_NAMES.includes(name)) return false;
+        return true;
+      });
+
+      return NextResponse.json({ registrations: filteredRegistrations, allContacts });
     }
 
     // Legacy single-search param — block it entirely
