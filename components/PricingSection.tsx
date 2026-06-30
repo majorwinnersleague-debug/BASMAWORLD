@@ -55,7 +55,7 @@ export default function PricingSection() {
               href="/enroll"
               className="inline-block bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-full text-sm transition"
             >
-              Enroll Now
+              Sign Up →
             </a>
           </div>
         ))}

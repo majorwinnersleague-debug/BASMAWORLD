@@ -120,8 +120,8 @@ export default function Home() {
               </div>
               <div className="p-5 text-center">
                 <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Private Lessons</h3>
-                <p className="text-white/25 text-xs leading-relaxed">One-on-one instruction tailored to your goals. Free 20-min trial included!</p>
-                <p className="text-emerald-400 text-xs font-semibold mt-2">Free Trial →</p>
+                <p className="text-white/25 text-xs leading-relaxed">One-on-one instruction tailored to your goals. Pay online instantly or try a free trial!</p>
+                <p className="text-[#c9a84c] text-xs font-semibold mt-2">From $35/session →</p>
               </div>
             </Link>
 

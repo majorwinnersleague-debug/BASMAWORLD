@@ -388,9 +388,9 @@ export default function PrivateLessonsContent() {
           </div>
           <div className="grid md:grid-cols-3 gap-6 mb-16">
             {[
-              { step: '1', title: 'Free Trial', desc: 'Book a free 20-minute private lesson to meet your instructor and get started.', emoji: '🎵' },
-              { step: '2', title: 'Choose a Package', desc: 'Pick a 4-lesson package — 30-minute or 60-minute sessions — and pay securely online.', emoji: '📦' },
-              { step: '3', title: 'Start Learning', desc: 'Attend your lessons weekly. Includes 1 makeup lesson per package (use by 2nd week of next month).', emoji: '🎹' },
+              { step: '1', title: 'Pick & Pay', desc: 'Choose your lesson package above and pay instantly — or book a free 20-minute trial first.', emoji: '💳' },
+              { step: '2', title: 'We Schedule You', desc: 'We\'ll call you within 24 hours to finalize your lesson day, time, and instructor.', emoji: '📞' },
+              { step: '3', title: 'Start Learning', desc: 'Attend your lessons weekly. Each package includes 1 makeup lesson (use by 2nd week of next month).', emoji: '🎹' },
             ].map(item => (
               <div key={item.step} className="card-minimal rounded-xl p-6 text-center">
                 <div className="text-3xl mb-3">{item.emoji}</div>
@@ -520,8 +520,9 @@ export default function PrivateLessonsContent() {
 
           {/* ── Pricing Cards ── */}
           <div id="lesson-form" className="text-center mb-8">
-            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Lesson Packages</h2>
-            <p className="text-white/20 text-xs mt-2">4 lessons per package · 1 makeup included</p>
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Book a Free Trial or Pay with Details</h2>
+            <p className="text-white/20 text-xs mt-2">Want to specify your instrument and schedule preferences? Use the form below.</p>
+            <p className="text-white/15 text-xs mt-1">For instant checkout, use the <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="text-[#c9a84c]/50 hover:text-[#c9a84c] underline">Pay Now buttons above ↑</a></p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-6">
