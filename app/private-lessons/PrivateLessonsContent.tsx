@@ -285,17 +285,19 @@ export default function PrivateLessonsContent() {
               </div>
 
               <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included per package</p>
-            </div>
 
-            <div className="text-center mt-6">
-              <p className="text-white/25 text-sm">Not sure yet?
+              {/* Free Trial Option — right below payment */}
+              <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Or try before you buy</p>
                 <button
                   onClick={() => { setMode('trial'); setSelectedPkg(null); setTimeout(() => document.getElementById('quick-trial-form')?.scrollIntoView({ behavior: 'smooth' }), 100) }}
-                  className="text-emerald-400/80 hover:text-emerald-400 ml-1 underline underline-offset-2 transition-colors"
+                  className="inline-block px-8 py-3 rounded-full text-sm font-semibold transition hover:scale-[1.02]"
+                  style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.4)', color: '#34d399' }}
                 >
-                  Book a free 20-minute trial first →
+                  🎵 Book a FREE 20-Minute Trial Lesson →
                 </button>
-              </p>
+                <p className="text-white/20 text-xs mt-2">No payment needed · Meet your instructor · See if BASMA is right for you</p>
+              </div>
             </div>
           </div>
 
