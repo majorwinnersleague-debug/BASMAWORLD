@@ -229,8 +229,74 @@ export default function PrivateLessonsContent() {
             </h1>
             <p className="text-white/30 max-w-lg mx-auto text-sm leading-relaxed">
               Personalized music instruction tailored to your goals.
-              Start with a free trial and continue with affordable lesson packages.
+              Start with a free trial or purchase a lesson package instantly.
             </p>
+          </div>
+
+          {/* ── Quick Pay — Direct Purchase ── */}
+          <div className="max-w-3xl mx-auto mb-16">
+            <div className="rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))', border: '1px solid rgba(201,168,76,0.15)' }}>
+              <p className="text-[#c9a84c] text-xs uppercase tracking-[0.3em] font-bold mb-3">Ready to Start?</p>
+              <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Buy a Lesson Package
+              </h2>
+              <p className="text-white/40 text-sm mb-8 max-w-md mx-auto">
+                Click below to pay securely. No forms, no signup — just pick your package and go.
+                We&apos;ll call you to schedule your lessons.
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-4 max-w-xl mx-auto mb-6">
+                {/* 30-min package */}
+                <a
+                  href="https://buy.stripe.com/7sY4gy0Pj0lV6Fy9EreEo0z"
+                  className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02]"
+                  style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
+                >
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 30-Minute Sessions</p>
+                  <div className="flex items-baseline justify-center gap-1 mb-2">
+                    <span className="text-4xl font-bold text-white">$140</span>
+                  </div>
+                  <p className="text-white/30 text-xs mb-4">$35 per session</p>
+                  <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
+                    style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
+                    Pay Now →
+                  </span>
+                </a>
+
+                {/* 60-min package */}
+                <a
+                  href="https://buy.stripe.com/28EcN49lP0lV4xq2bZeEo0y"
+                  className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] relative"
+                  style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
+                >
+                  <span className="absolute -top-3 right-4 bg-[#c9a84c] text-black text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full">
+                    Most Popular
+                  </span>
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 60-Minute Sessions</p>
+                  <div className="flex items-baseline justify-center gap-1 mb-2">
+                    <span className="text-4xl font-bold text-white">$200</span>
+                  </div>
+                  <p className="text-white/30 text-xs mb-4">$50 per session</p>
+                  <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
+                    style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
+                    Pay Now →
+                  </span>
+                </a>
+              </div>
+
+              <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included per package</p>
+            </div>
+
+            <div className="text-center mt-6">
+              <p className="text-white/25 text-sm">Not sure yet?
+                <button
+                  onClick={() => { setMode('trial'); setSelectedPkg(null); setTimeout(() => document.getElementById('quick-trial-form')?.scrollIntoView({ behavior: 'smooth' }), 100) }}
+                  className="text-emerald-400/80 hover:text-emerald-400 ml-1 underline underline-offset-2 transition-colors"
+                >
+                  Book a free 20-minute trial first →
+                </button>
+              </p>
+            </div>
           </div>
 
           {/* ── Hero Photo + Free Trial CTA ── */}
