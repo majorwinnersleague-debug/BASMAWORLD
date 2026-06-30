@@ -13,7 +13,7 @@ export default function StripeCheckoutButton() {
         boxShadow: '0 0 24px rgba(123,47,190,0.4), 0 4px 16px rgba(0,0,0,0.4)',
       }}
     >
-      🎵 Enroll Now
+      🎵 Sign Up for Summer Camp
     </a>
   )
 }
