@@ -20,19 +20,19 @@ const CLASSES = [
     name: "Kids Music & Fun (Ages 10–17)",
     emoji: "🎤",
     color: "#a78bfa",
-    times: { Mon: "11:30 AM – 1:00 PM", Tue: "11:30 AM – 1:00 PM", Wed: "11:30 AM – 1:00 PM", Thu: "11:30 AM – 1:00 PM" },
+    times: { Mon: "10:00 – 11:30 AM", Tue: "10:00 – 11:30 AM", Wed: "10:00 – 11:30 AM", Thu: "10:00 – 11:30 AM" },
   },
   {
     name: "Piano Class Lecture",
     emoji: "🎹",
     color: "#34d399",
-    times: { Mon: "1:30 – 2:45 PM", Tue: "1:30 – 2:45 PM", Wed: "1:30 – 2:45 PM", Thu: "1:30 – 2:45 PM" },
+    times: { Mon: "12:00 – 1:30 PM", Tue: "12:00 – 1:30 PM", Wed: "12:00 – 1:30 PM", Thu: "12:00 – 1:30 PM" },
   },
   {
     name: "Recording Class (All Ages)",
     emoji: "🎙️",
     color: "#f59e0b",
-    times: { Mon: "2:45 – 4:00 PM", Tue: "2:45 – 4:00 PM", Wed: "2:45 – 4:00 PM", Thu: "2:45 – 4:00 PM" },
+    times: { Mon: "12:00 – 1:30 PM", Tue: "12:00 – 1:30 PM", Wed: "12:00 – 1:30 PM", Thu: "12:00 – 1:30 PM" },
   },
   {
     name: "Private Lessons (By Appointment)",

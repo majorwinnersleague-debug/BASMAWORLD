@@ -154,17 +154,17 @@ export default function Home() {
                 img: '/images/camp/little-girl-piano.jpg',
               },
               {
-                emoji: '🎵', title: 'Kids Music', sub: '5–17 · 10:00 AM & 11:30 AM', price: 'From $25/day',
+                emoji: '🎵', title: 'Kids Music', sub: '5–17 · 10:00 AM', price: 'From $25/day',
                 desc: 'Play guitar, drums, piano & more with friends! Jam together, write songs, and have the best summer ever.',
                 img: '/images/camp/kids-guitar-class.jpg',
               },
               {
-                emoji: '🎹', title: 'Piano', sub: 'All Ages · 1:30 PM', price: 'From $25/day',
+                emoji: '🎹', title: 'Piano', sub: 'All Ages · 12:00 PM', price: 'From $25/day',
                 desc: 'From first chords to favorite songs — learn technique, theory, and how to perform with confidence!',
                 img: '/images/camp/kids-piano-duo.jpg',
               },
               {
-                emoji: '🎙️', title: 'Recording', sub: 'All Ages · 2:45 PM', price: 'From $25/day',
+                emoji: '🎙️', title: 'Recording', sub: 'All Ages · 12:00 PM', price: 'From $25/day',
                 desc: 'Become a real recording artist! Use a mic, record tracks, edit music, and build your artist image.',
                 img: '/images/studio-session.jpg',
               },

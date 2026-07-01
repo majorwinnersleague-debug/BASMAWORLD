@@ -3,11 +3,11 @@
 import { useState } from 'react'
 
 const JUNE_CLASSES = [
-  { id: 'tiny-tots', name: 'Tiny Tots Music & Fun (Ages 2–5)', time: '9:00 – 10:00 AM', color: '#ff69b4', emoji: '🧸' },
-  { id: 'kids-5-10', name: 'Kids Music & Fun (Ages 5–10)', time: '10:00 AM – 12:00 PM', color: '#4da6ff', emoji: '🎵' },
-  { id: 'kids-10-17', name: 'Kids Music & Fun (Ages 10–17)', time: '12:00 – 2:00 PM', color: '#50c878', emoji: '🎵' },
-  { id: 'private-am', name: 'Free 20-Min Private Lesson (Morning)', time: '8:00 – 9:40 AM', color: '#b388ff', emoji: '🎸' },
-  { id: 'private-pm', name: 'Free 20-Min Private Lesson (Afternoon)', time: '2:20 – 4:00 PM', color: '#b388ff', emoji: '🎸' },
+  { id: 'tiny-tots', name: 'Tiny Tots Music & Fun (Ages 2–5)', time: '9:00 – 9:45 AM', color: '#ff69b4', emoji: '🧸' },
+  { id: 'kids-5-10', name: 'Kids Music & Fun (Ages 5–10)', time: '10:00 – 11:30 AM', color: '#4da6ff', emoji: '🎵' },
+  { id: 'kids-10-17', name: 'Kids Music & Fun (Ages 10–17)', time: '10:00 – 11:30 AM', color: '#50c878', emoji: '🎵' },
+  { id: 'private-am', name: 'Free 20-Min Private Lesson (Morning)', time: '8:00 – 9:00 AM', color: '#b388ff', emoji: '🎸' },
+  { id: 'private-pm', name: 'Free 20-Min Private Lesson (Afternoon)', time: '2:00 – 4:00 PM', color: '#b388ff', emoji: '🎸' },
 ]
 
 const THIS_WEEK = [

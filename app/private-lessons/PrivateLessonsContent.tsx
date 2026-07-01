@@ -330,7 +330,7 @@ export default function PrivateLessonsContent() {
                 <li>✅ 20-minute one-on-one session</li>
                 <li>✅ Any instrument — piano, guitar, voice, drums & more</li>
                 <li>✅ Meet your instructor before committing</li>
-                <li>✅ Flexible scheduling — before 9 AM or after 4 PM</li>
+                <li>✅ Flexible scheduling — before 9 AM or after 2 PM</li>
               </ul>
               <button
                 onClick={() => { setMode('trial'); setSelectedPkg(null); setTimeout(() => document.getElementById('quick-trial-form')?.scrollIntoView({ behavior: 'smooth' }), 100) }}

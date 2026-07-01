@@ -118,7 +118,7 @@ export async function POST(request: Request) {
         <p style="color:#22c55e;font-size:16px;font-weight:bold;margin:0 0 4px;">🌟 FREE Discovery Camp — Last Weeks of June!</p>
         <p style="color:rgba(255,255,255,0.6);font-size:13px;margin:0;line-height:1.5;">
           Piano, voice, performance & dance — Mon through Thu<br>
-          Ages 5–10: 12:00–2:00 PM &nbsp;|&nbsp; Ages 11–17: 10:00 AM–12:00 PM<br>
+          Ages 5–10: 10:00–11:30 AM &nbsp;|&nbsp; Ages 10–17: 10:00–11:30 AM &nbsp;|&nbsp; Piano & Recording: 12:00–1:30 PM<br>
           📍 6787 W Tropicana Ave Suite 260, Las Vegas
         </p>
       </div>

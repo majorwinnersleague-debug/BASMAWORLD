@@ -5,9 +5,9 @@ import Link from 'next/link'
 const CLASSES = [
   { emoji: '👶', name: 'Tiny Tots', age: '5 & Under', time: '9:00 – 9:45 AM', july: 25, august: 25, desc: 'Explore instruments, sounds, and learn about music in general.' },
   { emoji: '🎵', name: 'Kids Music', age: '5–10', time: '10:00 – 11:30 AM', july: 25, august: 30, desc: 'Learn instruments, songs as a group, techniques on being a musician, and have fun!' },
-  { emoji: '🎤', name: 'Kids Music', age: '10–17', time: '11:30 AM – 1:00 PM', july: 25, august: 30, desc: 'Learn instruments, songs as a group, techniques on being a musician, and have fun!' },
-  { emoji: '🎹', name: 'Piano', age: 'All Ages', time: '1:30 – 2:45 PM', july: 25, august: 35, desc: 'Train to play your favorite songs on piano, music theory, and prepare for music in school.' },
-  { emoji: '🎙️', name: 'Recording', age: 'All Ages', time: '2:45 – 4:00 PM', july: 25, august: 40, desc: 'Learn to record yourself at home and build your artist image.' },
+  { emoji: '🎤', name: 'Kids Music', age: '10–17', time: '10:00 – 11:30 AM', july: 25, august: 30, desc: 'Learn instruments, songs as a group, techniques on being a musician, and have fun!' },
+  { emoji: '🎹', name: 'Piano', age: 'All Ages', time: '12:00 – 1:30 PM', july: 25, august: 35, desc: 'Train to play your favorite songs on piano, music theory, and prepare for music in school.' },
+  { emoji: '🎙️', name: 'Recording', age: 'All Ages', time: '12:00 – 1:30 PM', july: 25, august: 40, desc: 'Learn to record yourself at home and build your artist image.' },
 ]
 
 export default function BasmaContent() {
@@ -68,7 +68,7 @@ export default function BasmaContent() {
             Free 20-Min Private Lesson
           </h3>
           <p className="text-white/40 text-sm mb-4">
-            By appointment only · Before 9 AM or after 4 PM
+            By appointment only · Before 9 AM or after 2 PM
           </p>
           <a
             href="tel:+17027887369"

@@ -46,9 +46,9 @@ interface Registration {
 const SCHEDULE_BLOCKS = [
   { time: '9:00 – 9:45 AM',        label: 'Tiny Tots Music & Fun',   ageRange: '2–5',   emoji: '👶', color: '#f472b6' },
   { time: '10:00 – 11:30 AM',      label: 'Kids Music & Fun (5–10)', ageRange: '5–10',  emoji: '🎵', color: '#60a5fa' },
-  { time: '11:30 AM – 1:00 PM',    label: 'Kids Music & Fun (10–17)',ageRange: '10–17', emoji: '🎤', color: '#a78bfa' },
-  { time: '1:30 – 2:45 PM',        label: 'Piano Class Lecture',     ageRange: 'All',   emoji: '🎹', color: '#34d399' },
-  { time: '2:45 – 4:00 PM',        label: 'Teens Recording Lecture', ageRange: 'Teens', emoji: '🎧', color: '#f59e0b', julyAugOnly: true },
+  { time: '10:00 – 11:30 AM',      label: 'Kids Music & Fun (10–17)',ageRange: '10–17', emoji: '🎤', color: '#a78bfa' },
+  { time: '12:00 – 1:30 PM',       label: 'Piano Class Lecture',     ageRange: 'All',   emoji: '🎹', color: '#34d399' },
+  { time: '12:00 – 1:30 PM',       label: 'Recording Class',         ageRange: 'All',   emoji: '🎧', color: '#f59e0b', julyAugOnly: true },
 ]
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
