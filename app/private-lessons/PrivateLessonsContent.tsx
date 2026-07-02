@@ -229,7 +229,7 @@ export default function PrivateLessonsContent() {
             </h1>
             <p className="text-white/30 max-w-lg mx-auto text-sm leading-relaxed">
               Personalized music instruction tailored to your goals.
-              Start with a free trial or purchase a lesson package instantly.
+              Purchase a lesson package instantly and start learning.
             </p>
           </div>
 
@@ -286,22 +286,21 @@ export default function PrivateLessonsContent() {
 
               <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included per package</p>
 
-              {/* Free Trial Option — right below payment */}
+              {/* Contact for questions */}
               <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Or try before you buy</p>
-                <button
-                  onClick={() => { setMode('trial'); setSelectedPkg(null); setTimeout(() => document.getElementById('quick-trial-form')?.scrollIntoView({ behavior: 'smooth' }), 100) }}
+                <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Have questions?</p>
+                <a
+                  href="tel:+17027887369"
                   className="inline-block px-8 py-3 rounded-full text-sm font-semibold transition hover:scale-[1.02]"
-                  style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.4)', color: '#34d399' }}
+                  style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.4)', color: '#c9a84c' }}
                 >
-                  🎵 Book a FREE 20-Minute Trial Lesson →
-                </button>
-                <p className="text-white/20 text-xs mt-2">No payment needed · Meet your instructor · See if BASMA is right for you</p>
+                  📞 Call (702) 788-7369
+                </a>
               </div>
             </div>
           </div>
 
-          {/* ── Hero Photo + Free Trial CTA ── */}
+          {/* ── Hero Photo ── */}
           <div className="grid md:grid-cols-2 gap-6 mb-16 items-center max-w-4xl mx-auto">
             <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '4/3' }}>
               <Image
@@ -315,72 +314,29 @@ export default function PrivateLessonsContent() {
             <div className="text-center md:text-left">
               <div
                 className="inline-block px-3 py-1 rounded-full text-xs uppercase tracking-widest font-bold mb-4"
-                style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', border: '1px solid rgba(16,185,129,0.3)' }}
+                style={{ background: 'rgba(201,168,76,0.15)', color: '#c9a84c', border: '1px solid rgba(201,168,76,0.3)' }}
               >
-                Try Before You Commit
+                Personalized Instruction
               </div>
               <h2 className="text-2xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Your First Lesson is <span className="text-emerald-400">Free</span>
+                Learn at <span className="gradient-gold">Your Pace</span>
               </h2>
               <p className="text-white/40 text-sm leading-relaxed mb-4">
-                Book a free 20-minute trial lesson to meet your instructor, explore your instrument, and see if BASMA
-                is the right fit. No payment needed — just show up and play.
+                One-on-one lessons tailored to your goals. Pick your instrument, choose a package, and start learning with a dedicated instructor.
               </p>
               <ul className="text-white/30 text-sm space-y-2 mb-6">
-                <li>✅ 20-minute one-on-one session</li>
                 <li>✅ Any instrument — piano, guitar, voice, drums & more</li>
-                <li>✅ Meet your instructor before committing</li>
-                <li>✅ Flexible scheduling — before 9 AM or after 2 PM</li>
+                <li>✅ 30-minute or 60-minute sessions</li>
+                <li>✅ Flexible scheduling</li>
+                <li>✅ 1 makeup lesson included per package</li>
               </ul>
-              <button
-                onClick={() => { setMode('trial'); setSelectedPkg(null); setTimeout(() => document.getElementById('quick-trial-form')?.scrollIntoView({ behavior: 'smooth' }), 100) }}
+              <a
+                href="tel:+17027887369"
                 className="inline-block px-8 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
-                style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', color: '#0D0118' }}
+                style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
               >
-                Book Free Trial →
-              </button>
-
-              {/* Quick inline trial form */}
-              {mode === 'trial' && (
-                <div id="quick-trial-form" className="mt-6 text-left bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-5">
-                  <h3 className="text-emerald-400 font-semibold text-sm mb-3">📝 Quick Registration</h3>
-                  {trialSuccess ? (
-                    <div className="text-center py-4">
-                      <p className="text-emerald-400 text-lg font-bold mb-1">✅ You&apos;re booked!</p>
-                      <p className="text-white/40 text-sm">We&apos;ll contact you within 24 hours to confirm your lesson time.</p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleTrialSubmit} className="space-y-3">
-                      <div className="grid grid-cols-2 gap-3">
-                        <input type="text" required value={parentName} onChange={e => setParentName(e.target.value)}
-                          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 transition"
-                          placeholder="Your name *" />
-                        <input type="text" required value={studentName} onChange={e => setStudentName(e.target.value)}
-                          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 transition"
-                          placeholder="Student name *" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 transition"
-                          placeholder="Email *" />
-                        <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)}
-                          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 transition"
-                          placeholder="Phone *" />
-                      </div>
-                      <select value={instrument} onChange={e => setInstrument(e.target.value)}
-                        className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/40 transition appearance-none">
-                        <option value="" className="bg-[#111]">Choose an instrument...</option>
-                        {INSTRUMENTS.map(i => (<option key={i} value={i} className="bg-[#111]">{i}</option>))}
-                      </select>
-                      {error && <p className="text-red-400 text-xs">{error}</p>}
-                      <button type="submit" disabled={loading}
-                        className="w-full py-3 rounded-lg font-semibold text-sm bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30 transition disabled:opacity-50">
-                        {loading ? 'Submitting...' : 'Book My Free Trial →'}
-                      </button>
-                    </form>
-                  )}
-                </div>
-              )}
+                📞 Call to Schedule
+              </a>
             </div>
           </div>
 
@@ -390,7 +346,7 @@ export default function PrivateLessonsContent() {
           </div>
           <div className="grid md:grid-cols-3 gap-6 mb-16">
             {[
-              { step: '1', title: 'Pick & Pay', desc: 'Choose your lesson package above and pay instantly — or book a free 20-minute trial first.', emoji: '💳' },
+              { step: '1', title: 'Pick & Pay', desc: 'Choose your lesson package above and pay instantly online.', emoji: '💳' },
               { step: '2', title: 'We Schedule You', desc: 'We\'ll call you within 24 hours to finalize your lesson day, time, and instructor.', emoji: '📞' },
               { step: '3', title: 'Start Learning', desc: 'Attend your lessons weekly. Each package includes 1 makeup lesson (use by 2nd week of next month).', emoji: '🎹' },
             ].map(item => (
@@ -522,34 +478,12 @@ export default function PrivateLessonsContent() {
 
           {/* ── Pricing Cards ── */}
           <div id="lesson-form" className="text-center mb-8">
-            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Book a Free Trial or Pay with Details</h2>
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Purchase with Details</h2>
             <p className="text-white/20 text-xs mt-2">Want to specify your instrument and schedule preferences? Use the form below.</p>
             <p className="text-white/15 text-xs mt-1">For instant checkout, use the <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="text-[#c9a84c]/50 hover:text-[#c9a84c] underline">Pay Now buttons above ↑</a></p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-6">
-            {/* Free Trial Card */}
-            <div
-              onClick={() => { setMode('trial'); setSelectedPkg(null) }}
-              className={`card-minimal rounded-xl p-6 cursor-pointer transition-all duration-200 border-2 ${
-                mode === 'trial'
-                  ? 'border-emerald-500/50 bg-emerald-500/5'
-                  : 'border-transparent hover:border-white/10'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <span className="bg-emerald-500/20 text-emerald-400 text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full">
-                  Free Trial
-                </span>
-                <span className="text-2xl">🎤</span>
-              </div>
-              <h3 className="text-white font-semibold text-lg mb-1">20-Minute Trial Lesson</h3>
-              <p className="text-white/30 text-sm mb-4">Meet your instructor, try a lesson — no cost, no commitment.</p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-emerald-400">FREE</span>
-              </div>
-            </div>
-
             {/* Package Cards */}
             {PACKAGES.map(pkg => (
               <div
@@ -600,13 +534,10 @@ export default function PrivateLessonsContent() {
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-8">
                 <h2 className="text-2xl font-semibold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  {mode === 'trial' ? 'Book Your Free Trial' : 'Purchase Lesson Package'}
+                  {'Purchase Lesson Package'}
                 </h2>
                 <p className="text-white/30 text-sm mt-2">
-                  {mode === 'trial'
-                    ? 'Fill in your details and we\'ll schedule your free 20-minute lesson.'
-                    : `${PACKAGES.find(p => p.id === selectedPkg)?.name} — $${PACKAGES.find(p => p.id === selectedPkg)?.total} total`
-                  }
+                  {`${PACKAGES.find(p => p.id === selectedPkg)?.name} — $${PACKAGES.find(p => p.id === selectedPkg)?.total} total`}
                 </p>
               </div>
 
@@ -697,7 +628,7 @@ export default function PrivateLessonsContent() {
                       ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30'
                       : 'bg-[#c9a84c]/20 text-[#c9a84c] hover:bg-[#c9a84c]/30 border border-[#c9a84c]/30'
                   } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                  {loading ? 'Processing...' : mode === 'trial' ? 'Request Free Trial Lesson' : `Pay $${PACKAGES.find(p => p.id === selectedPkg)?.total} — Proceed to Checkout`}
+                  {loading ? 'Processing...' : `Pay $${PACKAGES.find(p => p.id === selectedPkg)?.total} — Proceed to Checkout`}
                 </button>
 
                 {mode === 'package' && (

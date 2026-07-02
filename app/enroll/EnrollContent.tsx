@@ -12,15 +12,8 @@ const CLASSES = [
   { id: 'recording', name: 'Recording', emoji: '🎙️', age: 'All Ages', time: '12:00 – 1:30 PM', desc: 'Become a real recording artist! Learn how to use a mic, record your voice or instrument, edit tracks, and create music you can share with the world. Build your artist image from day one! ⚠️ Child must be able to pay attention and sit still.', julyRate: 25, augustRate: 40 },
 ]
 
-const FREE_TRIAL_WEEK = 1 // Week 1 is free trial — no charge
-
 const ALL_DAYS = [
-  // Week 1: FREE TRIAL (camp starts Mon Jun 29; CLOSED Thu Jul 2 & Mon Jul 6)
-  { day: 'Mon Jun 29', month: 'july' as const, week: 1 },
-  { day: 'Tue Jun 30', month: 'july' as const, week: 1 },
-  { day: 'Wed Jul 1', month: 'july' as const, week: 1 },
-  // Thu Jul 2 – CLOSED
-  // Mon Jul 6 – CLOSED
+  // July (Week 1 free trial is over — starting from Week 2)
   { day: 'Tue Jul 7', month: 'july' as const, week: 2 },
   { day: 'Wed Jul 8', month: 'july' as const, week: 2 },
   { day: 'Thu Jul 9', month: 'july' as const, week: 2 },
@@ -56,7 +49,7 @@ const ALL_DAYS = [
 ]
 
 const WEEK_LABELS: Record<number, string> = {
-  1: 'Jun 29 – Jul 1 (first week free!)', 2: 'Jul 7 – 9', 3: 'Jul 13 – 16', 4: 'Jul 20 – 23', 5: 'Jul 27 – 30',
+  2: 'Jul 7 – 9', 3: 'Jul 13 – 16', 4: 'Jul 20 – 23', 5: 'Jul 27 – 30',
   6: 'Aug 3 – 6', 7: 'Aug 10 – 13', 8: 'Aug 17 – 20', 9: 'Aug 24 – 27',
 }
 
@@ -97,24 +90,17 @@ export default function EnrollContent() {
     }
   }
 
-  // Pricing: figure out discount automatically
+  // Pricing
   const pricing = useMemo(() => {
-    if (!cls || pickedDays.length === 0) return { perDay: 0, subtotal: 0, discount: '', freeTrialDays: 0, total: 0 }
+    if (!cls || pickedDays.length === 0) return { perDay: 0, subtotal: 0, discount: '', total: 0 }
 
-    // Group by month — exclude free trial week from paid count
-    const paidJulyDays = pickedDays.filter(d => {
-      const entry = ALL_DAYS.find(x => x.day === d)
-      return entry?.month === 'july' && entry.week !== FREE_TRIAL_WEEK
-    }).length
-    const freeTrialDays = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.week === FREE_TRIAL_WEEK).length
+    const julyDays = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.month === 'july').length
     const augDays = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.month === 'august').length
-    const julyDays = paidJulyDays // only paid July days for pricing
 
-    let rawTotal = (paidJulyDays * cls.julyRate) + (augDays * cls.augustRate)
-    // freeTrialDays cost $0 — just noted for display
+    let rawTotal = (julyDays * cls.julyRate) + (augDays * cls.augustRate)
     let discount = ''
 
-    // Check for full weeks (all available days in a week) → 15% off those
+    // Check for full weeks → 15% off
     const weeks = new Set(pickedDays.map(d => ALL_DAYS.find(x => x.day === d)?.week).filter(Boolean))
     let fullWeeks = 0
     weeks.forEach(w => {
@@ -134,21 +120,14 @@ export default function EnrollContent() {
       rawTotal = rawTotal * 0.85
     }
 
-    // Multi-child: $5 off per paid day per additional child
+    // Multi-child discount
     const totalChildren = children.length
-    const paidDaysCount = paidJulyDays + augDays
-
-    // Multiply by number of children
-    const perChildTotal = rawTotal / (totalChildren || 1)
-    const total = Math.max(rawTotal * totalChildren / totalChildren, 0) // already accounted for
-
-    // Recalculate properly per child
     let finalTotal = 0
     for (let i = 0; i < totalChildren; i++) {
-      let childJuly = paidJulyDays * cls.julyRate
+      let childJuly = julyDays * cls.julyRate
       let childAug = augDays * cls.augustRate
       if (i > 0) {
-        childJuly = paidJulyDays * Math.max(cls.julyRate - 5, 0)
+        childJuly = julyDays * Math.max(cls.julyRate - 5, 0)
         childAug = augDays * Math.max(cls.augustRate - 5, 0)
       }
       let childTotal = childJuly + childAug
@@ -159,9 +138,8 @@ export default function EnrollContent() {
 
     return {
       perDay: cls.julyRate,
-      subtotal: (paidJulyDays * cls.julyRate + augDays * cls.augustRate) * totalChildren,
+      subtotal: (julyDays * cls.julyRate + augDays * cls.augustRate) * totalChildren,
       discount,
-      freeTrialDays: freeTrialDays || 0,
       total: Math.round(finalTotal * 100) / 100,
     }
   }, [cls, pickedDays, children.length])
@@ -171,41 +149,12 @@ export default function EnrollContent() {
   const [success, setSuccess] = useState(false)
 
   async function handlePay() {
-    if (!cls || pickedDays.length === 0 || !infoValid) return
+    if (!cls || pickedDays.length === 0 || !infoValid || pricing.total === 0) return
     setLoading(true)
     setError('')
 
     try {
-      // If total is $0 (free trial only), skip Stripe and register directly
-      if (pricing.total === 0) {
-        // Save each child to Airtable
-        await Promise.all(children.map(async (c) => {
-          await fetch('/api/lead', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name: parentName, email, phone,
-              studentName: c.name, studentAge: c.age,
-              source: 'free-trial-week', status: 'Free Trial',
-              interests: cls.name, allergies: allergies || 'None',
-              emergencyContactName: emergencyName,
-              emergencyContactPhone: emergencyPhone,
-              liabilityAgreed: true,
-              discoveryWeek: pickedDays.join(', '),
-              timeSlot: cls.time,
-            }),
-          })
-        }))
-        setLoading(false)
-        setSuccess(true)
-        return
-      }
-
-      // Determine dominant month for pricing label
-      const julyCount = pickedDays.filter(d => {
-        const entry = ALL_DAYS.find(x => x.day === d)
-        return entry?.month === 'july' && entry.week !== FREE_TRIAL_WEEK
-      }).length
+      const julyCount = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.month === 'july').length
       const augCount = pickedDays.filter(d => ALL_DAYS.find(x => x.day === d)?.month === 'august').length
       const month = augCount > julyCount ? 'august' : 'july'
 
@@ -238,7 +187,6 @@ export default function EnrollContent() {
 
       const data = await res.json()
       if (data.url) {
-        // Save to Airtable (one per child)
         try {
           await Promise.all(children.map(async (c) => {
             await fetch('/api/lead', {
@@ -281,31 +229,30 @@ export default function EnrollContent() {
         <Link href="/" className="text-sm text-white/40">← Home</Link>
       </nav>
 
-      {/* ── 🎉 FREE FIRST WEEK Banner ── */}
+      {/* ── 🎓 Scholarship Banner ── */}
       {!success && (
         <div className="max-w-lg mx-auto px-6 mb-6">
-          <div
-            className="rounded-2xl p-6 md:p-8 text-center"
-            style={{
-              background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(52,211,153,0.1))',
-              border: '3px solid rgba(16,185,129,0.4)',
-              boxShadow: '0 0 30px rgba(16,185,129,0.15)',
-            }}
-          >
-            <p className="text-4xl mb-2">🎉</p>
-            <h2 className="text-emerald-400 font-bold text-xl md:text-2xl mb-2">
-              FIRST WEEK FREE!
-            </h2>
-            <p className="text-emerald-300/80 font-semibold text-base md:text-lg mb-2">
-              June 29 – July 1
-            </p>
-            <p className="text-white/50 text-sm md:text-base">
-              Select Week 1 below — no payment required for your first week!
-            </p>
-            <div className="mt-3 inline-block bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
-              Limited Spots Available
+          <Link href="/scholarship">
+            <div
+              className="rounded-2xl p-5 md:p-6 text-center cursor-pointer transition hover:scale-[1.01]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(168,85,247,0.2), rgba(236,72,153,0.1))',
+                border: '2px solid rgba(168,85,247,0.3)',
+                boxShadow: '0 0 20px rgba(168,85,247,0.1)',
+              }}
+            >
+              <p className="text-2xl mb-1">🎓</p>
+              <h2 className="text-purple-300 font-bold text-lg mb-1">
+                Scholarship Available — $250/month
+              </h2>
+              <p className="text-white/50 text-sm">
+                Unlimited classes for your entire family. Priority for June program families.
+              </p>
+              <span className="mt-2 inline-block text-purple-300 text-xs font-bold underline">
+                Learn More →
+              </span>
             </div>
-          </div>
+          </Link>
         </div>
       )}
 
@@ -323,7 +270,7 @@ export default function EnrollContent() {
 
       <div className="max-w-lg mx-auto px-6 pb-24">
 
-        {/* ═══ FREE TRIAL SUCCESS ═══ */}
+        {/* ═══ PAYMENT SUCCESS ═══ */}
         {success && (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">🎉</div>
@@ -331,7 +278,7 @@ export default function EnrollContent() {
               You&apos;re Registered!
             </h1>
             <p className="text-white/60 mb-2">
-              Free trial spot claimed for <strong className="text-white">{cls?.name}</strong>
+              Spot secured for <strong className="text-white">{cls?.name}</strong>
             </p>
             <p className="text-white/40 text-sm mb-1">
               {pickedDays.join(', ')} · {cls?.time}
@@ -340,7 +287,7 @@ export default function EnrollContent() {
               📍 Synergy Dance · 9512 W Flamingo Rd STE 100
             </p>
             <div className="p-4 rounded-xl mb-6 mx-auto max-w-sm" style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.15)' }}>
-              <p className="text-green-400 text-sm">✅ Limited spot secured! See you there.</p>
+              <p className="text-green-400 text-sm">✅ See you there!</p>
             </div>
             <Link href="/" className="text-sm font-medium" style={{ color: gold }}>
               ← Back to Home
@@ -391,16 +338,12 @@ export default function EnrollContent() {
             <h1 className="text-2xl font-bold text-center mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
               Pick Your Days
             </h1>
-            <p className="text-center text-white/40 text-sm mb-4">
+            <p className="text-center text-white/40 text-sm mb-6">
               {cls.emoji} {cls.name} ({cls.age}) · {cls.time}
-            </p>
-            <p className="text-center text-red-400/60 text-xs mb-6">
-              🚫 School closed Thu Jun 26 & Jul 2–6
             </p>
 
             {/* Month sections */}
             {[
-              { label: '🆓 Free Trial Week', weeks: [1], monthKey: 'trial' },
               { label: 'July — $' + cls.julyRate + '/day', weeks: [2, 3, 4, 5], monthKey: 'july' },
               { label: 'August — $' + cls.augustRate + '/day', weeks: [6, 7, 8, 9], monthKey: 'august' },
             ].map(section => (
@@ -456,12 +399,9 @@ export default function EnrollContent() {
                 <div className="flex justify-between text-sm">
                   <span className="text-white/60">{pickedDays.length} day{pickedDays.length !== 1 ? 's' : ''} selected</span>
                   <span className="font-bold" style={{ color: gold }}>
-                    {pricing.total === 0 ? 'FREE' : `$${pricing.total.toFixed(2)}`}
+                    ${pricing.total.toFixed(2)}
                   </span>
                 </div>
-                {pricing.freeTrialDays > 0 && (
-                  <p className="text-green-400 text-xs mt-1">🆓 {pricing.freeTrialDays} free trial day{pricing.freeTrialDays !== 1 ? 's' : ''} included</p>
-                )}
                 {pricing.discount && <p className="text-green-400 text-xs mt-1">🎉 {pricing.discount}</p>}
               </div>
             )}
@@ -599,12 +539,9 @@ export default function EnrollContent() {
               <div className="flex justify-between items-baseline">
                 <span className="text-white/60 text-sm">Total</span>
                 <span className="text-2xl font-bold" style={{ color: gold }}>
-                  {pricing.total === 0 ? 'FREE' : `$${pricing.total.toFixed(2)}`}
+                  ${pricing.total.toFixed(2)}
                 </span>
               </div>
-              {pricing.freeTrialDays > 0 && (
-                <p className="text-green-400 text-xs">🆓 {pricing.freeTrialDays} free trial day{pricing.freeTrialDays !== 1 ? 's' : ''}</p>
-              )}
               {pricing.discount && <p className="text-green-400 text-xs">🎉 {pricing.discount}</p>}
             </div>
 
@@ -623,11 +560,11 @@ export default function EnrollContent() {
                 className="flex-1 py-4 rounded-full text-base font-bold transition hover:scale-[1.02] disabled:opacity-50"
                 style={{ background: `linear-gradient(90deg, ${gold}, #FFE07A)`, color: '#0D0118' }}
               >
-                {loading ? 'Processing…' : pricing.total === 0 ? 'Register for Free Trial' : `Pay $${pricing.total.toFixed(2)}`}
+                {loading ? 'Processing…' : `Pay $${pricing.total.toFixed(2)}`}
               </button>
             </div>
             <p className="text-center text-white/20 text-xs mt-3">
-              {pricing.total === 0 ? 'Free trial — limited spots available!' : 'Secure payment via Stripe · Card or Klarna'}
+              Secure payment via Stripe · Card or Klarna
             </p>
           </div>
         )}

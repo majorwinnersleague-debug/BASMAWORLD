@@ -31,15 +31,14 @@ export default function AnnouncementBar() {
           <span className="text-yellow-300">New location: 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103</span>
         </span>
       </div>
-      {/* Line 2: Camp info */}
+      {/* Line 2: Summer classes + scholarship */}
       <div className="flex items-center justify-center gap-2 px-4 py-1.5"
            style={{ background: 'rgba(0,0,0,0.15)' }}>
         <span className="text-white text-xs md:text-sm text-center">
-          🏕️ Starting June 29 — ALL camps at <strong className="text-yellow-300">Synergy Dance: 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147</strong>{' '}
-          · First week FREE for new paid camp!{' '}
-          · <span className="text-yellow-200 font-semibold">Limited spots for free program!</span>{' '}
-          <Link href="/enroll" className="underline text-yellow-300 hover:text-white transition font-bold ml-1">
-            Sign Up Now →
+          🎵 Summer Music Classes — Mon–Thu at <strong className="text-yellow-300">Synergy Dance: 9512 W Flamingo Rd STE 100</strong>{' '}
+          · <span className="text-yellow-200 font-semibold">🎓 Scholarship available — $250/mo for the whole family!</span>{' '}
+          <Link href="/scholarship" className="underline text-yellow-300 hover:text-white transition font-bold ml-1">
+            Learn More →
           </Link>
         </span>
       </div>

@@ -61,23 +61,24 @@ export default function BasmaContent() {
         </div>
       </section>
 
-      {/* ── Free Private Lesson ── */}
+      {/* ── Scholarship ── */}
       <section className="max-w-3xl mx-auto px-6 pb-12">
-        <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.15)' }}>
-          <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Free 20-Min Private Lesson
-          </h3>
-          <p className="text-white/40 text-sm mb-4">
-            By appointment only · Before 9 AM or after 2 PM
-          </p>
-          <a
-            href="tel:+17027887369"
-            className="inline-block px-6 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
-            style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
-          >
-            📞 Call (702) 788-7369
-          </a>
-        </div>
+        <a href="/scholarship">
+          <div className="rounded-xl p-6 text-center cursor-pointer transition hover:scale-[1.01]" style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.15)' }}>
+            <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+              🎓 BASMA World Scholarship
+            </h3>
+            <p className="text-white/40 text-sm mb-4">
+              $250/month — 1 hour of daily classes for your entire family · Limited spots
+            </p>
+            <span
+              className="inline-block px-6 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
+              style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)', color: '#fff' }}
+            >
+              Learn More →
+            </span>
+          </div>
+        </a>
       </section>
 
       {/* ── Location ── */}

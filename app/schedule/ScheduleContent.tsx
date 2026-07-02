@@ -45,8 +45,7 @@ const CLASSES = [
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const IMPORTANT_DATES = [
-  { date: "June 29+", label: "ALL camps at Synergy Dance — 9512 W Flamingo Rd STE 100", type: "free" },
-  { date: "June 29 – July 5", label: "First week FREE at Synergy Dance! Limited spots!", type: "free" },
+  { date: "June 29+", label: "ALL camps at Synergy Dance — 9512 W Flamingo Rd STE 100", type: "paid" },
   { date: "July 2026", label: "July — $25/day for ALL classes", type: "paid" },
   { date: "July 4", label: "🇺🇸 Independence Day — Closed", type: "closed" },
   { date: "August 2026", label: "August — Tiny Tots $25, Kids Music $30, Piano $35, Recording $40/day", type: "paid" },
@@ -198,7 +197,7 @@ export default function ScheduleContent() {
             <span style={{ fontSize: 28 }}>🏕️</span>
             <div>
               <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, fontFamily: "'Playfair Display', serif", color: "#22c55e" }}>
-                Free Discovery Camp
+                Summer Music Camp
               </h2>
               <p style={{ margin: "2px 0 0", fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
                 June 2026 · Mon–Thu · 🍕 Pizza Thursdays!
@@ -268,17 +267,17 @@ export default function ScheduleContent() {
               textAlign: "center",
               marginTop: 20,
               padding: "14px 24px",
-              background: "linear-gradient(135deg, #22c55e, #16a34a)",
-              color: "#fff",
+              background: "linear-gradient(135deg, #c9a84c, #e4cc7a)",
+              color: "#0D0118",
               fontSize: 15,
               fontWeight: 700,
               borderRadius: 14,
               textDecoration: "none",
               letterSpacing: "0.02em",
-              boxShadow: "0 4px 16px rgba(34,197,94,0.3)",
+              boxShadow: "0 4px 16px rgba(201,168,76,0.3)",
             }}
           >
-            Register for Discovery Camp →
+            Enroll in Summer Camp →
           </a>
         </div>
 
@@ -502,12 +501,6 @@ export default function ScheduleContent() {
           <h3 style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 700, color: "#c9a84c", fontFamily: "'Playfair Display', serif" }}>
             💰 Summer Pricing
           </h3>
-
-          {/* June */}
-          <div style={{ marginBottom: 16, padding: "14px 16px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14 }}>
-            <h4 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 700, color: "#22c55e" }}>🏕️ June — FREE Discovery Camp</h4>
-            <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>All classes are 100% free. No catch!</p>
-          </div>
 
           {/* July */}
           <div style={{ marginBottom: 16, padding: "14px 16px", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14 }}>

@@ -61,31 +61,32 @@ export default function Home() {
           </p>
         </section>
 
-        {/* ── 🎉 FREE FIRST WEEK — Big Banner ── */}
+        {/* ── 🎓 Scholarship Banner ── */}
         <section className="max-w-3xl mx-auto px-6 pb-6">
-          <div
-            className="rounded-2xl p-6 md:p-8 text-center relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(52,211,153,0.08))',
-              border: '2px solid rgba(16,185,129,0.3)',
-            }}
-          >
-            <div className="text-4xl md:text-5xl mb-3">🎉</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-emerald-400 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-              First Week is FREE!
-            </h2>
-            <p className="text-white/50 text-sm md:text-base mb-1">
-              <strong className="text-emerald-300">June 29 – July 1</strong> — Try any summer camp class at no cost
-            </p>
-            <p className="text-white/30 text-xs mb-5">No payment required · No commitment · Just show up and enjoy!</p>
-            <Link
-              href="/enroll"
-              className="inline-block px-10 py-4 rounded-full font-bold text-base transition hover:scale-105"
-              style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', color: '#0D0118' }}
+          <Link href="/scholarship">
+            <div
+              className="rounded-2xl p-6 md:p-8 text-center relative overflow-hidden cursor-pointer transition hover:scale-[1.01]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(168,85,247,0.15), rgba(236,72,153,0.08))',
+                border: '2px solid rgba(168,85,247,0.3)',
+              }}
             >
-              Register for Free Week →
-            </Link>
-          </div>
+              <div className="text-4xl md:text-5xl mb-3">🎓</div>
+              <h2 className="text-2xl md:text-3xl font-bold text-purple-300 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                BASMA World Scholarship
+              </h2>
+              <p className="text-white/50 text-sm md:text-base mb-1">
+                <strong className="text-purple-300">$250/month</strong> — 1 hour of classes daily for your entire family
+              </p>
+              <p className="text-white/30 text-xs mb-5">Priority for June program families · Limited spots available</p>
+              <span
+                className="inline-block px-10 py-4 rounded-full font-bold text-base transition hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)', color: '#fff' }}
+              >
+                Learn More →
+              </span>
+            </div>
+          </Link>
         </section>
 
         {/* ── What We Offer — Services Grid ── */}
@@ -120,7 +121,7 @@ export default function Home() {
               </div>
               <div className="p-5 text-center">
                 <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Private Lessons</h3>
-                <p className="text-white/25 text-xs leading-relaxed">One-on-one instruction tailored to your goals. Pay online instantly or try a free trial!</p>
+                <p className="text-white/25 text-xs leading-relaxed">One-on-one instruction tailored to your goals. Pay online instantly!</p>
                 <p className="text-[#c9a84c] text-xs font-semibold mt-2">From $35/session →</p>
               </div>
             </Link>
@@ -185,7 +186,7 @@ export default function Home() {
             ))}
           </div>
           <p className="text-center text-white/25 text-xs mt-4">
-            🎉 First week FREE · 15% off weekly · 25% off monthly · $5 off each additional child
+            🎓 Scholarship available · 15% off weekly · 25% off monthly · $5 off each additional child
           </p>
         </section>
 
@@ -220,7 +221,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Free Private Lesson CTA ── */}
+        {/* ── Private Lessons CTA ── */}
         <section className="max-w-3xl mx-auto px-6 pb-6">
           <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.15)' }}>
             <div className="grid md:grid-cols-2">
@@ -235,10 +236,10 @@ export default function Home() {
               </div>
               <div className="p-6 md:p-8 flex flex-col justify-center text-center md:text-left" style={{ background: 'rgba(201,168,76,0.06)' }}>
                 <h2 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Free 20-Min Private Lesson
+                  Private Music Lessons
                 </h2>
                 <p className="text-white/40 text-sm mb-4">
-                  One-on-one instruction on any instrument. Meet your teacher, try it out — no strings attached.
+                  One-on-one instruction on any instrument. Tailored to your goals — pay online and get started.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                   <Link
@@ -246,7 +247,7 @@ export default function Home() {
                     className="inline-block px-6 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
                   >
-                    Book Free Trial Online
+                    View Lesson Packages
                   </Link>
                   <a
                     href="tel:+17027887369"
