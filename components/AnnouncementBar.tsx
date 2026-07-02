@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-const BAR_HEIGHT = '0px' // dynamic
-
 export default function AnnouncementBar() {
   const [barRef, setBarRef] = useState<HTMLDivElement | null>(null)
 
@@ -21,22 +19,14 @@ export default function AnnouncementBar() {
     <div
       ref={setBarRef}
       className="fixed top-0 left-0 right-0 z-[60]"
-      style={{ background: 'linear-gradient(90deg, #b91c1c, #dc2626)', borderBottom: '2px solid #fbbf24' }}
+      style={{ background: 'linear-gradient(135deg, #1a0a2e, #2d1b4e)', borderBottom: '2px solid rgba(201,168,76,0.4)' }}
     >
-      {/* Line 1: Address correction */}
-      <div className="flex items-center justify-center gap-2 px-4 py-1.5"
-           style={{ background: 'rgba(0,0,0,0.3)' }}>
-        <span className="text-white text-xs md:text-sm font-bold text-center">
-          📍 We are <span className="underline">NOT</span> at 330 W Washington Ave.{' '}
-          <span className="text-yellow-300">New location: 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103</span>
-        </span>
-      </div>
-      {/* Line 2: Summer classes + scholarship */}
-      <div className="flex items-center justify-center gap-2 px-4 py-1.5"
-           style={{ background: 'rgba(0,0,0,0.15)' }}>
+      {/* Summer classes + scholarship */}
+      <div className="flex items-center justify-center gap-2 px-4 py-2">
         <span className="text-white text-xs md:text-sm text-center">
-          🎵 Summer Music Classes — Mon–Thu at <strong className="text-yellow-300">Synergy Dance: 9512 W Flamingo Rd STE 100</strong>{' '}
-          · <span className="text-yellow-200 font-semibold">🎓 Scholarship available — $250/mo for the whole family!</span>{' '}
+          🎵 Summer Music Classes — Mon–Thu at{' '}
+          <strong className="text-yellow-300">Synergy Dance: 9512 W Flamingo Rd STE 100</strong>{' '}
+          · <span className="text-yellow-200 font-semibold">🎓 Scholarship — $250/mo for the whole family!</span>{' '}
           <Link href="/scholarship" className="underline text-yellow-300 hover:text-white transition font-bold ml-1">
             Learn More →
           </Link>

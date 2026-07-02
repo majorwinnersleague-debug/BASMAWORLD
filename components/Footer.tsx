@@ -24,8 +24,18 @@ export default function Footer() {
 
         <div className="flex flex-wrap gap-4 justify-center text-sm text-white/20 mb-6">
           <a href="mailto:becomeasingermusicacademy@gmail.com" className="hover:text-white/40 transition-colors">Email</a>
+          <a href="tel:+17027887369" className="hover:text-white/40 transition-colors">📞 (702) 788-7369</a>
           <a href="https://www.tiktok.com/@basma_singer" target="_blank" rel="noopener noreferrer" className="hover:text-white/40 transition-colors">TikTok</a>
           <a href="https://www.instagram.com/basma.tea" target="_blank" rel="noopener noreferrer" className="hover:text-white/40 transition-colors">Instagram</a>
+        </div>
+
+        {/* Locations */}
+        <div className="rounded-xl p-4 mb-6 mx-auto max-w-md" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <p className="text-white/40 text-xs uppercase tracking-widest font-semibold mb-3">Our Locations</p>
+          <div className="space-y-2 text-sm text-white/30">
+            <p>📍 <strong className="text-white/50">Summer Camp:</strong> Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147</p>
+            <p>📍 <strong className="text-white/50">Main Office:</strong> 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103</p>
+          </div>
         </div>
 
         <p className="text-white/10 text-xs">&copy; {new Date().getFullYear()} BASMA LLC · Las Vegas, NV</p>

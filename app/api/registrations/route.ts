@@ -7,6 +7,7 @@ const ENROLLMENTS_TABLE = "tblelNWN2hed8OclX"; // Enrollments (waivers/medical)
 const PAYMENTS_TABLE = "tblfTQQEciBFqovYU"; // Stripe Payments
 
 const SUMMER_TABLE = "tblfOnRDkfgZoCF9X"; // Summer 2026 Registrations
+const CHECKIN_TABLE = "tbl7vzQgS5o67kDYv"; // Check-In Log (walk-in families)
 const BLOCKED_TABLE = process.env.BLOCKED_TABLE_ID || "tbleV623dZRhgmULJ"; // Blocked Contacts (teacher portal removals)
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
@@ -257,11 +258,12 @@ export async function GET(req: Request) {
     // Teacher portal: authenticated with code 1515 + source=all → return all records
     const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || "1515";
     if (source === "all" && teacherCode === TEACHER_CODE) {
-      const [leadRecords, enrollmentRecords, paymentRecords, summerRecords] = await Promise.all([
+      const [leadRecords, enrollmentRecords, paymentRecords, summerRecords, checkinRecords] = await Promise.all([
         fetchAllRecords(LEADS_TABLE),
         fetchAllRecords(ENROLLMENTS_TABLE),
         fetchAllRecords(PAYMENTS_TABLE),
         fetchAllRecords(SUMMER_TABLE),
+        fetchAllRecords(CHECKIN_TABLE),
       ]);
 
       const enrollmentsByEmail: Record<string, AirtableRecord[]> = {};
@@ -541,6 +543,24 @@ export async function GET(req: Request) {
           studentName: f['Student Name'] || '',
           email: f['Parent Email'] || '',
           source: 'Summer Camp 2026',
+        });
+      }
+
+      // Also include check-in log records (walk-in families not in other tables)
+      for (const c of checkinRecords) {
+        const f = c.fields;
+        const ph = normalizePhone(f['Parent Phone'] || '');
+        if (ph.length < 7) continue;
+        if (EXCLUDED_PHONES.has(ph)) continue;
+        const name = (f['Parent Name'] || '').trim();
+        if (EXCLUDED_NAMES.includes(name.toLowerCase())) continue;
+        if (allContactsMap.has(ph)) continue;
+        allContactsMap.set(ph, {
+          name: name || f['Student Name'] || '',
+          phone: f['Parent Phone'] || '',
+          studentName: f['Student Name'] || '',
+          email: f['Parent Email'] || '',
+          source: 'Check-In Walk-In',
         });
       }
 

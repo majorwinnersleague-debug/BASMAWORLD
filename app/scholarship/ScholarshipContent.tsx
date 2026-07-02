@@ -18,10 +18,10 @@ export default function ScholarshipContent() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen text-white pt-16" style={{ background: '#0D0118' }}>
+      <main className="min-h-screen text-white" style={{ background: '#0D0118', paddingTop: 'calc(var(--ann-bar-height, 0px) + 80px)' }}>
 
         {/* ── Hero ── */}
-        <section className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
+        <section className="max-w-3xl mx-auto px-6 pt-12 pb-12 text-center">
           <div className="text-5xl mb-4">🎓</div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
             BASMA World{' '}
