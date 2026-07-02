@@ -1921,9 +1921,10 @@ export default function TeacherContent() {
                   <p className="text-xs text-[#c9a84c]/60 font-semibold uppercase tracking-wider mb-3">Quick Templates</p>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { label: '🎟️ EVO Tickets', text: 'Hi {name}! This is BASMA Academy 🎵 We have complimentary FREE EVO Convention tickets for you for being part of the BASMA family! Reply to this text if you\'d like tickets. Also don\'t forget to register for our NEW Summer Camp at basmaworld.com — spots are very limited! 🎶' },
-                      { label: '🏕️ Camp Reminder', text: 'Hi {name}! This is BASMA Academy 🎵 Just a reminder — our FREE Summer Dance & Music Camp starts June 29 at Synergy Dance Studio! Spots are LIMITED. Register now at basmaworld.com 🎶' },
-                      { label: '🎹 Free Trial', text: 'Hi {name}! This is BASMA Academy 🎵 Did you know every new student gets a FREE 20-minute private lesson? Piano, guitar, voice & more! Book yours at basmaworld.com/private-lessons 🎶' },
+                      { label: '🎓 Scholarship', text: 'Hi {name}! This is Become A Singer Music Academy 🎵 Great news — we just launched the BASMA World Scholarship! Your whole family can take music classes all summer for just $250/month (1 hr/day, Mon–Thu). Summer only — July & August. Spots are limited! Enroll here: basmaworld.com/scholarship 🎶 Questions? Call us at (702) 788-7369' },
+                      { label: '🎟️ EVO Tickets', text: 'Hi {name}! This is Become A Singer Music Academy 🎵 We have complimentary FREE EVO Convention tickets for you for being part of the BASMA family! Reply to this text if you\'d like tickets. Also don\'t forget to register for our NEW Summer Camp at basmaworld.com — spots are very limited! 🎶' },
+                      { label: '🏕️ Camp Reminder', text: 'Hi {name}! This is Become A Singer Music Academy 🎵 Just a reminder — our Summer Dance & Music Camp is happening NOW at Synergy Dance Studio! Spots are LIMITED. Check it out at basmaworld.com 🎶 Call us: (702) 788-7369' },
+                      { label: '🎹 Private Lessons', text: 'Hi {name}! This is Become A Singer Music Academy 🎵 We offer private lessons in Piano, Guitar, Voice & more! Check out our packages at basmaworld.com/private-lessons 🎶 Call us: (702) 788-7369' },
                     ].map((tmpl, i) => (
                       <button key={i}
                         onClick={() => setAnnounceMsg(tmpl.text)}
