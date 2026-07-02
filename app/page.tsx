@@ -78,7 +78,7 @@ export default function Home() {
               <p className="text-white/50 text-sm md:text-base mb-1">
                 <strong className="text-purple-300">$250/month</strong> — 1 hour of classes daily for your entire family
               </p>
-              <p className="text-white/30 text-xs mb-5">Priority for June program families · Limited spots available</p>
+              <p className="text-white/30 text-xs mb-5">Summer only (July & August) · Priority for June families · Limited spots</p>
               <span
                 className="inline-block px-10 py-4 rounded-full font-bold text-base transition hover:scale-105"
                 style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)', color: '#fff' }}

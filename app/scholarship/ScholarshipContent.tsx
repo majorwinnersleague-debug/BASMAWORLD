@@ -32,6 +32,10 @@ export default function ScholarshipContent() {
           <p className="text-white/50 text-lg mb-2">
             Affordable music education for the whole family
           </p>
+          <div className="inline-block px-4 py-1.5 rounded-full text-xs uppercase tracking-widest font-bold mt-2 mb-1"
+            style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' }}>
+            Summer 2026 · July &amp; August Only
+          </div>
           <p className="text-white/30 text-sm">
             📍 Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147
           </p>
@@ -56,7 +60,7 @@ export default function ScholarshipContent() {
                 <span className="text-5xl font-bold text-white">$250</span>
                 <span className="text-white/30 text-sm">/month</span>
               </div>
-              <p className="text-white/40 text-sm mb-6">1 hour of classes per day · Entire family included</p>
+              <p className="text-white/40 text-sm mb-6">1 hour of classes per day · Entire family · July &amp; August</p>
               <a
                 href={SCHOLARSHIP_LINK}
                 className="inline-block w-full py-4 rounded-full font-bold text-base transition hover:scale-[1.02]"
@@ -80,7 +84,7 @@ export default function ScholarshipContent() {
                 <span className="text-5xl font-bold text-white">$500</span>
                 <span className="text-white/30 text-sm">/month</span>
               </div>
-              <p className="text-white/40 text-sm mb-6">2 hours of classes per day · Entire family included</p>
+              <p className="text-white/40 text-sm mb-6">2 hours of classes per day · Entire family · July &amp; August</p>
               <a
                 href={SCHOLARSHIP_LINK}
                 className="inline-block w-full py-4 rounded-full font-bold text-base transition hover:scale-[1.02]"
@@ -102,7 +106,7 @@ export default function ScholarshipContent() {
             {[
               { emoji: '👨‍👩‍👧‍👦', title: 'Whole Family', desc: 'One flat rate covers every child in your family — no per-student fees.' },
               { emoji: '🎵', title: 'Any Class', desc: 'Choose from Tiny Tots, Kids Music, Piano, Recording, and more.' },
-              { emoji: '📅', title: 'Mon – Thu', desc: 'Attend classes Monday through Thursday, every week all summer.' },
+              { emoji: '📅', title: 'July & August', desc: 'Attend classes Monday through Thursday, every week through August. Camps end when school starts.' },
               { emoji: '💰', title: 'Massive Savings', desc: 'Save 50%+ compared to per-day pricing. The more you come, the more you save.' },
             ].map(item => (
               <div key={item.title} className="rounded-xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -153,8 +157,8 @@ export default function ScholarshipContent() {
             {[
               { q: 'How many kids can I enroll?', a: 'As many as you like! The scholarship covers your entire family — all children attend under one flat rate.' },
               { q: 'What does "1 hour" mean?', a: 'Each $250 plan gives your family access to 1 class session per day (classes range from 45 min to 1.5 hours). Want more class time? Buy the 2-hour plan for $500/mo.' },
-              { q: 'When are classes?', a: 'Monday through Thursday, 9 AM to 1:30 PM. Multiple classes run throughout the morning — pick what works for your family.' },
-              { q: 'Can I cancel?', a: 'Yes — you can cancel your subscription anytime. No long-term commitment required.' },
+              { q: 'When are classes?', a: 'Monday through Thursday, 9 AM to 1:30 PM. The scholarship runs through July and August — camps end when school starts.' },
+              { q: 'Can I cancel?', a: 'Yes — you can cancel your subscription anytime. The program runs through summer (July–August).' },
               { q: 'Do I need to have attended the June camp?', a: 'June families get priority, but anyone can apply. Spots are limited and offered first-come, first-served.' },
             ].map(item => (
               <div key={item.q} className="rounded-xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
