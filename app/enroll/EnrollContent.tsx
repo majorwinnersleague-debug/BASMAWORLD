@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 
 /* ═══ CLASS DATA ═══ */
@@ -73,6 +73,35 @@ export default function EnrollContent() {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [dataLoaded, setDataLoaded] = useState(false)
+
+  // Load saved family data from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('basma_family_info')
+      if (saved) {
+        const data = JSON.parse(saved)
+        if (data.children?.length) setChildren(data.children)
+        if (data.parentName) setParentName(data.parentName)
+        if (data.email) setEmail(data.email)
+        if (data.phone) setPhone(data.phone)
+        if (data.emergencyName) setEmergencyName(data.emergencyName)
+        if (data.emergencyPhone) setEmergencyPhone(data.emergencyPhone)
+        if (data.allergies) setAllergies(data.allergies)
+      }
+    } catch { /* ignore parse errors */ }
+    setDataLoaded(true)
+  }, [])
+
+  // Save family data whenever it changes (after initial load)
+  useEffect(() => {
+    if (!dataLoaded) return
+    try {
+      localStorage.setItem('basma_family_info', JSON.stringify({
+        children, parentName, email, phone, emergencyName, emergencyPhone, allergies,
+      }))
+    } catch { /* ignore storage errors */ }
+  }, [dataLoaded, children, parentName, email, phone, emergencyName, emergencyPhone, allergies])
 
   const cls = CLASSES.find(c => c.id === classId)
 
@@ -579,9 +608,18 @@ export default function EnrollContent() {
         {/* ═══ STEP 3: YOUR INFO ═══ */}
         {!success && step === 3 && (
           <div>
-            <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h1 className="text-2xl font-bold text-center mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
               Your Info
             </h1>
+            {parentName && email && dataLoaded && (
+              <div className="p-3 rounded-xl mb-4 text-center" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                <p className="text-green-400 text-sm">✅ Welcome back! Your info is saved from last time.</p>
+                <p className="text-white/30 text-xs mt-1">Update anything below if needed.</p>
+              </div>
+            )}
+            {!(parentName && email) && (
+              <p className="text-center text-white/30 text-xs mb-4">Your info will be saved for next time.</p>
+            )}
 
             {/* Children */}
             <div className="mb-6">
