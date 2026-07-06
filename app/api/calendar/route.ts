@@ -196,7 +196,7 @@ export async function GET() {
 
     return NextResponse.json({
       events,
-      closedDates: [...new Set(closedDates)].sort(),
+      closedDates: Array.from(new Set(closedDates)).sort(),
     })
   } catch (err) {
     console.error('[calendar] GET error:', err)
