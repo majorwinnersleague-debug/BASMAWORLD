@@ -28,258 +28,269 @@ export default function Home() {
     <>
       <AnnouncementBar />
       <Navbar />
-      <main className="min-h-screen text-white pt-16">
+      <main className="min-h-screen text-white">
 
-        {/* ── Hero Banner ── */}
-        <section className="max-w-4xl mx-auto px-4 pt-8">
-          <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '16/9' }}>
-            <Image
-              src="/images/basma-banner-hero.jpg"
-              alt="B.A.S.M.A. — Become A Singer Music Academy — Where Music Meets Passion"
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 896px"
-            />
-          </div>
-        </section>
+        {/* ══════════════════════════════════════════════════════════
+            HERO — Full-width with overlay text
+            ══════════════════════════════════════════════════════════ */}
+        <section className="relative w-full overflow-hidden" style={{ minHeight: '85vh' }}>
+          <Image
+            src="/images/basma-banner-hero.jpg"
+            alt="B.A.S.M.A. — Become A Singer Music Academy"
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+          />
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(13,1,24,0.4) 0%, rgba(13,1,24,0.6) 50%, rgba(13,1,24,0.95) 100%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.1) 0%, transparent 50%, rgba(201,168,76,0.08) 100%)' }} />
 
-        {/* ── CTA ── */}
-        <section className="max-w-3xl mx-auto px-6 pt-10 pb-4 text-center">
-          <h1
-            className="text-4xl md:text-6xl font-bold mb-4 leading-tight tracking-tight"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            <span className="gradient-gold">BASMA Academy</span>
-            <span className="text-white"> 2026</span>
-          </h1>
-          <p className="text-lg text-white/40 mb-2 max-w-xl mx-auto">
-            Music classes for all ages · Mon–Thu · 9:00 AM – 2:15 PM
-          </p>
-          <p className="text-sm text-white/25 mb-6">
-            📍 Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147
-          </p>
-        </section>
-
-        {/* ── 🎓 Scholarship Banner ── */}
-        <section className="max-w-3xl mx-auto px-6 pb-6">
-          <Link href="/scholarship">
-            <div
-              className="rounded-2xl p-6 md:p-8 text-center relative overflow-hidden cursor-pointer transition hover:scale-[1.01]"
-              style={{
-                background: 'linear-gradient(135deg, rgba(168,85,247,0.15), rgba(236,72,153,0.08))',
-                border: '2px solid rgba(168,85,247,0.3)',
-              }}
-            >
-              <div className="text-4xl md:text-5xl mb-3">🎓</div>
-              <h2 className="text-2xl md:text-3xl font-bold text-purple-300 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                BASMA World Scholarship
-              </h2>
-              <p className="text-white/50 text-sm md:text-base mb-1">
-                <strong className="text-purple-300">$250/month</strong> — 1 hour of classes daily for your entire family
-              </p>
-              <p className="text-white/30 text-xs mb-5">Summer only (July & August) · Priority for June families · Limited spots</p>
-              <span
-                className="inline-block px-10 py-4 rounded-full font-bold text-base transition hover:scale-105"
-                style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)', color: '#fff' }}
-              >
-                Learn More →
-              </span>
-            </div>
-          </Link>
-        </section>
-
-        {/* ── What We Offer — Services Grid ── */}
-        <section className="max-w-3xl mx-auto px-6 pb-6">
-          <p className="text-xs text-white/30 uppercase tracking-[0.3em] text-center mb-6">What We Offer</p>
-          <div className="grid sm:grid-cols-3 gap-4">
-
-            {/* BASMA Academy */}
-            <Link
-              href="/enroll"
-              className="group rounded-xl overflow-hidden transition hover:scale-[1.02]"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
-            >
-              <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
-                <Image src="/images/camp/summer-camp-bubbles.jpg" alt="Kids having fun at BASMA Academy with instruments" fill className="object-cover object-[center_30%]" style={{ objectPosition: 'center 70%' }} sizes="300px" />
-              </div>
-              <div className="p-5 text-center">
-                <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">BASMA Academy</h3>
-                <p className="text-white/25 text-xs leading-relaxed">Tiny Tots, Kids Music, Band Academy, Piano & more! Mon–Thu. All ages welcome.</p>
-                <p className="text-[#c9a84c] text-xs font-semibold mt-2">Enroll Now →</p>
-              </div>
-            </Link>
-
-            {/* Private Lessons */}
-            <Link
-              href="/private-lessons"
-              className="group rounded-xl overflow-hidden transition hover:scale-[1.02]"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
-            >
-              <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
-                <Image src="/images/camp/kids-piano-duo.jpg" alt="Two students smiling during a private piano lesson" fill className="object-cover" sizes="300px" />
-              </div>
-              <div className="p-5 text-center">
-                <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Private Lessons</h3>
-                <p className="text-white/25 text-xs leading-relaxed">One-on-one instruction tailored to your goals. Pay online instantly!</p>
-                <p className="text-[#c9a84c] text-xs font-semibold mt-2">From $35/session →</p>
-              </div>
-            </Link>
-
-            {/* Marketing / Social Media */}
-            <Link
-              href="/social-media"
-              className="group rounded-xl overflow-hidden transition hover:scale-[1.02]"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
-            >
-              <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
-                <Image src="/images/basma/basma-editing-studio.jpg" alt="Social media content creation" fill className="object-cover" sizes="300px" />
-              </div>
-              <div className="p-5 text-center">
-                <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Social Media Marketing</h3>
-                <p className="text-white/25 text-xs leading-relaxed">Grow your brand with professional content creation and management.</p>
-                <p className="text-[#c9a84c] text-xs font-semibold mt-2">Learn More →</p>
-              </div>
-            </Link>
-          </div>
-        </section>
-
-        {/* ── BASMA Academy Programs ── */}
-        <section className="max-w-3xl mx-auto px-6 pb-6">
-          <p className="text-xs text-white/30 uppercase tracking-[0.3em] text-center mb-4">Weekly Programs · Mon–Thu</p>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {[
-              {
-                emoji: '👶', title: 'Tiny Tots Music & Movement', sub: 'Ages 5 & Under · 9:00–9:45 AM', duration: '45 min',
-                desc: 'An engaging introduction to music through singing, movement, rhythm, storytelling, instruments, and creative play.',
-                img: '/images/camp/little-girl-piano.jpg',
-              },
-              {
-                emoji: '🎵', title: 'Kids Music Academy', sub: 'By Skill Level · 10:00–11:15 AM', duration: '1h 15min',
-                desc: 'Students build musical skills through singing, rhythm, movement, music theory, and instrument exploration while learning songs based on the monthly theme.',
-                img: '/images/camp/kids-guitar-class.jpg',
-              },
-              {
-                emoji: '🎸', title: 'Band Academy', sub: 'By Skill Level · 1:00–2:15 PM', duration: '1h 15min',
-                desc: 'Students develop ensemble skills on their instrument of choice — piano, guitar, drums, violin, voice, ukulele, bass, and more.',
-                img: '/images/camp/kids-guitar-drums.jpg',
-              },
-              {
-                emoji: '🎹', title: 'Piano Fundamentals', sub: 'By Skill Level · 45 min', duration: '45 min',
-                desc: 'Focused piano instruction covering note reading, technique, rhythm, ear training, and performance skills.',
-                img: '/images/camp/kids-piano-duo.jpg',
-              },
-            ].map(c => (
-              <Link key={c.title + c.sub} href="/enroll" className="group flex gap-4 p-4 rounded-xl transition hover:scale-[1.02] cursor-pointer" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div className="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden">
-                  <Image src={c.img} alt={c.title} fill className="object-cover" sizes="80px" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="font-semibold text-white text-sm group-hover:text-[#c9a84c] transition-colors">{c.emoji} {c.title}</div>
-                    <span className="text-xs font-bold text-[#c9a84c] flex-shrink-0">{c.duration}</span>
-                  </div>
-                  <div className="text-white/30 text-xs mb-1">{c.sub}</div>
-                  <p className="text-white/20 text-[11px] leading-relaxed">{c.desc}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <p className="text-center text-white/25 text-xs mt-4">
-            🎓 Scholarship available · Multiple session times · Monthly themes for all classes
-          </p>
-        </section>
-
-        {/* ── Photo Gallery ── */}
-        <section className="max-w-4xl mx-auto px-6 pb-8">
-          <p className="text-xs text-white/30 uppercase tracking-[0.3em] text-center mb-6">Life at BASMA</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {GALLERY_PHOTOS.slice(0, 8).map((photo, i) => (
-              <div
-                key={i}
-                className="relative rounded-xl overflow-hidden shadow-lg group"
-                style={{ aspectRatio: i === 0 || i === 3 ? '4/5' : '1/1' }}
-              >
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="(max-width: 768px) 50vw, 250px"
-                />
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Schedule Info ── */}
-        <section className="max-w-3xl mx-auto px-6 pb-6">
-          <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.15)' }}>
-            <p className="text-purple-300/80 text-sm">
-              📅 <strong>Classes run Monday–Thursday</strong> · 9:00 AM – 2:15 PM · Check the calendar for closures &amp; holidays
+          {/* Hero content */}
+          <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 px-6 text-center" style={{ minHeight: '85vh' }}>
+            <p className="text-sm md:text-base uppercase tracking-[0.3em] text-yellow-300/80 font-semibold mb-4">
+              Become a Singer Music Academy
             </p>
-          </div>
-        </section>
-
-        {/* ── Private Lessons CTA ── */}
-        <section className="max-w-3xl mx-auto px-6 pb-6">
-          <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.15)' }}>
-            <div className="grid md:grid-cols-2">
-              <div className="relative w-full" style={{ aspectRatio: '4/3' }}>
-                <Image
-                  src="/images/camp/boy-keyboard.jpg"
-                  alt="Student enjoying a private keyboard lesson"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 400px"
-                />
-              </div>
-              <div className="p-6 md:p-8 flex flex-col justify-center text-center md:text-left" style={{ background: 'rgba(201,168,76,0.06)' }}>
-                <h2 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Private Music Lessons
-                </h2>
-                <p className="text-white/40 text-sm mb-4">
-                  One-on-one instruction on any instrument. Tailored to your goals — pay online and get started.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                  <Link
-                    href="/private-lessons"
-                    className="inline-block px-6 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
-                    style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
-                  >
-                    View Lesson Packages
-                  </Link>
-                  <a
-                    href="tel:+17027887369"
-                    className="inline-block px-6 py-3 rounded-full font-semibold text-sm transition hover:scale-105 border border-white/20 text-white/60 hover:text-white"
-                  >
-                    📞 (702) 788-7369
-                  </a>
-                </div>
-              </div>
+            <h1
+              className="text-5xl md:text-7xl lg:text-8xl font-black mb-4 leading-[0.9] tracking-tight"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              <span style={{ color: '#c9a84c' }}>B.A.S.M.A.</span>
+              <br />
+              <span className="text-white text-4xl md:text-5xl lg:text-6xl font-bold">Academy 2026</span>
+            </h1>
+            <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-2">
+              Find Your Voice. Build Confidence. Perform on Stage.
+            </p>
+            <p className="text-white/30 text-sm mb-8">
+              Mon–Thu · 9:00 AM – 2:15 PM · Synergy Dance, Las Vegas
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/enroll"
+                className="px-10 py-4 rounded-full font-bold text-base transition hover:scale-105 shadow-lg"
+                style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118', boxShadow: '0 4px 20px rgba(201,168,76,0.4)' }}
+              >
+                Enroll Now →
+              </Link>
+              <Link
+                href="/scholarship"
+                className="px-8 py-4 rounded-full font-semibold text-sm transition hover:scale-105"
+                style={{ background: 'rgba(168,85,247,0.2)', border: '2px solid rgba(168,85,247,0.5)', color: '#d8b4fe' }}
+              >
+                🎓 Scholarship — $250/mo
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* ── Quick Links ── */}
-        <section className="max-w-3xl mx-auto px-6 pb-16">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { href: '/enroll', label: 'Enroll Now', emoji: '📝' },
-              { href: '/private-lessons', label: 'Private Lessons', emoji: '🎵' },
-              { href: '/portal', label: 'Parent Portal', emoji: '👨‍👩‍👧' },
-              { href: '/contact', label: 'Contact Us', emoji: '💬' },
-            ].map(link => (
+        {/* ══════════════════════════════════════════════════════════
+            PROGRAMS — Visual cards with large images
+            ══════════════════════════════════════════════════════════ */}
+        <section className="relative py-20 px-6" style={{ background: 'linear-gradient(180deg, #0D0118 0%, #1a0a2e 50%, #0D0118 100%)' }}>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <p className="text-xs uppercase tracking-[0.3em] text-yellow-300/60 font-semibold mb-3">Weekly Programs · Monday – Thursday</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Our <span style={{ color: '#c9a84c' }}>Academy</span> Programs
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                {
+                  emoji: '👶', title: 'Tiny Tots Music & Movement', time: '9:00 – 9:45 AM', placement: 'Ages 5 & Under', duration: '45 min',
+                  desc: 'An engaging introduction to music through singing, movement, rhythm, storytelling, instruments, and creative play.',
+                  img: '/images/camp/little-girl-piano.jpg', gradient: 'from-pink-500/20 to-purple-500/10',
+                },
+                {
+                  emoji: '🎵', title: 'Kids Music Academy', time: '10:00 – 11:15 AM & 11:30 – 12:45 PM', placement: 'By Skill Level', duration: '1h 15min',
+                  desc: 'Students build musical skills through singing, rhythm, movement, music theory, and instrument exploration. Two sessions available.',
+                  img: '/images/camp/kids-guitar-class.jpg', gradient: 'from-blue-500/20 to-purple-500/10',
+                },
+                {
+                  emoji: '🎸', title: 'Band Academy', time: '1:00 – 2:15 PM', placement: 'By Skill Level', duration: '1h 15min',
+                  desc: 'Ensemble skills on your instrument of choice — piano, guitar, drums, violin, voice, ukulele, bass, and more.',
+                  img: '/images/camp/kids-guitar-drums.jpg', gradient: 'from-green-500/20 to-teal-500/10',
+                },
+                {
+                  emoji: '🎹', title: 'Piano Fundamentals', time: 'Scheduled by Level', placement: 'By Skill Level', duration: '45 min',
+                  desc: 'Focused piano instruction covering note reading, technique, rhythm, ear training, and performance skills.',
+                  img: '/images/camp/kids-piano-duo.jpg', gradient: 'from-yellow-500/20 to-orange-500/10',
+                },
+              ].map(c => (
+                <Link key={c.title} href="/enroll" className={`group relative rounded-2xl overflow-hidden transition hover:scale-[1.02] hover:shadow-2xl bg-gradient-to-br ${c.gradient}`} style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+                    <Image src={c.img} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 500px" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    {/* Duration badge */}
+                    <div className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold" style={{ background: 'rgba(201,168,76,0.9)', color: '#0D0118' }}>
+                      {c.duration}
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xl">{c.emoji}</span>
+                      <h3 className="text-lg font-bold text-white group-hover:text-yellow-300 transition-colors" style={{ fontFamily: "'Playfair Display', serif" }}>{c.title}</h3>
+                    </div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(201,168,76,0.15)', color: '#c9a84c' }}>{c.time}</span>
+                      <span className="text-xs text-white/40">{c.placement}</span>
+                    </div>
+                    <p className="text-white/50 text-sm leading-relaxed">{c.desc}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            <div className="text-center mt-10">
               <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-xl p-4 text-center transition hover:scale-[1.02]"
-                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
+                href="/enroll"
+                className="inline-block px-10 py-4 rounded-full font-bold text-base transition hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
               >
-                <div className="text-xl mb-1">{link.emoji}</div>
-                <div className="text-white/40 text-xs">{link.label}</div>
+                Enroll in a Program →
               </Link>
-            ))}
+              <p className="text-white/25 text-xs mt-3">
+                Monthly themes for all classes · Weekly progress reports · Performances year-round
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════
+            SCHOLARSHIP — Bold banner
+            ══════════════════════════════════════════════════════════ */}
+        <section className="py-16 px-6" style={{ background: 'linear-gradient(135deg, #1a0533 0%, #2a1050 50%, #1a0533 100%)' }}>
+          <div className="max-w-4xl mx-auto">
+            <Link href="/scholarship" className="block group">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.2em] text-purple-400 font-semibold mb-3">🎓 Family Scholarship</p>
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    <span className="text-purple-300">$250/month</span> for Your Entire Family
+                  </h2>
+                  <p className="text-white/50 text-base leading-relaxed mb-6">
+                    One flat rate covers every child in your family. Choose from any program — Tiny Tots, Kids Music, Band Academy, or Piano. Classes Monday through Thursday.
+                  </p>
+                  <span
+                    className="inline-block px-8 py-3 rounded-full font-bold text-sm transition group-hover:scale-105"
+                    style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)', color: '#fff' }}
+                  >
+                    Learn More About Scholarship →
+                  </span>
+                </div>
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '4/3' }}>
+                  <Image src="/images/camp/group-music-class.jpg" alt="Group music class at BASMA" fill className="object-cover" sizes="500px" />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.3), rgba(236,72,153,0.2))' }} />
+                </div>
+              </div>
+            </Link>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════
+            PHOTO GALLERY
+            ══════════════════════════════════════════════════════════ */}
+        <section className="py-16 px-6" style={{ background: '#0D0118' }}>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <p className="text-xs uppercase tracking-[0.3em] text-yellow-300/60 font-semibold mb-3">See What We Do</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Life at <span style={{ color: '#c9a84c' }}>BASMA</span>
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {GALLERY_PHOTOS.slice(0, 8).map((photo, i) => (
+                <div
+                  key={i}
+                  className="relative rounded-xl overflow-hidden shadow-lg group"
+                  style={{ aspectRatio: i === 0 || i === 3 ? '4/5' : '1/1' }}
+                >
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    sizes="(max-width: 768px) 50vw, 250px"
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════
+            PRIVATE LESSONS + SERVICES
+            ══════════════════════════════════════════════════════════ */}
+        <section className="py-16 px-6" style={{ background: 'linear-gradient(180deg, #0D0118 0%, #1a0a2e 100%)' }}>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6">
+
+              {/* Private Lessons */}
+              <Link href="/private-lessons" className="group relative rounded-2xl overflow-hidden transition hover:scale-[1.02]" style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
+                <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
+                  <Image src="/images/camp/boy-keyboard.jpg" alt="Private keyboard lesson" fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="500px" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <p className="text-xs uppercase tracking-widest text-yellow-300/70 font-semibold mb-2">One-on-One Instruction</p>
+                  <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Private Music Lessons</h3>
+                  <p className="text-white/50 text-sm mb-3">Piano, voice, guitar, drums, violin & more. Tailored to your goals.</p>
+                  <div className="flex items-center gap-3">
+                    <span className="px-4 py-2 rounded-full text-xs font-bold" style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}>
+                      From $35/session
+                    </span>
+                    <span className="text-white/40 text-xs">4-pack available</span>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Marketing Services */}
+              <Link href="/social-media" className="group relative rounded-2xl overflow-hidden transition hover:scale-[1.02]" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
+                  <Image src="/images/basma/basma-editing-studio.jpg" alt="Content creation studio" fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="500px" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <p className="text-xs uppercase tracking-widest text-purple-300/70 font-semibold mb-2">Major Winners Marketing</p>
+                  <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Social Media Services</h3>
+                  <p className="text-white/50 text-sm mb-3">Professional content creation, brand growth, and social media management.</p>
+                  <span className="px-4 py-2 rounded-full text-xs font-bold" style={{ background: 'rgba(168,85,247,0.3)', border: '1px solid rgba(168,85,247,0.5)', color: '#d8b4fe' }}>
+                    Learn More →
+                  </span>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════
+            CONTACT + LOCATION
+            ══════════════════════════════════════════════════════════ */}
+        <section className="py-16 px-6" style={{ background: '#0D0118' }}>
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Ready to Start Your Musical Journey?
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Link href="/enroll" className="px-10 py-4 rounded-full font-bold text-base transition hover:scale-105" style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}>
+                Enroll Now
+              </Link>
+              <Link href="/private-lessons" className="px-8 py-4 rounded-full font-semibold text-sm transition hover:scale-105 border border-white/20 text-white/60 hover:text-white">
+                Book Private Lessons
+              </Link>
+              <a href="tel:+17027887369" className="px-8 py-4 rounded-full font-semibold text-sm transition hover:scale-105 border border-white/20 text-white/60 hover:text-white">
+                📞 (702) 788-7369
+              </a>
+            </div>
+            <p className="text-white/30 text-sm">
+              📍 Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147
+            </p>
+            <p className="text-white/20 text-xs mt-1">
+              Classes Mon–Thu · 9:00 AM – 2:15 PM · All ages welcome
+            </p>
           </div>
         </section>
 
