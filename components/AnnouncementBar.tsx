@@ -21,10 +21,10 @@ export default function AnnouncementBar() {
       className="fixed top-0 left-0 right-0 z-[60]"
       style={{ background: 'linear-gradient(135deg, #1a0a2e, #2d1b4e)', borderBottom: '2px solid rgba(201,168,76,0.4)' }}
     >
-      {/* Summer classes + scholarship */}
+      {/* Academy + scholarship */}
       <div className="flex items-center justify-center gap-2 px-4 py-2">
         <span className="text-white text-xs md:text-sm text-center">
-          🎵 Summer Music Classes — Mon–Thu at{' '}
+          🎵 BASMA Academy — Mon–Thu at{' '}
           <strong className="text-yellow-300">Synergy Dance: 9512 W Flamingo Rd STE 100</strong>{' '}
           · <span className="text-yellow-200 font-semibold">🎓 Scholarship — $250/mo for the whole family!</span>{' '}
           <Link href="/scholarship" className="underline text-yellow-300 hover:text-white transition font-bold ml-1">

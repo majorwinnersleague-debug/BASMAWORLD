@@ -9,11 +9,11 @@ import Footer from '@/components/Footer'
 // to ensure live mode keys are always used
 
 const CLASSES = [
-  { emoji: '👶', name: 'Tiny Tots', age: '5 & Under', time: '9:00 – 9:45 AM' },
-  { emoji: '🎵', name: 'Kids Music', age: '5–10', time: '10:00 – 11:30 AM' },
-  { emoji: '🎤', name: 'Kids Music', age: '10–17', time: '10:00 – 11:30 AM' },
-  { emoji: '🎹', name: 'Piano', age: 'All Ages', time: '12:00 – 1:30 PM' },
-  { emoji: '🎙️', name: 'Recording', age: 'All Ages', time: '12:00 – 1:30 PM' },
+  { emoji: '👶', name: 'Tiny Tots Music & Movement', age: 'Ages 5 & Under', time: '9:00 – 9:45 AM' },
+  { emoji: '🎵', name: 'Kids Music Academy (AM)', age: 'By Skill Level', time: '10:00 – 11:15 AM' },
+  { emoji: '🎵', name: 'Kids Music Academy (PM)', age: 'By Skill Level', time: '11:30 AM – 12:45 PM' },
+  { emoji: '🎸', name: 'Band Academy', age: 'By Skill Level', time: '1:00 – 2:15 PM' },
+  { emoji: '🎹', name: 'Piano Fundamentals', age: 'By Skill Level', time: '45 Minutes' },
 ]
 
 export default function ScholarshipContent() {
@@ -144,7 +144,7 @@ export default function ScholarshipContent() {
           <div className="grid sm:grid-cols-2 gap-4">
             {[
               { emoji: '👨‍👩‍👧‍👦', title: 'Whole Family', desc: 'One flat rate covers every child in your family — no per-student fees.' },
-              { emoji: '🎵', title: 'Any Class', desc: 'Choose from Tiny Tots, Kids Music, Piano, Recording, and more.' },
+              { emoji: '🎵', title: 'Any Class', desc: 'Choose from Tiny Tots, Kids Music Academy, Band Academy, Piano Fundamentals, and more.' },
               { emoji: '📅', title: 'July & August', desc: 'Attend classes Monday through Thursday, every week through August. Camps end when school starts.' },
               { emoji: '💰', title: 'Massive Savings', desc: 'Save 50%+ compared to per-day pricing. The more you come, the more you save.' },
             ].map(item => (
@@ -196,7 +196,7 @@ export default function ScholarshipContent() {
             {[
               { q: 'How many kids can I enroll?', a: 'As many as you like! The scholarship covers your entire family — all children attend under one flat rate.' },
               { q: 'What does "1 hour" mean?', a: 'Each $250 plan gives your family access to 1 class session per day (classes range from 45 min to 1.5 hours). Want more class time? Buy the 2-hour plan for $500/mo.' },
-              { q: 'When are classes?', a: 'Monday through Thursday, 9 AM to 1:30 PM. The scholarship runs through July and August — camps end when school starts.' },
+              { q: 'When are classes?', a: 'Monday through Thursday, 9:00 AM to 2:15 PM. The scholarship runs through July and August.' },
               { q: 'Can I cancel?', a: 'Yes — you can cancel your subscription anytime. The program runs through summer (July–August).' },
               { q: 'Do I need to have attended the June camp?', a: 'June families get priority, but anyone can apply. Spots are limited and offered first-come, first-served.' },
             ].map(item => (

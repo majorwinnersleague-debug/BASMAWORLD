@@ -3,11 +3,11 @@
 import { useState } from 'react'
 
 const JUNE_CLASSES = [
-  { id: 'tiny-tots', name: 'Tiny Tots Music & Fun (Ages 2–5)', time: '9:00 – 9:45 AM', color: '#ff69b4', emoji: '🧸' },
-  { id: 'kids-5-10', name: 'Kids Music & Fun (Ages 5–10)', time: '10:00 – 11:30 AM', color: '#4da6ff', emoji: '🎵' },
-  { id: 'kids-10-17', name: 'Kids Music & Fun (Ages 10–17)', time: '10:00 – 11:30 AM', color: '#50c878', emoji: '🎵' },
-  { id: 'private-am', name: 'Free 20-Min Private Lesson (Morning)', time: '8:00 – 9:00 AM', color: '#b388ff', emoji: '🎸' },
-  { id: 'private-pm', name: 'Free 20-Min Private Lesson (Afternoon)', time: '2:00 – 4:00 PM', color: '#b388ff', emoji: '🎸' },
+  { id: 'tiny-tots', name: 'Tiny Tots Music & Movement (Ages 5 & Under)', time: '9:00 – 9:45 AM', color: '#ff69b4', emoji: '👶' },
+  { id: 'kids-music-am', name: 'Kids Music Academy — AM (By Skill Level)', time: '10:00 – 11:15 AM', color: '#4da6ff', emoji: '🎵' },
+  { id: 'kids-music-pm', name: 'Kids Music Academy — PM (By Skill Level)', time: '11:30 AM – 12:45 PM', color: '#50c878', emoji: '🎵' },
+  { id: 'band-academy', name: 'Band Academy (By Skill Level)', time: '1:00 – 2:15 PM', color: '#34d399', emoji: '🎸' },
+  { id: 'piano', name: 'Piano Fundamentals (By Skill Level)', time: '45 min', color: '#f59e0b', emoji: '🎹' },
 ]
 
 const THIS_WEEK = [
