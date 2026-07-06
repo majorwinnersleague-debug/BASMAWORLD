@@ -8,7 +8,7 @@ export default function MWLContent() {
   return (
     <>
       
-      <main className="min-h-screen text-white pt-16">
+      <main className="min-h-screen text-white" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
 
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="max-w-4xl mx-auto px-4 pt-12 pb-16 text-center">

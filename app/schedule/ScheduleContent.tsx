@@ -158,7 +158,7 @@ export default function ScheduleContent() {
   const selectedClasses = selectedDate ? getClassesForDay(selectedDate.getDay()) : [];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#050505", color: "#fff", fontFamily: "'Inter', -apple-system, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#050505", color: "#fff", fontFamily: "'Inter', -apple-system, sans-serif", paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
       <style>{`
         .cal-day { transition: all 0.15s; cursor: pointer; }
         .cal-day:hover { background: rgba(201,168,76,0.15) !important; transform: scale(1.05); }

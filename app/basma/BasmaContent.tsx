@@ -12,10 +12,10 @@ const CLASSES = [
 
 export default function BasmaContent() {
   return (
-    <main className="min-h-screen text-white pt-16">
+    <main className="min-h-screen text-white" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
 
       {/* ── Hero ── */}
-      <section className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
+      <section className="max-w-3xl mx-auto px-6 pt-8 pb-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
           BASMA <span className="gradient-gold">Academy</span>
         </h1>
