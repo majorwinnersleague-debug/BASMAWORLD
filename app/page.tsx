@@ -28,58 +28,70 @@ export default function Home() {
     <>
       <AnnouncementBar />
       <Navbar />
-      <main className="min-h-screen text-white">
+      <main className="min-h-screen text-white" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
 
         {/* ══════════════════════════════════════════════════════════
-            HERO — Full-width with overlay text
+            HERO — Banner + CTA
             ══════════════════════════════════════════════════════════ */}
-        <section className="relative w-full overflow-hidden" style={{ minHeight: '85vh' }}>
-          <Image
-            src="/images/basma-banner-hero.jpg"
-            alt="B.A.S.M.A. — Become A Singer Music Academy"
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-          {/* Dark gradient overlay */}
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(13,1,24,0.4) 0%, rgba(13,1,24,0.6) 50%, rgba(13,1,24,0.95) 100%)' }} />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.1) 0%, transparent 50%, rgba(201,168,76,0.08) 100%)' }} />
+        <section className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #1a0a2e 0%, #0D0118 100%)' }}>
+          {/* Ambient glow effects */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-20" style={{ background: 'radial-gradient(circle, #a855f7, transparent)' }} />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-15" style={{ background: 'radial-gradient(circle, #c9a84c, transparent)' }} />
 
-          {/* Hero content */}
-          <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 px-6 text-center" style={{ minHeight: '85vh' }}>
-            <p className="text-sm md:text-base uppercase tracking-[0.3em] text-yellow-300/80 font-semibold mb-4">
-              Become a Singer Music Academy
-            </p>
-            <h1
-              className="text-5xl md:text-7xl lg:text-8xl font-black mb-4 leading-[0.9] tracking-tight"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              <span style={{ color: '#c9a84c' }}>B.A.S.M.A.</span>
-              <br />
-              <span className="text-white text-4xl md:text-5xl lg:text-6xl font-bold">Academy 2026</span>
-            </h1>
-            <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-2">
-              Find Your Voice. Build Confidence. Perform on Stage.
-            </p>
-            <p className="text-white/30 text-sm mb-8">
-              Mon–Thu · 9:00 AM – 2:15 PM · Synergy Dance, Las Vegas
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                href="/enroll"
-                className="px-10 py-4 rounded-full font-bold text-base transition hover:scale-105 shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118', boxShadow: '0 4px 20px rgba(201,168,76,0.4)' }}
+          <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-16">
+            {/* Banner Image */}
+            <div className="relative w-full max-w-3xl mx-auto mb-10 rounded-2xl overflow-hidden shadow-2xl" style={{ border: '2px solid rgba(201,168,76,0.3)', aspectRatio: '16/9' }}>
+              <Image
+                src="/images/basma-banner-hero.jpg"
+                alt="B.A.S.M.A. — Become A Singer Music Academy — Where Music Meets Passion"
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 900px"
+              />
+            </div>
+
+            {/* Hero Text */}
+            <div className="text-center">
+              <p className="text-sm uppercase tracking-[0.3em] text-yellow-300/70 font-semibold mb-4">
+                Become a Singer Music Academy
+              </p>
+              <h1
+                className="text-4xl md:text-6xl lg:text-7xl font-black mb-5 leading-[0.95] tracking-tight"
+                style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                Enroll Now →
-              </Link>
-              <Link
-                href="/scholarship"
-                className="px-8 py-4 rounded-full font-semibold text-sm transition hover:scale-105"
-                style={{ background: 'rgba(168,85,247,0.2)', border: '2px solid rgba(168,85,247,0.5)', color: '#d8b4fe' }}
-              >
-                🎓 Scholarship — $250/mo
-              </Link>
+                <span style={{ color: '#c9a84c' }}>B.A.S.M.A.</span>{' '}
+                <span className="text-white">Academy</span>
+              </h1>
+              <p className="text-white/60 text-lg md:text-xl max-w-lg mx-auto mb-2 italic">
+                Find Your Voice. Build Confidence. Perform on Stage.
+              </p>
+              <p className="text-white/30 text-sm mb-8">
+                Mon–Thu · 9:00 AM – 2:15 PM · Synergy Dance, Las Vegas, NV
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  href="/enroll"
+                  className="px-10 py-4 rounded-full font-bold text-base transition hover:scale-105 shadow-lg"
+                  style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118', boxShadow: '0 4px 20px rgba(201,168,76,0.4)' }}
+                >
+                  Enroll Now →
+                </Link>
+                <Link
+                  href="/scholarship"
+                  className="px-8 py-4 rounded-full font-semibold text-sm transition hover:scale-105"
+                  style={{ background: 'rgba(168,85,247,0.2)', border: '2px solid rgba(168,85,247,0.5)', color: '#d8b4fe' }}
+                >
+                  🎓 Scholarship — $250/mo
+                </Link>
+                <a
+                  href="tel:+17027887369"
+                  className="px-8 py-4 rounded-full font-semibold text-sm transition hover:scale-105"
+                  style={{ border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)' }}
+                >
+                  📞 (702) 788-7369
+                </a>
+              </div>
             </div>
           </div>
         </section>
