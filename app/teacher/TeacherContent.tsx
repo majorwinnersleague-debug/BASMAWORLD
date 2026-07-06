@@ -670,9 +670,9 @@ export default function TeacherContent() {
       })
     }
 
-    // Group students by class — ONLY paid/active students appear in class rosters
+    // Group students by class — ONLY Stripe-paid students appear in class rosters
     const paidStudents = registrations.filter(r =>
-      safe(r.paymentStatus) === 'Paid' || safe(r.paymentStatus) === 'Free' || safe(r.status) === 'Free Trial'
+      safe(r.paymentStatus) === 'Paid'
     )
     const classBucketsList = SCHEDULE_BLOCKS.map(block => {
       const students = paidStudents.filter(r => classifyRegistration(r) === block.label)
@@ -692,9 +692,9 @@ export default function TeacherContent() {
       block: { time: 'TBD', label: 'Unassigned', ageRange: 'All', emoji: '📋', color: '#6b7280' },
       students: [],
     }
-    // Only include paid/active students in class rosters
+    // Only include Stripe-paid students in class rosters
     const paidRegs = registrations.filter(r =>
-      safe(r.paymentStatus) === 'Paid' || safe(r.paymentStatus) === 'Free' || safe(r.status) === 'Free Trial'
+      safe(r.paymentStatus) === 'Paid'
     )
     for (const reg of paidRegs) {
       const cls = classifyRegistration(reg)
@@ -744,7 +744,7 @@ export default function TeacherContent() {
 
     // Apply stats filter first
     if (statsFilter === 'paid') {
-      filtered = filtered.filter(s => safe(s.paymentStatus) === 'Paid' || safe(s.paymentStatus) === 'Free' || safe(s.status) === 'Free Trial')
+      filtered = filtered.filter(s => safe(s.paymentStatus) === 'Paid')
     } else if (statsFilter === 'complete') {
       filtered = filtered.filter(s => s.isRegistrationComplete)
     } else if (statsFilter === 'incomplete') {
@@ -771,7 +771,7 @@ export default function TeacherContent() {
     const uniqueStudents = new Set(registrations.map(r => safe(r.studentName).trim().toLowerCase()).filter(Boolean))
     const uniqueParents = new Set(registrations.map(r => safe(r.email).trim().toLowerCase()).filter(Boolean))
     const checkedInCount = Object.keys(checkedInToday).length
-    const paidCount = registrations.filter(r => safe(r.paymentStatus) === 'Paid' || safe(r.paymentStatus) === 'Free' || safe(r.status) === 'Free Trial').length
+    const paidCount = registrations.filter(r => safe(r.paymentStatus) === 'Paid').length
     return {
       total: registrations.length,
       uniqueStudents: uniqueStudents.size,
