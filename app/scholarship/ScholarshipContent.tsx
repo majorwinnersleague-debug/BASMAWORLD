@@ -106,7 +106,7 @@ export default function ScholarshipContent() {
               >
                 {loading ? 'Processing...' : 'Enroll Now — $250/mo →'}
               </button>
-              <p className="text-white/20 text-xs mt-3">Secure payment via Stripe · Cancel anytime</p>
+              <p className="text-white/20 text-xs mt-3">Secure payment via Stripe · No refunds · Classes may be rescheduled or gifted</p>
             </div>
 
             {/* 2-Hour Plan */}
@@ -197,7 +197,7 @@ export default function ScholarshipContent() {
               { q: 'How many kids can I enroll?', a: 'As many as you like! The scholarship covers your entire family — all children attend under one flat rate.' },
               { q: 'What does "1 hour" mean?', a: 'Each $250 plan gives your family access to 1 class session per day (classes range from 45 min to 1.5 hours). Want more class time? Buy the 2-hour plan for $500/mo.' },
               { q: 'When are classes?', a: 'Monday through Thursday, 9:00 AM to 2:15 PM. The scholarship runs through July and August.' },
-              { q: 'Can I cancel?', a: 'Yes — you can cancel your subscription anytime. The program runs through summer (July–August).' },
+              { q: 'What is your refund policy?', a: 'We do not issue refunds. However, classes may be discussed for rescheduling or transferred to someone else as a gift. Contact us at (702) 788-7369 for any questions.' },
               { q: 'Do I need to have attended the June camp?', a: 'June families get priority, but anyone can apply. Spots are limited and offered first-come, first-served.' },
             ].map(item => (
               <div key={item.q} className="rounded-xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
