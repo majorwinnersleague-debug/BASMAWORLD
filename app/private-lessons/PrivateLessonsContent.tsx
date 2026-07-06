@@ -247,9 +247,9 @@ export default function PrivateLessonsContent() {
 
               <div className="grid sm:grid-cols-2 gap-4 max-w-xl mx-auto mb-6">
                 {/* 30-min package */}
-                <a
-                  href="https://buy.stripe.com/7sY4gy0Pj0lV6Fy9EreEo0z"
-                  className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02]"
+                <button
+                  onClick={() => { window.scrollTo({ top: document.getElementById('booking-form')?.offsetTop || 600, behavior: 'smooth' }); }}
+                  className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
                   <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 30-Minute Sessions</p>
@@ -259,14 +259,14 @@ export default function PrivateLessonsContent() {
                   <p className="text-white/30 text-xs mb-4">$35 per session</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
-                    Pay Now →
+                    Book Now →
                   </span>
-                </a>
+                </button>
 
                 {/* 60-min package */}
-                <a
-                  href="https://buy.stripe.com/28EcN49lP0lV4xq2bZeEo0y"
-                  className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] relative"
+                <button
+                  onClick={() => { window.scrollTo({ top: document.getElementById('booking-form')?.offsetTop || 600, behavior: 'smooth' }); }}
+                  className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] relative text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
                   <span className="absolute -top-3 right-4 bg-[#c9a84c] text-black text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full">
@@ -279,9 +279,9 @@ export default function PrivateLessonsContent() {
                   <p className="text-white/30 text-xs mb-4">$50 per session</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
-                    Pay Now →
+                    Book Now →
                   </span>
-                </a>
+                </button>
               </div>
 
               <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included per package</p>

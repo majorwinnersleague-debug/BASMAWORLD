@@ -77,16 +77,37 @@ function safe(val: unknown): string {
   return ''
 }
 
+function normalizeClassName(raw: string): string {
+  if (!raw) return ''
+  const lower = raw.toLowerCase()
+  if (lower.includes('tiny tots')) return 'Tiny Tots Music & Fun'
+  if (lower.includes('kids') && (lower.includes('5-10') || lower.includes('5–10'))) return 'Kids Music & Fun (5–10)'
+  if (lower.includes('kids') && (lower.includes('10-17') || lower.includes('10–17'))) return 'Kids Music & Fun (10–17)'
+  if (lower.includes('kids music')) return 'Kids Music & Fun (5–10)'
+  if (lower.includes('piano')) return 'Piano Class Lecture'
+  if (lower.includes('recording')) return 'Recording Class'
+  if (lower.includes('all access') || lower.includes('all classes') || lower.includes('scholarship')) return 'All Access'
+  return raw
+}
+
 function classifyRegistration(r: Registration): string {
+  // Priority 1: Use enrolled class set by Stripe webhook (most accurate)
+  const enrolled = normalizeClassName(safe(r.enrolledClass))
+  if (enrolled && enrolled !== 'All Access') return enrolled
+
+  // Priority 2: Use interests field
   const interests = safe(r.interests).toLowerCase()
-  const age = parseInt(safe(r.studentAge)) || 0
-  const msg = safe(r.message).toLowerCase()
   if (interests.includes('piano')) return 'Piano Class Lecture'
-  if (interests.includes('recording') || interests.includes('studio')) return 'Teens Recording Lecture'
+  if (interests.includes('recording') || interests.includes('studio')) return 'Recording Class'
   if (interests.includes('tiny tots') || interests.includes('toddler')) return 'Tiny Tots Music & Fun'
+
+  // Priority 3: Fall back to age-based classification
+  const age = parseInt(safe(r.studentAge)) || 0
   if (age >= 2 && age <= 4) return 'Tiny Tots Music & Fun'
   if (age >= 5 && age <= 10) return 'Kids Music & Fun (5–10)'
   if (age >= 10 && age <= 17) return 'Kids Music & Fun (10–17)'
+
+  const msg = safe(r.message).toLowerCase()
   const ageMatch = msg.match(/age:\s*(\d+)/)
   if (ageMatch) {
     const a = parseInt(ageMatch[1])
@@ -133,7 +154,7 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce'
+type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce' | 'dashboard'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -175,10 +196,21 @@ export default function TeacherContent() {
   const [calMonth, setCalMonth] = useState(new Date().getMonth())
   const [calYear, setCalYear] = useState(2026)
 
-  // Closures
-  const [closures, setClosures] = useState<{ date: string; note: string }[]>(DEFAULT_CLOSURES)
+  // Closures — loaded from server API (not localStorage)
+  const [closures, setClosures] = useState<{ id?: string; date: string; endDate?: string; type?: string; note: string; reason?: string; makeupDate?: string }[]>([])
+  const [closuresLoaded, setClosuresLoaded] = useState(false)
   const [newClosureDate, setNewClosureDate] = useState('')
+  const [newClosureEndDate, setNewClosureEndDate] = useState('')
   const [newClosureNote, setNewClosureNote] = useState('')
+  const [newClosureReason, setNewClosureReason] = useState('')
+  const [newClosureType, setNewClosureType] = useState<string>('closure')
+  const [newClosureMakeup, setNewClosureMakeup] = useState('')
+  const [closureSaving, setClosureSaving] = useState(false)
+
+  // Dashboard data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [dashboardData, setDashboardData] = useState<any>(null)
+  const [dashboardLoading, setDashboardLoading] = useState(false)
 
   // Birthdays
   const [birthdays, setBirthdays] = useState<Record<string, string>>({})
@@ -220,11 +252,21 @@ export default function TeacherContent() {
     try { localStorage.removeItem('basma-teacher-auth') } catch {}
   }, [])
 
-  // Load saved data from localStorage
+  // Load closures from server API (replaces localStorage)
+  useEffect(() => {
+    if (!authenticated) return
+    fetch('/api/calendar')
+      .then(r => r.json())
+      .then(data => {
+        setClosures(data.events || [])
+        setClosuresLoaded(true)
+      })
+      .catch(() => setClosuresLoaded(true))
+  }, [authenticated])
+
+  // Load saved data from localStorage (birthdays + check-ins only)
   useEffect(() => {
     try {
-      const savedClosures = localStorage.getItem('basma-closures')
-      if (savedClosures) setClosures(JSON.parse(savedClosures))
       const savedBdays = localStorage.getItem('basma-birthdays')
       if (savedBdays) setBirthdays(JSON.parse(savedBdays))
       // Load today's check-ins
@@ -245,29 +287,82 @@ export default function TeacherContent() {
     }
   }
 
-  function addClosure() {
+  async function addClosure() {
     if (!newClosureDate) return
-    const updated = [...closures, { date: newClosureDate, note: newClosureNote || 'School Closed' }]
-    setClosures(updated)
-    try { localStorage.setItem('basma-closures', JSON.stringify(updated)) } catch {}
+    setClosureSaving(true)
+    try {
+      const res = await fetch('/api/calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacherCode: ACCESS_CODE,
+          date: newClosureDate,
+          endDate: newClosureEndDate || undefined,
+          type: newClosureType || 'closure',
+          note: newClosureNote || 'School Closed',
+          reason: newClosureReason || undefined,
+          makeupDate: newClosureMakeup || undefined,
+          notify: true,
+        }),
+      })
+      const data = await res.json()
+      if (data.success && data.event) {
+        setClosures(prev => [...prev, data.event])
+      }
+    } catch (err) {
+      console.error('Failed to add closure:', err)
+    }
+    setClosureSaving(false)
     setNewClosureDate('')
+    setNewClosureEndDate('')
     setNewClosureNote('')
+    setNewClosureReason('')
+    setNewClosureMakeup('')
+    setNewClosureType('closure')
   }
 
-  function removeClosure(date: string) {
-    const updated = closures.filter(c => c.date !== date)
-    setClosures(updated)
-    try { localStorage.setItem('basma-closures', JSON.stringify(updated)) } catch {}
+  async function removeClosure(dateOrId: string) {
+    try {
+      const evt = closures.find(c => c.id === dateOrId || c.date === dateOrId)
+      await fetch('/api/calendar', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacherCode: ACCESS_CODE,
+          id: evt?.id || undefined,
+          date: dateOrId,
+        }),
+      })
+      setClosures(prev => prev.filter(c => c.id !== dateOrId && c.date !== dateOrId))
+    } catch (err) {
+      console.error('Failed to remove closure:', err)
+    }
   }
 
   function toggleClosureOnDate(dateStr: string) {
     const existing = closures.find(c => c.date === dateStr)
     if (existing) {
-      removeClosure(dateStr)
+      removeClosure(existing.id || dateStr)
     } else {
-      const updated = [...closures, { date: dateStr, note: 'School Closed' }]
-      setClosures(updated)
-      try { localStorage.setItem('basma-closures', JSON.stringify(updated)) } catch {}
+      // Quick-add closure via API
+      fetch('/api/calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacherCode: ACCESS_CODE,
+          date: dateStr,
+          type: 'closure',
+          note: 'School Closed',
+          notify: true,
+        }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success && data.event) {
+            setClosures(prev => [...prev, data.event])
+          }
+        })
+        .catch(err => console.error('Toggle closure error:', err))
     }
   }
 
@@ -575,17 +670,19 @@ export default function TeacherContent() {
       })
     }
 
-    // Group students by class
+    // Group students by class — ONLY paid/active students appear in class rosters
+    const paidStudents = registrations.filter(r =>
+      safe(r.paymentStatus) === 'Paid' || safe(r.paymentStatus) === 'Free' || safe(r.status) === 'Free Trial'
+    )
     const classBucketsList = SCHEDULE_BLOCKS.map(block => {
-      const students = registrations.filter(r => classifyRegistration(r) === block.label)
+      const students = paidStudents.filter(r => classifyRegistration(r) === block.label)
       return { block, students }
     })
 
-    const confirmedStudents = registrations.filter(r => safe(r.paymentStatus) === 'Paid' || safe(r.paymentStatus) === 'Free' || safe(r.status) === 'Free Trial')
-    return { weekDays, classBuckets: classBucketsList, totalStudents: confirmedStudents.length }
+    return { weekDays, classBuckets: classBucketsList, totalStudents: paidStudents.length }
   }, [registrations, closureSet])
 
-  // Class buckets for roster
+  // Class buckets for roster — ONLY paid/active students
   const classBuckets = useMemo(() => {
     const buckets: Record<string, { block: typeof SCHEDULE_BLOCKS[0]; students: Registration[] }> = {}
     for (const block of SCHEDULE_BLOCKS) {
@@ -595,7 +692,11 @@ export default function TeacherContent() {
       block: { time: 'TBD', label: 'Unassigned', ageRange: 'All', emoji: '📋', color: '#6b7280' },
       students: [],
     }
-    for (const reg of registrations) {
+    // Only include paid/active students in class rosters
+    const paidRegs = registrations.filter(r =>
+      safe(r.paymentStatus) === 'Paid' || safe(r.paymentStatus) === 'Free' || safe(r.status) === 'Free Trial'
+    )
+    for (const reg of paidRegs) {
       const cls = classifyRegistration(reg)
       if (buckets[cls]) buckets[cls].students.push(reg)
       else buckets['Unassigned'].students.push(reg)
@@ -816,6 +917,7 @@ export default function TeacherContent() {
         {/* Tabs */}
         <div className="flex gap-1 mb-6 p-1 rounded-xl bg-white/[0.03] w-fit overflow-x-auto">
           {([
+            { id: 'dashboard' as const, label: '📊 Dashboard' },
             { id: 'checkin' as const, label: '✅ Check-In' },
             { id: 'thisweek' as const, label: '📅 This Week' },
             { id: 'roster' as const, label: '📋 Class Roster' },
@@ -825,12 +927,181 @@ export default function TeacherContent() {
             { id: 'chat' as const, label: '🤖 Assistant' },
             { id: 'announce' as const, label: '📢 Text All' },
           ]).map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
+            <button key={t.id} onClick={() => {
+              setTab(t.id)
+              // Auto-load dashboard data when tab is selected
+              if (t.id === 'dashboard' && !dashboardData && !dashboardLoading) {
+                setDashboardLoading(true)
+                fetch(`/api/dashboard?teacherCode=${ACCESS_CODE}`)
+                  .then(r => r.json())
+                  .then(data => { setDashboardData(data); setDashboardLoading(false) })
+                  .catch(() => setDashboardLoading(false))
+              }
+            }}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${tab === t.id ? 'bg-[#c9a84c]/20 text-[#c9a84c]' : 'text-white/40 hover:text-white/60'}`}>
               {t.label}
             </button>
           ))}
         </div>
+
+        {/* ═══ DASHBOARD TAB ═══ */}
+        {tab === 'dashboard' && (
+          <div>
+            {dashboardLoading && (
+              <div className="text-center py-16">
+                <div className="text-4xl animate-pulse mb-4">📊</div>
+                <p className="text-white/40 text-sm">Loading dashboard data...</p>
+              </div>
+            )}
+            {dashboardData && (
+              <div className="space-y-6">
+                {/* Summary Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="p-5 rounded-xl" style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                    <div className="text-3xl font-bold text-green-400">{dashboardData.summary?.totalActivePaid || 0}</div>
+                    <div className="text-xs text-white/40 mt-1">Active Paid Students</div>
+                  </div>
+                  <div className="p-5 rounded-xl" style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.2)' }}>
+                    <div className="text-3xl font-bold text-yellow-400">${dashboardData.summary?.totalRevenue?.toLocaleString() || '0'}</div>
+                    <div className="text-xs text-white/40 mt-1">Total Revenue</div>
+                  </div>
+                  <div className="p-5 rounded-xl" style={{ background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.2)' }}>
+                    <div className="text-3xl font-bold text-blue-400">{dashboardData.summary?.totalPending || 0}</div>
+                    <div className="text-xs text-white/40 mt-1">Pending</div>
+                  </div>
+                  <div className="p-5 rounded-xl" style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                    <div className="text-3xl font-bold text-red-400">{dashboardData.summary?.totalRefunded || 0}</div>
+                    <div className="text-xs text-white/40 mt-1">Refunded</div>
+                  </div>
+                </div>
+
+                {/* Payment Status Breakdown */}
+                <div className="p-5 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <h3 className="text-sm font-semibold mb-4" style={{ color: '#c9a84c' }}>💳 Payment Status</h3>
+                  <div className="grid grid-cols-4 gap-3">
+                    {[
+                      { label: 'Paid', value: dashboardData.paymentBreakdown?.paid || 0, color: '#22c55e', emoji: '✅' },
+                      { label: 'Pending', value: dashboardData.paymentBreakdown?.pending || 0, color: '#f59e0b', emoji: '⏳' },
+                      { label: 'Unpaid', value: dashboardData.paymentBreakdown?.unpaid || 0, color: '#ef4444', emoji: '❌' },
+                      { label: 'Refunded', value: dashboardData.paymentBreakdown?.refunded || 0, color: '#6b7280', emoji: '↩️' },
+                    ].map(s => (
+                      <div key={s.label} className="text-center p-3 rounded-lg" style={{ background: `${s.color}10`, border: `1px solid ${s.color}30` }}>
+                        <div className="text-lg mb-1">{s.emoji}</div>
+                        <div className="text-xl font-bold" style={{ color: s.color }}>{s.value}</div>
+                        <div className="text-xs text-white/40">{s.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Students by Class */}
+                <div className="p-5 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <h3 className="text-sm font-semibold mb-4" style={{ color: '#c9a84c' }}>🎵 Students by Class (Paid Only)</h3>
+                  <div className="space-y-3">
+                    {(dashboardData.byClass || []).map((cls: { className: string; count: number; emoji?: string; time?: string }) => (
+                      <div key={cls.className} className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl">{cls.emoji || '🎵'}</span>
+                          <div>
+                            <div className="text-sm font-medium text-white">{cls.className}</div>
+                            {cls.time && <div className="text-xs text-white/30">{cls.time}</div>}
+                          </div>
+                        </div>
+                        <div className="text-xl font-bold" style={{ color: '#c9a84c' }}>{cls.count}</div>
+                      </div>
+                    ))}
+                    {(dashboardData.byClass || []).length === 0 && (
+                      <p className="text-white/30 text-sm text-center py-4">No paid students yet</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Students by Teacher */}
+                {dashboardData.byTeacher?.length > 0 && (
+                  <div className="p-5 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <h3 className="text-sm font-semibold mb-4" style={{ color: '#c9a84c' }}>👩‍🏫 Students by Teacher</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      {dashboardData.byTeacher.map((t: { teacher: string; count: number }) => (
+                        <div key={t.teacher} className="p-4 rounded-lg text-center" style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.2)' }}>
+                          <div className="text-2xl font-bold text-purple-400">{t.count}</div>
+                          <div className="text-xs text-white/40 mt-1">{t.teacher}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Revenue by Month */}
+                {dashboardData.revenueByMonth?.length > 0 && (
+                  <div className="p-5 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <h3 className="text-sm font-semibold mb-4" style={{ color: '#c9a84c' }}>💰 Revenue by Month</h3>
+                    <div className="space-y-2">
+                      {dashboardData.revenueByMonth.map((m: { month: string; amount: number }) => (
+                        <div key={m.month} className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'rgba(251,191,36,0.04)' }}>
+                          <span className="text-sm text-white/60">{m.month}</span>
+                          <span className="text-lg font-bold text-yellow-400">${m.amount.toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recent Enrollments */}
+                {dashboardData.recentEnrollments?.length > 0 && (
+                  <div className="p-5 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <h3 className="text-sm font-semibold mb-4" style={{ color: '#c9a84c' }}>🆕 Recent Enrollments (Last 7 Days)</h3>
+                    <div className="space-y-2">
+                      {dashboardData.recentEnrollments.map((e: { studentName: string; className: string; parentName: string; enrollmentDate: string; amount: number }, i: number) => (
+                        <div key={i} className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'rgba(34,197,94,0.04)' }}>
+                          <div>
+                            <div className="text-sm font-medium text-white">{e.studentName}</div>
+                            <div className="text-xs text-white/30">{e.className} · {e.parentName}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-bold text-green-400">${e.amount}</div>
+                            <div className="text-xs text-white/30">{e.enrollmentDate}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Upcoming Closures */}
+                {dashboardData.upcomingClosures?.length > 0 && (
+                  <div className="p-5 rounded-xl" style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.15)' }}>
+                    <h3 className="text-sm font-semibold mb-4 text-red-400">🚫 Upcoming Closures</h3>
+                    <div className="space-y-2">
+                      {dashboardData.upcomingClosures.map((c: { date: string; note: string }, i: number) => (
+                        <div key={i} className="flex items-center gap-3 p-2">
+                          <span className="text-xs px-2 py-1 rounded bg-red-500/10 text-red-400 font-mono">{c.date}</span>
+                          <span className="text-sm text-white/60">{c.note}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Refresh button */}
+                <div className="text-center">
+                  <button
+                    onClick={() => {
+                      setDashboardLoading(true)
+                      fetch(`/api/dashboard?teacherCode=${ACCESS_CODE}`)
+                        .then(r => r.json())
+                        .then(data => { setDashboardData(data); setDashboardLoading(false) })
+                        .catch(() => setDashboardLoading(false))
+                    }}
+                    className="text-sm px-6 py-2 rounded-lg transition hover:opacity-80"
+                    style={{ background: 'rgba(201,168,76,0.1)', color: '#c9a84c', border: '1px solid rgba(201,168,76,0.2)' }}
+                  >
+                    🔄 Refresh Dashboard
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ═══ CHECK-IN TAB ═══ */}
         {tab === 'checkin' && (

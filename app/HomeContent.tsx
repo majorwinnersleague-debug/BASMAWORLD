@@ -1,9 +1,49 @@
 'use client'
 
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import ExpandableSection from '@/components/ExpandableSection'
 
+/* ── Calendar helpers ── */
+function getMonthDays(year: number, month: number) {
+  const first = new Date(year, month, 1)
+  const last = new Date(year, month + 1, 0)
+  const days: (Date | null)[] = []
+  const startDay = first.getDay()
+  for (let i = 0; i < startDay; i++) days.push(null)
+  for (let d = 1; d <= last.getDate(); d++) days.push(new Date(year, month, d))
+  return days
+}
+
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
+
+const CLASS_TIMES = [
+  { emoji: '👶', name: 'Tiny Tots', time: '9:00 AM', days: [1,2,3,4] },
+  { emoji: '🎵', name: 'Kids Music', time: '10:00 AM', days: [1,2,3,4] },
+  { emoji: '🎹', name: 'Piano', time: '12:00 PM', days: [1,2,3,4] },
+  { emoji: '🎙️', name: 'Recording', time: '12:00 PM', days: [1,2,3,4] },
+]
+
 export default function HomeContent() {
+  const [calMonth, setCalMonth] = useState(new Date().getMonth())
+  const [calYear, setCalYear] = useState(new Date().getFullYear())
+  const [closedDates, setClosedDates] = useState<string[]>([])
+  const [calEvents, setCalEvents] = useState<{date: string; note: string; type: string}[]>([])
+
+  // Load calendar data from API
+  useEffect(() => {
+    fetch('/api/calendar')
+      .then(r => r.json())
+      .then(data => {
+        setClosedDates(data.closedDates || [])
+        setCalEvents(data.events || [])
+      })
+      .catch(() => {})
+  }, [])
+
+  const closedSet = useMemo(() => new Set(closedDates), [closedDates])
+  const monthDays = useMemo(() => getMonthDays(calYear, calMonth), [calYear, calMonth])
+
   return (
     <>
       <main className="min-h-screen text-white" style={{ background: 'linear-gradient(160deg, #0f0225 0%, #1a053a 35%, #0d1a2e 100%)' }}>
@@ -250,6 +290,103 @@ export default function HomeContent() {
               </p>
             </div>
           </ExpandableSection>
+        </section>
+
+        {/* ── Business Calendar ──────────────────────────────── */}
+        <section className="max-w-4xl mx-auto px-4 pb-12 relative z-10">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-3">
+              📅 Are We Open Today?
+            </h2>
+            <p className="text-white/50 max-w-lg mx-auto text-sm">
+              Check our live calendar — classes run Monday through Thursday. Tap any day to see what&apos;s happening!
+            </p>
+          </div>
+
+          <div className="rounded-3xl p-6 md:p-8" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            {/* Month nav */}
+            <div className="flex justify-between items-center mb-6">
+              <button onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(calYear - 1) } else setCalMonth(calMonth - 1) }}
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-lg text-white/50 hover:bg-white/10 transition">‹</button>
+              <h3 className="text-xl font-bold" style={{ color: '#c9a84c', fontFamily: "'Playfair Display', serif" }}>
+                {MONTH_NAMES[calMonth]} {calYear}
+              </h3>
+              <button onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(calYear + 1) } else setCalMonth(calMonth + 1) }}
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-lg text-white/50 hover:bg-white/10 transition">›</button>
+            </div>
+
+            {/* Day headers */}
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
+                <div key={d} className="text-center text-xs font-semibold text-white/30 py-1">{d}</div>
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            <div className="grid grid-cols-7 gap-1">
+              {monthDays.map((day, i) => {
+                if (!day) return <div key={`e-${i}`} className="min-h-[60px]" />
+                const today = new Date()
+                const isToday = day.toDateString() === today.toDateString()
+                const dateStr = `${day.getFullYear()}-${String(day.getMonth()+1).padStart(2,'0')}-${String(day.getDate()).padStart(2,'0')}`
+                const isClosed = closedSet.has(dateStr)
+                const dow = day.getDay()
+                const hasClasses = dow >= 1 && dow <= 4 && !isClosed
+                const closureEvent = calEvents.find(e => e.date === dateStr)
+
+                return (
+                  <div key={i} className={`min-h-[60px] rounded-lg p-1.5 text-center transition ${isToday ? 'ring-2 ring-yellow-400/50' : ''}`}
+                    style={{ background: isClosed ? 'rgba(239,68,68,0.08)' : hasClasses ? 'rgba(34,197,94,0.04)' : 'transparent' }}
+                    title={isClosed ? (closureEvent?.note || 'Closed') : hasClasses ? 'Classes today!' : 'No classes'}
+                  >
+                    <span className={`text-sm font-medium ${isToday ? 'text-yellow-400 font-bold' : isClosed ? 'text-red-400' : hasClasses ? 'text-white' : 'text-white/20'}`}>
+                      {day.getDate()}
+                    </span>
+                    {isClosed && <div className="text-[8px] text-red-400 mt-0.5">Closed</div>}
+                    {hasClasses && !isClosed && (
+                      <div className="flex justify-center gap-0.5 mt-0.5">
+                        {CLASS_TIMES.filter(c => c.days.includes(dow)).slice(0, 3).map((c, ci) => (
+                          <span key={ci} className="text-[7px]">{c.emoji}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Legend */}
+            <div className="flex flex-wrap gap-4 justify-center mt-6 text-xs text-white/40">
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-500/60" /> Classes</span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-500/60" /> Closed</span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-yellow-400/60" /> Today</span>
+            </div>
+
+            {/* Upcoming closures banner */}
+            {calEvents.filter(e => {
+              const d = new Date(e.date + 'T00:00:00')
+              return d >= new Date() && (e.type === 'closure' || e.type === 'holiday' || e.type === 'break')
+            }).slice(0, 3).length > 0 && (
+              <div className="mt-6 p-4 rounded-xl" style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
+                <h4 className="text-sm font-semibold text-red-400 mb-2">🚫 Upcoming Closures</h4>
+                {calEvents.filter(e => {
+                  const d = new Date(e.date + 'T00:00:00')
+                  return d >= new Date() && (e.type === 'closure' || e.type === 'holiday' || e.type === 'break')
+                }).slice(0, 3).map((e, i) => (
+                  <div key={i} className="text-xs text-white/40 py-0.5">
+                    <span className="text-red-400/70 font-mono">{e.date}</span> — {e.note}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* CTA under calendar */}
+          <div className="text-center mt-6">
+            <Link href="/schedule" className="text-sm font-semibold transition hover:opacity-80" style={{ color: '#c9a84c' }}>
+              View Full Schedule & Pricing →
+            </Link>
+          </div>
         </section>
 
         {/* ── Billy + Basma Photo Teaser ───────────────────── */}
