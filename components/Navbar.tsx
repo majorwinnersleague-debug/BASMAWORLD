@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react'
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/enroll', label: 'BASMA Academy' },
+  { href: '/enroll', label: 'Academy', highlight: true },
   { href: '/private-lessons', label: 'Private Lessons' },
+  { href: '/scholarship', label: 'Scholarship' },
+  { href: '/schedule', label: 'Schedule' },
   { href: '/portal', label: 'Parent Portal' },
-  { href: '/teacher', label: 'Teacher Portal' },
   { href: '/contact', label: 'Contact' },
 ]
 
@@ -24,33 +25,43 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#050505]/90 backdrop-blur-md border-b border-white/[0.04]' : ''
+        scrolled ? 'bg-[#0D0118]/95 backdrop-blur-md border-b border-white/[0.04]' : ''
       }`}
       style={{ top: 'var(--ann-bar-height, 0px)' }}
     >
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
         <Link
           href="/"
-          className="text-lg font-semibold tracking-tight gradient-gold"
-          style={{ fontFamily: "'Playfair Display', serif" }}
+          className="flex items-center gap-2"
         >
-          BasmaWorld
+          <span className="text-xl font-bold tracking-tight" style={{ color: '#c9a84c', fontFamily: "'Playfair Display', serif" }}>
+            B.A.S.M.A.
+          </span>
+          <span className="hidden sm:inline text-xs text-white/30 font-medium">Music Academy</span>
         </Link>
 
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-1">
           {navLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-white/40 hover:text-white transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                link.highlight
+                  ? 'text-white/70 hover:text-white hover:bg-white/5 font-medium'
+                  : 'text-white/40 hover:text-white/70 hover:bg-white/5'
+              }`}
             >
               {link.label}
             </Link>
           ))}
-          <a href="/enroll" className="text-sm text-[#c9a84c] hover:text-[#e4cc7a] transition-colors font-semibold">
+          <Link
+            href="/enroll"
+            className="ml-2 text-sm font-bold px-5 py-2 rounded-full transition hover:scale-105"
+            style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
+          >
             Enroll Now
-          </a>
+          </Link>
         </div>
 
         {/* Mobile */}
@@ -78,24 +89,62 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-[#050505]/95 backdrop-blur-md border-t border-white/[0.04] px-6 py-4 animate-fadeIn">
-          {navLinks.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="block text-white/40 hover:text-white py-2.5 text-sm transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <a
-            href="/enroll"
-            onClick={() => setOpen(false)}
-            className="block text-[#c9a84c] py-2.5 text-sm mt-2 border-t border-white/[0.04] pt-4 font-semibold"
-          >
-            Enroll Now
-          </a>
+        <div className="md:hidden bg-[#0D0118]/98 backdrop-blur-md border-t border-white/[0.04] px-6 py-3">
+          {/* Academy section */}
+          <div className="mb-2">
+            <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold mb-1 px-2">Academy</p>
+            {[
+              { href: '/enroll', label: '🎵 Enroll in Classes' },
+              { href: '/scholarship', label: '🎓 Scholarship ($250/mo)' },
+              { href: '/schedule', label: '📅 Schedule & Calendar' },
+            ].map(link => (
+              <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
+                className="block text-white/60 hover:text-white py-2 px-2 text-sm transition-colors rounded-lg hover:bg-white/5">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="h-px bg-white/5 my-2" />
+
+          {/* Lessons & Services */}
+          <div className="mb-2">
+            <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold mb-1 px-2">Lessons & Services</p>
+            {[
+              { href: '/private-lessons', label: '🎹 Private Lessons' },
+              { href: '/social-media', label: '📱 Marketing Services' },
+            ].map(link => (
+              <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
+                className="block text-white/60 hover:text-white py-2 px-2 text-sm transition-colors rounded-lg hover:bg-white/5">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="h-px bg-white/5 my-2" />
+
+          {/* Portals & Contact */}
+          <div className="mb-2">
+            <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold mb-1 px-2">Account</p>
+            {[
+              { href: '/portal', label: '👨‍👩‍👧 Parent Portal' },
+              { href: '/teacher', label: '👩‍🏫 Teacher Portal' },
+              { href: '/contact', label: '💬 Contact Us' },
+            ].map(link => (
+              <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
+                className="block text-white/60 hover:text-white py-2 px-2 text-sm transition-colors rounded-lg hover:bg-white/5">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="h-px bg-white/5 my-3" />
+
+          <Link href="/enroll" onClick={() => setOpen(false)}
+            className="block text-center py-3 rounded-full font-bold text-sm"
+            style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}>
+            Enroll Now →
+          </Link>
         </div>
       )}
     </nav>
