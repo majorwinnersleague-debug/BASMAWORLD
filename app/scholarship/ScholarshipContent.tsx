@@ -1,10 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
-const SCHOLARSHIP_LINK = 'https://buy.stripe.com/bJe9AScy1c4De809EreEo0A'
+// Scholarship uses API checkout instead of hardcoded payment links
+// to ensure live mode keys are always used
 
 const CLASSES = [
   { emoji: '👶', name: 'Tiny Tots', age: '5 & Under', time: '9:00 – 9:45 AM' },
@@ -15,6 +17,41 @@ const CLASSES = [
 ]
 
 export default function ScholarshipContent() {
+  const [loading, setLoading] = useState(false)
+
+  async function handleScholarshipCheckout(plan: '1hr' | '2hr') {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          students: [{ name: 'Scholarship Family', age: 'N/A', classId: 'scholarship', className: 'Scholarship — All Classes', classTime: 'Mon–Thu', dailyRate: plan === '1hr' ? 250 : 500 }],
+          month: 'july',
+          passType: 'monthly',
+          selectedDays: ['Full Month'],
+          parentName: '',
+          email: '',
+          phone: '',
+          allergies: 'None',
+          emergencyName: '',
+          emergencyPhone: '',
+          total: plan === '1hr' ? 250 : 500,
+        }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        alert('Something went wrong. Please try again or call (702) 788-7369.')
+        setLoading(false)
+      }
+    } catch {
+      alert('Something went wrong. Please try again.')
+      setLoading(false)
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -61,13 +98,14 @@ export default function ScholarshipContent() {
                 <span className="text-white/30 text-sm">/month</span>
               </div>
               <p className="text-white/40 text-sm mb-6">1 hour of classes per day · Entire family · July &amp; August</p>
-              <a
-                href={SCHOLARSHIP_LINK}
-                className="inline-block w-full py-4 rounded-full font-bold text-base transition hover:scale-[1.02]"
+              <button
+                onClick={() => handleScholarshipCheckout('1hr')}
+                disabled={loading}
+                className="inline-block w-full py-4 rounded-full font-bold text-base transition hover:scale-[1.02] disabled:opacity-50"
                 style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)', color: '#fff' }}
               >
-                Enroll Now — $250/mo →
-              </a>
+                {loading ? 'Processing...' : 'Enroll Now — $250/mo →'}
+              </button>
               <p className="text-white/20 text-xs mt-3">Secure payment via Stripe · Cancel anytime</p>
             </div>
 
@@ -85,13 +123,14 @@ export default function ScholarshipContent() {
                 <span className="text-white/30 text-sm">/month</span>
               </div>
               <p className="text-white/40 text-sm mb-6">2 hours of classes per day · Entire family · July &amp; August</p>
-              <a
-                href={SCHOLARSHIP_LINK}
-                className="inline-block w-full py-4 rounded-full font-bold text-base transition hover:scale-[1.02]"
+              <button
+                onClick={() => handleScholarshipCheckout('2hr')}
+                disabled={loading}
+                className="inline-block w-full py-4 rounded-full font-bold text-base transition hover:scale-[1.02] disabled:opacity-50"
                 style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
               >
-                Enroll Now — $500/mo →
-              </a>
+                {loading ? 'Processing...' : 'Enroll Now — $500/mo →'}
+              </button>
               <p className="text-white/20 text-xs mt-3">Buy 2 scholarship plans · Double the class time</p>
             </div>
           </div>
@@ -171,13 +210,14 @@ export default function ScholarshipContent() {
 
         {/* ── Final CTA ── */}
         <section className="max-w-3xl mx-auto px-6 pb-20 text-center">
-          <a
-            href={SCHOLARSHIP_LINK}
-            className="inline-block px-12 py-5 rounded-full font-bold text-lg transition hover:scale-105"
+          <button
+            onClick={() => handleScholarshipCheckout('1hr')}
+            disabled={loading}
+            className="inline-block px-12 py-5 rounded-full font-bold text-lg transition hover:scale-105 disabled:opacity-50"
             style={{ background: 'linear-gradient(135deg, #a855f7, #ec4899)', color: '#fff', boxShadow: '0 0 30px rgba(168,85,247,0.3)' }}
           >
-            Enroll in Scholarship — $250/mo →
-          </a>
+            {loading ? 'Processing...' : 'Enroll in Scholarship — $250/mo →'}
+          </button>
           <p className="text-white/25 text-sm mt-4">
             📞 Questions? Call <a href="tel:+17027887369" className="text-purple-300 hover:text-white transition">(702) 788-7369</a>
           </p>
