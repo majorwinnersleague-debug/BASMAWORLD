@@ -156,7 +156,7 @@ export default function PrivateLessonsContent() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen pt-16">
+        <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
           <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
             <div className="text-5xl mb-6">✅</div>
             <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -186,7 +186,7 @@ export default function PrivateLessonsContent() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen pt-16">
+        <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
           <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
             <div className="text-5xl mb-6">🎉</div>
             <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -215,7 +215,7 @@ export default function PrivateLessonsContent() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen pt-16">
+      <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
         <section className="max-w-5xl mx-auto px-6 pt-16 pb-20">
 
           {/* ── Header ── */}

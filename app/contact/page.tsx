@@ -35,7 +35,7 @@ export default function ContactPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen pt-16">
+      <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
         <section className="max-w-5xl mx-auto px-6 pt-16 pb-20">
 
           {/* Header */}
@@ -73,8 +73,8 @@ export default function ContactPage() {
                 className="flex items-center gap-4 card-minimal border border-white/[0.06] hover:border-white/15 rounded-xl p-5 transition-all duration-200 group"
               >
                 <div className="flex-1">
-                  <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">Enroll in Music Camp</p>
-                  <p className="text-white/25 text-xs mt-0.5">Summer classes from $25/day — all ages</p>
+                  <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">Enroll in BASMA Academy</p>
+                  <p className="text-white/25 text-xs mt-0.5">Music classes Mon–Thu · All ages · Scholarship available</p>
                 </div>
                 <span className="text-white/15 group-hover:text-white/40 transition-colors text-sm">→</span>
               </Link>

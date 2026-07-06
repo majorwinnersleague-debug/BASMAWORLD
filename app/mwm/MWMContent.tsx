@@ -9,7 +9,7 @@ export default function MWMContent() {
   return (
     <>
       
-      <main className="min-h-screen bg-[#0a0a0a] text-white pt-16">
+      <main className="min-h-screen bg-[#0a0a0a] text-white" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
 
         {/* ── Hero with background ─────────────────────────────── */}
         <section className="relative max-w-4xl mx-auto px-4 pt-12 pb-16 text-center">
