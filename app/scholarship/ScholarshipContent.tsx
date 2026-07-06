@@ -28,8 +28,8 @@ export default function ScholarshipContent() {
         body: JSON.stringify({
           students: [{ name: 'Scholarship Family', age: 'N/A', classId: 'scholarship', className: 'Scholarship — All Classes', classTime: 'Mon–Thu', dailyRate: plan === '1hr' ? 250 : 500 }],
           month: 'july',
-          passType: 'monthly',
-          selectedDays: ['Full Month'],
+          passType: 'daily',
+          selectedDays: ['Scholarship'],
           parentName: '',
           email: '',
           phone: '',
