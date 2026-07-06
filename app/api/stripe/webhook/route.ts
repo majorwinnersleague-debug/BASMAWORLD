@@ -44,7 +44,7 @@ function getProductInfo(productName: string, productId: string): ProductEmailInf
         'Your whole family can attend classes — all children included',
         '1 hour of classes per day (Mon–Thu) for $250/mo, or 2 hours for $500/mo',
         'Choose from: Tiny Tots Music & Movement, Kids Music Academy, Band Academy, and Piano Fundamentals',
-        'This is a monthly subscription — cancel anytime',
+        'This is a monthly subscription — no refunds, but classes may be rescheduled or transferred as a gift',
         'Program runs through August 2026',
       ],
       schedule: 'Mon–Thu · 9:00 AM – 2:00 PM (class times vary)',
