@@ -333,65 +333,217 @@ export default function EnrollContent() {
         )}
 
         {/* ═══ STEP 2: PICK YOUR DAYS ═══ */}
-        {!success && step === 2 && cls && (
+        {!success && step === 2 && cls && (() => {
+          const selectedWeek = pickedDays.length > 0
+            ? ALL_DAYS.find(d => pickedDays.includes(d.day))?.week || 0
+            : 0
+
+          // Group weeks by month for the dropdown
+          const julyWeeks = [2, 3, 4, 5]
+          const augWeeks = [6, 7, 8, 9]
+
+          return (
           <div>
             <h1 className="text-2xl font-bold text-center mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Pick Your Days
+              Choose Your Schedule
             </h1>
             <p className="text-center text-white/40 text-sm mb-6">
               {cls.emoji} {cls.name} ({cls.age}) · {cls.time}
             </p>
 
-            {/* Month sections */}
-            {[
-              { label: 'July — $' + cls.julyRate + '/day', weeks: [2, 3, 4, 5], monthKey: 'july' },
-              { label: 'August — $' + cls.augustRate + '/day', weeks: [6, 7, 8, 9], monthKey: 'august' },
-            ].map(section => (
-              <div key={section.monthKey} className="mb-6">
-                <h2 className="text-sm font-bold mb-3" style={{ color: gold }}>{section.label}</h2>
-                {section.weeks.map(w => {
-                  const weekDays = ALL_DAYS.filter(d => d.week === w)
-                  const allSelected = weekDays.every(d => pickedDays.includes(d.day))
-                  return (
-                    <div key={w} className="mb-3">
+            {/* ── Quick options ── */}
+            <div className="grid grid-cols-3 gap-2 mb-6">
+              {[
+                { label: 'Single Day', sub: 'Pick one day', icon: '📅' },
+                { label: 'Full Week', sub: '15% off', icon: '📆' },
+                { label: 'Full Month', sub: '25% off', icon: '🗓️' },
+              ].map((opt, i) => {
+                const isActive = i === 0 ? (pickedDays.length === 1)
+                  : i === 1 ? (pickedDays.length >= 3 && pickedDays.length <= 4 && new Set(pickedDays.map(d => ALL_DAYS.find(x => x.day === d)?.week)).size === 1)
+                  : (pickedDays.length >= 12)
+                return (
+                  <div
+                    key={opt.label}
+                    className="text-center p-3 rounded-xl cursor-default"
+                    style={{
+                      background: isActive ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.03)',
+                      border: isActive ? '1px solid rgba(201,168,76,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                    }}
+                  >
+                    <div className="text-lg mb-1">{opt.icon}</div>
+                    <div className="text-xs font-semibold text-white">{opt.label}</div>
+                    <div className="text-[10px] text-green-400 font-semibold">{opt.sub}</div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* ── Week selector dropdown ── */}
+            <div className="mb-4">
+              <label className="text-xs font-bold mb-2 block" style={{ color: gold }}>Select a Week</label>
+              <select
+                value={selectedWeek || ''}
+                onChange={e => {
+                  const week = parseInt(e.target.value)
+                  if (!week) { setPickedDays([]); return }
+                  const weekDays = ALL_DAYS.filter(d => d.week === week).map(d => d.day)
+                  setPickedDays(weekDays)
+                }}
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  fontSize: 15,
+                  background: '#1a1a2e',
+                  color: 'white',
+                  border: '1px solid rgba(201,168,76,0.3)',
+                  borderRadius: 12,
+                  outline: 'none',
+                  appearance: 'auto' as React.CSSProperties['appearance'],
+                }}
+              >
+                <option value="">— Choose a week —</option>
+                <optgroup label={`☀️ July — $${cls.julyRate}/day`}>
+                  {julyWeeks.map(w => (
+                    <option key={w} value={w}>Week of {WEEK_LABELS[w]} (Mon–Thu)</option>
+                  ))}
+                </optgroup>
+                <optgroup label={`🎓 August — $${cls.augustRate}/day`}>
+                  {augWeeks.map(w => (
+                    <option key={w} value={w}>Week of {WEEK_LABELS[w]} (Mon–Thu)</option>
+                  ))}
+                </optgroup>
+              </select>
+            </div>
+
+            {/* ── Days within selected week ── */}
+            {selectedWeek > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold" style={{ color: gold }}>
+                    Days — {WEEK_LABELS[selectedWeek]}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => selectWeek(selectedWeek)}
+                    className="text-xs font-semibold transition"
+                    style={{ color: ALL_DAYS.filter(d => d.week === selectedWeek).every(d => pickedDays.includes(d.day)) ? '#22c55e' : gold }}
+                  >
+                    {ALL_DAYS.filter(d => d.week === selectedWeek).every(d => pickedDays.includes(d.day))
+                      ? '✓ All selected (15% off!)'
+                      : 'Select All'}
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {ALL_DAYS.filter(d => d.week === selectedWeek).map(d => {
+                    const sel = pickedDays.includes(d.day)
+                    const dayName = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                    const dateObj = new Date(d.day + ' 2026')
+                    const dayOfWeek = dayName[dateObj.getDay()] || d.day.split(' ')[0]
+                    return (
                       <button
+                        key={d.day}
                         type="button"
-                        onClick={() => selectWeek(w)}
-                        className="text-xs font-semibold mb-1.5 flex items-center gap-2 transition"
-                        style={{ color: allSelected ? '#22c55e' : 'rgba(255,255,255,0.3)' }}
+                        onClick={() => toggleDay(d.day)}
+                        className="flex items-center gap-3 p-3 rounded-xl transition"
+                        style={{
+                          background: sel ? 'rgba(201,168,76,0.12)' : 'rgba(255,255,255,0.03)',
+                          border: sel ? '2px solid rgba(201,168,76,0.5)' : '1px solid rgba(255,255,255,0.08)',
+                        }}
                       >
-                        {allSelected ? '✓' : '○'} {WEEK_LABELS[w]}
-                        {allSelected && <span className="text-green-400 text-[10px]">all days — 15% off</span>}
+                        <div
+                          className="w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold shrink-0"
+                          style={{
+                            background: sel ? gold : 'rgba(255,255,255,0.08)',
+                            color: sel ? '#0D0118' : 'rgba(255,255,255,0.3)',
+                          }}
+                        >
+                          {sel ? '✓' : ''}
+                        </div>
+                        <div className="text-left">
+                          <div className="text-sm font-semibold" style={{ color: sel ? 'white' : 'rgba(255,255,255,0.6)' }}>
+                            {dayOfWeek}
+                          </div>
+                          <div className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                            {d.day}
+                          </div>
+                        </div>
                       </button>
-                      <div className="grid grid-cols-4 gap-1.5">
-                        {weekDays.map(d => {
-                          const sel = pickedDays.includes(d.day)
-                          return (
-                            <button
-                              key={d.day}
-                              type="button"
-                              onClick={() => toggleDay(d.day)}
-                              className="py-2.5 rounded-lg text-xs font-medium transition"
-                              style={{
-                                background: sel ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.03)',
-                                border: sel ? '1px solid rgba(201,168,76,0.4)' : '1px solid rgba(255,255,255,0.08)',
-                                color: sel ? gold : 'rgba(255,255,255,0.5)',
-                              }}
-                            >
-                              {sel ? '✓ ' : ''}{d.day.split(' ').slice(0, 2).join(' ')}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* ── Add more weeks ── */}
+            {selectedWeek > 0 && (
+              <div className="mb-4">
+                <label className="text-xs font-bold mb-2 block" style={{ color: gold }}>Add Another Week (optional)</label>
+                <div className="flex flex-wrap gap-2">
+                  {[...julyWeeks, ...augWeeks]
+                    .filter(w => w !== selectedWeek)
+                    .map(w => {
+                      const weekDays = ALL_DAYS.filter(d => d.week === w).map(d => d.day)
+                      const isAdded = weekDays.some(d => pickedDays.includes(d))
+                      return (
+                        <button
+                          key={w}
+                          type="button"
+                          onClick={() => {
+                            if (isAdded) {
+                              setPickedDays(prev => prev.filter(d => !weekDays.includes(d)))
+                            } else {
+                              setPickedDays(prev => Array.from(new Set([...prev, ...weekDays])))
+                            }
+                          }}
+                          className="px-3 py-2 rounded-lg text-xs font-medium transition"
+                          style={{
+                            background: isAdded ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.03)',
+                            border: isAdded ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                            color: isAdded ? '#22c55e' : 'rgba(255,255,255,0.4)',
+                          }}
+                        >
+                          {isAdded ? '✓ ' : '+ '}{WEEK_LABELS[w]}
+                        </button>
+                      )
+                    })}
+                </div>
+              </div>
+            )}
+
+            {/* ── Full month option ── */}
+            {selectedWeek > 0 && (
+              <div className="grid grid-cols-2 gap-2 mb-6">
+                {[
+                  { label: 'All of July', icon: '☀️', month: 'july' as const, weeks: julyWeeks },
+                  { label: 'All of August', icon: '🎓', month: 'august' as const, weeks: augWeeks },
+                ].map(opt => {
+                  const allDaysInMonth = ALL_DAYS.filter(d => d.month === opt.month).map(d => d.day)
+                  const allSelected = allDaysInMonth.every(d => pickedDays.includes(d))
+                  return (
+                    <button
+                      key={opt.month}
+                      type="button"
+                      onClick={() => {
+                        if (allSelected) {
+                          setPickedDays(prev => prev.filter(d => !allDaysInMonth.includes(d)))
+                        } else {
+                          setPickedDays(prev => Array.from(new Set([...prev, ...allDaysInMonth])))
+                        }
+                      }}
+                      className="p-3 rounded-xl text-center transition"
+                      style={{
+                        background: allSelected ? 'rgba(168,85,247,0.12)' : 'rgba(255,255,255,0.03)',
+                        border: allSelected ? '2px solid rgba(168,85,247,0.5)' : '1px solid rgba(255,255,255,0.08)',
+                      }}
+                    >
+                      <div className="text-lg mb-1">{opt.icon}</div>
+                      <div className="text-sm font-bold" style={{ color: allSelected ? '#a855f7' : 'white' }}>{opt.label}</div>
+                      <div className="text-[10px] text-green-400 font-bold">25% off!</div>
+                    </button>
                   )
                 })}
               </div>
-            ))}
-
-            <p className="text-white/20 text-xs text-center mb-6">
-              Tap a week header to select the full week (15% off) · Select all month for 25% off
-            </p>
+            )}
 
             {/* Live price preview */}
             {pickedDays.length > 0 && (
@@ -421,7 +573,8 @@ export default function EnrollContent() {
               </button>
             </div>
           </div>
-        )}
+          )
+        })()}
 
         {/* ═══ STEP 3: YOUR INFO ═══ */}
         {!success && step === 3 && (
