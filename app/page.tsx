@@ -50,11 +50,11 @@ export default function Home() {
             className="text-4xl md:text-6xl font-bold mb-4 leading-tight tracking-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            <span className="gradient-gold">Summer Camp</span>
+            <span className="gradient-gold">BASMA Academy</span>
             <span className="text-white"> 2026</span>
           </h1>
           <p className="text-lg text-white/40 mb-2 max-w-xl mx-auto">
-            Music classes for all ages · Mon–Thu · Starting June 29
+            Music classes for all ages · Mon–Thu · 9:00 AM – 2:15 PM
           </p>
           <p className="text-sm text-white/25 mb-6">
             📍 Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147
@@ -94,19 +94,19 @@ export default function Home() {
           <p className="text-xs text-white/30 uppercase tracking-[0.3em] text-center mb-6">What We Offer</p>
           <div className="grid sm:grid-cols-3 gap-4">
 
-            {/* Summer Camp */}
+            {/* BASMA Academy */}
             <Link
               href="/enroll"
               className="group rounded-xl overflow-hidden transition hover:scale-[1.02]"
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
-                <Image src="/images/camp/summer-camp-bubbles.jpg" alt="Kids having fun at BASMA summer camp with bubbles and instruments" fill className="object-cover object-[center_30%]" style={{ objectPosition: 'center 70%' }} sizes="300px" />
+                <Image src="/images/camp/summer-camp-bubbles.jpg" alt="Kids having fun at BASMA Academy with instruments" fill className="object-cover object-[center_30%]" style={{ objectPosition: 'center 70%' }} sizes="300px" />
               </div>
               <div className="p-5 text-center">
-                <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">Summer Camp</h3>
-                <p className="text-white/25 text-xs leading-relaxed">Guitar, drums, piano, voice & more! Mon–Thu starting June 29. All ages welcome.</p>
-                <p className="text-[#c9a84c] text-xs font-semibold mt-2">From $25/day →</p>
+                <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-[#c9a84c] transition-colors">BASMA Academy</h3>
+                <p className="text-white/25 text-xs leading-relaxed">Tiny Tots, Kids Music, Band Academy, Piano & more! Mon–Thu. All ages welcome.</p>
+                <p className="text-[#c9a84c] text-xs font-semibold mt-2">Enroll Now →</p>
               </div>
             </Link>
 
@@ -144,30 +144,30 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Summer Camp Classes — Updated Descriptions ── */}
+        {/* ── BASMA Academy Programs ── */}
         <section className="max-w-3xl mx-auto px-6 pb-6">
-          <p className="text-xs text-white/30 uppercase tracking-[0.3em] text-center mb-4">Summer Camp Classes</p>
+          <p className="text-xs text-white/30 uppercase tracking-[0.3em] text-center mb-4">Weekly Programs · Mon–Thu</p>
           <div className="grid sm:grid-cols-2 gap-3">
             {[
               {
-                emoji: '👶', title: 'Tiny Tots', sub: '5 & Under · 9:00 AM', price: '$25/day',
-                desc: 'A magical first step into music! Shake, clap, sing, and explore real instruments through fun and games.',
+                emoji: '👶', title: 'Tiny Tots Music & Movement', sub: 'Ages 5 & Under · 9:00–9:45 AM', duration: '45 min',
+                desc: 'An engaging introduction to music through singing, movement, rhythm, storytelling, instruments, and creative play.',
                 img: '/images/camp/little-girl-piano.jpg',
               },
               {
-                emoji: '🎵', title: 'Kids Music', sub: '5–17 · 10:00 AM', price: 'From $25/day',
-                desc: 'Play guitar, drums, piano & more with friends! Jam together, write songs, and have the best summer ever.',
+                emoji: '🎵', title: 'Kids Music Academy', sub: 'By Skill Level · 10:00–11:15 AM', duration: '1h 15min',
+                desc: 'Students build musical skills through singing, rhythm, movement, music theory, and instrument exploration while learning songs based on the monthly theme.',
                 img: '/images/camp/kids-guitar-class.jpg',
               },
               {
-                emoji: '🎹', title: 'Piano', sub: 'All Ages · 12:00 PM', price: 'From $25/day',
-                desc: 'From first chords to favorite songs — learn technique, theory, and how to perform with confidence!',
-                img: '/images/camp/kids-piano-duo.jpg',
+                emoji: '🎸', title: 'Band Academy', sub: 'By Skill Level · 1:00–2:15 PM', duration: '1h 15min',
+                desc: 'Students develop ensemble skills on their instrument of choice — piano, guitar, drums, violin, voice, ukulele, bass, and more.',
+                img: '/images/camp/kids-guitar-drums.jpg',
               },
               {
-                emoji: '🎙️', title: 'Recording', sub: 'All Ages · 12:00 PM', price: 'From $25/day',
-                desc: 'Become a real recording artist! Use a mic, record tracks, edit music, and build your artist image.',
-                img: '/images/studio-session.jpg',
+                emoji: '🎹', title: 'Piano Fundamentals', sub: 'By Skill Level · 45 min', duration: '45 min',
+                desc: 'Focused piano instruction covering note reading, technique, rhythm, ear training, and performance skills.',
+                img: '/images/camp/kids-piano-duo.jpg',
               },
             ].map(c => (
               <Link key={c.title + c.sub} href="/enroll" className="group flex gap-4 p-4 rounded-xl transition hover:scale-[1.02] cursor-pointer" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -177,7 +177,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <div className="font-semibold text-white text-sm group-hover:text-[#c9a84c] transition-colors">{c.emoji} {c.title}</div>
-                    <span className="text-xs font-bold text-[#c9a84c] flex-shrink-0">{c.price}</span>
+                    <span className="text-xs font-bold text-[#c9a84c] flex-shrink-0">{c.duration}</span>
                   </div>
                   <div className="text-white/30 text-xs mb-1">{c.sub}</div>
                   <p className="text-white/20 text-[11px] leading-relaxed">{c.desc}</p>
@@ -186,7 +186,7 @@ export default function Home() {
             ))}
           </div>
           <p className="text-center text-white/25 text-xs mt-4">
-            🎓 Scholarship available · 15% off weekly · 25% off monthly · $5 off each additional child
+            🎓 Scholarship available · Multiple session times · Monthly themes for all classes
           </p>
         </section>
 
@@ -212,11 +212,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Closure Notice ── */}
+        {/* ── Schedule Info ── */}
         <section className="max-w-3xl mx-auto px-6 pb-6">
-          <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
-            <p className="text-red-400/80 text-sm">
-              🚫 <strong>School Closed:</strong> Thu June 25 &amp; July 2–6 (No classes)
+          <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.15)' }}>
+            <p className="text-purple-300/80 text-sm">
+              📅 <strong>Classes run Monday–Thursday</strong> · 9:00 AM – 2:15 PM · Check the calendar for closures &amp; holidays
             </p>
           </div>
         </section>

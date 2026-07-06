@@ -204,11 +204,11 @@ function getRecommendations(age: number, interests: string, experience: string) 
         match: "Age + interest match",
       });
     }
-    if (allInterests || interestLower.includes("record") || interestLower.includes("produc")) {
+    if (allInterests || interestLower.includes("band") || interestLower.includes("guitar") || interestLower.includes("drums") || interestLower.includes("violin")) {
       recs.push({
-        name: "🎧 Teens Recording Studio",
-        description: "Learn music production, recording, and mixing in a real studio!",
-        link: "/enroll?program=teens-recording&month=july",
+        name: "🎸 Band Academy",
+        description: "Develop ensemble skills on your instrument of choice — piano, guitar, drums, violin, voice, ukulele, bass & more!",
+        link: "/enroll?program=band-academy",
         match: "Age + interest match",
       });
     }

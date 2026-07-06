@@ -3,11 +3,11 @@
 import Link from 'next/link'
 
 const CLASSES = [
-  { emoji: '👶', name: 'Tiny Tots', age: '5 & Under', time: '9:00 – 9:45 AM', july: 25, august: 25, desc: 'Explore instruments, sounds, and learn about music in general.' },
-  { emoji: '🎵', name: 'Kids Music', age: '5–10', time: '10:00 – 11:30 AM', july: 25, august: 30, desc: 'Learn instruments, songs as a group, techniques on being a musician, and have fun!' },
-  { emoji: '🎤', name: 'Kids Music', age: '10–17', time: '10:00 – 11:30 AM', july: 25, august: 30, desc: 'Learn instruments, songs as a group, techniques on being a musician, and have fun!' },
-  { emoji: '🎹', name: 'Piano', age: 'All Ages', time: '12:00 – 1:30 PM', july: 25, august: 35, desc: 'Train to play your favorite songs on piano, music theory, and prepare for music in school.' },
-  { emoji: '🎙️', name: 'Recording', age: 'All Ages', time: '12:00 – 1:30 PM', july: 25, august: 40, desc: 'Learn to record yourself at home and build your artist image.' },
+  { emoji: '👶', name: 'Tiny Tots Music & Movement', age: 'Ages 5 & Under', time: '9:00 – 9:45 AM', duration: '45 min', desc: 'An engaging introduction to music through singing, movement, rhythm, storytelling, instruments, and creative play.' },
+  { emoji: '🎵', name: 'Kids Music Academy', age: 'By Skill Level', time: '10:00 – 11:15 AM', duration: '1h 15min', desc: 'Students build musical skills through singing, rhythm, movement, music theory, and instrument exploration while learning songs based on the monthly theme.' },
+  { emoji: '🎵', name: 'Kids Music Academy', age: 'By Skill Level', time: '11:30 AM – 12:45 PM', duration: '1h 15min', desc: 'Same curriculum as the morning session with multiple scheduling options for families.' },
+  { emoji: '🎸', name: 'Band Academy', age: 'By Skill Level', time: '1:00 – 2:15 PM', duration: '1h 15min', desc: 'Students develop ensemble skills on their instrument of choice — piano, guitar, drums, violin, voice, ukulele, bass, and more. Every student also learns piano fundamentals.' },
+  { emoji: '🎹', name: 'Piano Fundamentals', age: 'By Skill Level', time: '45 Minutes', duration: '45 min', desc: 'Focused piano instruction covering note reading, technique, rhythm, ear training, and performance skills. Individual and small-group instruction available.' },
 ]
 
 export default function BasmaContent() {
@@ -17,9 +17,9 @@ export default function BasmaContent() {
       {/* ── Hero ── */}
       <section className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
-          BASMA <span className="gradient-gold">Summer Camp</span>
+          BASMA <span className="gradient-gold">Academy</span>
         </h1>
-        <p className="text-white/40 text-base mb-2">Mon – Thu · Starting June 29 · All ages</p>
+        <p className="text-white/40 text-base mb-2">Mon – Thu · 9:00 AM – 2:15 PM · All ages</p>
         <p className="text-white/30 text-sm mb-8">📍 Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas</p>
         <Link
           href="/enroll"
@@ -41,23 +41,16 @@ export default function BasmaContent() {
               <span className="text-2xl">{cls.emoji}</span>
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-white text-sm">{cls.name} <span className="text-white/30 text-xs font-normal">({cls.age})</span></div>
-                <div className="text-white/30 text-xs">{cls.time}</div>
+                <div className="text-white/30 text-xs">{cls.time} · {cls.duration}</div>
                 <div className="text-white/20 text-xs mt-1">{cls.desc}</div>
-              </div>
-              <div className="text-right shrink-0">
-                <div className="font-bold text-lg" style={{ color: '#c9a84c' }}>${cls.july}</div>
-                <div className="text-white/25 text-[10px]">July/day</div>
-                {cls.august !== cls.july && (
-                  <div className="text-white/30 text-xs mt-0.5">${cls.august} Aug</div>
-                )}
               </div>
             </div>
           ))}
         </div>
         <div className="flex flex-wrap gap-4 mt-4 justify-center text-xs text-white/30">
-          <span>🟢 15% off weekly</span>
-          <span>🟢 25% off monthly</span>
-          <span>🟡 $5 off each additional child</span>
+          <span>🎵 Monthly themes for all classes</span>
+          <span>📊 Weekly progress reports</span>
+          <span>🎓 Scholarship available</span>
         </div>
       </section>
 

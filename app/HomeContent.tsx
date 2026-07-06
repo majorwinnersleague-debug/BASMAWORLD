@@ -19,9 +19,10 @@ const MONTH_NAMES = ['January','February','March','April','May','June','July','A
 
 const CLASS_TIMES = [
   { emoji: '👶', name: 'Tiny Tots', time: '9:00 AM', days: [1,2,3,4] },
-  { emoji: '🎵', name: 'Kids Music', time: '10:00 AM', days: [1,2,3,4] },
-  { emoji: '🎹', name: 'Piano', time: '12:00 PM', days: [1,2,3,4] },
-  { emoji: '🎙️', name: 'Recording', time: '12:00 PM', days: [1,2,3,4] },
+  { emoji: '🎵', name: 'Kids Music (AM)', time: '10:00 AM', days: [1,2,3,4] },
+  { emoji: '🎵', name: 'Kids Music (PM)', time: '11:30 AM', days: [1,2,3,4] },
+  { emoji: '🎸', name: 'Band Academy', time: '1:00 PM', days: [1,2,3,4] },
+  { emoji: '🎹', name: 'Piano', time: 'By Appointment', days: [1,2,3,4] },
 ]
 
 export default function HomeContent() {
@@ -194,7 +195,7 @@ export default function HomeContent() {
               </p>
               <ul className="space-y-1.5 text-sm text-white/55">
                 <li>✅ Voice, piano, guitar, drums</li>
-                <li>✅ Summer camp from $25/day</li>
+                <li>✅ Classes Mon–Thu, 9 AM – 2:15 PM</li>
                 <li>✅ AI music mentor (Billy)</li>
               </ul>
               <p className="text-purple-400 text-sm font-bold mt-5 group-hover:translate-x-1 transition-transform">

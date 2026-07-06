@@ -5,7 +5,7 @@ const plans = [
     name: 'July — All Classes',
     price: '$25',
     period: '/day',
-    features: ['Tiny Tots, Kids Music, Piano, Recording', 'Mon – Thu at Synergy Dance', '15% off weekly · 25% off monthly'],
+    features: ['Tiny Tots, Kids Music, Band Academy, Piano', 'Mon – Thu at Synergy Dance', 'Monthly themes for all classes'],
     highlight: true,
     badge: 'Summer Special',
   },
@@ -13,7 +13,7 @@ const plans = [
     name: 'August — Tiered',
     price: '$25–$40',
     period: '/day',
-    features: ['Tiny Tots $25 · Kids Music $30', 'Piano $35 · Recording $40', '$5 off each additional child'],
+    features: ['Tiny Tots · Kids Music Academy', 'Band Academy · Piano Fundamentals', 'All programs Mon–Thu'],
     highlight: false,
   },
 ]
@@ -23,7 +23,7 @@ export default function PricingSection() {
     <section className="max-w-4xl mx-auto px-4 py-20">
       <div className="text-center mb-12">
         <p className="text-purple-400 font-bold uppercase tracking-widest text-sm mb-3">Pricing</p>
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Summer Camp Pricing</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">BASMA Academy Programs</h2>
         <p className="text-gray-400 max-w-xl mx-auto">
           Enroll today — classes Mon–Thu at Synergy Dance.
         </p>

@@ -5,34 +5,34 @@ import { useState } from "react";
 /* ── Schedule Data ─────────────────────────────────────── */
 const CLASSES = [
   {
-    name: "Tiny Tots Music & Fun (Ages 2–5)",
+    name: "Tiny Tots Music & Movement (Ages 5 & Under)",
     emoji: "👶",
     color: "#f472b6",
     times: { Mon: "9:00 – 9:45 AM", Tue: "9:00 – 9:45 AM", Wed: "9:00 – 9:45 AM", Thu: "9:00 – 9:45 AM" },
   },
   {
-    name: "Kids Music & Fun (Ages 5–10)",
+    name: "Kids Music Academy — AM (By Skill Level)",
     emoji: "🎵",
     color: "#60a5fa",
-    times: { Mon: "10:00 – 11:30 AM", Tue: "10:00 – 11:30 AM", Wed: "10:00 – 11:30 AM", Thu: "10:00 – 11:30 AM" },
+    times: { Mon: "10:00 – 11:15 AM", Tue: "10:00 – 11:15 AM", Wed: "10:00 – 11:15 AM", Thu: "10:00 – 11:15 AM" },
   },
   {
-    name: "Kids Music & Fun (Ages 10–17)",
-    emoji: "🎤",
+    name: "Kids Music Academy — PM (By Skill Level)",
+    emoji: "🎵",
     color: "#a78bfa",
-    times: { Mon: "10:00 – 11:30 AM", Tue: "10:00 – 11:30 AM", Wed: "10:00 – 11:30 AM", Thu: "10:00 – 11:30 AM" },
+    times: { Mon: "11:30 AM – 12:45 PM", Tue: "11:30 AM – 12:45 PM", Wed: "11:30 AM – 12:45 PM", Thu: "11:30 AM – 12:45 PM" },
   },
   {
-    name: "Piano Class Lecture",
-    emoji: "🎹",
+    name: "Band Academy (By Skill Level)",
+    emoji: "🎸",
     color: "#34d399",
-    times: { Mon: "12:00 – 1:30 PM", Tue: "12:00 – 1:30 PM", Wed: "12:00 – 1:30 PM", Thu: "12:00 – 1:30 PM" },
+    times: { Mon: "1:00 – 2:15 PM", Tue: "1:00 – 2:15 PM", Wed: "1:00 – 2:15 PM", Thu: "1:00 – 2:15 PM" },
   },
   {
-    name: "Recording Class (All Ages)",
-    emoji: "🎙️",
+    name: "Piano Fundamentals (By Skill Level)",
+    emoji: "🎹",
     color: "#f59e0b",
-    times: { Mon: "12:00 – 1:30 PM", Tue: "12:00 – 1:30 PM", Wed: "12:00 – 1:30 PM", Thu: "12:00 – 1:30 PM" },
+    times: { Mon: "45 min", Tue: "45 min", Wed: "45 min", Thu: "45 min" },
   },
   {
     name: "Private Lessons (By Appointment)",
@@ -45,11 +45,10 @@ const CLASSES = [
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const IMPORTANT_DATES = [
-  { date: "June 29+", label: "ALL camps at Synergy Dance — 9512 W Flamingo Rd STE 100", type: "paid" },
-  { date: "July 2026", label: "July — $25/day for ALL classes", type: "paid" },
-  { date: "July 4", label: "🇺🇸 Independence Day — Closed", type: "closed" },
-  { date: "August 2026", label: "August — Tiny Tots $25, Kids Music $30, Piano $35, Recording $40/day", type: "paid" },
-  { date: "Discounts", label: "15% off weekly · 25% off monthly · $5 off per additional child", type: "paid" },
+  { date: "Location", label: "Synergy Dance — 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147", type: "paid" },
+  { date: "Schedule", label: "Monday – Thursday · 9:00 AM – 2:15 PM", type: "paid" },
+  { date: "Programs", label: "Tiny Tots · Kids Music Academy · Band Academy · Piano Fundamentals", type: "paid" },
+  { date: "Scholarship", label: "$250/mo — 1 hour of daily classes for your entire family", type: "paid" },
 ];
 
 /* ── June Discovery Camp Enrollment Data ───────────────── */
@@ -277,7 +276,7 @@ export default function ScheduleContent() {
               boxShadow: "0 4px 16px rgba(201,168,76,0.3)",
             }}
           >
-            Enroll in Summer Camp →
+            Enroll in BASMA Academy →
           </a>
         </div>
 
@@ -499,32 +498,24 @@ export default function ScheduleContent() {
         {/* ── Pricing ──────────────────────────── */}
         <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: "20px 24px", marginBottom: 28 }}>
           <h3 style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 700, color: "#c9a84c", fontFamily: "'Playfair Display', serif" }}>
-            💰 Summer Pricing
+            📋 Weekly Programs
           </h3>
 
-          {/* July */}
-          <div style={{ marginBottom: 16, padding: "14px 16px", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14 }}>
-            <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: "#c9a84c" }}>🎵 July — $25/class Special</h4>
-            <p style={{ margin: "0 0 6px", fontSize: 13, color: "rgba(255,255,255,0.5)" }}>One-month special: every class is just $25 — including Teens Recording Studio!</p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {["Tiny Tots $25", "Kids $25", "Piano $25", "Teens Recording $25"].map((t, i) => (
-                <span key={i} style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(201,168,76,0.12)", color: "#c9a84c", fontWeight: 600 }}>{t}</span>
-              ))}
+          <div style={{ padding: "14px 16px", background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, marginBottom: 16 }}>
+            <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: "#c9a84c" }}>🎵 Monday – Thursday</h4>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>
+              <div>👶 Tiny Tots Music &amp; Movement: <strong>9:00 – 9:45 AM</strong> (Ages 5 &amp; Under)</div>
+              <div>🎵 Kids Music Academy (AM): <strong>10:00 – 11:15 AM</strong> (By Skill Level)</div>
+              <div>🎵 Kids Music Academy (PM): <strong>11:30 AM – 12:45 PM</strong> (By Skill Level)</div>
+              <div>🎸 Band Academy: <strong>1:00 – 2:15 PM</strong> (By Skill Level)</div>
+              <div>🎹 Piano Fundamentals: <strong>45 min</strong> (By Skill Level)</div>
             </div>
           </div>
 
-          {/* August */}
           <div style={{ padding: "14px 16px", background: "rgba(168,85,247,0.08)", border: "1px solid rgba(168,85,247,0.2)", borderRadius: 14 }}>
-            <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: "#a855f7" }}>🎓 August — Per Day Pricing</h4>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>
-              <div>👶 Tiny Tots: <strong>$25/day</strong></div>
-              <div>🎵 Kids Music (5–10): <strong>$30/day</strong></div>
-              <div>🎤 Kids Music (10–17): <strong>$30/day</strong></div>
-              <div>🎹 Piano: <strong>$35/day</strong></div>
-              <div>🎙️ Recording: <strong>$40/day</strong></div>
-            </div>
-            <p style={{ margin: "8px 0 0", fontSize: 12, color: "rgba(34,197,94,0.8)" }}>
-              15% off weekly · 25% off monthly · $5 off each additional child
+            <h4 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: "#a855f7" }}>🎓 Scholarship Available</h4>
+            <p style={{ margin: "0", fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
+              $250/month — 1 hour of daily classes for your entire family. <a href="/scholarship" style={{ color: "#a855f7", textDecoration: "underline" }}>Learn more →</a>
             </p>
           </div>
         </div>

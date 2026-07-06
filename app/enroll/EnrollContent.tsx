@@ -5,11 +5,11 @@ import Link from 'next/link'
 
 /* ═══ CLASS DATA ═══ */
 const CLASSES = [
-  { id: 'tiny-tots', name: 'Tiny Tots', emoji: '👶', age: '5 & Under', time: '9:00 – 9:45 AM', desc: 'A magical first step into music! Little ones shake, clap, sing, and explore real instruments in a playful, colorful setting. Build rhythm, creativity, and confidence — all through fun and games!', julyRate: 25, augustRate: 25 },
-  { id: 'kids-5-10', name: 'Kids Music', emoji: '🎵', age: '5–10', time: '10:00 – 11:30 AM', desc: 'Play guitar, drums, piano, and more with friends! Kids learn songs, jam together, write their own music, and build skills they\'ll keep for life. Every day is a new musical adventure!', julyRate: 25, augustRate: 30 },
-  { id: 'kids-10-17', name: 'Kids Music', emoji: '🎤', age: '10–17', time: '10:00 – 11:30 AM', desc: 'Level up your skills! Teens and tweens dive into guitar, vocals, piano, and songwriting. Collaborate with other young musicians, build a band, and even prepare for a live performance!', julyRate: 25, augustRate: 30 },
-  { id: 'piano', name: 'Piano', emoji: '🎹', age: 'All Ages', time: '12:00 – 1:30 PM', desc: 'From your first chord to playing your favorite songs — learn piano in a supportive, hands-on environment. Covers technique, music theory, reading sheet music, and performing with confidence! ⚠️ Child must be able to pay attention and sit still.', julyRate: 25, augustRate: 35 },
-  { id: 'recording', name: 'Recording', emoji: '🎙️', age: 'All Ages', time: '12:00 – 1:30 PM', desc: 'Become a real recording artist! Learn how to use a mic, record your voice or instrument, edit tracks, and create music you can share with the world. Build your artist image from day one! ⚠️ Child must be able to pay attention and sit still.', julyRate: 25, augustRate: 40 },
+  { id: 'tiny-tots', name: 'Tiny Tots Music & Movement', emoji: '👶', age: 'Ages 5 & Under', time: '9:00 – 9:45 AM', desc: 'An engaging introduction to music through singing, movement, rhythm, storytelling, instruments, and creative play.', julyRate: 25, augustRate: 25 },
+  { id: 'kids-music-am', name: 'Kids Music Academy (AM)', emoji: '🎵', age: 'By Skill Level', time: '10:00 – 11:15 AM', desc: 'Students build musical skills through singing, rhythm, movement, music theory, and instrument exploration while learning songs based on the monthly theme.', julyRate: 25, augustRate: 30 },
+  { id: 'kids-music-pm', name: 'Kids Music Academy (PM)', emoji: '🎵', age: 'By Skill Level', time: '11:30 AM – 12:45 PM', desc: 'Same curriculum as the morning session with multiple scheduling options for families.', julyRate: 25, augustRate: 30 },
+  { id: 'band-academy', name: 'Band Academy', emoji: '🎸', age: 'By Skill Level', time: '1:00 – 2:15 PM', desc: 'Students develop ensemble skills on their instrument of choice — piano, guitar, drums, violin, voice, ukulele, bass, and more. Every student also learns piano fundamentals.', julyRate: 25, augustRate: 35 },
+  { id: 'piano', name: 'Piano Fundamentals', emoji: '🎹', age: 'By Skill Level', time: '45 Minutes', desc: 'Focused piano instruction covering note reading, technique, rhythm, ear training, and performance skills. Individual and small-group instruction available.', julyRate: 25, augustRate: 35 },
 ]
 
 const ALL_DAYS = [

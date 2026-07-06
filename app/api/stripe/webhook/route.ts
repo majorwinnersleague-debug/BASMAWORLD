@@ -43,7 +43,7 @@ function getProductInfo(productName: string, productId: string): ProductEmailInf
       whatToExpect: [
         'Your whole family can attend classes — all children included',
         '1 hour of classes per day (Mon–Thu) for $250/mo, or 2 hours for $500/mo',
-        'Choose from: Tiny Tots (ages 2–5), Kids Music (ages 5–17), Piano, and Recording',
+        'Choose from: Tiny Tots Music & Movement, Kids Music Academy, Band Academy, and Piano Fundamentals',
         'This is a monthly subscription — cancel anytime',
         'Program runs through August 2026',
       ],
@@ -203,36 +203,36 @@ function getProductInfo(productName: string, productId: string): ProductEmailInf
     }
   }
 
-  // Teens Recording (single class)
-  if ((name.includes('recording') || name.includes('teens recording')) && !name.includes('bundle')) {
+  // Band Academy (single class)
+  if (name.includes('band') && !name.includes('bundle')) {
     return {
       category: 'single_class',
-      heading: 'Recording Class Confirmed! 🎙️',
-      emoji: '🎙️',
+      heading: 'Band Academy Confirmed! 🎸',
+      emoji: '🎸',
       whatToExpect: [
-        'Recording and production class for teens',
-        'Learn how to record, mix, and produce your own music',
-        'Studio equipment is provided',
+        'Ensemble skills on your instrument of choice',
+        'Piano, guitar, drums, violin, voice, ukulele, bass, and more',
+        'Every student also learns piano fundamentals',
         'Check in at the front desk when you arrive',
       ],
-      schedule: 'Mon–Thu · 2:45 – 4:00 PM',
+      schedule: 'Mon–Thu · 1:00 – 2:15 PM',
       location: SUMMER_CAMP_LOCATION,
     }
   }
 
-  // Teens Recording Weekly Bundle
-  if ((name.includes('recording') || name.includes('teens recording')) && name.includes('bundle')) {
+  // Band Academy Weekly Bundle
+  if (name.includes('band') && name.includes('bundle')) {
     return {
       category: 'weekly_bundle',
-      heading: 'Recording Weekly Bundle — You\'re All Set! 🎙️',
-      emoji: '🎙️',
+      heading: 'Band Academy Weekly Bundle — You\'re All Set! 🎸',
+      emoji: '🎸',
       whatToExpect: [
-        '4 Recording classes for the price of 3 — great value!',
-        'Recording and production class for teens',
-        'Learn how to record, mix, and produce your own music',
+        '4 Band Academy classes — great value!',
+        'Ensemble skills on your instrument of choice',
+        'Piano, guitar, drums, violin, voice, ukulele, bass, and more',
         'Check in at the front desk each day',
       ],
-      schedule: 'Mon–Thu · 2:45 – 4:00 PM',
+      schedule: 'Mon–Thu · 1:00 – 2:15 PM',
       location: SUMMER_CAMP_LOCATION,
     }
   }
@@ -311,7 +311,7 @@ function getProductInfo(productName: string, productId: string): ProductEmailInf
       emoji: '🌟',
       whatToExpect: [
         'Full monthly access to ALL BASMA classes',
-        'Includes Tiny Tots, Kids Music, Piano, and Recording',
+        'Includes Tiny Tots, Kids Music Academy, Band Academy, and Piano Fundamentals',
         'Attend as many classes as you want, Mon–Thu',
         'Best value package — enjoy everything we offer!',
         'Check in at the front desk each day',
@@ -347,12 +347,12 @@ function detectClassName(productName: string, metadata: Record<string, string>):
     if (match) return match[1].trim()
   }
 
-  if (name.includes('tiny tots')) return 'Tiny Tots Music & Fun'
-  if (name.includes('kids music') && (name.includes('5-10') || name.includes('5–10'))) return 'Kids Music & Fun (5–10)'
-  if (name.includes('kids music') && (name.includes('10-17') || name.includes('10–17'))) return 'Kids Music & Fun (10–17)'
-  if (name.includes('kids music')) return 'Kids Music & Fun'
-  if (name.includes('piano')) return 'Piano Class Lecture'
-  if (name.includes('recording')) return 'Recording Class'
+  if (name.includes('tiny tots')) return 'Tiny Tots Music & Movement'
+  if (name.includes('kids music') && name.includes('pm')) return 'Kids Music Academy (PM)'
+  if (name.includes('kids music') && name.includes('am')) return 'Kids Music Academy (AM)'
+  if (name.includes('kids music')) return 'Kids Music Academy (AM)'
+  if (name.includes('band')) return 'Band Academy'
+  if (name.includes('piano')) return 'Piano Fundamentals'
   if (name.includes('all classes') || name.includes('all-access') || name.includes('monthly bundle')) return 'All Access'
   if (name.includes('scholarship')) return 'Scholarship — All Classes'
   if (name.includes('private')) return 'Private Lessons'
@@ -455,7 +455,7 @@ function buildConfirmationEmail(
         Become A Singer Music Academy
       </p>
       <p style="margin: 0 0 4px; font-size: 12px; color: rgba(255,255,255,0.4);">
-        Summer Camp: 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147
+        BASMA Academy: 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147
       </p>
       <p style="margin: 0 0 8px; font-size: 12px; color: rgba(255,255,255,0.4);">
         Main Office: 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103

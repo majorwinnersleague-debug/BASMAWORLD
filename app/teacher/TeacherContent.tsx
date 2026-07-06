@@ -44,11 +44,11 @@ interface Registration {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const SCHEDULE_BLOCKS = [
-  { time: '9:00 – 9:45 AM',        label: 'Tiny Tots Music & Fun',   ageRange: '2–5',   emoji: '👶', color: '#f472b6' },
-  { time: '10:00 – 11:30 AM',      label: 'Kids Music & Fun (5–10)', ageRange: '5–10',  emoji: '🎵', color: '#60a5fa' },
-  { time: '10:00 – 11:30 AM',      label: 'Kids Music & Fun (10–17)',ageRange: '10–17', emoji: '🎤', color: '#a78bfa' },
-  { time: '12:00 – 1:30 PM',       label: 'Piano Class Lecture',     ageRange: 'All',   emoji: '🎹', color: '#34d399' },
-  { time: '12:00 – 1:30 PM',       label: 'Recording Class',         ageRange: 'All',   emoji: '🎧', color: '#f59e0b', julyAugOnly: true },
+  { time: '9:00 – 9:45 AM',        label: 'Tiny Tots Music & Movement', ageRange: '5 & Under', emoji: '👶', color: '#f472b6' },
+  { time: '10:00 – 11:15 AM',      label: 'Kids Music Academy (AM)',    ageRange: 'By Skill',  emoji: '🎵', color: '#60a5fa' },
+  { time: '11:30 AM – 12:45 PM',   label: 'Kids Music Academy (PM)',    ageRange: 'By Skill',  emoji: '🎵', color: '#a78bfa' },
+  { time: '1:00 – 2:15 PM',        label: 'Band Academy',              ageRange: 'By Skill',  emoji: '🎸', color: '#34d399' },
+  { time: '45 min',                label: 'Piano Fundamentals',        ageRange: 'By Skill',  emoji: '🎹', color: '#f59e0b' },
 ]
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday']
@@ -80,12 +80,12 @@ function safe(val: unknown): string {
 function normalizeClassName(raw: string): string {
   if (!raw) return ''
   const lower = raw.toLowerCase()
-  if (lower.includes('tiny tots')) return 'Tiny Tots Music & Fun'
-  if (lower.includes('kids') && (lower.includes('5-10') || lower.includes('5–10'))) return 'Kids Music & Fun (5–10)'
-  if (lower.includes('kids') && (lower.includes('10-17') || lower.includes('10–17'))) return 'Kids Music & Fun (10–17)'
-  if (lower.includes('kids music')) return 'Kids Music & Fun (5–10)'
-  if (lower.includes('piano')) return 'Piano Class Lecture'
-  if (lower.includes('recording')) return 'Recording Class'
+  if (lower.includes('tiny tots')) return 'Tiny Tots Music & Movement'
+  if (lower.includes('kids music') && lower.includes('pm')) return 'Kids Music Academy (PM)'
+  if (lower.includes('kids music') && lower.includes('am')) return 'Kids Music Academy (AM)'
+  if (lower.includes('kids music') || lower.includes('kids') && (lower.includes('5-10') || lower.includes('5–10') || lower.includes('10-17') || lower.includes('10–17'))) return 'Kids Music Academy (AM)'
+  if (lower.includes('band')) return 'Band Academy'
+  if (lower.includes('piano')) return 'Piano Fundamentals'
   if (lower.includes('all access') || lower.includes('all classes') || lower.includes('scholarship')) return 'All Access'
   return raw
 }
@@ -97,23 +97,21 @@ function classifyRegistration(r: Registration): string {
 
   // Priority 2: Use interests field
   const interests = safe(r.interests).toLowerCase()
-  if (interests.includes('piano')) return 'Piano Class Lecture'
-  if (interests.includes('recording') || interests.includes('studio')) return 'Recording Class'
-  if (interests.includes('tiny tots') || interests.includes('toddler')) return 'Tiny Tots Music & Fun'
+  if (interests.includes('piano')) return 'Piano Fundamentals'
+  if (interests.includes('band') || interests.includes('guitar') || interests.includes('drums') || interests.includes('violin')) return 'Band Academy'
+  if (interests.includes('tiny tots') || interests.includes('toddler')) return 'Tiny Tots Music & Movement'
 
   // Priority 3: Fall back to age-based classification
   const age = parseInt(safe(r.studentAge)) || 0
-  if (age >= 2 && age <= 4) return 'Tiny Tots Music & Fun'
-  if (age >= 5 && age <= 10) return 'Kids Music & Fun (5–10)'
-  if (age >= 10 && age <= 17) return 'Kids Music & Fun (10–17)'
+  if (age >= 0 && age <= 5) return 'Tiny Tots Music & Movement'
+  if (age >= 6 && age <= 17) return 'Kids Music Academy (AM)'
 
   const msg = safe(r.message).toLowerCase()
   const ageMatch = msg.match(/age:\s*(\d+)/)
   if (ageMatch) {
     const a = parseInt(ageMatch[1])
-    if (a >= 2 && a <= 4) return 'Tiny Tots Music & Fun'
-    if (a >= 5 && a <= 10) return 'Kids Music & Fun (5–10)'
-    if (a >= 10 && a <= 17) return 'Kids Music & Fun (10–17)'
+    if (a >= 0 && a <= 5) return 'Tiny Tots Music & Movement'
+    if (a >= 6 && a <= 17) return 'Kids Music Academy (AM)'
   }
   return 'Unassigned'
 }
@@ -1817,7 +1815,7 @@ export default function TeacherContent() {
                     <div className="px-4 py-3 space-y-2">
                       {thisWeekData.classBuckets
                         .filter(({ block }) => {
-                          if (block.julyAugOnly && day.date.getMonth() < 6) return false
+                          // all classes available year-round
                           return true
                         })
                         .map(({ block, students }) => (
@@ -1839,7 +1837,7 @@ export default function TeacherContent() {
                         <span className="text-xs text-white/30">Total expected</span>
                         <span className="text-sm font-bold" style={{ color: '#c9a84c' }}>
                           {thisWeekData.classBuckets
-                            .filter(({ block }) => !(block.julyAugOnly && day.date.getMonth() < 6))
+                            
                             .reduce((sum, { students }) => sum + students.length, 0)} students
                         </span>
                       </div>
@@ -1966,7 +1964,7 @@ export default function TeacherContent() {
                       ) : isClass && inMonth && !isPast ? (
                         <div className="space-y-0.5">
                           {SCHEDULE_BLOCKS.filter(b => {
-                            if (b.julyAugOnly && calMonth < 6) return false
+                            // all classes available year-round
                             return true
                           }).map(b => (
                             <div key={b.label} className="text-[9px] text-white/25 truncate leading-tight">

@@ -46,22 +46,22 @@ async function fetchAllRecords(tableId: string): Promise<AirtableRecord[]> {
 
 /* ─── Schedule data for class names ─── */
 const SCHEDULE_BLOCKS = [
-  { label: 'Tiny Tots Music & Fun', ageRange: '2–5', time: '9:00 – 9:45 AM', emoji: '👶', teacher: 'Miss Basma' },
-  { label: 'Kids Music & Fun (5–10)', ageRange: '5–10', time: '10:00 – 11:30 AM', emoji: '🎵', teacher: 'Miss Basma' },
-  { label: 'Kids Music & Fun (10–17)', ageRange: '10–17', time: '10:00 – 11:30 AM', emoji: '🎤', teacher: 'Miss Basma' },
-  { label: 'Piano Class Lecture', ageRange: 'All', time: '12:00 – 1:30 PM', emoji: '🎹', teacher: 'Miss Sarah' },
-  { label: 'Recording Class', ageRange: 'All', time: '12:00 – 1:30 PM', emoji: '🎧', teacher: 'Miss Basma' },
+  { label: 'Tiny Tots Music & Movement', ageRange: '5 & Under', time: '9:00 – 9:45 AM', emoji: '👶', teacher: 'Miss Basma' },
+  { label: 'Kids Music Academy (AM)', ageRange: 'By Skill', time: '10:00 – 11:15 AM', emoji: '🎵', teacher: 'Miss Basma' },
+  { label: 'Kids Music Academy (PM)', ageRange: 'By Skill', time: '11:30 AM – 12:45 PM', emoji: '🎵', teacher: 'Miss Basma' },
+  { label: 'Band Academy', ageRange: 'By Skill', time: '1:00 – 2:15 PM', emoji: '🎸', teacher: 'Miss Basma' },
+  { label: 'Piano Fundamentals', ageRange: 'By Skill', time: '45 min', emoji: '🎹', teacher: 'Miss Sarah' },
 ]
 
 function normalizeClassName(raw: string): string {
   if (!raw) return 'Unassigned'
   const lower = raw.toLowerCase()
-  if (lower.includes('tiny tots')) return 'Tiny Tots Music & Fun'
-  if (lower.includes('kids') && (lower.includes('5-10') || lower.includes('5–10'))) return 'Kids Music & Fun (5–10)'
-  if (lower.includes('kids') && (lower.includes('10-17') || lower.includes('10–17'))) return 'Kids Music & Fun (10–17)'
-  if (lower.includes('kids')) return 'Kids Music & Fun (5–10)' // default
-  if (lower.includes('piano')) return 'Piano Class Lecture'
-  if (lower.includes('recording')) return 'Recording Class'
+  if (lower.includes('tiny tots')) return 'Tiny Tots Music & Movement'
+  if (lower.includes('kids music') && lower.includes('pm')) return 'Kids Music Academy (PM)'
+  if (lower.includes('kids music') && lower.includes('am')) return 'Kids Music Academy (AM)'
+  if (lower.includes('kids')) return 'Kids Music Academy (AM)' // default
+  if (lower.includes('band')) return 'Band Academy'
+  if (lower.includes('piano')) return 'Piano Fundamentals'
   if (lower.includes('all access') || lower.includes('all classes') || lower.includes('scholarship')) return 'All Access'
   if (lower.includes('private')) return 'Private Lessons'
   return raw

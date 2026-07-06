@@ -5,11 +5,11 @@ import BasmaContent from './BasmaContent'
 
 export const metadata: Metadata = {
   title: 'BASMA Music Academy — Singing, Piano & Guitar Lessons | Las Vegas',
-  description: 'BASMA Music Academy: professional singing, piano, guitar, and vocal coaching in Las Vegas. Summer camp classes starting June 29. All ages. Founded by Basma Awada (300K+ TikTok).',
+  description: 'BASMA Music Academy: Tiny Tots, Kids Music, Band Academy, and Piano Fundamentals in Las Vegas. Classes Mon–Thu, 9 AM – 2:15 PM. All ages. Founded by Basma Awada.',
   keywords: ['music lessons las vegas', 'singing lessons', 'piano lessons', 'guitar lessons', 'vocal coach las vegas', 'basma awada', 'music academy', 'kids music lessons', 'basmaworld', 'become a singer'],
   openGraph: {
     title: 'BASMA Music Academy — Singing, Piano & Guitar Lessons | Las Vegas',
-    description: 'Professional music lessons. Summer camp from $25/day. All ages.',
+    description: 'Professional music lessons. Tiny Tots, Kids Music, Band Academy & Piano. Mon–Thu. All ages.',
     url: 'https://basmaworld.com/basma',
     siteName: 'BasmaWorld',
     type: 'website',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     site: '@basma_singer',
     creator: '@basma_singer',
     title: 'BASMA Music Academy — Las Vegas',
-    description: 'Singing, piano, guitar lessons. Summer camp. All ages.',
+    description: 'Singing, piano, guitar lessons. BASMA Academy. All ages.',
     images: ['/images/basma-academy.jpg'],
   },
   alternates: {

@@ -5,12 +5,12 @@ const faqs = [
   {
     question: 'How much do music lessons cost?',
     answer:
-      'Summer camp classes start at $25/day in July. August has tiered pricing from $25–$40 per day depending on the class. Save 15% with a weekly pass or 25% with a monthly pass. Each additional child gets $5 off per day. Visit our enrollment page for full details.',
+      'BASMA Academy offers Tiny Tots Music & Movement, Kids Music Academy, Band Academy, and Piano Fundamentals. Classes run Monday through Thursday from 9:00 AM to 2:15 PM. We also offer a Family Scholarship at $250/month. Visit our enrollment page for full details.',
   },
   {
     question: 'What ages do you teach?',
     answer:
-      'All ages are welcome! We teach kids as young as 5 all the way to adults of any age. Our approach adapts to each student — whether it\'s a child\'s first encounter with music or an adult returning to an old passion.',
+      'All ages are welcome! Tiny Tots Music & Movement is for ages 5 and under. Kids Music Academy, Band Academy, and Piano Fundamentals are placed by skill level — not age. Students receive weekly progress reports from their teachers.',
   },
   {
     question: 'What instruments and skills do you offer?',
@@ -25,7 +25,7 @@ const faqs = [
   {
     question: 'How long is each lesson?',
     answer:
-      '30-minute and 60-minute sessions are available. We recommend 30 minutes for younger beginners and 60 minutes for older students or those who want to cover more ground each session.',
+      'Tiny Tots and Piano Fundamentals are 45-minute classes. Kids Music Academy and Band Academy are 1 hour and 15 minutes. Private lessons are available in 30-minute and 60-minute sessions.',
   },
   {
     question: 'Do I need experience to start?',
@@ -40,7 +40,7 @@ const faqs = [
   {
     question: 'Where are you located?',
     answer:
-      'Our studio is at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. Summer camp is at 9512 W Flamingo Rd STE 100. Give us a call at (702) 788-7369 or enroll online.',
+      'Our studio is at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. BASMA Academy is at Synergy Dance — 9512 W Flamingo Rd STE 100. Give us a call at (702) 788-7369 or enroll online.',
   },
 ]
 
