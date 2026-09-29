@@ -12,43 +12,23 @@ import Footer from '@/components/Footer'
 
 const PACKAGES = [
   {
-    id: 'individual-30min',
-    name: 'Individual 30-Minute Lesson',
-    duration: '30 min',
-    sessions: 1,
-    pricePerSession: 45,
-    total: 45,
-    desc: 'A single personalized 30-minute private lesson.',
-    popular: false,
-  },
-  {
-    id: 'individual-60min',
-    name: 'Individual 60-Minute Lesson',
-    duration: '1 hour',
-    sessions: 1,
-    pricePerSession: 70,
-    total: 70,
-    desc: 'A single personalized 60-minute private lesson.',
-    popular: false,
-  },
-  {
     id: 'monthly-4x30min',
-    name: 'Monthly 4 × 30-Minute Lessons',
+    name: 'Monthly 4 × 30-Minute Private Lessons',
     duration: '30 min',
     sessions: 4,
-    pricePerSession: 33.75,
-    total: 135,
-    desc: 'Four 30-minute private lessons paid in advance each month.',
+    pricePerSession: 35,
+    total: 140,
+    desc: 'Four 30-minute private lessons each month. Minimum 4 lessons per month.',
     popular: true,
   },
   {
     id: 'monthly-4x60min',
-    name: 'Monthly 4 × 60-Minute Lessons',
+    name: 'Monthly 4 × 60-Minute Private Lessons',
     duration: '1 hour',
     sessions: 4,
     pricePerSession: 50,
     total: 200,
-    desc: 'Four 60-minute private lessons paid in advance each month.',
+    desc: 'Four 60-minute private lessons each month. Minimum 4 lessons per month.',
     popular: false,
   },
 ]
@@ -187,7 +167,7 @@ export default function PrivateLessonsContent() {
             </h1>
             <p className="text-white/30 max-w-lg mx-auto text-sm leading-relaxed">
               Personalized music instruction tailored to your goals.
-              Choose an individual lesson or a monthly package and start learning.
+              Private, one-on-one music instruction built around your goals, schedule, and level.
             </p>
           </div>
 
@@ -199,7 +179,7 @@ export default function PrivateLessonsContent() {
                 Choose Your Private Lessons
               </h2>
               <p className="text-white/40 text-sm mb-8 max-w-md mx-auto">
-                Choose an individual lesson or monthly package below. Pay securely online, and we’ll call you to schedule your lessons.
+                Choose your monthly private-lesson package, provide your scheduling preferences, and pay securely online. We’ll contact you to finalize your lessons.
               </p>
 
               <div className="grid sm:grid-cols-2 gap-4 max-w-xl mx-auto mb-6">
@@ -209,11 +189,11 @@ export default function PrivateLessonsContent() {
                   className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
-                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">30-Minute Individual Lesson</p>
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 30-Minute Private Lessons</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-4xl font-bold text-white">$45</span>
+                    <span className="text-4xl font-bold text-white">$140</span>
                   </div>
-                  <p className="text-white/30 text-xs mb-4">One private lesson</p>
+                  <p className="text-white/30 text-xs mb-4">Four private lessons each month</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
                     Book Now →
@@ -226,9 +206,9 @@ export default function PrivateLessonsContent() {
                   className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] relative text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
-                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">60-Minute Individual Lesson</p>
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 60-Minute Private Lessons</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-4xl font-bold text-white">$70</span>
+                    <span className="text-4xl font-bold text-white">$200</span>
                   </div>
                   <p className="text-white/30 text-xs mb-4">One private lesson</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
