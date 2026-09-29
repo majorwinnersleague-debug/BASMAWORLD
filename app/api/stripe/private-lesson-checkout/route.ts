@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { sql } from '@/lib/db'
 
 export async function POST(req: NextRequest) {
   // Rate limit: 5 checkout attempts per IP per 10 minutes
@@ -52,6 +53,21 @@ export async function POST(req: NextRequest) {
     }
     const { name: packageName, duration, sessions, total } = pkg
 
+    // Save the new request in Neon before creating checkout.
+    // Neon is the operational system; Airtable remains the marketing/history system.
+    const [request] = await sql`
+      INSERT INTO lesson_requests (
+        parent_name, email, phone, student_name, student_age, instrument,
+        preferred_day, preferred_time, notes, package_id, package_name, amount_cents, status
+      ) VALUES (
+        ${parentName}, ${email}, ${phone}, ${studentName}, ${studentAge || null}, ${instrument || null},
+        ${preferredDay || 'Flexible'}, ${preferredTime || 'Flexible'}, ${notes || null},
+        ${packageId}, ${packageName}, ${Math.round(total * 100)}, 'Payment Pending'
+      )
+      RETURNING id
+    `
+    const requestId = String(request.id)
+
     const metadata: Record<string, string> = {
       type: 'private_lesson_package',
       packageId,
@@ -67,6 +83,7 @@ export async function POST(req: NextRequest) {
       preferredDay: preferredDay || 'Flexible',
       preferredTime: preferredTime || 'Flexible',
       notes: notes || '',
+      requestId,
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -90,6 +107,14 @@ export async function POST(req: NextRequest) {
       success_url: `https://basmaworld.com/private-lessons?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: 'https://basmaworld.com/private-lessons',
     })
+
+    // Attach the Stripe session to the Neon request. If this update fails,
+    // the request still exists and the Stripe webhook can reconcile it by requestId.
+    await sql`
+      UPDATE lesson_requests
+      SET stripe_session_id = ${session.id}
+      WHERE id = ${request.id}
+    `
 
     // Also save to Airtable if configured
     const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
