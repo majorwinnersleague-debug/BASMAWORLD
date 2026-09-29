@@ -9,6 +9,7 @@ const PAYMENTS_TABLE = "tblfTQQEciBFqovYU"; // Stripe Payments
 const SUMMER_TABLE = "tblfOnRDkfgZoCF9X"; // Summer 2026 Registrations
 const CHECKIN_TABLE = "tbl7vzQgS5o67kDYv"; // Check-In Log (walk-in families)
 const BLOCKED_TABLE = process.env.BLOCKED_TABLE_ID || "tbleV623dZRhgmULJ"; // Blocked Contacts (teacher portal removals)
+const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || "1515";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
 // basmaworld.com not yet verified in Resend — use their default sender until DNS records are added
