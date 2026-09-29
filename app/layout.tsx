@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { PostHogProvider } from '@/components/PostHogProvider'
-import AnnouncementBar from '@/components/AnnouncementBar'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import BackToTop from '@/components/BackToTop'
 import CookieBanner from '@/components/CookieBanner'
@@ -76,7 +75,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased" style={{ background: '#050505', minHeight: '100vh' }}>
         <PostHogProvider>
-          <AnnouncementBar />
           {children}
           <WhatsAppButton />
           <BackToTop />
