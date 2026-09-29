@@ -24,7 +24,7 @@ export default function Navbar() {
       className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? 'bg-[#0D0118]/95 backdrop-blur-md border-b border-white/[0.04]' : ''
       }`}
-      style={{ top: 'var(--ann-bar-height, 0px)' }}
+      style={{ top: 0 }}
     >
       <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
         <Link
