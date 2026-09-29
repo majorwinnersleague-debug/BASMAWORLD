@@ -25,11 +25,6 @@ export async function POST(req: NextRequest) {
 
     const {
       packageId,
-      packageName,
-      duration,
-      sessions,
-      total,
-      pricePerSession,
       parentName,
       email,
       phone,
@@ -45,16 +40,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Validate total matches expected pricing
-    const expectedTotals: Record<string, number> = {
-      'individual-30min': 45,
-      'individual-60min': 70,
-      'monthly-4x30min': 135,
-      'monthly-4x60min': 200,
+    const packages: Record<string, { name: string; duration: string; sessions: number; total: number }> = {
+      'individual-30min': { name: 'Individual 30-Minute Lesson', duration: '30 min', sessions: 1, total: 45 },
+      'individual-60min': { name: 'Individual 60-Minute Lesson', duration: '1 hour', sessions: 1, total: 70 },
+      'monthly-4x30min': { name: 'Monthly 4 × 30-Minute Lessons', duration: '30 min', sessions: 4, total: 135 },
+      'monthly-4x60min': { name: 'Monthly 4 × 60-Minute Lessons', duration: '1 hour', sessions: 4, total: 200 },
     }
-    if (expectedTotals[packageId] !== total) {
-      return NextResponse.json({ error: 'Invalid package pricing' }, { status: 400 })
+    const pkg = packages[packageId]
+    if (!pkg) {
+      return NextResponse.json({ error: 'Invalid lesson option' }, { status: 400 })
     }
+    const { name: packageName, duration, sessions, total } = pkg
 
     const metadata: Record<string, string> = {
       type: 'private_lesson_package',
