@@ -144,7 +144,7 @@ export default function PrivateLessonsContent() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
+        <div className="min-h-screen" style={{ paddingTop: '64px' }}>
           <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
             <div className="text-5xl mb-6">✅</div>
             <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -160,35 +160,6 @@ export default function PrivateLessonsContent() {
                 <li>📞 We&apos;ll call to finalize your schedule</li>
                 <li>🎵 Attend your lessons weekly</li>
                 <li>📋 1 makeup lesson included — use by 2nd week of next month</li>
-              </ul>
-            </div>
-            <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
-          </section>
-        </div>
-        <Footer />
-      </>
-    )
-  }
-
-  if (success) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
-          <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
-            <div className="text-5xl mb-6">🎉</div>
-            <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Lesson Request Received!
-            </h1>
-            <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">
-              We&apos;ve received your request. We&apos;ll review your details and contact you to confirm your lesson.
-            </p>
-            <div className="card-minimal rounded-xl p-5 text-left max-w-sm mx-auto">
-              <p className="text-white/50 text-xs uppercase tracking-widest mb-3">What&apos;s Next</p>
-              <ul className="text-white/35 text-sm space-y-2">
-                <li>✉️ Confirmation email within 24 hours</li>
-                <li>📞 We may call to confirm the time</li>
-                <li>🎵 Show up and enjoy your lesson!</li>
               </ul>
             </div>
             <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
