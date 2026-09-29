@@ -179,10 +179,10 @@ export default function PrivateLessonsContent() {
           <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
             <div className="text-5xl mb-6">🎉</div>
             <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Trial Lesson Requested!
+              initial Lesson Requested!
             </h1>
             <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">
-              We&apos;ve received your request for a free 20-minute trial lesson.
+              We&apos;ve received your request for a free 20-minute initial lesson.
               We&apos;ll review your preferred time and send you a confirmation email shortly.
             </p>
             <div className="card-minimal rounded-xl p-5 text-left max-w-sm mx-auto">
@@ -526,7 +526,7 @@ export default function PrivateLessonsContent() {
                 </p>
               </div>
 
-              <form onSubmit={false ? handleTrialSubmit : handlePackagePurchase} className="space-y-4">
+              <form onSubmit={false ? handleinitialSubmit : handlePackagePurchase} className="space-y-4">
                 {/* Parent / Contact */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
