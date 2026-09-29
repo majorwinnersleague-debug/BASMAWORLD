@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import OnlineLessonsComingSoon from '@/components/OnlineLessonsComingSoon'
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PHOTO GALLERY — real photos from BASMA
@@ -98,6 +99,9 @@ export default function Home() {
                 </Link>
               ))}
             </div>
+          </div>
+          <div className="max-w-5xl mx-auto px-6 pb-4">
+            <OnlineLessonsComingSoon />
           </div>
         </section>
 
