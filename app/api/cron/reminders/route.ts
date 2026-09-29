@@ -94,8 +94,11 @@ export async function GET(request: NextRequest) {
       const student = String(f['Student Name'] || '').trim()
       if (!email || !student) continue
       studentsChecked++
+      // Only contact people who have explicitly opted into email updates.
+      // Historical/unfinished records are not automatically treated as marketing subscribers.
       if (f['Marketing Opt Out'] === true) continue
-      if (String(f['Email Updates'] || '').toLowerCase() === 'false') continue
+      const emailUpdates = f['Email Updates']
+      if (emailUpdates !== true && String(emailUpdates || '').toLowerCase() !== 'true') continue
       if (!families[email]) families[email] = {firstName:String(f['Full Name'] || '').trim().split(/\s+/)[0] || 'there',students:[]}
       if (!families[email].students.includes(student)) families[email].students.push(student)
     }
