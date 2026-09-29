@@ -2,8 +2,6 @@ import { neon } from "@neondatabase/serverless";
 
 const databaseUrl = process.env.DATABASE_URL;
 
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is not configured");
-}
-
-export const sql = neon(databaseUrl);
+// Neon is an operational enhancement. If it is unavailable, the existing
+// Stripe/Airtable flow must continue to work rather than fail checkout.
+export const sql = databaseUrl ? neon(databaseUrl) : null;
