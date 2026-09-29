@@ -272,11 +272,11 @@ export default function PrivateLessonsContent() {
                   className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
-                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 30-Minute Sessions</p>
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">30-Minute Individual Lesson</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-4xl font-bold text-white">$140</span>
+                    <span className="text-4xl font-bold text-white">$45</span>
                   </div>
-                  <p className="text-white/30 text-xs mb-4">$35 per session</p>
+                  <p className="text-white/30 text-xs mb-4">One private lesson</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
                     Book Now →
@@ -292,11 +292,11 @@ export default function PrivateLessonsContent() {
                   <span className="absolute -top-3 right-4 bg-[#c9a84c] text-black text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full">
                     Most Popular
                   </span>
-                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 60-Minute Sessions</p>
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">60-Minute Individual Lesson</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-4xl font-bold text-white">$200</span>
+                    <span className="text-4xl font-bold text-white">$70</span>
                   </div>
-                  <p className="text-white/30 text-xs mb-4">$50 per session</p>
+                  <p className="text-white/30 text-xs mb-4">One private lesson</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
                     Book Now →
