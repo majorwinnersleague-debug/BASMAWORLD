@@ -4,10 +4,7 @@ import { useState, useEffect } from 'react'
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/enroll', label: 'Academy', highlight: true },
-  { href: '/private-lessons', label: 'Private Lessons' },
-  { href: '/scholarship', label: 'Scholarship' },
-  { href: '/schedule', label: 'Schedule' },
+  { href: '/private-lessons', label: 'Private Lessons', highlight: true },
   { href: '/portal', label: 'Parent Portal' },
   { href: '/contact', label: 'Contact' },
 ]
@@ -56,11 +53,11 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/enroll"
+            href="/private-lessons"
             className="ml-2 text-sm font-bold px-5 py-2 rounded-full transition hover:scale-105"
             style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
           >
-            Enroll Now
+            Book a Lesson
           </Link>
         </div>
 
@@ -90,24 +87,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       {open && (
         <div className="md:hidden bg-[#0D0118]/98 backdrop-blur-md border-t border-white/[0.04] px-6 py-3">
-          {/* Academy section */}
-          <div className="mb-2">
-            <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold mb-1 px-2">Academy</p>
-            {[
-              { href: '/enroll', label: '🎵 Enroll in Classes' },
-              { href: '/scholarship', label: '🎓 Scholarship ($250/mo)' },
-              { href: '/schedule', label: '📅 Schedule & Calendar' },
-            ].map(link => (
-              <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
-                className="block text-white/60 hover:text-white py-2 px-2 text-sm transition-colors rounded-lg hover:bg-white/5">
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="h-px bg-white/5 my-2" />
-
-          {/* Lessons & Services */}
+                    {/* Lessons & Services */}
           <div className="mb-2">
             <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold mb-1 px-2">Lessons & Services</p>
             {[
@@ -140,10 +120,10 @@ export default function Navbar() {
 
           <div className="h-px bg-white/5 my-3" />
 
-          <Link href="/enroll" onClick={() => setOpen(false)}
+          <Link href="/private-lessons" onClick={() => setOpen(false)}
             className="block text-center py-3 rounded-full font-bold text-sm"
             style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}>
-            Enroll Now →
+            Book a Lesson →
           </Link>
         </div>
       )}

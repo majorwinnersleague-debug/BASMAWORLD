@@ -12,24 +12,44 @@ import Footer from '@/components/Footer'
 
 const PACKAGES = [
   {
-    id: '30min',
-    name: '30-Minute Lessons',
+    id: 'individual-30min',
+    name: 'Individual 30-Minute Lesson',
     duration: '30 min',
-    sessions: 4,
-    pricePerSession: 35,
-    total: 140,
-    desc: 'Perfect for younger students or focused skill-building.',
+    sessions: 1,
+    pricePerSession: 45,
+    total: 45,
+    desc: 'A single personalized 30-minute private lesson.',
     popular: false,
   },
   {
-    id: '60min',
-    name: '60-Minute Lessons',
+    id: 'individual-60min',
+    name: 'Individual 60-Minute Lesson',
+    duration: '1 hour',
+    sessions: 1,
+    pricePerSession: 70,
+    total: 70,
+    desc: 'A single personalized 60-minute private lesson.',
+    popular: false,
+  },
+  {
+    id: 'monthly-4x30min',
+    name: 'Monthly 4 × 30-Minute Lessons',
+    duration: '30 min',
+    sessions: 4,
+    pricePerSession: 33.75,
+    total: 135,
+    desc: 'Four 30-minute private lessons paid in advance each month.',
+    popular: true,
+  },
+  {
+    id: 'monthly-4x60min',
+    name: 'Monthly 4 × 60-Minute Lessons',
     duration: '1 hour',
     sessions: 4,
     pricePerSession: 50,
     total: 200,
-    desc: 'Ideal for deeper learning, technique, and repertoire work.',
-    popular: true,
+    desc: 'Four 60-minute private lessons paid in advance each month.',
+    popular: false,
   },
 ]
 
@@ -42,12 +62,12 @@ const INSTRUMENTS = [
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const LESSON_PHOTOS = [
-  { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Basma teaching a virtual piano class to students' },
+  { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Basma teaching a private piano lesson' },
   { src: '/images/camp/boy-keyboard.jpg', alt: 'Student concentrating during a keyboard lesson' },
-  { src: '/images/camp/teacher-whiteboard.jpg', alt: 'BASMA instructor teaching music theory at the whiteboard' },
+  { src: '/images/camp/teacher-whiteboard.jpg', alt: 'BASMA instructor teaching music theory' },
   { src: '/images/camp/little-girl-piano.jpg', alt: 'Young girl learning piano at BASMA' },
-  { src: '/images/guitar-lesson.jpg', alt: 'Guitar instruction at BASMA Music Academy' },
-  { src: '/images/camp/classroom-piano-lesson.jpg', alt: 'Piano lessons in the BASMA studio' },
+  { src: '/images/guitar-lesson.jpg', alt: 'Guitar instruction at BASMA' },
+  { src: '/images/camp/classroom-piano-lesson.jpg', alt: 'Piano instruction in the BASMA studio' },
 ]
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -229,7 +249,7 @@ export default function PrivateLessonsContent() {
             </h1>
             <p className="text-white/30 max-w-lg mx-auto text-sm leading-relaxed">
               Personalized music instruction tailored to your goals.
-              Purchase a lesson package instantly and start learning.
+              Choose an individual lesson or a monthly package and start learning.
             </p>
           </div>
 
@@ -238,25 +258,24 @@ export default function PrivateLessonsContent() {
             <div className="rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))', border: '1px solid rgba(201,168,76,0.15)' }}>
               <p className="text-[#c9a84c] text-xs uppercase tracking-[0.3em] font-bold mb-3">Ready to Start?</p>
               <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Buy a Lesson Package
+                Choose Your Private Lessons
               </h2>
               <p className="text-white/40 text-sm mb-8 max-w-md mx-auto">
-                Click below to pay securely. No forms, no signup — just pick your package and go.
-                We&apos;ll call you to schedule your lessons.
+                Choose an individual lesson or monthly package below. Pay securely online, and we’ll call you to schedule your lessons.
               </p>
 
               <div className="grid sm:grid-cols-2 gap-4 max-w-xl mx-auto mb-6">
                 {/* 30-min package */}
                 <button
-                  onClick={() => { window.scrollTo({ top: document.getElementById('booking-form')?.offsetTop || 600, behavior: 'smooth' }); }}
+                  onClick={() => { window.scrollTo({ top: document.getElementById('lesson-form')?.offsetTop || 600, behavior: 'smooth' }); }}
                   className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
-                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 30-Minute Sessions</p>
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">30-Minute Individual Lesson</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-4xl font-bold text-white">$140</span>
+                    <span className="text-4xl font-bold text-white">$45</span>
                   </div>
-                  <p className="text-white/30 text-xs mb-4">$35 per session</p>
+                  <p className="text-white/30 text-xs mb-4">One private lesson</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
                     Book Now →
@@ -265,18 +284,15 @@ export default function PrivateLessonsContent() {
 
                 {/* 60-min package */}
                 <button
-                  onClick={() => { window.scrollTo({ top: document.getElementById('booking-form')?.offsetTop || 600, behavior: 'smooth' }); }}
+                  onClick={() => { window.scrollTo({ top: document.getElementById('lesson-form')?.offsetTop || 600, behavior: 'smooth' }); }}
                   className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] relative text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
-                  <span className="absolute -top-3 right-4 bg-[#c9a84c] text-black text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full">
-                    Most Popular
-                  </span>
-                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">4 × 60-Minute Sessions</p>
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">60-Minute Individual Lesson</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-4xl font-bold text-white">$200</span>
+                    <span className="text-4xl font-bold text-white">$70</span>
                   </div>
-                  <p className="text-white/30 text-xs mb-4">$50 per session</p>
+                  <p className="text-white/30 text-xs mb-4">One private lesson</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
                     Book Now →
@@ -284,7 +300,7 @@ export default function PrivateLessonsContent() {
                 </button>
               </div>
 
-              <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included per package</p>
+              <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included with monthly packages</p>
 
               {/* Contact for questions */}
               <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
@@ -305,7 +321,7 @@ export default function PrivateLessonsContent() {
             <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '4/3' }}>
               <Image
                 src="/images/camp/students-guitar-duo.jpg"
-                alt="Two students playing guitar at BASMA Music Academy"
+                alt="Guitar lesson at BASMA"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 768px) 100vw, 500px"

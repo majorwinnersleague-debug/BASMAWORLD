@@ -64,12 +64,12 @@ export default function AnnouncementBar() {
         </div>
       )}
 
-      {/* Academy info */}
+      {/* Private lessons */}
       <div className="flex items-center justify-center gap-2 px-4 py-1.5">
         <span className="text-white text-xs md:text-sm text-center">
-          🎵 <strong className="text-yellow-300">BASMA Academy</strong> — Mon–Thu · 9:00 AM – 2:15 PM · Synergy Dance{' '}
-          · <Link href="/scholarship" className="text-yellow-200 font-semibold hover:text-white transition">
-            🎓 Scholarship $250/mo →
+          🎵 <strong className="text-yellow-300">BASMA Private Lessons</strong> — 30 or 60 minutes · Individual lessons and monthly packages{' '}
+          · <Link href="/private-lessons" className="text-yellow-200 font-semibold hover:text-white transition">
+            Book a Lesson →
           </Link>
         </span>
       </div>

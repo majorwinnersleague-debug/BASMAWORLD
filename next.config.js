@@ -3,6 +3,10 @@ const nextConfig = {
   // ── Redirects ──────────────────────────────────────────────────────────────
   async redirects() {
     return [
+      // Old group-class pages → private lessons
+      { source: '/enroll', destination: '/private-lessons', permanent: false },
+      { source: '/scholarship', destination: '/private-lessons', permanent: false },
+      { source: '/schedule', destination: '/private-lessons', permanent: false },
       // Old pages → enroll
       { source: '/academy', destination: '/enroll', permanent: true },
       { source: '/wins', destination: '/enroll', permanent: true },
@@ -12,7 +16,6 @@ const nextConfig = {
       { source: '/register', destination: '/enroll', permanent: true },
       { source: '/signup', destination: '/enroll', permanent: true },
       { source: '/booking', destination: '/enroll', permanent: true },
-      { source: '/schedule', destination: '/enroll', permanent: true },
       { source: '/gateway', destination: '/', permanent: true },
       { source: '/hopes', destination: '/', permanent: true },
       { source: '/navigator', destination: '/', permanent: true },

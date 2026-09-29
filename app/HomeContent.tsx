@@ -18,11 +18,8 @@ function getMonthDays(year: number, month: number) {
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
 const CLASS_TIMES = [
-  { emoji: '👶', name: 'Tiny Tots', time: '9:00 AM', days: [1,2,3,4] },
-  { emoji: '🎵', name: 'Kids Music (AM)', time: '10:00 AM', days: [1,2,3,4] },
-  { emoji: '🎵', name: 'Kids Music (PM)', time: '11:30 AM', days: [1,2,3,4] },
-  { emoji: '🎸', name: 'Band Academy', time: '1:00 PM', days: [1,2,3,4] },
-  { emoji: '🎹', name: 'Piano', time: 'By Appointment', days: [1,2,3,4] },
+  { emoji: '🎤', name: '30-Minute Individual Lesson', time: 'By Appointment', days: [1,2,3,4,5,6] },
+  { emoji: '🎹', name: '60-Minute Individual Lesson', time: 'By Appointment', days: [1,2,3,4,5,6] },
 ]
 
 export default function HomeContent() {
@@ -187,7 +184,7 @@ export default function HomeContent() {
             >
               <div className="text-4xl mb-4">🎵</div>
               <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition mb-2">
-                BASMA Music Academy
+                BASMA Private Lessons
               </h3>
               <p className="text-purple-300/70 text-xs uppercase tracking-widest mb-3 font-semibold">Music & Lessons</p>
               <p className="text-white/65 text-sm leading-relaxed mb-4">
@@ -195,7 +192,7 @@ export default function HomeContent() {
               </p>
               <ul className="space-y-1.5 text-sm text-white/55">
                 <li>✅ Voice, piano, guitar, drums</li>
-                <li>✅ Classes Mon–Thu, 9 AM – 2:15 PM</li>
+                <li>✅ Private lessons by appointment</li>
                 <li>✅ AI music mentor (Billy)</li>
               </ul>
               <p className="text-purple-400 text-sm font-bold mt-5 group-hover:translate-x-1 transition-transform">
@@ -300,7 +297,7 @@ export default function HomeContent() {
               📅 Are We Open Today?
             </h2>
             <p className="text-white/50 max-w-lg mx-auto text-sm">
-              Check our live calendar — classes run Monday through Thursday. Tap any day to see what&apos;s happening!
+              Check our live calendar for studio availability and scheduled private lessons.
             </p>
           </div>
 
@@ -338,7 +335,7 @@ export default function HomeContent() {
                 return (
                   <div key={i} className={`min-h-[60px] rounded-lg p-1.5 text-center transition ${isToday ? 'ring-2 ring-yellow-400/50' : ''}`}
                     style={{ background: isClosed ? 'rgba(239,68,68,0.08)' : hasClasses ? 'rgba(34,197,94,0.04)' : 'transparent' }}
-                    title={isClosed ? (closureEvent?.note || 'Closed') : hasClasses ? 'Classes today!' : 'No classes'}
+                    title={isClosed ? (closureEvent?.note || 'Closed') : hasClasses ? 'Private lessons available' : 'No private lessons'}
                   >
                     <span className={`text-sm font-medium ${isToday ? 'text-yellow-400 font-bold' : isClosed ? 'text-red-400' : hasClasses ? 'text-white' : 'text-white/20'}`}>
                       {day.getDate()}
