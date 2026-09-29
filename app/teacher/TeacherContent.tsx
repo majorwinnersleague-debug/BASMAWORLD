@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
+import DatabaseAccessPanel from './DatabaseAccessPanel'
 
 /* ═══════════════════════════════════════════════════════════════════════════
    TYPES
@@ -152,7 +153,7 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce' | 'dashboard'
+type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce' | 'dashboard' | 'database'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -274,13 +275,21 @@ export default function TeacherContent() {
     } catch {}
   }, [])
 
-  function handleCodeSubmit(e: React.FormEvent) {
+  async function handleCodeSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (codeInput.trim() === ACCESS_CODE) {
-      setAuthenticated(true)
-      setCodeError(false)
-      // No localStorage persistence — code required every visit
-    } else {
+    try {
+      const response = await fetch('/api/teacher-database-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeInput.trim() }),
+      })
+      if (response.ok) {
+        setAuthenticated(true)
+        setCodeError(false)
+      } else {
+        setCodeError(true)
+      }
+    } catch {
       setCodeError(true)
     }
   }
@@ -924,6 +933,7 @@ export default function TeacherContent() {
             { id: 'closures' as const, label: '🚫 Closures' },
             { id: 'chat' as const, label: '🤖 Assistant' },
             { id: 'announce' as const, label: '📢 Text All' },
+            { id: 'database' as const, label: '🗄️ Database Access' },
           ]).map(t => (
             <button key={t.id} onClick={() => {
               setTab(t.id)
@@ -941,6 +951,8 @@ export default function TeacherContent() {
             </button>
           ))}
         </div>
+
+        {tab === 'database' && <DatabaseAccessPanel teacherCode={ACCESS_CODE} />}
 
         {/* ═══ DASHBOARD TAB ═══ */}
         {tab === 'dashboard' && (
