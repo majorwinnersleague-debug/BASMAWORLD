@@ -64,7 +64,7 @@ async function sendReminderEmail(to: string, firstName: string, students: string
         <a href="${SITE}/private-lessons" style="display:inline-block;background:linear-gradient(135deg,#F0C850,#c9a84c);color:#0D0118;font-weight:700;font-size:16px;padding:14px 32px;border-radius:12px;text-decoration:none;">View Private Lessons →</a>
       </div>
       <p style="color:rgba(255,255,255,.48);font-size:13px;line-height:1.6;margin:22px 0 0;text-align:center;">
-        We also share occasional BASMA events and special opportunities with our community — including student experiences and event tickets when available.
+        We also share occasional BASMA events and special opportunities with our community — including special student experiences and event tickets when available.
       </p>
     </div>
     <div style="text-align:center;margin-top:22px;">
