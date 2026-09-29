@@ -34,24 +34,49 @@ export async function POST(req: NextRequest) {
   const email = meta.email || session.customer_details?.email || ''
   const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id || ''
 
-  // Mark the Neon request paid and make the student operationally active.
-  // This is intentionally independent of Airtable so the Teacher Portal can work without it.
-  try {
-    const requestId = Number(meta.requestId || 0)
-    const requests = requestId
-      ? await sql`SELECT * FROM lesson_requests WHERE id = ${requestId} LIMIT 1`
-      : await sql`SELECT * FROM lesson_requests WHERE stripe_session_id = ${session.id} LIMIT 1`
-    const request = requests[0]
+  // Update the operational Neon database when it is available.
+  // Failures here must not prevent Stripe from receiving a successful webhook response
+  // or stop the existing Airtable reconciliation.
+  if (sql) {
+    try {
+      const requestId = Number(meta.requestId || 0)
+      let requests = requestId
+        ? await sql`SELECT * FROM lesson_requests WHERE id = ${requestId} LIMIT 1`
+        : await sql`SELECT * FROM lesson_requests WHERE stripe_session_id = ${session.id} LIMIT 1`
+      let request = requests[0]
 
-    if (request) {
-      await sql`
-        UPDATE lesson_requests
-        SET status = 'Paid',
-            stripe_session_id = ${session.id},
-            stripe_payment_id = ${paymentIntentId || null},
-            paid_at = NOW()
-        WHERE id = ${request.id}
-      `
+      // If checkout could not write Neon, reconstruct the request from trusted
+      // Stripe metadata so a successful payment can still activate the student.
+      if (!request) {
+        const [created] = await sql`
+          INSERT INTO lesson_requests (
+            parent_name, email, phone, student_name, student_age, instrument,
+            preferred_day, preferred_time, notes, package_id, package_name,
+            amount_cents, status, stripe_session_id, stripe_payment_id, paid_at
+          ) VALUES (
+            ${meta.parentName || ''}, ${email}, ${meta.phone || null}, ${meta.studentName || ''},
+            ${meta.studentAge || null}, ${meta.instrument || null},
+            ${meta.preferredDay || 'Flexible'}, ${meta.preferredTime || 'Flexible'}, ${meta.notes || null},
+            ${meta.packageId || null}, ${pkg.name}, ${Math.round(pkg.total * 100)}, 'Paid',
+            ${session.id}, ${paymentIntentId || null}, NOW()
+          )
+          ON CONFLICT (stripe_session_id) DO UPDATE SET
+            status = 'Paid',
+            stripe_payment_id = EXCLUDED.stripe_payment_id,
+            paid_at = COALESCE(lesson_requests.paid_at, EXCLUDED.paid_at)
+          RETURNING *
+        `
+        request = created
+      } else {
+        await sql`
+          UPDATE lesson_requests
+          SET status = 'Paid',
+              stripe_session_id = ${session.id},
+              stripe_payment_id = ${paymentIntentId || null},
+              paid_at = COALESCE(paid_at, NOW())
+          WHERE id = ${request.id}
+        `
+      }
 
       const existing = await sql`
         SELECT id FROM active_students
@@ -69,6 +94,7 @@ export async function POST(req: NextRequest) {
               lesson_type = 'Private',
               instrument = ${request.instrument},
               status = 'Active',
+              notes = ${request.notes},
               updated_at = NOW()
           WHERE id = ${existing[0].id}
         `
@@ -84,12 +110,10 @@ export async function POST(req: NextRequest) {
           )
         `
       }
-    } else {
-      console.error('[stripe-webhook] Neon request not found for paid session:', session.id)
+    } catch (error) {
+      console.error('[stripe-webhook] Neon operational update failed:', error)
+      // Airtable reconciliation below remains independent.
     }
-  } catch (error) {
-    console.error('[stripe-webhook] Neon update failed:', error)
-    return NextResponse.json({ error: 'Operational database update failed' }, { status: 500 })
   }
   const pat = process.env.AIRTABLE_PAT || ''
   const base = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
