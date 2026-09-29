@@ -64,7 +64,7 @@ const INSTRUMENTS = [
 const LESSON_PHOTOS = [
   { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Basma teaching a private piano lesson' },
   { src: '/images/camp/boy-keyboard.jpg', alt: 'Student concentrating during a keyboard lesson' },
-  { src: '/images/camp/teacher-whiteboard.jpg', alt: 'BASMA instructor teaching music theory' },
+  { src: '/images/camp/classroom-piano-lesson.jpg', alt: 'BASMA instructor teaching music theory' },
   { src: '/images/camp/little-girl-piano.jpg', alt: 'Young girl learning piano at BASMA' },
   { src: '/images/guitar-lesson.jpg', alt: 'Guitar instruction at BASMA' },
   { src: '/images/camp/classroom-piano-lesson.jpg', alt: 'Piano instruction in the BASMA studio' },
@@ -75,9 +75,7 @@ const LESSON_PHOTOS = [
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function PrivateLessonsContent() {
-  // Form mode: 'trial' | 'package'
-  const [mode, setMode] = useState<'trial' | 'package' | null>(null)
-  const [trialSuccess, setTrialSuccess] = useState(false)
+  const [mode, setMode] = useState<'package' | null>(null)
   const [selectedPkg, setSelectedPkg] = useState<string | null>(null)
 
   // Shared form fields
@@ -92,7 +90,6 @@ export default function PrivateLessonsContent() {
   const [notes, setNotes] = useState('')
 
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [error, setError] = useState('')
 
@@ -104,35 +101,6 @@ export default function PrivateLessonsContent() {
       setPaymentSuccess(true)
     }
   }, [searchParams])
-
-  // Handle free trial submission
-  async function handleTrialSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    try {
-      const res = await fetch('/api/private-lesson', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          parentName, email, phone, studentName, studentAge,
-          instrument, preferredDay, preferredTime, notes,
-        }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setSuccess(true)
-        setTrialSuccess(true)
-      } else {
-        setError(data.error || 'Something went wrong. Please try again.')
-      }
-    } catch {
-      setError('Failed to submit. Please call us at (702) 788-7369.')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   // Handle package purchase via Stripe
   async function handlePackagePurchase(e: React.FormEvent) {
@@ -176,7 +144,7 @@ export default function PrivateLessonsContent() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
+        <div className="min-h-screen" style={{ paddingTop: '64px' }}>
           <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
             <div className="text-5xl mb-6">✅</div>
             <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -192,36 +160,6 @@ export default function PrivateLessonsContent() {
                 <li>📞 We&apos;ll call to finalize your schedule</li>
                 <li>🎵 Attend your lessons weekly</li>
                 <li>📋 1 makeup lesson included — use by 2nd week of next month</li>
-              </ul>
-            </div>
-            <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
-          </section>
-        </div>
-        <Footer />
-      </>
-    )
-  }
-
-  if (success) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
-          <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
-            <div className="text-5xl mb-6">🎉</div>
-            <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Trial Lesson Requested!
-            </h1>
-            <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">
-              We&apos;ve received your request for a free 20-minute trial lesson.
-              We&apos;ll review your preferred time and send you a confirmation email shortly.
-            </p>
-            <div className="card-minimal rounded-xl p-5 text-left max-w-sm mx-auto">
-              <p className="text-white/50 text-xs uppercase tracking-widest mb-3">What&apos;s Next</p>
-              <ul className="text-white/35 text-sm space-y-2">
-                <li>✉️ Confirmation email within 24 hours</li>
-                <li>📞 We may call to confirm the time</li>
-                <li>🎵 Show up and enjoy your lesson!</li>
               </ul>
             </div>
             <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
@@ -418,7 +356,7 @@ export default function PrivateLessonsContent() {
 
           {/* ── Meet the Team ── */}
           <div className="text-center mb-8">
-            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-4">Meet Our Instructors</h2>
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-4">Your Instructor</h2>
             <p className="text-white/25 text-sm max-w-lg mx-auto">
               Our team of passionate musicians and educators brings real-world performance experience
               into every lesson. Whether your child is picking up an instrument for the first time or
@@ -448,23 +386,23 @@ export default function PrivateLessonsContent() {
               </div>
             </div>
 
-            {/* Instructor 2 - Sarah */}
+            {/* Instructor 2 -  */}
             <div className="card-minimal rounded-xl overflow-hidden">
               <div className="relative w-full" style={{ aspectRatio: '4/5' }}>
                 <Image
-                  src="/images/camp/teacher-whiteboard.jpg"
-                  alt="Sarah — Music Instructor at BASMA Music Academy"
+                  src="/images/camp/classroom-piano-lesson.jpg"
+                  alt=" at BASMA Music Academy"
                   fill
                   className="object-cover object-top"
                   sizes="(max-width: 768px) 100vw, 300px"
                 />
               </div>
               <div className="p-5">
-                <h3 className="text-white font-semibold text-base mb-1">Sarah</h3>
+                <h3 className="text-white font-semibold text-base mb-1"></h3>
                 <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">Music Instructor</p>
                 <p className="text-white/30 text-xs leading-relaxed mb-3">
                   A versatile multi-instrumentalist with a passion for classical and contemporary music.
-                  Sarah brings warmth, patience, and expertise to every lesson — from beginners to advanced students.
+                   brings warmth, patience, and expertise to every lesson — from beginners to advanced students.
                 </p>
                 <p className="text-white/20 text-xs">🎹 Piano · 🎻 Violin · 🎻 Viola · 🎻 Cello</p>
               </div>
@@ -485,7 +423,7 @@ export default function PrivateLessonsContent() {
                 <h3 className="text-white font-semibold text-base mb-1">Why BASMA?</h3>
                 <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">What Sets Us Apart</p>
                 <p className="text-white/30 text-xs leading-relaxed">
-                  Small class sizes (5–7 students max), real instruments from day one, performance opportunities,
+                  , real instruments from day one, performance opportunities,
                   and a warm community that feels like family. We believe every child has a song inside them.
                 </p>
               </div>
@@ -557,7 +495,7 @@ export default function PrivateLessonsContent() {
                 </p>
               </div>
 
-              <form onSubmit={mode === 'trial' ? handleTrialSubmit : handlePackagePurchase} className="space-y-4">
+              <form onSubmit={handlePackagePurchase} className="space-y-4">
                 {/* Parent / Contact */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
@@ -640,7 +578,7 @@ export default function PrivateLessonsContent() {
 
                 <button type="submit" disabled={loading}
                   className={`w-full py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 ${
-                    mode === 'trial'
+                    false
                       ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30'
                       : 'bg-[#c9a84c]/20 text-[#c9a84c] hover:bg-[#c9a84c]/30 border border-[#c9a84c]/30'
                   } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
