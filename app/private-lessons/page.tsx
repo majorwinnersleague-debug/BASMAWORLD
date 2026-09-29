@@ -3,11 +3,11 @@ import PrivateLessonsContent from './PrivateLessonsContent'
 
 export const metadata: Metadata = {
   title: 'Private Lessons — BASMA Music Academy | BasmaWorld',
-  description: 'Book private music lessons with BASMA. Individual lessons are $45 for 30 minutes or $70 for 60 minutes. Monthly 4-lesson packages are $135 or $200.',
+  description: 'Book private music lessons with BASMA. Monthly 4-lesson packages are $140 for 30-minute lessons or $200 for 60-minute lessons.',
   keywords: ['private music lessons las vegas', 'music tutoring', 'piano lessons', 'vocal lessons', 'basma music academy'],
   openGraph: {
     title: 'Private Music Lessons — BASMA',
-    description: 'Book a 30- or 60-minute private lesson, or choose a monthly 4-lesson package.',
+    description: 'Choose a monthly 4-lesson private package in 30- or 60-minute sessions.',
     url: 'https://basmaworld.com/private-lessons',
     siteName: 'BasmaWorld',
     type: 'website',
