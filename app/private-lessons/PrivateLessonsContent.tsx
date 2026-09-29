@@ -62,12 +62,12 @@ const INSTRUMENTS = [
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const LESSON_PHOTOS = [
-  { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Basma teaching a virtual piano class to students' },
+  { src: '/images/basma/basma-teaching-classroom.jpg', alt: 'Basma teaching a private piano lesson' },
   { src: '/images/camp/boy-keyboard.jpg', alt: 'Student concentrating during a keyboard lesson' },
-  { src: '/images/camp/teacher-whiteboard.jpg', alt: 'BASMA instructor teaching music theory at the whiteboard' },
+  { src: '/images/camp/teacher-whiteboard.jpg', alt: 'BASMA instructor teaching music theory' },
   { src: '/images/camp/little-girl-piano.jpg', alt: 'Young girl learning piano at BASMA' },
-  { src: '/images/guitar-lesson.jpg', alt: 'Guitar instruction at BASMA Music Academy' },
-  { src: '/images/camp/classroom-piano-lesson.jpg', alt: 'Piano lessons in the BASMA studio' },
+  { src: '/images/guitar-lesson.jpg', alt: 'Guitar instruction at BASMA' },
+  { src: '/images/camp/classroom-piano-lesson.jpg', alt: 'Piano instruction in the BASMA studio' },
 ]
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -267,7 +267,7 @@ export default function PrivateLessonsContent() {
               <div className="grid sm:grid-cols-2 gap-4 max-w-xl mx-auto mb-6">
                 {/* 30-min package */}
                 <button
-                  onClick={() => { window.scrollTo({ top: document.getElementById('booking-form')?.offsetTop || 600, behavior: 'smooth' }); }}
+                  onClick={() => { window.scrollTo({ top: document.getElementById('lesson-form')?.offsetTop || 600, behavior: 'smooth' }); }}
                   className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
@@ -284,13 +284,10 @@ export default function PrivateLessonsContent() {
 
                 {/* 60-min package */}
                 <button
-                  onClick={() => { window.scrollTo({ top: document.getElementById('booking-form')?.offsetTop || 600, behavior: 'smooth' }); }}
+                  onClick={() => { window.scrollTo({ top: document.getElementById('lesson-form')?.offsetTop || 600, behavior: 'smooth' }); }}
                   className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] relative text-center"
                   style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
                 >
-                  <span className="absolute -top-3 right-4 bg-[#c9a84c] text-black text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full">
-                    Most Popular
-                  </span>
                   <p className="text-white/50 text-xs uppercase tracking-widest mb-2">60-Minute Individual Lesson</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
                     <span className="text-4xl font-bold text-white">$70</span>
@@ -324,7 +321,7 @@ export default function PrivateLessonsContent() {
             <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '4/3' }}>
               <Image
                 src="/images/camp/students-guitar-duo.jpg"
-                alt="Two students playing guitar at BASMA Music Academy"
+                alt="Guitar lesson at BASMA"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 768px) 100vw, 500px"
