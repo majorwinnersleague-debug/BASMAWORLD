@@ -32,7 +32,8 @@ export async function POST(req: Request) {
     if (!e || !e.includes('@')) return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     if (!AIRTABLE_PAT) return NextResponse.json({ error: 'Online lesson interest is temporarily unavailable.' }, { status: 503 })
 
-    const historical = await Promise.all(TABLES.map(fetchAllRecords))
+    const [leadRecords, ...historicalTables] = await Promise.all([fetchAllRecords(LEADS_TABLE), ...TABLES.map(fetchAllRecords)])
+    const historical = [leadRecords, ...historicalTables]
     const pd = phone(p)
     const returning = historical.some((records, i) => records.some(r => {
       const f=r.fields || {}
@@ -42,6 +43,16 @@ export async function POST(req: Request) {
     }))
 
     const status = returning ? 'Returning' : 'New'
+
+    // Reuse an existing master-list record when the person is already in BASMA Marketing Leads.
+    // This keeps the master list clean instead of creating duplicate people.
+    const existing = leadRecords.find(r => {
+      const f = r.fields || {}
+      const existingEmail = email(String(f.Email || ''))
+      const existingPhone = phone(String(f.Phone || ''))
+      return existingEmail === e || (!!pd && pd === existingPhone)
+    })
+
     const fields: Record<string, any> = {
       'Full Name': name,
       Email: e,
@@ -50,10 +61,10 @@ export async function POST(req: Request) {
       Status: status,
       Message: `Online Lessons Interest | Status: ${status}`,
     }
-    const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}`, {
-      method:'POST',
+    const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}${existing ? `/${existing.id}` : ''}`, {
+      method: existing ? 'PATCH' : 'POST',
       headers:{ Authorization:`Bearer ${AIRTABLE_PAT}`, 'Content-Type':'application/json' },
-      body:JSON.stringify({ records:[{ fields }] }),
+      body: JSON.stringify(existing ? { fields } : { records: [{ fields }] }),
     })
     if (!res.ok) { console.error('Airtable online interest create failed:', await res.text()); return NextResponse.json({ error:'We could not save your request. Please try again.' }, { status:500 }) }
     return NextResponse.json({ success:true })
