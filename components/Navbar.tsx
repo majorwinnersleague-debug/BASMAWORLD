@@ -108,7 +108,7 @@ export default function Navbar() {
             <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold mb-1 px-2">Account</p>
             {[
               { href: '/portal', label: '👨‍👩‍👧 Parent Portal' },
-              { href: '/teacher', label: '👩‍🏫 Teacher Portal' },
+              { href: '/teacher', label: '👩‍🏫 ' },
               { href: '/contact', label: '💬 Contact Us' },
             ].map(link => (
               <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
