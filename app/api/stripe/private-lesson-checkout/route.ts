@@ -42,10 +42,8 @@ export async function POST(req: NextRequest) {
     }
 
     const packages: Record<string, { name: string; duration: string; sessions: number; total: number }> = {
-      'individual-30min': { name: 'Individual 30-Minute Lesson', duration: '30 min', sessions: 1, total: 45 },
-      'individual-60min': { name: 'Individual 60-Minute Lesson', duration: '1 hour', sessions: 1, total: 70 },
-      'monthly-4x30min': { name: 'Monthly 4 × 30-Minute Lessons', duration: '30 min', sessions: 4, total: 135 },
-      'monthly-4x60min': { name: 'Monthly 4 × 60-Minute Lessons', duration: '1 hour', sessions: 4, total: 200 },
+      'monthly-4x30min': { name: 'Monthly 4 × 30-Minute Private Lessons', duration: '30 min', sessions: 4, total: 140 },
+      'monthly-4x60min': { name: 'Monthly 4 × 60-Minute Private Lessons', duration: '1 hour', sessions: 4, total: 200 },
     }
     const pkg = packages[packageId]
     if (!pkg) {
