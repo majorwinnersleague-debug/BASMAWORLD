@@ -255,329 +255,98 @@ export async function GET(req: Request) {
     const teacherCode = url.searchParams.get("teacherCode")?.trim() || "";
     const source = url.searchParams.get("source")?.trim() || "";
 
-    // Teacher portal: authenticated with code 1515 + source=all → return all records
-    const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || "1515";
+    // Teacher portal: BASMA Marketing Leads is the single master roster.
+    // Historical tables are read-only fallbacks for legacy health/check-in data.
     if (source === "all" && teacherCode === TEACHER_CODE) {
-      const [leadRecords, enrollmentRecords, paymentRecords, summerRecords, checkinRecords] = await Promise.all([
-        fetchAllRecords(LEADS_TABLE),
-        fetchAllRecords(ENROLLMENTS_TABLE),
-        fetchAllRecords(PAYMENTS_TABLE),
-        fetchAllRecords(SUMMER_TABLE),
-        fetchAllRecords(CHECKIN_TABLE),
+      const [leadRecords, summerRecords, checkinRecords] = await Promise.all([
+        fetchAllRecords(LEADS_TABLE), fetchAllRecords(SUMMER_TABLE), fetchAllRecords(CHECKIN_TABLE),
       ]);
 
-      const enrollmentsByEmail: Record<string, AirtableRecord[]> = {};
-      for (const e of enrollmentRecords) {
-        const em = (e.fields.Email || "").toLowerCase().trim();
-        if (em) {
-          if (!enrollmentsByEmail[em]) enrollmentsByEmail[em] = [];
-          enrollmentsByEmail[em].push(e);
-        }
-      }
-
-      const paymentsByEmail: Record<string, AirtableRecord[]> = {};
-      for (const p of paymentRecords) {
-        const em = (p.fields.Email || p.fields.email || "").toLowerCase().trim();
-        if (em) {
-          if (!paymentsByEmail[em]) paymentsByEmail[em] = [];
-          paymentsByEmail[em].push(p);
-        }
-      }
-
-      // Index summer records by student+email key for enrichment
-      const summerByKey: Record<string, Record<string, any>> = {};
-      for (const s of summerRecords) {
-        const sName = (s.fields["Student Name"] || "").toLowerCase().trim();
-        const sEmail = (s.fields["Parent Email"] || "").toLowerCase().trim();
-        if (sName) summerByKey[`${sName}|${sEmail}`] = s.fields;
-        if (sName) summerByKey[sName] = s.fields; // fallback by name only
-      }
-
-      // Build registrations — only include records that have a student name
-      // (records without a student name are just marketing leads, not enrolled students)
-      const registrations = leadRecords
-        .map((r) => {
-          const f = r.fields;
-          const parsed = parseStudentInfo(f.Message || "");
-          const em = (f.Email || "").toLowerCase().trim();
-          const src = (f.Source || "").toLowerCase();
-          const studentName = f["Student Name"] || parsed?.studentName || "";
-
-          // Skip records without a student name — they're marketing leads, not students
-          if (!studentName.trim()) return null;
-
-          // Look up enriched data from Summer 2026 Registrations
-          const summerData = summerByKey[`${studentName.toLowerCase().trim()}|${em}`]
-            || summerByKey[studentName.toLowerCase().trim()]
-            || null;
-
-          // Determine payment status
-          const hasPaid = !!(paymentsByEmail[em] && paymentsByEmail[em].length > 0);
-          const isFreeSource = src.includes("discovery") || src.includes("free") || src.includes("private");
-          let paymentStatus: string;
-          if (hasPaid) {
-            paymentStatus = "Paid";
-          } else if (summerData?.["Payment Status"] === "Paid") {
-            paymentStatus = "Paid";
-          } else if (isFreeSource) {
-            paymentStatus = "Free";
-          } else {
-            paymentStatus = "Pending";
-          }
-
-          // Get enrolled class name from enrollment records
-          const enrollments = enrollmentsByEmail[em] || [];
-          const enrolledClass = enrollments.length > 0
-            ? (enrollments[0].fields["Class"] || enrollments[0].fields["Class Name"] || enrollments[0].fields["Selected Class"] || "")
-            : "";
-
-          // Determine waiver status from multiple sources
-          const waiverForm = f["Waiver Form"] || "";
-          const liabilityAgreed = summerData?.["Liability Agreed"] || "";
-          const hasWaiver = waiverForm.toLowerCase() === "complete" || liabilityAgreed === "Yes" || enrollments.length > 0;
-
-          // Check-in data from Notes field
-          const notes = summerData?.["Notes"] || f["Notes"] || "";
-          const checkInMatches = notes.match(/Checked in: .+/g) || [];
-          const lastCheckIn = checkInMatches.length > 0 ? checkInMatches[checkInMatches.length - 1] : null;
-
-          // Determine registration completeness:
-          // "Complete" = has parent name + email + phone + student name + waiver signed
-          // These are the essentials. Allergies/emergency contact are tracked separately.
-          const parentName = (f["Full Name"] || "").trim();
-          const hasBasicInfo = !!(parentName && em && (f.Phone || "").trim());
-          const isRegistrationComplete = hasBasicInfo && hasWaiver;
-
-          // Track what's missing for teacher display
-          const missingFields: string[] = [];
-          if (!parentName) missingFields.push("Parent Name");
-          if (!em) missingFields.push("Email");
-          if (!(f.Phone || "").trim()) missingFields.push("Phone");
-          if (!hasWaiver) missingFields.push("Waiver");
-          if (!summerData?.["Allergies"] && !summerData?.["Allergies"]?.trim()) missingFields.push("Allergies");
-          if (!summerData?.["Emergency Contact Name"]) missingFields.push("Emergency Contact");
-
-          return {
-            id: r.id,
-            parentName: f["Full Name"] || "",
-            email: f.Email || "",
-            phone: f.Phone || "",
-            studentName,
-            studentAge: f["Student Age"] || parsed?.studentAge || "",
-            interests: f.Interests || "",
-            status: f.Status || "Unknown",
-            source: f.Source || "",
-            ageGroup: f["Age Group"] || "",
-            experienceLevel: f["Experience Level"] || "",
-            referralSource: f["Referral Source"] || "",
-            message: f.Message || "",
-            discoveryWeek: f["Discovery Week"] || "",
-            timeSlot: f["Time Slot"] || "",
-            paymentStatus,
-            enrolledClass: enrolledClass as string,
-            hasWaiver,
-            createdAt: r.createdTime,
-            // Enriched fields from Summer 2026 table
-            allergies: summerData?.["Allergies"] || "",
-            medicalConditions: summerData?.["Medical Conditions"] || "",
-            emergencyContactName: summerData?.["Emergency Contact Name"] || "",
-            emergencyContactPhone: summerData?.["Emergency Contact Phone"] || "",
-            liabilityAgreed: liabilityAgreed === "Yes",
-            waiverFormStatus: waiverForm || (liabilityAgreed === "Yes" ? "Complete" : "Not Started"),
-            lastCheckIn: lastCheckIn || null,
-            isRegistrationComplete,
-            missingFields,
-          };
-        })
-        .filter((r): r is NonNullable<typeof r> => r !== null);
-
-      // ── Deduplicate: keep the most complete record per student+email ──
-      const deduped: typeof registrations = [];
-      const seen = new Map<string, number>(); // key → index in deduped
-
-      for (const r of registrations) {
-        const key = `${r.studentName.trim().toLowerCase()}|${r.email.trim().toLowerCase()}`;
-        const existingIdx = seen.get(key);
-
-        if (existingIdx === undefined) {
-          // First time seeing this student
-          seen.set(key, deduped.length);
-          deduped.push(r);
-        } else {
-          // Duplicate — keep whichever has more filled fields
-          const existing = deduped[existingIdx];
-          const scoreFields = (rec: typeof r) => {
-            let s = 0;
-            if (rec.parentName) s++;
-            if (rec.phone) s++;
-            if (rec.studentAge) s++;
-            if (rec.interests) s++;
-            if (rec.ageGroup) s++;
-            if (rec.experienceLevel) s++;
-            if (rec.discoveryWeek) s++;
-            if (rec.timeSlot) s++;
-            if (rec.hasWaiver) s += 2; // waiver is important
-            if (rec.allergies) s++;
-            if (rec.emergencyContactName) s++;
-            if (rec.isRegistrationComplete) s += 2;
-            if (rec.paymentStatus === "Paid" || rec.paymentStatus === "Free") s++;
-            return s;
-          };
-          if (scoreFields(r) > scoreFields(existing)) {
-            deduped[existingIdx] = r;
-          }
-        }
-      }
-
-      // ── Also include Summer 2026 records not already in Leads ──
-      // Students who registered directly (e.g. via enrollment form) may only be
-      // in the Summer 2026 table, not in the Leads table.
-      // Build a secondary index by first-name + email for fuzzy dedup
-      // (e.g. "Saul Acevedo" in Leads matches "Saul" in Summer 2026)
-      const seenFirstNameEmail = new Set<string>();
-      for (const r of deduped) {
-        const firstName = r.studentName.trim().toLowerCase().split(/\s+/)[0];
-        const em = r.email.trim().toLowerCase();
-        if (firstName && em) seenFirstNameEmail.add(`${firstName}|${em}`);
-      }
-
+      const normalizePhone = (value: string) => {
+        const digits = value.replace(/\D/g, "");
+        return digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+      };
+      const summerByStudentEmail = new Map<string, Record<string, any>>();
+      const summerByStudent = new Map<string, Record<string, any>>();
       for (const s of summerRecords) {
         const f = s.fields;
-        const studentName = (f["Student Name"] || "").trim();
-        const email = (f["Parent Email"] || "").toLowerCase().trim();
-        if (!studentName) continue;
-
-        const key = `${studentName.toLowerCase()}|${email}`;
-        const firstNameKey = `${studentName.toLowerCase().split(/\s+/)[0]}|${email}`;
-        if (seen.has(key) || seenFirstNameEmail.has(firstNameKey)) continue; // already included from Leads
-
-        seen.set(key, deduped.length);
-        seenFirstNameEmail.add(firstNameKey);
-        const payStatus = f["Payment Status"] || "Free";
-        deduped.push({
-          id: s.id,
-          parentName: f["Parent Name"] || "",
-          email: f["Parent Email"] || "",
-          phone: f["Parent Phone"] || "",
-          studentName,
-          studentAge: String(f["Age"] || ""),
-          interests: f["Class"] || "",
-          status: payStatus === "Paid" ? "Enrolled" : payStatus === "Free" ? "Free Trial" : "Registered",
-          source: "Summer Camp 2026",
-          message: "",
-          ageGroup: "",
-          experienceLevel: "",
-          referralSource: "",
-          discoveryWeek: "",
-          timeSlot: "",
-          paymentStatus: payStatus,
-          enrolledClass: f["Class"] || "",
-          hasWaiver: f["Liability Agreed"] === "Yes",
-          createdAt: s.createdTime,
-          allergies: f["Allergies"] || "",
-          medicalConditions: f["Medical Conditions"] || "",
-          emergencyContactName: f["Emergency Contact"] || "",
-          emergencyContactPhone: f["Emergency Phone"] || "",
-          liabilityAgreed: f["Liability Agreed"] === "Yes",
-          waiverFormStatus: f["Liability Agreed"] === "Yes" ? "Complete" : "Not Started",
-          lastCheckIn: null,
-          isRegistrationComplete: !!(studentName && email && (f["Parent Phone"] || "").trim()),
-          missingFields: [],
-        });
+        const student = String(f["Student Name"] || "").trim().toLowerCase();
+        const em = String(f["Parent Email"] || "").trim().toLowerCase();
+        if (student && em) summerByStudentEmail.set(student + "|" + em, f);
+        if (student) summerByStudent.set(student, f);
       }
-
-      // ── Build allContacts: every lead/contact with a phone number ──
-      // Used by the Text All announcements tab (includes marketing leads without student names)
-      const EXCLUDED_NAMES = ['mitzi', 'frank vecchio'];
-      const EXCLUDED_PHONES_RAW = ['7028846787'];
-      // Normalize: strip leading '1' for 11-digit US numbers so both 7028846787 and 17028846787 match
-      const normalizePhone = (p: string) => { const d = p.replace(/\D/g, ''); return d.length === 11 && d.startsWith('1') ? d.slice(1) : d; };
-
-      // Fetch blocked phones from Airtable Blocked Contacts table
-      const blockedFromAirtable: string[] = [];
-      if (BLOCKED_TABLE) {
-        try {
-          const blockedRes = await fetch(
-            `https://api.airtable.com/v0/${AIRTABLE_BASE}/${BLOCKED_TABLE}?fields%5B%5D=Phone`,
-            { headers: { Authorization: `Bearer ${AIRTABLE_PAT}` }, cache: 'no-store' }
-          );
-          const blockedData = await blockedRes.json();
-          for (const rec of (blockedData.records || [])) {
-            const ph = normalizePhone(rec.fields?.Phone || '');
-            if (ph.length >= 7) blockedFromAirtable.push(ph);
-          }
-        } catch (_) { /* ignore — hardcoded list still applies */ }
-      }
-
-      const EXCLUDED_PHONES = new Set([...EXCLUDED_PHONES_RAW, ...blockedFromAirtable]);
-      const allContactsMap = new Map<string, { name: string; phone: string; studentName: string; email: string; source: string }>();
-
-      for (const r of leadRecords) {
-        const f = r.fields;
-        const ph = normalizePhone(f.Phone || '');
-        if (ph.length < 7) continue;
-        if (EXCLUDED_PHONES.has(ph)) continue;
-        const name = (f['Full Name'] || '').trim();
-        if (EXCLUDED_NAMES.includes(name.toLowerCase())) continue;
-        if (allContactsMap.has(ph)) continue;
-        allContactsMap.set(ph, {
-          name: name || f['Student Name'] || '',
-          phone: f.Phone || '',
-          studentName: f['Student Name'] || '',
-          email: f.Email || '',
-          source: f.Source || '',
-        });
-      }
-
-      for (const s of summerRecords) {
-        const f = s.fields;
-        const ph = normalizePhone(f['Parent Phone'] || '');
-        if (ph.length < 7) continue;
-        if (EXCLUDED_PHONES.has(ph)) continue;
-        const name = (f['Parent Name'] || '').trim();
-        if (EXCLUDED_NAMES.includes(name.toLowerCase())) continue;
-        if (allContactsMap.has(ph)) continue;
-        allContactsMap.set(ph, {
-          name: name || f['Student Name'] || '',
-          phone: f['Parent Phone'] || '',
-          studentName: f['Student Name'] || '',
-          email: f['Parent Email'] || '',
-          source: 'Summer Camp 2026',
-        });
-      }
-
-      // Also include check-in log records (walk-in families not in other tables)
+      const lastCheckInByPhone = new Map<string, string>();
       for (const c of checkinRecords) {
         const f = c.fields;
-        const ph = normalizePhone(f['Parent Phone'] || '');
-        if (ph.length < 7) continue;
-        if (EXCLUDED_PHONES.has(ph)) continue;
-        const name = (f['Parent Name'] || '').trim();
-        if (EXCLUDED_NAMES.includes(name.toLowerCase())) continue;
-        if (allContactsMap.has(ph)) continue;
-        allContactsMap.set(ph, {
-          name: name || f['Student Name'] || '',
-          phone: f['Parent Phone'] || '',
-          studentName: f['Student Name'] || '',
-          email: f['Parent Email'] || '',
-          source: 'Check-In Walk-In',
-        });
+        const ph = normalizePhone(String(f["Parent Phone"] || ""));
+        if (ph) lastCheckInByPhone.set(ph, String(f["Check-In Time"] || f["Timestamp"] || c.createdTime || ""));
       }
 
-      const allContacts = Array.from(allContactsMap.values());
-
-      // Filter excluded contacts from registrations too
-      const filteredRegistrations = deduped.filter(r => {
-        const ph = normalizePhone(r.phone || '');
-        if (EXCLUDED_PHONES.has(ph)) return false;
-        const name = (r.parentName || '').trim().toLowerCase();
-        if (EXCLUDED_NAMES.includes(name)) return false;
+      const EXCLUDED_NAMES = ["mitzi", "frank vecchio"];
+      const EXCLUDED_PHONES = new Set(["7028846787"]);
+      const registrations = leadRecords.map((r) => {
+        const f = r.fields;
+        const parsed = parseStudentInfo(f.Message || "");
+        const parentName = String(f["Full Name"] || "").trim();
+        const em = String(f.Email || "").trim().toLowerCase();
+        const ph = normalizePhone(String(f.Phone || ""));
+        const studentName = String(f["Student Name"] || parsed?.studentName || "").trim();
+        const studentAge = String(f["Student Age"] || parsed?.studentAge || "");
+        const summer = summerByStudentEmail.get(studentName.toLowerCase() + "|" + em) || summerByStudent.get(studentName.toLowerCase());
+        const waiverForm = String(f["Waiver Form"] || "");
+        const liabilityAgreed = String(f["Liability Agreed"] || summer?.["Liability Agreed"] || "");
+        const hasWaiver = waiverForm.toLowerCase() === "complete" || liabilityAgreed === "Yes";
+        const isRegistrationComplete = !!(parentName && em && ph && studentName && hasWaiver);
+        const missingFields: string[] = [];
+        if (!parentName) missingFields.push("Parent Name");
+        if (!em) missingFields.push("Email");
+        if (!ph) missingFields.push("Phone");
+        if (!studentName) missingFields.push("Student Name");
+        if (!hasWaiver) missingFields.push("Waiver");
+        return {
+          id: r.id, parentName, email: f.Email || "", phone: f.Phone || "", studentName, studentAge,
+          interests: f.Interests || "", status: f.Status || "New", source: f.Source || "",
+          ageGroup: f["Age Group"] || "", experienceLevel: f["Experience Level"] || "",
+          referralSource: f["Referral Source"] || "", message: f.Message || "",
+          discoveryWeek: f["Discovery Week"] || "", timeSlot: f["Time Slot"] || "",
+          paymentStatus: "Not tracked", enrolledClass: f["Lesson Type"] || "", hasWaiver, createdAt: r.createdTime,
+          allergies: f["Allergies"] || summer?.["Allergies"] || "",
+          medicalConditions: f["Medical Conditions"] || summer?.["Medical Conditions"] || "",
+          emergencyContactName: f["Emergency Contact Name"] || summer?.["Emergency Contact"] || "",
+          emergencyContactPhone: f["Emergency Contact Phone"] || summer?.["Emergency Phone"] || "",
+          liabilityAgreed: liabilityAgreed === "Yes",
+          waiverFormStatus: waiverForm || (liabilityAgreed === "Yes" ? "Complete" : "Not Started"),
+          lastCheckIn: lastCheckInByPhone.get(ph) || null, isRegistrationComplete, missingFields,
+          onlineInterest: f["Online Interest"] === true || String(f["Online Interest"] || "").toLowerCase() === "true",
+          lessonType: f["Lesson Type"] || "Private",
+        };
+      }).filter(r => {
+        if (!r.studentName && !r.parentName) return false;
+        if (EXCLUDED_NAMES.includes(r.parentName.toLowerCase())) return false;
+        if (EXCLUDED_PHONES.has(normalizePhone(r.phone))) return false;
         return true;
       });
 
-      return NextResponse.json({ registrations: filteredRegistrations, allContacts });
+      const blockedFromAirtable: string[] = [];
+      if (BLOCKED_TABLE) {
+        try {
+          const blockedRes = await fetch("https://api.airtable.com/v0/" + AIRTABLE_BASE + "/" + BLOCKED_TABLE + "?fields%5B%5D=Phone", { headers: { Authorization: "Bearer " + AIRTABLE_PAT }, cache: "no-store" });
+          const blockedData = await blockedRes.json();
+          for (const rec of (blockedData.records || [])) {
+            const ph = normalizePhone(String(rec.fields?.Phone || ""));
+            if (ph.length >= 7) blockedFromAirtable.push(ph);
+          }
+        } catch (_) {}
+      }
+      const blocked = new Set([...blockedFromAirtable, ...Array.from(EXCLUDED_PHONES)]);
+      const allContactsMap = new Map<string, { name: string; phone: string; studentName: string; email: string; source: string }>();
+      for (const r of leadRecords) {
+        const f = r.fields, ph = normalizePhone(String(f.Phone || "")), name = String(f["Full Name"] || "").trim();
+        if (ph.length < 7 || blocked.has(ph) || EXCLUDED_NAMES.includes(name.toLowerCase()) || allContactsMap.has(ph)) continue;
+        allContactsMap.set(ph, { name: name || String(f["Student Name"] || ""), phone: String(f.Phone || ""), studentName: String(f["Student Name"] || ""), email: String(f.Email || ""), source: String(f.Source || "") });
+      }
+      return NextResponse.json({ registrations, allContacts: Array.from(allContactsMap.values()) });
     }
-
     // Legacy single-search param — block it entirely
     const legacySearch = url.searchParams.get("search");
     if (legacySearch) {

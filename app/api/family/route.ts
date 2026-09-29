@@ -149,51 +149,26 @@ export async function GET(request: NextRequest) {
   })
 }
 
-// POST — Add a new sibling
+// POST — Add a new sibling to the master roster
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json()
     const { email, parentName, phone, studentName, studentAge, interests } = data
-
-    if (!email || !studentName) {
-      return NextResponse.json({ error: 'Email and student name required' }, { status: 400 })
+    if (!email || !studentName) return NextResponse.json({ error: "Email and student name required" }, { status: 400 })
+    const existing = await airtableGet(LEADS_TABLE, `LOWER({Email})="${String(email).trim().toLowerCase().replace(/"/g, "\\\"")}"`)
+    const fields: Record<string, unknown> = { "Full Name": parentName || "", Email: email, Phone: phone || "", "Student Name": studentName, "Student Age": studentAge || "", Interests: interests || "", "Lesson Type": "Private", "Online Interest": false }
+    if (existing[0]) {
+      await airtablePatch(LEADS_TABLE, existing[0].id, fields)
+      return NextResponse.json({ success: true, newRecordId: existing[0].id, existing: true })
     }
-
-    // Create in Marketing Leads
-    const leadsResult = await airtableCreate(LEADS_TABLE, {
-      'Full Name': parentName || '',
-      'Email': email,
-      'Phone': phone || '',
-      'Student Name': studentName,
-      'Student Age': studentAge || '',
-      'Interests': interests || '',
-      'Source': 'family-portal-add-sibling',
-      'Status': 'New Lead',
-      'Registration Form': 'Partial',
-      'Waiver Form': 'Not Started',
-    })
-
-    // Also create in Summer table
-    await airtableCreate(SUMMER_TABLE, {
-      'Parent Name': parentName || '',
-      'Parent Email': email,
-      'Parent Phone': phone || '',
-      'Student Name': studentName,
-      'Age': studentAge ? parseInt(studentAge) : undefined,
-      'Class': '',
-      'Payment Status': 'Free',
-      'Notes': 'Added via family portal (sibling)',
-    })
-
-    return NextResponse.json({
-      success: true,
-      newRecordId: leadsResult.records?.[0]?.id,
-    })
-  } catch (error) {
-    return NextResponse.json({ error: String(error) }, { status: 500 })
-  }
+    fields["Status"] = "Returning"
+    fields["Source"] = "family-portal-add-sibling"
+    fields["Registration Form"] = "Partial"
+    fields["Waiver Form"] = "Not Started"
+    const result = await airtableCreate(LEADS_TABLE, fields)
+    return NextResponse.json({ success: true, newRecordId: result.records?.[0]?.id, existing: false })
+  } catch (error) { return NextResponse.json({ error: String(error) }, { status: 500 }) }
 }
-
 // PATCH — Update a student's info
 export async function PATCH(request: NextRequest) {
   try {
