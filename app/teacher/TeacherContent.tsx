@@ -275,13 +275,21 @@ export default function TeacherContent() {
     } catch {}
   }, [])
 
-  function handleCodeSubmit(e: React.FormEvent) {
+  async function handleCodeSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (codeInput.trim() === ACCESS_CODE) {
-      setAuthenticated(true)
-      setCodeError(false)
-      // No localStorage persistence — code required every visit
-    } else {
+    try {
+      const response = await fetch('/api/teacher-database-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeInput.trim() }),
+      })
+      if (response.ok) {
+        setAuthenticated(true)
+        setCodeError(false)
+      } else {
+        setCodeError(true)
+      }
+    } catch {
       setCodeError(true)
     }
   }
