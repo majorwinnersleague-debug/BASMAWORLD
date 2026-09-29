@@ -3,7 +3,7 @@
 export default function StripeCheckoutButton() {
   return (
     <a
-      href="/enroll"
+      href="/private-lessons"
       className="inline-block bg-[#7B2FBE] hover:bg-[#9333ea]
                  text-white font-bold px-8 py-4 rounded-full text-lg transition-all duration-200
                  shadow-lg shadow-purple-900/50 hover:shadow-purple-600/40 hover:scale-105
@@ -13,7 +13,7 @@ export default function StripeCheckoutButton() {
         boxShadow: '0 0 24px rgba(123,47,190,0.4), 0 4px 16px rgba(0,0,0,0.4)',
       }}
     >
-      🎵 Sign Up for BASMA Academy
+      Book a Private Lesson
     </a>
   )
 }
