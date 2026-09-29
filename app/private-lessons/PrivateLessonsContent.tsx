@@ -90,7 +90,6 @@ export default function PrivateLessonsContent() {
   const [notes, setNotes] = useState('')
 
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [error, setError] = useState('')
 
@@ -179,11 +178,10 @@ export default function PrivateLessonsContent() {
           <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
             <div className="text-5xl mb-6">🎉</div>
             <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-              initial Lesson Requested!
+              Lesson Request Received!
             </h1>
             <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">
-              We&apos;ve received your request for a free 20-minute initial lesson.
-              We&apos;ll review your preferred time and send you a confirmation email shortly.
+              We&apos;ve received your request. We&apos;ll review your details and contact you to confirm your lesson.
             </p>
             <div className="card-minimal rounded-xl p-5 text-left max-w-sm mx-auto">
               <p className="text-white/50 text-xs uppercase tracking-widest mb-3">What&apos;s Next</p>
@@ -526,7 +524,7 @@ export default function PrivateLessonsContent() {
                 </p>
               </div>
 
-              <form onSubmit={false ? handleinitialSubmit : handlePackagePurchase} className="space-y-4">
+              <form onSubmit={handlePackagePurchase} className="space-y-4">
                 {/* Parent / Contact */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
