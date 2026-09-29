@@ -54,12 +54,14 @@ export async function POST(req: Request) {
     })
 
     const fields: Record<string, any> = {
-      'Full Name': name,
+      'Full Name': name || String(existing?.fields?.['Full Name'] || ''),
       Email: e,
-      Phone: p,
-      Source: 'Online Lessons Interest',
+      Phone: p || String(existing?.fields?.Phone || ''),
+      Source: existing?.fields?.Source || 'Online Lessons Interest',
       Status: status,
-      Message: `Online Lessons Interest | Status: ${status}`,
+      'Lesson Type': existing?.fields?.['Lesson Type'] || 'Private',
+      'Online Interest': true,
+      Message: existing?.fields?.Message || `Online Lessons Interest | Status: ${status}`,
     }
     const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}${existing ? `/${existing.id}` : ''}`, {
       method: existing ? 'PATCH' : 'POST',
