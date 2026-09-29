@@ -14,7 +14,6 @@ export default function Footer() {
 
         <div className="flex flex-wrap gap-4 justify-center text-sm text-white/25 mb-6">
           <Link href="/" className="hover:text-white/50 transition-colors">Home</Link>
-          <Link href="/enroll" className="hover:text-white/50 transition-colors">BASMA Academy</Link>
           <Link href="/private-lessons" className="hover:text-white/50 transition-colors">Private Lessons</Link>
           <Link href="/portal" className="hover:text-white/50 transition-colors">Parent Portal</Link>
           <Link href="/teacher" className="hover:text-white/50 transition-colors">Teacher Portal</Link>
@@ -33,7 +32,6 @@ export default function Footer() {
         <div className="rounded-xl p-4 mb-6 mx-auto max-w-md" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
           <p className="text-white/40 text-xs uppercase tracking-widest font-semibold mb-3">Our Locations</p>
           <div className="space-y-2 text-sm text-white/30">
-            <p>📍 <strong className="text-white/50">BASMA Academy:</strong> Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147</p>
             <p>📍 <strong className="text-white/50">Main Office:</strong> 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103</p>
           </div>
         </div>
