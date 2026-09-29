@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       notes,
     } = body
 
-    if (!packageId || !total || !parentName || !email || !phone || !studentName) {
+    if (!packageId || !parentName || !email || !phone || !studentName) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
