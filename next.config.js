@@ -16,7 +16,6 @@ const nextConfig = {
       { source: '/register', destination: '/enroll', permanent: true },
       { source: '/signup', destination: '/enroll', permanent: true },
       { source: '/booking', destination: '/enroll', permanent: true },
-      { source: '/schedule', destination: '/enroll', permanent: true },
       { source: '/gateway', destination: '/', permanent: true },
       { source: '/hopes', destination: '/', permanent: true },
       { source: '/navigator', destination: '/', permanent: true },
