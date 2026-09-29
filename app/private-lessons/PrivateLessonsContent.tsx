@@ -75,9 +75,7 @@ const LESSON_PHOTOS = [
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function PrivateLessonsContent() {
-  // Form mode: 'trial' | 'package'
-  const [mode, setMode] = useState<'trial' | 'package' | null>(null)
-  const [false, setTrialSuccess] = useState(false)
+  const [mode, setMode] = useState<'package' | null>(null)
   const [selectedPkg, setSelectedPkg] = useState<string | null>(null)
 
   // Shared form fields
@@ -104,35 +102,6 @@ export default function PrivateLessonsContent() {
       setPaymentSuccess(true)
     }
   }, [searchParams])
-
-  // Handle free trial submission
-  async function handleTrialSubmitRemoved(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    try {
-      const res = await fetch('/api/private-lesson', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          parentName, email, phone, studentName, studentAge,
-          instrument, preferredDay, preferredTime, notes,
-        }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setSuccess(true)
-        setTrialSuccess(true)
-      } else {
-        setError(data.error || 'Something went wrong. Please try again.')
-      }
-    } catch {
-      setError('Failed to submit. Please call us at (702) 788-7369.')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   // Handle package purchase via Stripe
   async function handlePackagePurchase(e: React.FormEvent) {
@@ -174,6 +143,320 @@ export default function PrivateLessonsContent() {
 
   if (paymentSuccess) {
     return (
+      <>
+        <Navbar />
+        <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
+          <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
+            <div className="text-5xl mb-6">✅</div>
+            <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Payment Successful!
+            </h1>
+            <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">
+              Your private lesson package has been purchased. We&apos;ll reach out to confirm your lesson schedule.
+            </p>
+            <div className="card-minimal rounded-xl p-5 text-left max-w-sm mx-auto">
+              <p className="text-white/50 text-xs uppercase tracking-widest mb-3">What&apos;s Next</p>
+              <ul className="text-white/35 text-sm space-y-2">
+                <li>✉️ Confirmation email with receipt</li>
+                <li>📞 We&apos;ll call to finalize your schedule</li>
+                <li>🎵 Attend your lessons weekly</li>
+                <li>📋 1 makeup lesson included — use by 2nd week of next month</li>
+              </ul>
+            </div>
+            <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
+          </section>
+        </div>
+        <Footer />
+      </>
+    )
+  }
+
+  if (success) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
+          <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
+            <div className="text-5xl mb-6">🎉</div>
+            <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Trial Lesson Requested!
+            </h1>
+            <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">
+              We&apos;ve received your request for a free 20-minute trial lesson.
+              We&apos;ll review your preferred time and send you a confirmation email shortly.
+            </p>
+            <div className="card-minimal rounded-xl p-5 text-left max-w-sm mx-auto">
+              <p className="text-white/50 text-xs uppercase tracking-widest mb-3">What&apos;s Next</p>
+              <ul className="text-white/35 text-sm space-y-2">
+                <li>✉️ Confirmation email within 24 hours</li>
+                <li>📞 We may call to confirm the time</li>
+                <li>🎵 Show up and enjoy your lesson!</li>
+              </ul>
+            </div>
+            <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
+          </section>
+        </div>
+        <Footer />
+      </>
+    )
+  }
+
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen" style={{ paddingTop: 'calc(var(--ann-bar-height, 0px) + 64px)' }}>
+        <section className="max-w-5xl mx-auto px-6 pt-16 pb-20">
+
+          {/* ── Header ── */}
+          <div className="text-center mb-12">
+            <p className="text-xs text-[#c9a84c]/50 tracking-[0.3em] uppercase mb-4">One-on-One Instruction</p>
+            <h1
+              className="text-4xl md:text-5xl font-semibold text-white mb-5 tracking-tight"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              Private <span className="gradient-gold">Lessons</span>
+            </h1>
+            <p className="text-white/30 max-w-lg mx-auto text-sm leading-relaxed">
+              Personalized music instruction tailored to your goals.
+              Choose an individual lesson or a monthly package and start learning.
+            </p>
+          </div>
+
+          {/* ── Quick Pay — Direct Purchase ── */}
+          <div className="max-w-3xl mx-auto mb-16">
+            <div className="rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))', border: '1px solid rgba(201,168,76,0.15)' }}>
+              <p className="text-[#c9a84c] text-xs uppercase tracking-[0.3em] font-bold mb-3">Ready to Start?</p>
+              <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Choose Your Private Lessons
+              </h2>
+              <p className="text-white/40 text-sm mb-8 max-w-md mx-auto">
+                Choose an individual lesson or monthly package below. Pay securely online, and we’ll call you to schedule your lessons.
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-4 max-w-xl mx-auto mb-6">
+                {/* 30-min package */}
+                <button
+                  onClick={() => { window.scrollTo({ top: document.getElementById('lesson-form')?.offsetTop || 600, behavior: 'smooth' }); }}
+                  className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] text-center"
+                  style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
+                >
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">30-Minute Individual Lesson</p>
+                  <div className="flex items-baseline justify-center gap-1 mb-2">
+                    <span className="text-4xl font-bold text-white">$45</span>
+                  </div>
+                  <p className="text-white/30 text-xs mb-4">One private lesson</p>
+                  <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
+                    style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
+                    Book Now →
+                  </span>
+                </button>
+
+                {/* 60-min package */}
+                <button
+                  onClick={() => { window.scrollTo({ top: document.getElementById('lesson-form')?.offsetTop || 600, behavior: 'smooth' }); }}
+                  className="block rounded-xl p-6 transition-all duration-200 hover:scale-[1.02] relative text-center"
+                  style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
+                >
+                  <p className="text-white/50 text-xs uppercase tracking-widest mb-2">60-Minute Individual Lesson</p>
+                  <div className="flex items-baseline justify-center gap-1 mb-2">
+                    <span className="text-4xl font-bold text-white">$70</span>
+                  </div>
+                  <p className="text-white/30 text-xs mb-4">One private lesson</p>
+                  <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
+                    style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
+                    Book Now →
+                  </span>
+                </button>
+              </div>
+
+              <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included with monthly packages</p>
+
+              {/* Contact for questions */}
+              <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Have questions?</p>
+                <a
+                  href="tel:+17027887369"
+                  className="inline-block px-8 py-3 rounded-full text-sm font-semibold transition hover:scale-[1.02]"
+                  style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.4)', color: '#c9a84c' }}
+                >
+                  📞 Call (702) 788-7369
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Hero Photo ── */}
+          <div className="grid md:grid-cols-2 gap-6 mb-16 items-center max-w-4xl mx-auto">
+            <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '4/3' }}>
+              <Image
+                src="/images/camp/students-guitar-duo.jpg"
+                alt="Guitar lesson at BASMA"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 768px) 100vw, 500px"
+              />
+            </div>
+            <div className="text-center md:text-left">
+              <div
+                className="inline-block px-3 py-1 rounded-full text-xs uppercase tracking-widest font-bold mb-4"
+                style={{ background: 'rgba(201,168,76,0.15)', color: '#c9a84c', border: '1px solid rgba(201,168,76,0.3)' }}
+              >
+                Personalized Instruction
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Learn at <span className="gradient-gold">Your Pace</span>
+              </h2>
+              <p className="text-white/40 text-sm leading-relaxed mb-4">
+                One-on-one lessons tailored to your goals. Pick your instrument, choose a package, and start learning with a dedicated instructor.
+              </p>
+              <ul className="text-white/30 text-sm space-y-2 mb-6">
+                <li>✅ Any instrument — piano, guitar, voice, drums & more</li>
+                <li>✅ 30-minute or 60-minute sessions</li>
+                <li>✅ Flexible scheduling</li>
+                <li>✅ 1 makeup lesson included per package</li>
+              </ul>
+              <a
+                href="tel:+17027887369"
+                className="inline-block px-8 py-3 rounded-full font-semibold text-sm transition hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}
+              >
+                📞 Call to Schedule
+              </a>
+            </div>
+          </div>
+
+          {/* ── How It Works ── */}
+          <div className="text-center mb-8">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">How It Works</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
+            {[
+              { step: '1', title: 'Pick & Pay', desc: 'Choose your lesson package above and pay instantly online.', emoji: '💳' },
+              { step: '2', title: 'We Schedule You', desc: 'We\'ll call you within 24 hours to finalize your lesson day, time, and instructor.', emoji: '📞' },
+              { step: '3', title: 'Start Learning', desc: 'Attend your lessons weekly. Each package includes 1 makeup lesson (use by 2nd week of next month).', emoji: '🎹' },
+            ].map(item => (
+              <div key={item.step} className="card-minimal rounded-xl p-6 text-center">
+                <div className="text-3xl mb-3">{item.emoji}</div>
+                <div className="text-xs text-[#c9a84c]/50 uppercase tracking-widest mb-2">Step {item.step}</div>
+                <h3 className="text-white font-medium text-sm mb-2">{item.title}</h3>
+                <p className="text-white/30 text-xs leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* ── What You'll Learn ── */}
+          <div className="text-center mb-8">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Instruments We Teach</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-16 max-w-3xl mx-auto">
+            {[
+              { emoji: '🎹', name: 'Piano', desc: 'Classical, pop, jazz' },
+              { emoji: '🎸', name: 'Guitar', desc: 'Acoustic & electric' },
+              { emoji: '🎤', name: 'Voice', desc: 'Singing & technique' },
+              { emoji: '🥁', name: 'Drums', desc: 'Rhythm & percussion' },
+              { emoji: '🎻', name: 'Violin', desc: 'Classical & fiddle' },
+              { emoji: '🪕', name: 'Ukulele', desc: 'Fun & beginner-friendly' },
+              { emoji: '🎙️', name: 'Recording', desc: 'Production & mixing' },
+              { emoji: '📝', name: 'Music Theory', desc: 'Reading & composing' },
+            ].map(inst => (
+              <div key={inst.name} className="card-minimal rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">{inst.emoji}</div>
+                <h3 className="text-white text-sm font-medium">{inst.name}</h3>
+                <p className="text-white/25 text-xs">{inst.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Photo Gallery ── */}
+          <div className="text-center mb-8">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">Inside Our Lessons</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16 max-w-4xl mx-auto">
+            {LESSON_PHOTOS.map((photo, i) => (
+              <div key={i} className="relative rounded-xl overflow-hidden shadow-lg" style={{ aspectRatio: i === 0 || i === 5 ? '16/10' : '4/3' }}>
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 50vw, 300px"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* ── Meet the Team ── */}
+          <div className="text-center mb-8">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-4">Your Instructor</h2>
+            <p className="text-white/25 text-sm max-w-lg mx-auto">
+              Our team of passionate musicians and educators brings real-world performance experience
+              into every lesson. Whether your child is picking up an instrument for the first time or
+              preparing for a recital, they&apos;re in expert hands.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-16 max-w-4xl mx-auto">
+            {/* Instructor 1 - Basma (founder) */}
+            <div className="card-minimal rounded-xl overflow-hidden">
+              <div className="relative w-full" style={{ aspectRatio: '4/5' }}>
+                <Image
+                  src="/images/basma-headshot.jpg"
+                  alt="Basma — Founder & Lead Instructor at BASMA Music Academy"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 300px"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-white font-semibold text-base mb-1">Basma</h3>
+                <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">Founder &amp; Lead Instructor</p>
+                <p className="text-white/30 text-xs leading-relaxed mb-3">
+                  Singer, songwriter, and music educator with years of performance and teaching experience.
+                  Basma founded the academy to make music education accessible and joyful for every child in Las Vegas.
+                </p>
+                <p className="text-white/20 text-xs">🎹 Piano · 🎸 Guitar · 🎤 Voice · 🎸 Bass</p>
+              </div>
+            </div>
+
+            {/* Instructor 2 -  */}
+            <div className="card-minimal rounded-xl overflow-hidden">
+              <div className="relative w-full" style={{ aspectRatio: '4/5' }}>
+                <Image
+                  src="/images/camp/classroom-piano-lesson.jpg"
+                  alt=" at BASMA Music Academy"
+                  fill
+                  className="object-cover object-top"
+                  sizes="(max-width: 768px) 100vw, 300px"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-white font-semibold text-base mb-1"></h3>
+                <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">Music Instructor</p>
+                <p className="text-white/30 text-xs leading-relaxed mb-3">
+                  A versatile multi-instrumentalist with a passion for classical and contemporary music.
+                   brings warmth, patience, and expertise to every lesson — from beginners to advanced students.
+                </p>
+                <p className="text-white/20 text-xs">🎹 Piano · 🎻 Violin · 🎻 Viola · 🎻 Cello</p>
+              </div>
+            </div>
+
+            {/* Why BASMA */}
+            <div className="card-minimal rounded-xl overflow-hidden">
+              <div className="relative w-full" style={{ aspectRatio: '4/5' }}>
+                <Image
+                  src="/images/camp/students-guitar-duo.jpg"
+                  alt="Students learning guitar at BASMA Music Academy"
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 768px) 100vw, 300px"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-white font-semibold text-base mb-1">Why BASMA?</h3>
+                <p className="text-[#c9a84c] text-xs uppercase tracking-widest mb-3">What Sets Us Apart</p>
+                <p className="text-white/30 text-xs leading-relaxed">
+                  , real instruments from day one, performance opportunities,
+                  and a warm community that feels like family. We believe every child has a song inside them.
+                </p>
               </div>
             </div>
           </div>
@@ -243,7 +526,7 @@ export default function PrivateLessonsContent() {
                 </p>
               </div>
 
-              <form onSubmit={false ? handleTrialSubmitRemoved : handlePackagePurchase} className="space-y-4">
+              <form onSubmit={false ? handleTrialSubmit : handlePackagePurchase} className="space-y-4">
                 {/* Parent / Contact */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
