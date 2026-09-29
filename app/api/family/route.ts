@@ -223,32 +223,22 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid teacher code' }, { status: 403 })
     }
 
-    // Update Marketing Leads
+    // The master Leads table is the current source of truth. Historical
+    // Summer records are read-only and are used only for legacy enrichment.
     const leadsFields: Record<string, unknown> = {}
     if (studentName !== undefined) leadsFields['Student Name'] = studentName
     if (studentAge !== undefined) leadsFields['Student Age'] = studentAge
     if (interests !== undefined) leadsFields['Interests'] = interests
+    if (allergies !== undefined) leadsFields['Allergies'] = allergies
+    if (medicalConditions !== undefined) leadsFields['Medical Conditions'] = medicalConditions
+    if (emergencyContactName !== undefined) leadsFields['Emergency Contact'] = emergencyContactName
+    if (emergencyContactPhone !== undefined) leadsFields['Emergency Phone'] = emergencyContactPhone
     if (parentName !== undefined) leadsFields['Full Name'] = parentName
     if (phone !== undefined) leadsFields['Phone'] = phone
     if (newEmail !== undefined) leadsFields['Email'] = newEmail
 
     if (Object.keys(leadsFields).length > 0) {
       await airtablePatch(LEADS_TABLE, recordId, leadsFields)
-    }
-
-    // Also update Summer table if health/safety data provided
-    if (allergies !== undefined || medicalConditions !== undefined || emergencyContactName !== undefined || emergencyContactPhone !== undefined) {
-      // Find matching summer record
-      const escapedName = (studentName || '').replace(/"/g, '\\"')
-      const summerRecs = await airtableGet(SUMMER_TABLE, `{Student Name}="${escapedName}"`)
-      if (summerRecs.length > 0) {
-        const summerFields: Record<string, unknown> = {}
-        if (allergies !== undefined) summerFields['Allergies'] = allergies
-        if (medicalConditions !== undefined) summerFields['Medical Conditions'] = medicalConditions
-        if (emergencyContactName !== undefined) summerFields['Emergency Contact'] = emergencyContactName
-        if (emergencyContactPhone !== undefined) summerFields['Emergency Phone'] = emergencyContactPhone
-        await airtablePatch(SUMMER_TABLE, summerRecs[0].id, summerFields)
-      }
     }
 
     return NextResponse.json({ success: true })
