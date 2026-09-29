@@ -3,44 +3,44 @@ import { useState } from 'react'
 
 const faqs = [
   {
-    question: 'How much do music lessons cost?',
+    question: 'How much do private music lessons cost?',
     answer:
-      'BASMA Academy offers Tiny Tots Music & Movement, Kids Music Academy, Band Academy, and Piano Fundamentals. Classes run Monday through Thursday from 9:00 AM to 2:15 PM. We also offer a Family Scholarship at $250/month. Visit our enrollment page for full details.',
+      'Individual lessons are $45 for 30 minutes or $70 for 60 minutes. Monthly packages paid in advance are $135 for four 30-minute lessons or $200 for four 60-minute lessons.',
   },
   {
     question: 'What ages do you teach?',
     answer:
-      'All ages are welcome! Tiny Tots Music & Movement is for ages 5 and under. Kids Music Academy, Band Academy, and Piano Fundamentals are placed by skill level — not age. Students receive weekly progress reports from their teachers.',
+      'Private lessons are available for students of all ages. Lessons are personalized to the student’s age, experience level, goals, and instrument.',
   },
   {
     question: 'What instruments and skills do you offer?',
     answer:
-      'We offer lessons in voice/singing, piano, guitar, violin, drums, and music theory. Each instrument has dedicated instructors who tailor lessons to your level and goals.',
+      'We offer private instruction in voice/singing, piano, guitar, drums, ukulele, recording/production, and other musical interests.',
   },
   {
     question: 'Are lessons in-person or online?',
     answer:
-      'Both! We offer in-person lessons at our Las Vegas studio (6787 W Tropicana Ave Suite 260) and live online lessons for students anywhere in the world. Same great quality, your choice of format.',
+      'We offer in-person private lessons at our Las Vegas studio and can discuss online lesson options when appropriate.',
   },
   {
     question: 'How long is each lesson?',
     answer:
-      'Tiny Tots and Piano Fundamentals are 45-minute classes. Kids Music Academy and Band Academy are 1 hour and 15 minutes. Private lessons are available in 30-minute and 60-minute sessions.',
+      'You can choose a 30-minute or 60-minute individual lesson. Monthly packages include four lessons of the selected length and are paid in advance.',
   },
   {
     question: 'Do I need experience to start?',
     answer:
-      'Absolutely no experience needed! We start from the very beginning — learning the basics is part of the fun. Our instructors are experts at making complete beginners feel comfortable and excited to learn.',
+      'No experience is required. Lessons are tailored to your starting level and goals, whether you are a complete beginner or continuing your musical development.',
   },
   {
-    question: 'What makes BasmaWorld different?',
+    question: 'What is included with a monthly package?',
     answer:
-      'BasmaWorld uses gamified learning with XP points, skill trees, and our AI music mentor Echo — so learning feels like leveling up in a game. Students earn XP, unlock milestones, and stay motivated far longer than in traditional lessons.',
+      'Each monthly package includes four private lessons paid in advance. A 1 makeup lesson is included and must be used by the second week of the following month.',
   },
   {
     question: 'Where are you located?',
     answer:
-      'Our studio is at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. BASMA Academy is at Synergy Dance — 9512 W Flamingo Rd STE 100. Give us a call at (702) 788-7369 or enroll online.',
+      'Our private-lesson studio is at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. Call (702) 788-7369 or book through the private lessons page.',
   },
 ]
 
