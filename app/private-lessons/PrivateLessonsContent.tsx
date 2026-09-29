@@ -262,7 +262,6 @@ export default function PrivateLessonsContent() {
               </h2>
               <p className="text-white/40 text-sm mb-8 max-w-md mx-auto">
                 Choose an individual lesson or monthly package below. Pay securely online, and we’ll call you to schedule your lessons.
-                We&apos;ll call you to schedule your lessons.
               </p>
 
               <div className="grid sm:grid-cols-2 gap-4 max-w-xl mx-auto mb-6">
@@ -304,7 +303,7 @@ export default function PrivateLessonsContent() {
                 </button>
               </div>
 
-              <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included per package</p>
+              <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included with monthly packages</p>
 
               {/* Contact for questions */}
               <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
