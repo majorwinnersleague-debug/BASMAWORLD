@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
+import DatabaseAccessPanel from './DatabaseAccessPanel'
 
 /* ═══════════════════════════════════════════════════════════════════════════
    TYPES
@@ -152,7 +153,7 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const ACCESS_CODE = '1515'
-type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce' | 'dashboard'
+type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce' | 'dashboard' | 'database'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -924,6 +925,7 @@ export default function TeacherContent() {
             { id: 'closures' as const, label: '🚫 Closures' },
             { id: 'chat' as const, label: '🤖 Assistant' },
             { id: 'announce' as const, label: '📢 Text All' },
+            { id: 'database' as const, label: '🗄️ Database Access' },
           ]).map(t => (
             <button key={t.id} onClick={() => {
               setTab(t.id)
@@ -941,6 +943,8 @@ export default function TeacherContent() {
             </button>
           ))}
         </div>
+
+        {tab === 'database' && <DatabaseAccessPanel teacherCode={ACCESS_CODE} />}
 
         {/* ═══ DASHBOARD TAB ═══ */}
         {tab === 'dashboard' && (
