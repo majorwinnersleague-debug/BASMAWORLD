@@ -47,8 +47,10 @@ export async function POST(req: NextRequest) {
 
     // Validate total matches expected pricing
     const expectedTotals: Record<string, number> = {
-      '30min': 140,
-      '60min': 200,
+      'individual-30min': 45,
+      'individual-60min': 70,
+      'monthly-4x30min': 135,
+      'monthly-4x60min': 200,
     }
     if (expectedTotals[packageId] !== total) {
       return NextResponse.json({ error: 'Invalid package pricing' }, { status: 400 })
