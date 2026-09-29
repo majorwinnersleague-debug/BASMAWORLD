@@ -12,24 +12,44 @@ import Footer from '@/components/Footer'
 
 const PACKAGES = [
   {
-    id: '30min',
-    name: '30-Minute Lessons',
+    id: 'individual-30min',
+    name: 'Individual 30-Minute Lesson',
     duration: '30 min',
-    sessions: 4,
-    pricePerSession: 35,
-    total: 140,
-    desc: 'Perfect for younger students or focused skill-building.',
+    sessions: 1,
+    pricePerSession: 45,
+    total: 45,
+    desc: 'A single personalized 30-minute private lesson.',
     popular: false,
   },
   {
-    id: '60min',
-    name: '60-Minute Lessons',
+    id: 'individual-60min',
+    name: 'Individual 60-Minute Lesson',
+    duration: '1 hour',
+    sessions: 1,
+    pricePerSession: 70,
+    total: 70,
+    desc: 'A single personalized 60-minute private lesson.',
+    popular: false,
+  },
+  {
+    id: 'monthly-4x30min',
+    name: 'Monthly 4 × 30-Minute Lessons',
+    duration: '30 min',
+    sessions: 4,
+    pricePerSession: 33.75,
+    total: 135,
+    desc: 'Four 30-minute private lessons paid in advance each month.',
+    popular: true,
+  },
+  {
+    id: 'monthly-4x60min',
+    name: 'Monthly 4 × 60-Minute Lessons',
     duration: '1 hour',
     sessions: 4,
     pricePerSession: 50,
     total: 200,
-    desc: 'Ideal for deeper learning, technique, and repertoire work.',
-    popular: true,
+    desc: 'Four 60-minute private lessons paid in advance each month.',
+    popular: false,
   },
 ]
 
@@ -229,7 +249,7 @@ export default function PrivateLessonsContent() {
             </h1>
             <p className="text-white/30 max-w-lg mx-auto text-sm leading-relaxed">
               Personalized music instruction tailored to your goals.
-              Purchase a lesson package instantly and start learning.
+              Choose an individual lesson or a monthly package and start learning.
             </p>
           </div>
 
@@ -238,10 +258,10 @@ export default function PrivateLessonsContent() {
             <div className="rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))', border: '1px solid rgba(201,168,76,0.15)' }}>
               <p className="text-[#c9a84c] text-xs uppercase tracking-[0.3em] font-bold mb-3">Ready to Start?</p>
               <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Buy a Lesson Package
+                Choose Your Private Lessons
               </h2>
               <p className="text-white/40 text-sm mb-8 max-w-md mx-auto">
-                Click below to pay securely. No forms, no signup — just pick your package and go.
+                Choose an individual lesson or monthly package below. Pay securely online, and we’ll call you to schedule your lessons.
                 We&apos;ll call you to schedule your lessons.
               </p>
 
