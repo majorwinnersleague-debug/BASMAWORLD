@@ -59,7 +59,7 @@ export default function Home() {
                 Find Your Voice. Build Confidence. Perform on Stage.
               </p>
               <p className="text-white/30 text-sm mb-8">
-                Mon–Thu · 9:00 AM – 2:15 PM · Synergy Dance, Las Vegas, NV
+                Private lessons · In-person Las Vegas studio or online
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
@@ -67,14 +67,7 @@ export default function Home() {
                   className="px-10 py-4 rounded-full font-bold text-base transition hover:scale-105 shadow-lg"
                   style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118', boxShadow: '0 4px 20px rgba(201,168,76,0.4)' }}
                 >
-                  Enroll Now →
-                </Link>
-                <Link
-                  href="/private-lessons"
-                  className="px-8 py-4 rounded-full font-semibold text-sm transition hover:scale-105"
-                  style={{ background: 'rgba(168,85,247,0.2)', border: '2px solid rgba(168,85,247,0.5)', color: '#d8b4fe' }}
-                >
-                  🎓 Scholarship — $250/mo
+                  Book a Private Lesson →
                 </Link>
                 <a
                   href="tel:+17027887369"
@@ -127,7 +120,7 @@ export default function Home() {
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Link href="/private-lessons" className="px-10 py-4 rounded-full font-bold text-base transition hover:scale-105" style={{ background: 'linear-gradient(135deg, #c9a84c, #FFE07A)', color: '#0D0118' }}>
-                Enroll Now
+                Book a Private Lesson
               </Link>
               <Link href="/private-lessons" className="px-8 py-4 rounded-full font-semibold text-sm transition hover:scale-105 border border-white/20 text-white/60 hover:text-white">
                 Book Private Lessons
@@ -137,10 +130,10 @@ export default function Home() {
               </a>
             </div>
             <p className="text-white/30 text-sm">
-              📍 Synergy Dance · 9512 W Flamingo Rd STE 100, Las Vegas, NV 89147
+              📍 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103
             </p>
             <p className="text-white/20 text-xs mt-1">
-              Classes Mon–Thu · 9:00 AM – 2:15 PM · All ages welcome
+              Private lessons available in person or online
             </p>
           </div>
         </section>
