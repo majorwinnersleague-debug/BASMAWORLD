@@ -4,6 +4,7 @@ const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
 const LEADS_TABLE = 'tbl1diIEhM9MtKViE'
 const SUMMER_TABLE = 'tblfOnRDkfgZoCF9X'
+const CHECKIN_TABLE = 'tbl7vzQgS5o67kDYv'
 const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || '1515'
 
 /* ─── Airtable helpers ─── */
@@ -92,9 +93,9 @@ IMPORTANT RULES:
 - When the user asks to change/update info, identify the student and field, confirm the change, then output an ACTION tag
 - When you identify a match and are ready to make a change, output EXACTLY this format:
   [ACTION: UPDATE record_id=XXXXX field=FIELD_NAME value=NEW_VALUE table=leads_or_summer]
-- Valid fields for leads table: Student Name, Student Age, Full Name (parent), Email, Phone, Interests
-- Valid fields for summer table: Allergies, Medical Conditions, Emergency Contact Name, Emergency Contact Phone
-- If a student has a summer record, use table=summer for health/safety fields
+- Valid fields for the master leads table: Student Name, Student Age, Full Name (parent), Email, Phone, Interests, Status, Lesson Type, Online Interest
+- Historical summer health/safety fields are read-only enrichment; do not use the AI to write to the summer table.
+- All student/parent identity and current roster edits must use table=leads.
 - If multiple students match, list them and ask which one
 - If no match, say so clearly
 - Never reveal record IDs to the user — use them only in ACTION tags
@@ -166,39 +167,24 @@ export async function POST(req: NextRequest) {
     const data = await response.json()
     let reply = data.choices?.[0]?.message?.content || 'Sorry, I could not process that request.'
 
-    // Process ACTION tags — execute Airtable updates
+    // Process ACTION tags — only the master leads table is writable by AI.
     const actionRegex = /\[ACTION: UPDATE record_id=(\S+) field=(.+?) value=(.+?) table=(\w+)\]/g
     const updates: { success: boolean; field: string; value: string }[] = []
+    const allowedFields = new Set(['Student Name','Student Age','Full Name','Email','Phone','Interests','Status','Lesson Type','Online Interest'])
     let match
-
     while ((match = actionRegex.exec(reply)) !== null) {
       const [, recordId, field, value, table] = match
       try {
-        if (table === 'summer') {
-          // Find summer record by looking up the lead record's student name
-          const leadRecord = leadRecords.find(r => r.id === recordId)
-          const studentName = leadRecord?.fields['Student Name'] || ''
-          if (studentName) {
-            const escapedName = studentName.replace(/"/g, '\\"')
-            const summerRecs = await airtableGet(SUMMER_TABLE, `{Student Name}="${escapedName}"`)
-            if (summerRecs.length > 0) {
-              await airtablePatch(SUMMER_TABLE, summerRecs[0].id, { [field]: value })
-              updates.push({ success: true, field, value })
-            } else {
-              updates.push({ success: false, field, value })
-            }
-          }
-        } else {
-          // Update leads table directly
-          await airtablePatch(LEADS_TABLE, recordId, { [field]: value })
-          updates.push({ success: true, field, value })
-        }
+        if (table !== 'leads' || !allowedFields.has(field)) { updates.push({ success: false, field, value }); continue }
+        const leadRecord = leadRecords.find(r => r.id === recordId)
+        if (!leadRecord) { updates.push({ success: false, field, value }); continue }
+        await airtablePatch(LEADS_TABLE, recordId, { [field]: field === 'Online Interest' ? value.toLowerCase() === 'true' : value })
+        updates.push({ success: true, field, value })
       } catch (err) {
         console.error('Teacher chat update error:', err)
         updates.push({ success: false, field, value })
       }
     }
-
     // Clean ACTION tags from visible reply
     const cleanReply = reply.replace(/\[ACTION:.*?\]/g, '').trim()
 
