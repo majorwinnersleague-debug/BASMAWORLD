@@ -149,51 +149,64 @@ export async function GET(request: NextRequest) {
   })
 }
 
-// POST — Add a new sibling
+// POST — Add a new sibling to the master roster
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json()
     const { email, parentName, phone, studentName, studentAge, interests } = data
-
     if (!email || !studentName) {
-      return NextResponse.json({ error: 'Email and student name required' }, { status: 400 })
+      return NextResponse.json({ error: "Email and student name required" }, { status: 400 })
     }
 
-    // Create in Marketing Leads
-    const leadsResult = await airtableCreate(LEADS_TABLE, {
-      'Full Name': parentName || '',
-      'Email': email,
-      'Phone': phone || '',
-      'Student Name': studentName,
-      'Student Age': studentAge || '',
-      'Interests': interests || '',
-      'Source': 'family-portal-add-sibling',
-      'Status': 'New Lead',
-      'Registration Form': 'Partial',
-      'Waiver Form': 'Not Started',
-    })
+    const normalizedEmail = String(email).trim().toLowerCase()
+    const escapedEmail = normalizedEmail.replace(/"/g, "\\\"")
+    const existing = await airtableGet(LEADS_TABLE, `LOWER({Email})="${escapedEmail}"`)
+    const normalizedStudentName = String(studentName).trim().toLowerCase()
 
-    // Also create in Summer table
-    await airtableCreate(SUMMER_TABLE, {
-      'Parent Name': parentName || '',
-      'Parent Email': email,
-      'Parent Phone': phone || '',
-      'Student Name': studentName,
-      'Age': studentAge ? parseInt(studentAge) : undefined,
-      'Class': '',
-      'Payment Status': 'Free',
-      'Notes': 'Added via family portal (sibling)',
-    })
+    // Each student gets their own master-roster record. A shared parent email
+    // must never cause an existing sibling's record to be overwritten.
+    const existingStudent = existing.find((r: any) =>
+      String(r.fields?.["Student Name"] || "").trim().toLowerCase() === normalizedStudentName
+    )
 
-    return NextResponse.json({
-      success: true,
-      newRecordId: leadsResult.records?.[0]?.id,
-    })
+    if (existingStudent) {
+      // Keep the operation idempotent: update this exact sibling rather than creating a duplicate.
+      const fields: Record<string, unknown> = {
+        "Full Name": parentName || existingStudent.fields?.["Full Name"] || "",
+        Email: normalizedEmail,
+        Phone: phone || existingStudent.fields?.Phone || "",
+        "Student Name": String(studentName).trim(),
+        "Student Age": studentAge || existingStudent.fields?.["Student Age"] || "",
+        Interests: interests || existingStudent.fields?.Interests || "",
+        "Lesson Type": "Private",
+        "Online Interest": existingStudent.fields?.["Online Interest"] ?? false,
+      }
+      await airtablePatch(LEADS_TABLE, existingStudent.id, fields)
+      return NextResponse.json({ success: true, newRecordId: existingStudent.id, existing: true })
+    }
+
+    // The parent/family already exists in BASMA's historical database, so a
+    // newly added sibling is Returning even though this student is a new row.
+    const fields: Record<string, unknown> = {
+      "Full Name": parentName || existing[0]?.fields?.["Full Name"] || "",
+      Email: normalizedEmail,
+      Phone: phone || existing[0]?.fields?.Phone || "",
+      "Student Name": String(studentName).trim(),
+      "Student Age": studentAge || "",
+      Interests: interests || "",
+      Status: "Returning",
+      Source: "family-portal-add-sibling",
+      "Registration Form": "Partial",
+      "Waiver Form": "Not Started",
+      "Lesson Type": "Private",
+      "Online Interest": false,
+    }
+    const result = await airtableCreate(LEADS_TABLE, fields)
+    return NextResponse.json({ success: true, newRecordId: result.records?.[0]?.id, existing: false })
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 })
   }
 }
-
 // PATCH — Update a student's info
 export async function PATCH(request: NextRequest) {
   try {
@@ -210,32 +223,22 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid teacher code' }, { status: 403 })
     }
 
-    // Update Marketing Leads
+    // The master Leads table is the current source of truth. Historical
+    // Summer records are read-only and are used only for legacy enrichment.
     const leadsFields: Record<string, unknown> = {}
     if (studentName !== undefined) leadsFields['Student Name'] = studentName
     if (studentAge !== undefined) leadsFields['Student Age'] = studentAge
     if (interests !== undefined) leadsFields['Interests'] = interests
+    if (allergies !== undefined) leadsFields['Allergies'] = allergies
+    if (medicalConditions !== undefined) leadsFields['Medical Conditions'] = medicalConditions
+    if (emergencyContactName !== undefined) leadsFields['Emergency Contact'] = emergencyContactName
+    if (emergencyContactPhone !== undefined) leadsFields['Emergency Phone'] = emergencyContactPhone
     if (parentName !== undefined) leadsFields['Full Name'] = parentName
     if (phone !== undefined) leadsFields['Phone'] = phone
     if (newEmail !== undefined) leadsFields['Email'] = newEmail
 
     if (Object.keys(leadsFields).length > 0) {
       await airtablePatch(LEADS_TABLE, recordId, leadsFields)
-    }
-
-    // Also update Summer table if health/safety data provided
-    if (allergies !== undefined || medicalConditions !== undefined || emergencyContactName !== undefined || emergencyContactPhone !== undefined) {
-      // Find matching summer record
-      const escapedName = (studentName || '').replace(/"/g, '\\"')
-      const summerRecs = await airtableGet(SUMMER_TABLE, `{Student Name}="${escapedName}"`)
-      if (summerRecs.length > 0) {
-        const summerFields: Record<string, unknown> = {}
-        if (allergies !== undefined) summerFields['Allergies'] = allergies
-        if (medicalConditions !== undefined) summerFields['Medical Conditions'] = medicalConditions
-        if (emergencyContactName !== undefined) summerFields['Emergency Contact'] = emergencyContactName
-        if (emergencyContactPhone !== undefined) summerFields['Emergency Phone'] = emergencyContactPhone
-        await airtablePatch(SUMMER_TABLE, summerRecs[0].id, summerFields)
-      }
     }
 
     return NextResponse.json({ success: true })
