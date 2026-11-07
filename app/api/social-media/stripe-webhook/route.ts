@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getWebhookSecrets, verifyStripeEvent } from '@/lib/stripe-webhook'
 
 export const dynamic = 'force-dynamic'
 
@@ -231,8 +232,8 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
 export async function POST(req: NextRequest) {
   const secretKey = process.env.STRIPE_SECRET_KEY
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-  if (!secretKey || !webhookSecret) {
+  // Own signing secret (STRIPE_WEBHOOK_SECRET_SOCIAL); see lib/stripe-webhook.ts.
+  if (!secretKey || getWebhookSecrets('social').length === 0) {
     return NextResponse.json(
       { error: 'Stripe not configured' },
       { status: 503 }
@@ -250,14 +251,12 @@ export async function POST(req: NextRequest) {
 
   const rawBody = await req.text()
   const stripe = new Stripe(secretKey, { apiVersion: '2026-03-25.dahlia' })
-  let event: Stripe.Event
-
-  try {
-    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret)
-  } catch (err) {
-    console.error('[stripe-webhook] Signature verification failed:', err)
+  const verified = verifyStripeEvent(stripe, rawBody, sig, 'social')
+  if (!verified) {
+    console.error('[stripe-webhook] Signature verification failed')
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
+  const event: Stripe.Event = verified
 
   // ── Route event ───────────────────────────────────────────────────────────
   try {
