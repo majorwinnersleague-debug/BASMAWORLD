@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { getStaffSession } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,11 +8,14 @@ export const dynamic = 'force-dynamic'
  * Admin endpoint: returns ALL social media clients with full data.
  * Used by the /social-media/admin dashboard.
  *
- * TODO: Add proper authentication (admin API key or session-based auth)
- * For now, rate limited to prevent abuse. In production, add an auth check
- * before returning all client data.
+ * Requires a signed staff session with the admin role (sign in at /teacher).
  */
 export async function GET(req: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff || staff.role !== 'admin') {
+    return NextResponse.json({ error: 'Admin sign-in required' }, { status: 401 })
+  }
+
   // Rate limit: 10 requests per minute
   const ip = getClientIp(req)
   const { allowed } = checkRateLimit(`admin-data:${ip}`, 10, 60 * 1000)

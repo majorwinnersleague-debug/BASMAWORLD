@@ -83,6 +83,10 @@ export default function AdminPage() {
       // Fetch all clients from the dashboard-data API
       // For admin, we'll use a special endpoint that returns all records
       const res = await fetch('/api/social-media/admin-data')
+      if (res.status === 401) {
+        setError('Admin sign-in required. Sign in at /teacher with an admin email, then reload this page.')
+        return
+      }
       if (!res.ok) {
         // Admin data API not available — show setup instructions
         setError(
