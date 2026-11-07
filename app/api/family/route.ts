@@ -1,4 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getStaffSession, staffUnauthorized } from '@/lib/auth'
+import { airtableString } from '@/lib/escape'
+
+/**
+ * /api/family — staff only (teacher portal). The public /family page is
+ * redirected to /, so every method now requires a signed staff session.
+ * Previously GET leaked family PII by email, and PATCH/DELETE let anyone
+ * change login email/phone or delete records.
+ */
+export const dynamic = 'force-dynamic'
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
@@ -50,16 +60,18 @@ async function airtableDelete(table: string, recordId: string) {
 
 // GET — Look up family by email
 export async function GET(request: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+
   const email = request.nextUrl.searchParams.get('email')?.trim().toLowerCase()
   if (!email) {
     return NextResponse.json({ error: 'Email required' }, { status: 400 })
   }
 
   // Search both tables
-  const escapedEmail = email.replace(/"/g, '\\"')
   const [leadsRecords, summerRecords] = await Promise.all([
-    airtableGet(LEADS_TABLE, `LOWER({Email})="${escapedEmail}"`),
-    airtableGet(SUMMER_TABLE, `LOWER({Parent Email})="${escapedEmail}"`),
+    airtableGet(LEADS_TABLE, `LOWER({Email})=${airtableString(email)}`),
+    airtableGet(SUMMER_TABLE, `LOWER({Parent Email})=${airtableString(email)}`),
   ])
 
   if (leadsRecords.length === 0 && summerRecords.length === 0) {
@@ -151,6 +163,9 @@ export async function GET(request: NextRequest) {
 
 // POST — Add a new sibling to the master roster
 export async function POST(request: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+
   try {
     const data = await request.json()
     const { email, parentName, phone, studentName, studentAge, interests } = data
@@ -159,8 +174,7 @@ export async function POST(request: NextRequest) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase()
-    const escapedEmail = normalizedEmail.replace(/"/g, "\\\"")
-    const existing = await airtableGet(LEADS_TABLE, `LOWER({Email})="${escapedEmail}"`)
+    const existing = await airtableGet(LEADS_TABLE, `LOWER({Email})=${airtableString(normalizedEmail)}`)
     const normalizedStudentName = String(studentName).trim().toLowerCase()
 
     // Each student gets their own master-roster record. A shared parent email
@@ -209,18 +223,15 @@ export async function POST(request: NextRequest) {
 }
 // PATCH — Update a student's info
 export async function PATCH(request: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+
   try {
     const data = await request.json()
-    const { recordId, studentName, studentAge, interests, allergies, medicalConditions, emergencyContactName, emergencyContactPhone, parentName, phone, email: newEmail, teacherCode } = data
+    const { recordId, studentName, studentAge, interests, allergies, medicalConditions, emergencyContactName, emergencyContactPhone, parentName, phone, email: newEmail } = data
 
-    if (!recordId) {
+    if (!recordId || typeof recordId !== 'string' || !/^rec[A-Za-z0-9]+$/.test(recordId)) {
       return NextResponse.json({ error: 'Record ID required' }, { status: 400 })
-    }
-
-    // If teacherCode is provided, verify it
-    const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || '1515'
-    if (teacherCode && teacherCode !== TEACHER_CODE) {
-      return NextResponse.json({ error: 'Invalid teacher code' }, { status: 403 })
     }
 
     // The master Leads table is the current source of truth. Historical
@@ -249,11 +260,14 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE — Remove a duplicate record
 export async function DELETE(request: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+
   try {
     const data = await request.json()
     const { recordId } = data
 
-    if (!recordId) {
+    if (!recordId || typeof recordId !== 'string' || !/^rec[A-Za-z0-9]+$/.test(recordId)) {
       return NextResponse.json({ error: 'Record ID required' }, { status: 400 })
     }
 

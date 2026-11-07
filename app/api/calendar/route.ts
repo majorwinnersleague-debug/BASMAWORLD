@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import * as nodemailer from 'nodemailer'
+import { getStaffSession, staffUnauthorized } from '@/lib/auth'
 
 /**
  * Calendar API — Server-side calendar events (closures, holidays, events)
@@ -8,8 +9,8 @@ import * as nodemailer from 'nodemailer'
  * between the homepage, teacher portal, and parent portal.
  * 
  * GET  /api/calendar              → list all events
- * POST /api/calendar              → create event (requires teacherCode)
- * DELETE /api/calendar?id=xxx     → delete event (requires teacherCode)
+ * POST /api/calendar              → create event (staff session required)
+ * DELETE /api/calendar            → delete event (staff session required)
  */
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
@@ -20,7 +21,6 @@ const SUMMER_TABLE = 'tblfOnRDkfgZoCF9X' // Summer 2026 Registrations (for enrol
 // If this table doesn't exist yet, we fall back to a JSON approach via Vercel KV or file
 const CALENDAR_TABLE = process.env.CALENDAR_TABLE_ID || ''
 
-const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || '1515'
 const GMAIL_USER = process.env.GMAIL_USER || 'becomeasingermusicacademy@gmail.com'
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || ''
 
@@ -206,13 +206,12 @@ export async function GET() {
 
 /* ─── POST: Create a calendar event ─── */
 export async function POST(req: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+
   try {
     const body = await req.json()
-    const { teacherCode, date, endDate, type, note, reason, makeupDate } = body
-
-    if (teacherCode !== TEACHER_CODE) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { date, endDate, type, note, reason, makeupDate } = body
 
     if (!date) {
       return NextResponse.json({ error: 'Date is required' }, { status: 400 })
@@ -258,13 +257,12 @@ export async function POST(req: NextRequest) {
 
 /* ─── DELETE: Remove a calendar event ─── */
 export async function DELETE(req: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+
   try {
     const body = await req.json()
-    const { teacherCode, id, date } = body
-
-    if (teacherCode !== TEACHER_CODE) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { id, date } = body
 
     const events = await loadCalendarEvents()
     const filtered = events.filter(e => {

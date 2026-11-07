@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getStaffSession, staffUnauthorized } from '@/lib/auth'
+import { airtableString } from '@/lib/escape'
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
@@ -33,7 +35,7 @@ async function findExistingRecord(
   if (!email) return null
 
   // Search by email first
-  const formula = `{Email} = '${email.replace(/'/g, "\\'")}'`
+  const formula = `{Email} = ${airtableString(email)}`
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${tableId}?filterByFormula=${encodeURIComponent(formula)}&maxRecords=100`
 
   const res = await fetch(url, {
@@ -65,7 +67,7 @@ async function findExistingSummerRecord(
 ): Promise<{ id: string; fields: Record<string, string> } | null> {
   if (!email) return null
 
-  const formula = `{Parent Email} = '${email.replace(/'/g, "\\'")}'`
+  const formula = `{Parent Email} = ${airtableString(email)}`
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${SUMMER_TABLE_ID}?filterByFormula=${encodeURIComponent(formula)}&maxRecords=100`
 
   const res = await fetch(url, {
@@ -250,7 +252,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// PATCH — staff only (previously unauthenticated: anyone could change a
+// lead's email/phone, which are the parent-portal login factors).
 export async function PATCH(request: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+
   try {
     const data = await request.json()
     const { recordId, ...rest } = data
@@ -282,9 +289,12 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// ── GET: Lookup registration by email ──
-// Used by enrollment page to show what's already complete
+// ── GET: Lookup registration by email ── staff only.
+// Previously public and returned every field (incl. medical info) for any email.
 export async function GET(request: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+
   try {
     const url = new URL(request.url)
     const email = url.searchParams.get('email')

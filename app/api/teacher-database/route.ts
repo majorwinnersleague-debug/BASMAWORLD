@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getActiveStudents, getLessonRequests } from "@/lib/active-db";
+import { getStaffSession, staffUnauthorized } from "@/lib/auth";
 
-const COOKIE_NAME = "basma_teacher_database";
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  if (request.cookies.get(COOKIE_NAME)?.value !== "authenticated") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // Signed staff session required (replaces the old forgeable
+  // "basma_teacher_database=authenticated" cookie).
+  const staff = await getStaffSession();
+  if (!staff) return staffUnauthorized();
 
   try {
     const query = request.nextUrl.searchParams.get("q")?.trim().toLowerCase() || "";

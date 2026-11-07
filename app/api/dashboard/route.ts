@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getStaffSession, staffUnauthorized } from '@/lib/auth'
 
 /**
  * Dashboard Stats API — Live metrics for admin dashboard
  * 
- * GET /api/dashboard?teacherCode=1515
+ * GET /api/dashboard  (staff session required)
  * 
  * Returns real numbers based on Stripe payments and Airtable enrollment data.
  * Only counts students with verified Stripe payments as "active."
@@ -13,7 +14,6 @@ const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
 const SUMMER_TABLE = 'tblfOnRDkfgZoCF9X'
 const LEADS_TABLE = 'tbl1diIEhM9MtKViE'
-const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || '1515'
 
 interface AirtableRecord {
   id: string
@@ -67,13 +67,12 @@ function normalizeClassName(raw: string): string {
   return raw
 }
 
-export async function GET(req: NextRequest) {
-  const url = new URL(req.url)
-  const teacherCode = url.searchParams.get('teacherCode')
+export const dynamic = 'force-dynamic'
 
-  if (teacherCode !== TEACHER_CODE) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+export async function GET(req: NextRequest) {
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
+  const url = new URL(req.url)
 
   if (!AIRTABLE_PAT) {
     return NextResponse.json({ error: 'Airtable not configured' }, { status: 503 })

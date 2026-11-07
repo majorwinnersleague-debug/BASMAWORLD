@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getStaffSession, staffUnauthorized } from '@/lib/auth'
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
 const LEADS_TABLE = 'tbl1diIEhM9MtKViE'
 const SUMMER_TABLE = 'tblfOnRDkfgZoCF9X'
 const CHECKIN_TABLE = 'tbl7vzQgS5o67kDYv'
-const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || '1515'
 
 /* ─── Airtable helpers ─── */
 
@@ -107,13 +107,11 @@ STUDENT DATABASE:
 `
 
 export async function POST(req: NextRequest) {
-  try {
-    const { messages, teacherCode } = await req.json()
+  const staff = await getStaffSession()
+  if (!staff) return staffUnauthorized()
 
-    // Verify teacher code
-    if (teacherCode !== TEACHER_CODE) {
-      return NextResponse.json({ error: 'Invalid teacher code' }, { status: 403 })
-    }
+  try {
+    const { messages } = await req.json()
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 })

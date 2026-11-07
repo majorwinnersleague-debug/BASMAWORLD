@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server";
+import { getStaffSession } from "@/lib/auth";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
 
+// Admin-only helper for Resend domain setup. Previously protected by the
+// hard-coded shared teacher code; now requires a signed admin staff session.
 export async function POST(request: Request) {
+  const staff = await getStaffSession();
+  if (!staff || staff.role !== "admin") {
+    return NextResponse.json({ error: "Admin sign-in required" }, { status: 401 });
+  }
+
   try {
-    const { secret, action } = await request.json();
-    if (secret !== "1515") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const { action } = await request.json();
 
     if (action === "add") {
       // Add basmaworld.com domain to Resend

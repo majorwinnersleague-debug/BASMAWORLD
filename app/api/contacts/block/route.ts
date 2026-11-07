@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import { getStaffSession, staffUnauthorized } from "@/lib/auth";
+
+// Teacher portal only — staff session required on every method.
+export const dynamic = "force-dynamic";
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || "";
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || "appK3o119Z5r9AY6j";
@@ -12,6 +16,8 @@ function normalizePhone(raw: string): string {
 
 // GET — list all blocked contacts
 export async function GET() {
+  const staff = await getStaffSession();
+  if (!staff) return staffUnauthorized();
   if (!BLOCKED_TABLE) {
     return NextResponse.json({ blocked: [] });
   }
@@ -37,6 +43,8 @@ export async function GET() {
 
 // POST — block a contact by phone number
 export async function POST(req: Request) {
+  const staff = await getStaffSession();
+  if (!staff) return staffUnauthorized();
   if (!BLOCKED_TABLE) {
     return NextResponse.json({ error: "Blocked contacts table not configured" }, { status: 500 });
   }
@@ -53,7 +61,10 @@ export async function POST(req: Request) {
     }
 
     // Check if already blocked
-    const checkUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${BLOCKED_TABLE}?filterByFormula=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE({Phone},"-",""),"(",""),")","")," ","")="${normalized}"`;
+    // `normalized` is digits only, so it is safe inside the formula; it's
+    // URL-encoded so Airtable receives the formula intact.
+    const formula = `SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE({Phone},"-",""),"(",""),")","")," ","")="${normalized}"`;
+    const checkUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${BLOCKED_TABLE}?filterByFormula=${encodeURIComponent(formula)}`;
     const checkRes = await fetch(checkUrl, {
       headers: { Authorization: `Bearer ${AIRTABLE_PAT}` },
       cache: "no-store",
@@ -92,6 +103,8 @@ export async function POST(req: Request) {
 
 // DELETE — unblock a contact by record ID
 export async function DELETE(req: Request) {
+  const staff = await getStaffSession();
+  if (!staff) return staffUnauthorized();
   if (!BLOCKED_TABLE) {
     return NextResponse.json({ error: "Blocked contacts table not configured" }, { status: 500 });
   }

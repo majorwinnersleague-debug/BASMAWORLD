@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getStaffSession, staffUnauthorized } from '@/lib/auth'
+import { airtableString, escapeHtml } from '@/lib/escape'
+import { getFromAddress } from '@/lib/auth-email'
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
@@ -6,9 +9,7 @@ const LEADS_TABLE = 'tbl1diIEhM9MtKViE'
 const SUMMER_TABLE = 'tblfOnRDkfgZoCF9X'
 const CHECKIN_TABLE = process.env.CHECKIN_TABLE_ID || '' // Will be set after table creation
 const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
-const FROM_EMAIL = 'BASMA Academy <onboarding@resend.dev>'
-
-const TEACHER_CODE = process.env.TEACHER_ACCESS_CODE || '1515'
+const FROM_EMAIL = getFromAddress()
 
 async function patchAirtable(tableId: string, recordId: string, fields: Record<string, unknown>) {
   const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${tableId}/${recordId}`, {
@@ -44,7 +45,7 @@ async function deleteAirtableRecord(tableId: string, recordId: string) {
 
 async function findCheckInRecord(studentName: string, date: string) {
   if (!CHECKIN_TABLE) return null
-  const formula = `AND({Student Name}="${studentName}",{Check-In Date}="${date}")`
+  const formula = `AND({Student Name}=${airtableString(studentName)},{Check-In Date}=${airtableString(date)})`
   const params = new URLSearchParams({ filterByFormula: formula, maxRecords: '1' })
   const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${CHECKIN_TABLE}?${params}`, {
     headers: { 'Authorization': `Bearer ${AIRTABLE_PAT}` },
@@ -62,8 +63,8 @@ async function getRecord(tableId: string, recordId: string) {
 
 async function findSummerRecord(studentName: string, parentEmail: string) {
   const formula = parentEmail
-    ? `OR({Student Name}="${studentName}",{Parent Email}="${parentEmail}")`
-    : `{Student Name}="${studentName}"`
+    ? `OR({Student Name}=${airtableString(studentName)},{Parent Email}=${airtableString(parentEmail)})`
+    : `{Student Name}=${airtableString(studentName)}`
   const params = new URLSearchParams({ filterByFormula: formula, maxRecords: '5' })
   const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${SUMMER_TABLE}?${params}`, {
     headers: { 'Authorization': `Bearer ${AIRTABLE_PAT}` },
@@ -72,8 +73,10 @@ async function findSummerRecord(studentName: string, parentEmail: string) {
   return data.records?.[0] || null
 }
 
-async function sendCheckInEmail(parentEmail: string, parentName: string, studentName: string, isIncomplete: boolean) {
+async function sendCheckInEmail(parentEmail: string, rawParentName: string, rawStudentName: string, isIncomplete: boolean) {
   if (!RESEND_API_KEY || !parentEmail) return
+  const parentName = escapeHtml(rawParentName)
+  const studentName = escapeHtml(rawStudentName)
 
   const now = new Date()
   const timeStr = now.toLocaleString('en-US', {
@@ -141,7 +144,7 @@ async function sendCheckInEmail(parentEmail: string, parentName: string, student
       body: JSON.stringify({
         from: FROM_EMAIL,
         to: parentEmail,
-        subject: `✅ ${studentName} is checked in at BASMA!${isIncomplete ? ' — Please complete registration' : ''}`,
+        subject: `✅ ${rawStudentName} is checked in at BASMA!${isIncomplete ? ' — Please complete registration' : ''}`,
         html,
       }),
     })
@@ -153,16 +156,15 @@ async function sendCheckInEmail(parentEmail: string, parentName: string, student
 // ═══ CHECK IN ═══
 export async function POST(request: NextRequest) {
   try {
+    const staff = await getStaffSession()
+    if (!staff) return staffUnauthorized()
+
     const data = await request.json()
     const {
-      recordId, teacherCode, studentName, parentEmail, parentName,
+      recordId, studentName, parentEmail, parentName,
       parentPhone, isIncomplete, studentAge, allergies, medicalConditions,
       emergencyContactName, emergencyContactPhone, hasWaiver, interests
     } = data
-
-    if (teacherCode !== TEACHER_CODE) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    }
 
     if (!recordId) {
       return NextResponse.json({ success: false, error: 'recordId required' }, { status: 400 })
@@ -241,12 +243,11 @@ export async function POST(request: NextRequest) {
 // ═══ UNCHECK (DELETE) ═══
 export async function DELETE(request: NextRequest) {
   try {
-    const data = await request.json()
-    const { teacherCode, studentName, recordId } = data
+    const staff = await getStaffSession()
+    if (!staff) return staffUnauthorized()
 
-    if (teacherCode !== TEACHER_CODE) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    }
+    const data = await request.json()
+    const { studentName, recordId } = data
 
     const now = new Date()
     const isoDate = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' })

@@ -25,6 +25,8 @@ const nextConfig = {
       { source: '/mwl/:path*', destination: '/', permanent: true },
       { source: '/mwm', destination: '/', permanent: true },
       { source: '/family', destination: '/', permanent: true },
+      // Retired June-2026 camp confirmation page (Phase 0; its API is gone)
+      { source: '/confirm', destination: '/', permanent: false },
       { source: '/basma/academy', destination: '/basma', permanent: true },
       { source: '/basma/lessons', destination: '/basma', permanent: true },
       { source: '/basma/artist', destination: '/basma', permanent: true },
