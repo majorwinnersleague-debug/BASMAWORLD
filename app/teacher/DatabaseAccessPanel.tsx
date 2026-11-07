@@ -23,7 +23,7 @@ function Table({ rows, empty }: { rows: Row[]; empty: string }) {
   );
 }
 
-export default function DatabaseAccessPanel({ teacherCode }: { teacherCode: string }) {
+export default function DatabaseAccessPanel() {
   const [tab, setTab] = useState<"students" | "requests" | "airtable">("students");
   const [query, setQuery] = useState("");
   const [airtable, setAirtable] = useState<Row[]>([]);
@@ -48,14 +48,14 @@ export default function DatabaseAccessPanel({ teacherCode }: { teacherCode: stri
   const loadAirtable = useCallback(async () => {
     setLoading(true); setMessage("");
     try {
-      const response = await fetch("/api/registrations?source=all&teacherCode=" + encodeURIComponent(teacherCode), { cache: "no-store" });
+      const response = await fetch("/api/registrations?source=all", { cache: "no-store" });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Unable to load Airtable.");
       setAirtable((data.registrations || []) as Row[]);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to load Airtable.");
     } finally { setLoading(false); }
-  }, [teacherCode]);
+  }, []);
 
   const filteredAirtable = useMemo(() => {
     const q = query.trim().toLowerCase();

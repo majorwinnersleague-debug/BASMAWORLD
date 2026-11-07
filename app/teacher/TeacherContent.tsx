@@ -152,7 +152,6 @@ const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
    COMPONENT
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const ACCESS_CODE = '1515'
 type TabView = 'checkin' | 'roster' | 'discovery' | 'thisweek' | 'calendar' | 'closures' | 'chat' | 'announce' | 'dashboard' | 'database'
 
 interface ChatMessage {
@@ -174,9 +173,15 @@ interface EditFields {
 }
 
 export default function TeacherContent() {
+  // Staff sign-in (email + one-time code → signed 12-hour session cookie)
   const [authenticated, setAuthenticated] = useState(false)
-  const [codeInput, setCodeInput] = useState('')
-  const [codeError, setCodeError] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
+  const [staffEmail, setStaffEmail] = useState('')
+  const [staffCode, setStaffCode] = useState('')
+  const [loginStep, setLoginStep] = useState<'email' | 'code'>('email')
+  const [loginError, setLoginError] = useState('')
+  const [loginInfo, setLoginInfo] = useState('')
+  const [loginBusy, setLoginBusy] = useState(false)
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [allContacts, setAllContacts] = useState<{ name: string; phone: string; studentName: string; email: string; source: string }[]>([])
   const [loading, setLoading] = useState(true)
@@ -218,8 +223,6 @@ export default function TeacherContent() {
 
   // Edit student mode
   const [editMode, setEditMode] = useState(false)
-  const [editCodeInput, setEditCodeInput] = useState('')
-  const [editCodeVerified, setEditCodeVerified] = useState(false)
   const [editFields, setEditFields] = useState<EditFields | null>(null)
   const [editSaving, setEditSaving] = useState(false)
   const [editSuccess, setEditSuccess] = useState(false)
@@ -245,10 +248,13 @@ export default function TeacherContent() {
   const [blockMsg, setBlockMsg] = useState('')
   const [showBlockSection, setShowBlockSection] = useState(false)
 
-  // Auth check — code required every time (no saved sessions)
+  // Auth check — restore an existing signed staff session, if any
   useEffect(() => {
-    // Clear any old saved auth so code is always required
     try { localStorage.removeItem('basma-teacher-auth') } catch {}
+    fetch('/api/staff/me', { cache: 'no-store' })
+      .then(r => { if (r.ok) setAuthenticated(true) })
+      .catch(() => {})
+      .finally(() => setAuthChecked(true))
   }, [])
 
   // Load closures from server API (replaces localStorage)
@@ -275,23 +281,61 @@ export default function TeacherContent() {
     } catch {}
   }, [])
 
-  async function handleCodeSubmit(e: React.FormEvent) {
+  async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setLoginBusy(true)
+    setLoginError('')
+    setLoginInfo('')
     try {
-      const response = await fetch('/api/teacher-database-auth', {
+      const response = await fetch('/api/staff/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: codeInput.trim() }),
+        body: JSON.stringify({ email: staffEmail.trim() }),
+      })
+      const data = await response.json().catch(() => ({}))
+      if (response.ok) {
+        setLoginStep('code')
+        setLoginInfo(data.message || 'Check your email for a login code.')
+      } else {
+        setLoginError(data.error || 'Could not send a login code.')
+      }
+    } catch {
+      setLoginError('Something went wrong. Please try again.')
+    }
+    setLoginBusy(false)
+  }
+
+  async function handleCodeSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setLoginBusy(true)
+    setLoginError('')
+    try {
+      const response = await fetch('/api/staff/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: staffEmail.trim(), code: staffCode.trim() }),
       })
       if (response.ok) {
         setAuthenticated(true)
-        setCodeError(false)
+        setStaffCode('')
       } else {
-        setCodeError(true)
+        const data = await response.json().catch(() => ({}))
+        setLoginError(data.error || 'Invalid or expired code.')
       }
     } catch {
-      setCodeError(true)
+      setLoginError('Something went wrong. Please try again.')
     }
+    setLoginBusy(false)
+  }
+
+  async function handleLogout() {
+    try { await fetch('/api/staff/logout', { method: 'POST' }) } catch {}
+    setAuthenticated(false)
+    setLoginStep('email')
+    setStaffCode('')
+    setRegistrations([])
+    setAllContacts([])
+    setLoading(true)
   }
 
   async function addClosure() {
@@ -302,7 +346,6 @@ export default function TeacherContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          teacherCode: ACCESS_CODE,
           date: newClosureDate,
           endDate: newClosureEndDate || undefined,
           type: newClosureType || 'closure',
@@ -335,7 +378,6 @@ export default function TeacherContent() {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          teacherCode: ACCESS_CODE,
           id: evt?.id || undefined,
           date: dateOrId,
         }),
@@ -356,7 +398,6 @@ export default function TeacherContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          teacherCode: ACCESS_CODE,
           date: dateStr,
           type: 'closure',
           note: 'School Closed',
@@ -384,7 +425,7 @@ export default function TeacherContent() {
   // Fetch registrations
   useEffect(() => {
     if (!authenticated) return
-    fetch('/api/registrations?source=all&teacherCode=1515')
+    fetch('/api/registrations?source=all')
       .then(r => r.json())
       .then(data => {
         setRegistrations(data.registrations || [])
@@ -431,7 +472,7 @@ export default function TeacherContent() {
         setBlockName('')
         fetchBlockedList()
         // Re-fetch contacts to update the Text All list
-        fetch('/api/registrations?source=all&teacherCode=1515')
+        fetch('/api/registrations?source=all')
           .then(r => r.json())
           .then(d => { setRegistrations(d.registrations || []); setAllContacts(d.allContacts || []) })
       }
@@ -452,7 +493,7 @@ export default function TeacherContent() {
       })
       fetchBlockedList()
       // Re-fetch contacts
-      fetch('/api/registrations?source=all&teacherCode=1515')
+      fetch('/api/registrations?source=all')
         .then(r => r.json())
         .then(d => { setRegistrations(d.registrations || []); setAllContacts(d.allContacts || []) })
     } catch (_) {}
@@ -468,7 +509,6 @@ export default function TeacherContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           recordId: student.id,
-          teacherCode: ACCESS_CODE,
           studentName: student.studentName || student.parentName,
           parentEmail: student.email,
           parentName: student.parentName,
@@ -504,7 +544,6 @@ export default function TeacherContent() {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          teacherCode: ACCESS_CODE,
           studentName: student.studentName || student.parentName,
           recordId: student.id,
         }),
@@ -528,8 +567,6 @@ export default function TeacherContent() {
   // Edit student handlers
   const startEdit = useCallback((student: Registration) => {
     setEditMode(true)
-    setEditCodeVerified(false)
-    setEditCodeInput('')
     setEditSuccess(false)
     setEditFields({
       studentName: safe(student.studentName),
@@ -545,14 +582,6 @@ export default function TeacherContent() {
     })
   }, [])
 
-  const verifyEditCode = useCallback((code: string) => {
-    if (code.trim() === ACCESS_CODE) {
-      setEditCodeVerified(true)
-      return true
-    }
-    return false
-  }, [])
-
   const saveEdit = useCallback(async (student: Registration) => {
     if (!editFields) return
     setEditSaving(true)
@@ -562,7 +591,6 @@ export default function TeacherContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           recordId: student.id,
-          teacherCode: ACCESS_CODE,
           studentName: editFields.studentName,
           studentAge: editFields.studentAge,
           parentName: editFields.parentName,
@@ -633,7 +661,6 @@ export default function TeacherContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: newMessages,
-          teacherCode: ACCESS_CODE,
         }),
       })
       const data = await res.json()
@@ -641,7 +668,7 @@ export default function TeacherContent() {
         setChatMessages(prev => [...prev, { role: 'assistant', content: data.reply }])
         // If updates were made, refresh registrations
         if (data.updates && data.updates.length > 0 && data.updates.some((u: any) => u.success)) {
-          fetch('/api/registrations?source=all&teacherCode=1515')
+          fetch('/api/registrations?source=all')
             .then(r => r.json())
             .then(d => { setRegistrations(d.registrations || []); setAllContacts(d.allContacts || []) })
             .catch(() => {})
@@ -819,20 +846,46 @@ export default function TeacherContent() {
             <h1 className="text-3xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
               <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BASMA</span> Teachers
             </h1>
-            <p className="text-white/40 text-sm">Enter your access code to continue.</p>
+            <p className="text-white/40 text-sm">
+              {!authChecked ? 'Checking your session…'
+                : loginStep === 'email' ? 'Enter your staff email to get a login code.'
+                : 'Enter the 6-digit code we emailed you.'}
+            </p>
           </div>
-          <form onSubmit={handleCodeSubmit} className="space-y-4">
-            <input type="password" placeholder="Access code" value={codeInput}
-              onChange={(e) => { setCodeInput(e.target.value); setCodeError(false) }}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-2xl tracking-[0.5em] placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition"
-              autoFocus />
-            {codeError && <p className="text-red-400 text-sm">Incorrect code. Please try again.</p>}
-            <button type="submit" disabled={!codeInput.trim()}
-              className="w-full py-3 rounded-xl font-semibold text-sm tracking-wide transition disabled:opacity-40"
-              style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
-              Enter Portal
-            </button>
-          </form>
+          {authChecked && loginStep === 'email' && (
+            <form onSubmit={handleEmailSubmit} className="space-y-4">
+              <input type="email" placeholder="Staff email" value={staffEmail} autoComplete="email"
+                onChange={(e) => { setStaffEmail(e.target.value); setLoginError('') }}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition"
+                autoFocus />
+              {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
+              <button type="submit" disabled={!staffEmail.trim() || loginBusy}
+                className="w-full py-3 rounded-xl font-semibold text-sm tracking-wide transition disabled:opacity-40"
+                style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+                {loginBusy ? 'Sending…' : 'Email me a code'}
+              </button>
+            </form>
+          )}
+          {authChecked && loginStep === 'code' && (
+            <form onSubmit={handleCodeSubmit} className="space-y-4">
+              {loginInfo && <p className="text-white/50 text-xs">{loginInfo}</p>}
+              <input type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6}
+                placeholder="000000" value={staffCode}
+                onChange={(e) => { setStaffCode(e.target.value.replace(/\D/g, '')); setLoginError('') }}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-2xl tracking-[0.5em] placeholder-white/25 focus:border-[#c9a84c]/50 focus:outline-none transition"
+                autoFocus />
+              {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
+              <button type="submit" disabled={staffCode.length !== 6 || loginBusy}
+                className="w-full py-3 rounded-xl font-semibold text-sm tracking-wide transition disabled:opacity-40"
+                style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#050505' }}>
+                {loginBusy ? 'Checking…' : 'Enter Portal'}
+              </button>
+              <button type="button" onClick={() => { setLoginStep('email'); setStaffCode(''); setLoginError(''); setLoginInfo('') }}
+                className="w-full py-2 text-xs text-white/40 hover:text-white/70">
+                Use a different email / resend code
+              </button>
+            </form>
+          )}
         </div>
       </main>
     )
@@ -856,7 +909,12 @@ export default function TeacherContent() {
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-white/5">
         <Link href="/" className="text-lg font-bold tracking-wider" style={{ color: '#c9a84c', fontFamily: "'Playfair Display', serif" }}>BASMA</Link>
-        <span className="text-sm text-white/40">Teacher Portal</span>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-white/40">Teacher Portal</span>
+          <button onClick={handleLogout} className="text-xs text-white/40 hover:text-white/80 border border-white/10 rounded-lg px-3 py-1">
+            Log out
+          </button>
+        </div>
       </header>
 
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8">
@@ -940,7 +998,7 @@ export default function TeacherContent() {
               // Auto-load dashboard data when tab is selected
               if (t.id === 'dashboard' && !dashboardData && !dashboardLoading) {
                 setDashboardLoading(true)
-                fetch(`/api/dashboard?teacherCode=${ACCESS_CODE}`)
+                fetch("/api/dashboard")
                   .then(r => r.json())
                   .then(data => { setDashboardData(data); setDashboardLoading(false) })
                   .catch(() => setDashboardLoading(false))
@@ -952,7 +1010,7 @@ export default function TeacherContent() {
           ))}
         </div>
 
-        {tab === 'database' && <DatabaseAccessPanel teacherCode={ACCESS_CODE} />}
+        {tab === 'database' && <DatabaseAccessPanel />}
 
         {/* ═══ DASHBOARD TAB ═══ */}
         {tab === 'dashboard' && (
@@ -1097,7 +1155,7 @@ export default function TeacherContent() {
                   <button
                     onClick={() => {
                       setDashboardLoading(true)
-                      fetch(`/api/dashboard?teacherCode=${ACCESS_CODE}`)
+                      fetch("/api/dashboard")
                         .then(r => r.json())
                         .then(data => { setDashboardData(data); setDashboardLoading(false) })
                         .catch(() => setDashboardLoading(false))
@@ -1357,21 +1415,6 @@ export default function TeacherContent() {
                           style={{ background: 'rgba(167,139,250,0.1)', color: '#a78bfa', border: '1px solid rgba(167,139,250,0.3)' }}>
                           ✏️ Edit Student Info
                         </button>
-                      ) : !editCodeVerified ? (
-                        <div className="p-4 rounded-xl" style={{ background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)' }}>
-                          <p className="text-sm text-purple-400 mb-3 font-semibold">🔒 Enter teacher code to edit:</p>
-                          <form onSubmit={(e) => { e.preventDefault(); if (!verifyEditCode(editCodeInput)) { setEditCodeInput(''); alert('Incorrect code') } }} className="flex gap-2">
-                            <input type="password" value={editCodeInput} onChange={e => setEditCodeInput(e.target.value)}
-                              className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-center text-xl tracking-[0.3em] placeholder-white/25 focus:border-purple-400/50 focus:outline-none"
-                              placeholder="••••" autoFocus />
-                            <button type="submit" className="px-4 py-2 rounded-lg font-semibold text-sm" style={{ background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', color: '#fff' }}>
-                              Verify
-                            </button>
-                            <button type="button" onClick={() => setEditMode(false)} className="px-3 py-2 rounded-lg text-white/40 hover:text-white/60 text-sm">
-                              Cancel
-                            </button>
-                          </form>
-                        </div>
                       ) : editSuccess ? (
                         <div className="p-4 rounded-xl text-center" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)' }}>
                           <span className="text-green-400 text-lg font-bold">✅ Saved successfully!</span>
