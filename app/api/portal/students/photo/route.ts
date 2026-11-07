@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
+import { airtableString } from '@/lib/escape'
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
     const studentName = record.fields?.['Student Name'] || ''
     if (studentName) {
       const formula = encodeURIComponent(
-        `AND(LOWER({Parent Email}) = '${user.email.toLowerCase().trim()}', LOWER({Student Name}) = '${studentName.toLowerCase().trim()}')`
+        `AND(LOWER({Parent Email}) = ${airtableString(user.email.toLowerCase().trim())}, LOWER({Student Name}) = ${airtableString(studentName.toLowerCase().trim())})`
       )
       const summerUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${SUMMER_TABLE}?filterByFormula=${formula}&maxRecords=1`
       const summerRes = await fetch(summerUrl, {

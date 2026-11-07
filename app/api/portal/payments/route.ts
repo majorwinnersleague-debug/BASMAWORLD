@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
+import { airtableString } from '@/lib/escape'
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
@@ -13,7 +14,7 @@ export async function GET() {
 
   try {
     // Get payments for this parent by email
-    const formula = encodeURIComponent(`LOWER({Email}) = '${user.email.toLowerCase().trim()}'`)
+    const formula = encodeURIComponent(`LOWER({Email}) = ${airtableString(user.email.toLowerCase().trim())}`)
     const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${PAYMENTS_TABLE}?filterByFormula=${formula}&maxRecords=100&sort[0][field]=Created&sort[0][direction]=desc`
 
     const res = await fetch(url, {

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
+import { airtableString } from '@/lib/escape'
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
@@ -14,11 +15,11 @@ export async function GET() {
 
   try {
     // Get all lead records for this parent (by email)
-    const formula = encodeURIComponent(`LOWER({Email}) = '${user.email.toLowerCase().trim()}'`)
+    const formula = encodeURIComponent(`LOWER({Email}) = ${airtableString(user.email.toLowerCase().trim())}`)
     const leadsUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}?filterByFormula=${formula}&maxRecords=100`
 
     // Also get summer records for extra fields (allergies, medical, emergency)
-    const summerFormula = encodeURIComponent(`LOWER({Parent Email}) = '${user.email.toLowerCase().trim()}'`)
+    const summerFormula = encodeURIComponent(`LOWER({Parent Email}) = ${airtableString(user.email.toLowerCase().trim())}`)
     const summerUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${SUMMER_TABLE}?filterByFormula=${summerFormula}&maxRecords=100`
 
     const [leadsRes, summerRes] = await Promise.all([

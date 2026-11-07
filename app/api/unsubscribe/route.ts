@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { airtableString } from '@/lib/escape'
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
 const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
@@ -8,7 +9,7 @@ function email(v: string) { return String(v || '').trim().toLowerCase() }
 
 async function findLeads(e: string) {
   const url = new URL(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}`)
-  url.searchParams.set('filterByFormula', `LOWER({Email})="${e.replace(/"/g, '\\\"')}"`)
+  url.searchParams.set('filterByFormula', `LOWER({Email})=${airtableString(e)}`)
   url.searchParams.set('pageSize','100')
   const res = await fetch(url.toString(), { headers:{Authorization:`Bearer ${AIRTABLE_PAT}`}, cache:'no-store' })
   if (!res.ok) throw new Error('Airtable lookup failed')
