@@ -1,114 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateOTP, storeOTP } from '@/lib/auth'
+import { issueLoginCode, OtpRateLimitError } from '@/lib/otp'
+import { findParent } from '@/lib/parent-lookup'
+import { sendLoginCodeEmail } from '@/lib/auth-email'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
-import { SignJWT } from 'jose'
 
-const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
-const AIRTABLE_BASE = process.env.AIRTABLE_ACADEMY_BASE || 'appK3o119Z5r9AY6j'
-const LEADS_TABLE = 'tbl1diIEhM9MtKViE'
-
-const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
-const FROM_EMAIL = 'BASMA Academy <onboarding@resend.dev>'
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'basma-portal-secret-change-me-in-production'
-)
-const COOKIE_NAME = 'basma_session'
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
-
-/* ── Find parent in Airtable by email + phone ── */
-async function findParent(email: string, phone: string) {
-  const cleanPhone = phone.replace(/\D/g, '').slice(-10)
-  
-  // Search by email first
-  const formula = encodeURIComponent(`LOWER({Email}) = '${email.toLowerCase().trim()}'`)
-  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}?filterByFormula=${formula}&maxRecords=100`
-  
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${AIRTABLE_PAT}` },
-  })
-  
-  if (!res.ok) return null
-  const data = await res.json()
-  
-  // Match by phone number (last 10 digits)
-  for (const record of data.records || []) {
-    const recordPhone = (record.fields?.['Phone'] || '').replace(/\D/g, '').slice(-10)
-    if (recordPhone === cleanPhone) {
-      return {
-        id: record.id,
-        email: record.fields?.['Email'] || email,
-        phone: record.fields?.['Phone'] || phone,
-        parentName: record.fields?.['Full Name'] || record.fields?.['Name'] || record.fields?.['Parent Name'] || '',
-      }
-    }
-  }
-  
-  return null
-}
-
-/* ── Send OTP email via Resend ── */
-async function sendOTPEmail(email: string, code: string, name: string): Promise<boolean> {
-  if (!RESEND_API_KEY) return false
-  
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: FROM_EMAIL,
-        to: email,
-        subject: `Your BASMA login code: ${code}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
-            <div style="background: linear-gradient(135deg, #4a0e78, #6b21a8); padding: 20px; border-radius: 12px 12px 0 0; text-align: center;">
-              <h2 style="color: #ffd700; margin: 0; font-size: 22px;">🎵 BASMA Parent Portal</h2>
-            </div>
-            <div style="background: #fff; padding: 24px; border: 1px solid #e5e7eb; border-radius: 0 0 12px 12px;">
-              <p style="font-size: 15px; color: #333;">Hi ${name || 'there'},</p>
-              <p style="font-size: 15px; color: #333;">Your login code is:</p>
-              <div style="background: #f3f4f6; padding: 20px; border-radius: 10px; text-align: center; margin: 16px 0;">
-                <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #4a0e78;">${code}</span>
-              </div>
-              <p style="font-size: 13px; color: #888;">This code expires in 10 minutes. If you didn't request this, you can safely ignore it.</p>
-            </div>
-          </div>
-        `,
-      }),
-    })
-    if (!res.ok) {
-      const errorBody = await res.text()
-      console.error('[RESEND ERROR]', res.status, errorBody)
-    }
-    return res.ok
-  } catch (err) {
-    console.error('[RESEND EXCEPTION]', err)
-    return false
-  }
-}
-
-/* ── Create session directly (fallback when email OTP unavailable) ── */
-async function createDirectSession(parent: { id: string; email: string; phone: string; parentName: string }) {
-  const token = await new SignJWT({
-    id: parent.id,
-    email: parent.email,
-    phone: parent.phone,
-    parentName: parent.parentName,
-    role: 'parent',
-  })
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('30d')
-    .sign(JWT_SECRET)
-
-  return token
-}
-
+/**
+ * Parent portal login, step 1: email + phone → emailed 6-digit code.
+ * There is NO fallback: if the code can't be emailed, nobody is logged in.
+ */
 export async function POST(req: NextRequest) {
-  // Rate limit: 3 login attempts per IP per 5 minutes
+  // Rate limit: 3 login attempts per IP per 5 minutes (per instance; the
+  // per-email limit in lib/otp.ts is enforced in Neon across instances).
   const ip = getClientIp(req)
   const { allowed } = checkRateLimit(`auth-login:${ip}`, 3, 5 * 60 * 1000)
   if (!allowed) {
@@ -120,57 +22,42 @@ export async function POST(req: NextRequest) {
 
   try {
     const { email, phone } = await req.json()
-    
-    if (!email || !phone) {
+
+    if (!email || !phone || typeof email !== 'string' || typeof phone !== 'string') {
       return NextResponse.json({ error: 'Email and phone number are required.' }, { status: 400 })
     }
-    
-    // Find parent in Airtable
+
     const parent = await findParent(email, phone)
     if (!parent) {
       return NextResponse.json(
-        { error: 'No account found with this email and phone number. Please register first at basmaworld.com/enroll.' },
+        { error: 'No account found with this email and phone number. Please contact the academy for help.' },
         { status: 404 }
       )
     }
-    
-    // Generate and store OTP
-    const code = generateOTP()
-    storeOTP(email, code)
-    
-    // Try to send OTP via email
-    const sent = await sendOTPEmail(email, code, parent.parentName)
-    
-    if (sent) {
-      // Email OTP flow
-      return NextResponse.json({
-        success: true,
-        message: 'Verification code sent to your email.',
-        parentName: parent.parentName,
-      })
+
+    const code = await issueLoginCode(email, 'parent')
+    const sent = await sendLoginCodeEmail({ to: email.trim(), code, name: parent.parentName, portal: 'Parent Portal' })
+
+    if (!sent) {
+      return NextResponse.json(
+        { error: "We couldn't send your login code right now. Please try again later or contact the academy." },
+        { status: 503 }
+      )
     }
-    
-    // FALLBACK: Email failed — auto-login since email+phone already verified via Airtable
-    console.log('[AUTH FALLBACK] Email send failed, using direct login for:', parent.email)
-    const token = await createDirectSession(parent)
-    
-    const response = NextResponse.json({
+
+    return NextResponse.json({
       success: true,
-      message: 'Logged in successfully!',
+      message: 'Verification code sent to your email.',
       parentName: parent.parentName,
-      directLogin: true,
     })
-    
-    response.cookies.set(COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: COOKIE_MAX_AGE,
-      path: '/',
-    })
-    
-    return response
-  } catch {
+  } catch (error) {
+    if (error instanceof OtpRateLimitError) {
+      return NextResponse.json(
+        { error: 'Too many codes requested. Please wait 15 minutes and try again.' },
+        { status: 429 }
+      )
+    }
+    console.error('[auth/login] error:', error)
     return NextResponse.json({ error: 'Something went wrong.' }, { status: 500 })
   }
 }

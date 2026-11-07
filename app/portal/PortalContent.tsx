@@ -109,13 +109,7 @@ export default function PortalContent() {
       })
       const data = await res.json()
       if (data.success) {
-        if (data.directLogin) {
-          // Email+phone verified via Airtable — session created directly
-          setAuthState('dashboard')
-          loadDashboard()
-        } else {
-          setAuthState('otp')
-        }
+        setAuthState('otp')
       } else {
         setAuthError(data.error || 'Login failed')
       }

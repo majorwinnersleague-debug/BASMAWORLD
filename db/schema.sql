@@ -56,3 +56,28 @@ CREATE INDEX IF NOT EXISTS idx_active_students_email
 
 CREATE INDEX IF NOT EXISTS idx_active_students_student_name
   ON active_students (LOWER(student_name));
+
+-- Phase 0 additions (see db/migrations/001_phase0_security.sql)
+CREATE TABLE IF NOT EXISTS auth_codes (
+  id BIGSERIAL PRIMARY KEY,
+  email TEXT NOT NULL,
+  purpose TEXT NOT NULL,
+  code_hash TEXT NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  expires_at TIMESTAMPTZ NOT NULL,
+  consumed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_auth_codes_lookup
+  ON auth_codes (email, purpose, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS stripe_events (
+  event_id TEXT PRIMARY KEY,
+  type TEXT NOT NULL,
+  endpoint TEXT NOT NULL,
+  received_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  processed_at TIMESTAMPTZ,
+  attempts INTEGER NOT NULL DEFAULT 1,
+  last_error TEXT
+);
