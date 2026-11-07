@@ -1,9 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 /**
- * Daily private-lesson reminder.
- * IMPORTANT: This no longer sends registration-completion emails.
- * It only reminds opted-in families who have a student record in the master roster.
+ * Weekday marketing email ("we'd love to have X back…") to opted-in families.
+ * Called by the Vercel cron in vercel.json (0 16 * * 1-5).
+ *
+ * ── PAUSED in Phase 0 ───────────────────────────────────────────────────────
+ * The cron schedule is still in vercel.json and still calls this route, but
+ * the route returns { paused: true } and sends nothing unless the environment
+ * variable MARKETING_REMINDERS_ENABLED is set to exactly "true".
+ *
+ * To re-enable:
+ *   1. (Recommended first) fix the prices in the email copy below (Phase 1)
+ *      and consider a less frequent schedule in vercel.json, e.g. monthly
+ *      "0 16 1 * *", since families currently get this up to 5×/week.
+ *   2. In Vercel → Project → Settings → Environment Variables (Production),
+ *      add MARKETING_REMINDERS_ENABLED = true.
+ *   3. Redeploy. To pause again, delete the variable (or set it to false)
+ *      and redeploy.
+ * CRON_SECRET must also be set or the route refuses to run at all.
+ * ────────────────────────────────────────────────────────────────────────────
  */
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT || ''
@@ -82,8 +99,21 @@ async function sendReminderEmail(to: string, firstName: string, students: string
 }
 
 export async function GET(request: NextRequest) {
+  // Fail closed: without CRON_SECRET nobody can trigger this mass email.
+  if (!CRON_SECRET) {
+    console.error('[cron/reminders] CRON_SECRET is not configured; refusing to run')
+    return NextResponse.json({ error: 'Cron not configured' }, { status: 503 })
+  }
   const authHeader = request.headers.get('authorization')
-  if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) return NextResponse.json({error:'Unauthorized'},{status:401})
+  if (authHeader !== `Bearer ${CRON_SECRET}`) return NextResponse.json({error:'Unauthorized'},{status:401})
+
+  // PAUSED (Phase 0): this weekday marketing email is switched off unless
+  // MARKETING_REMINDERS_ENABLED is exactly "true". See the header comment
+  // for how to re-enable it.
+  if (process.env.MARKETING_REMINDERS_ENABLED !== 'true') {
+    return NextResponse.json({ success: true, paused: true, message: 'Marketing reminder email is paused (set MARKETING_REMINDERS_ENABLED=true to re-enable).' })
+  }
+
   try {
     const records = await fetchAllRecords(LEADS_TABLE)
     const families: Record<string,{firstName:string;students:string[]}> = {}
