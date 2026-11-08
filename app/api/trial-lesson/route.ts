@@ -3,7 +3,24 @@ import { sql } from '@/lib/db'
 import { checkRateLimit, getClientIp, isValidEmail, sanitizeString } from '@/lib/rate-limit'
 import { sendResendEmail } from '@/lib/auth-email'
 import { escapeHtml } from '@/lib/escape'
-import { BOOKING_LINKS } from '@/lib/booking'
+import { CreditError, upsertGuardianAndStudent } from '@/lib/credits'
+import { bookTrial, getBooking, getOpenSlots, type BookingView } from '@/lib/schedule'
+import { sendBookingConfirmation } from '@/lib/booking-emails'
+import { TRIAL_MINUTES } from '@/lib/schedule-policy'
+
+/** GET /api/trial-lesson → open 15-minute times for a free trial (public). */
+export async function GET(req: NextRequest) {
+  const ip = getClientIp(req)
+  const { allowed } = checkRateLimit(`trial-slots:${ip}`, 30, 10 * 60 * 1000)
+  if (!allowed) return NextResponse.json({ slots: [] }, { status: 429 })
+  if (!sql) return NextResponse.json({ slots: [] })
+  try {
+    return NextResponse.json({ slots: await getOpenSlots(TRIAL_MINUTES) }, { headers: { 'Cache-Control': 'no-store' } })
+  } catch (error) {
+    console.error('[trial-lesson] slots failed:', error)
+    return NextResponse.json({ slots: [] })
+  }
+}
 
 /**
  * POST /api/trial-lesson — free 15-minute trial lesson request (Phase 1).
@@ -56,6 +73,8 @@ export async function POST(req: NextRequest) {
   const preferredDay = field(body.preferredDay, 40) || 'Flexible'
   const preferredTime = field(body.preferredTime, 40) || 'Flexible'
   const notes = field(body.notes, 1000)
+  const startsAt = typeof body.startsAt === 'string' && /^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/.test(body.startsAt) ? body.startsAt : ''
+  let trialBooking: BookingView | null = null
 
   if (!parentName || !email || !phone || !studentName) {
     return NextResponse.json({ error: 'Please fill in parent name, email, phone and student name.' }, { status: 400 })
@@ -84,6 +103,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, alreadyRequested: true })
     }
 
+    // Phase 3: if a time was picked, book it first (a taken time returns an
+    // error and nothing else is saved).
+    if (startsAt) {
+      const { studentId } = await upsertGuardianAndStudent({ email, guardianName: parentName, phone, studentName, studentAge, instrument })
+      const { bookingId } = await bookTrial({ studentId, startsAt, by: email })
+      trialBooking = await getBooking(bookingId)
+    }
+
     await sql`
       INSERT INTO lesson_requests (
         parent_name, email, phone, student_name, student_age, instrument,
@@ -95,11 +122,20 @@ export async function POST(req: NextRequest) {
       )
     `
   } catch (error) {
+    if (error instanceof CreditError) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
     console.error('[trial-lesson] Neon save failed:', error)
     return NextResponse.json(
       { error: 'We could not save your request. Please try again or call (702) 788-7369.' },
       { status: 500 }
     )
+  }
+
+  // A booked trial gets the booking confirmation (parent + academy) instead.
+  if (trialBooking) {
+    await sendBookingConfirmation(trialBooking)
+    return NextResponse.json({ success: true, booked: true, startsAt: trialBooking.startsAt })
   }
 
   const e = escapeHtml
@@ -130,9 +166,7 @@ export async function POST(req: NextRequest) {
       <div style="font-family: Arial, sans-serif; max-width: 560px;">
         <h2 style="color:#4a0e78;">Thanks, ${e(parentName)}!</h2>
         <p>We received your request for a <strong>free 15-minute trial lesson</strong> for ${e(studentName)}.</p>
-        ${BOOKING_LINKS.trial
-          ? `<p><a href="${e(BOOKING_LINKS.trial)}" style="display:inline-block;background:#4a0e78;color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;">Pick your free trial time</a></p><p>Questions? Call (702) 788-7369.</p>`
-          : `<p>We'll contact you shortly to schedule it. Questions? Call (702) 788-7369.</p>`}
+        <p>We'll contact you shortly to schedule it. Questions? Call (702) 788-7369.</p>
         <p style="color:#666;font-size:13px;">BASMA Music Academy</p>
       </div>
     `,

@@ -14,7 +14,9 @@ import {
   formatUsd,
 } from '@/lib/pricing'
 import { POLICY_LINES } from '@/lib/lesson-policy'
-import { BOOKING_LINKS, HAS_LESSON_BOOKING } from '@/lib/booking'
+import { PORTAL_BOOKING_URL } from '@/lib/booking'
+import { formatInstant } from '@/lib/tz'
+import SlotPicker from '@/components/SlotPicker'
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PACKAGES
@@ -115,6 +117,8 @@ export default function PrivateLessonsContent() {
   const [trialOpen, setTrialOpen] = useState(false)
   const [trialStatus, setTrialStatus] = useState<'idle' | 'sending' | 'sent' | 'already' | 'error'>('idle')
   const [trialError, setTrialError] = useState('')
+  const [trialSlot, setTrialSlot] = useState('')
+  const [trialBookedAt, setTrialBookedAt] = useState('')
 
   const searchParams = useSearchParams()
 
@@ -169,10 +173,12 @@ export default function PrivateLessonsContent() {
         body: JSON.stringify({
           parentName, email, phone, studentName, studentAge,
           instrument, preferredDay, preferredTime, notes,
+          ...(trialSlot ? { startsAt: trialSlot } : {}),
         }),
       })
       const data = await res.json()
       if (res.ok && data.success) {
+        if (data.booked && data.startsAt) setTrialBookedAt(data.startsAt)
         setTrialStatus(data.alreadyRequested ? 'already' : 'sent')
       } else {
         setTrialStatus('error')
@@ -256,29 +262,19 @@ export default function PrivateLessonsContent() {
               Payment Successful!
             </h1>
             <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">
-              Your private lesson package has been purchased.{' '}
-              {HAS_LESSON_BOOKING ? 'Book your lesson times below.' : 'We’ll reach out to confirm your lesson schedule.'}
+              Your private lesson package has been purchased. Next, pick your lesson times —
+              it only takes a minute.
             </p>
-            {HAS_LESSON_BOOKING && (
-              <div className="flex flex-wrap justify-center gap-3 mb-8">
-                {BOOKING_LINKS.min30 && (
-                  <a href={BOOKING_LINKS.min30} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full text-sm font-semibold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
-                    Book a 30-minute time →
-                  </a>
-                )}
-                {BOOKING_LINKS.min60 && (
-                  <a href={BOOKING_LINKS.min60} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full text-sm font-semibold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
-                    Book a 1-hour time →
-                  </a>
-                )}
-              </div>
-            )}
+            <a href={PORTAL_BOOKING_URL} className="inline-block px-8 py-3 rounded-full text-sm font-bold mb-3" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
+              📅 Book My Lesson Times →
+            </a>
+            <p className="text-white/30 text-xs mb-8">Sign in with the email and phone number you just used — we’ll email you a login code.</p>
             <div className="card-minimal rounded-xl p-5 text-left max-w-sm mx-auto">
               <p className="text-white/50 text-xs uppercase tracking-widest mb-3">What&apos;s Next</p>
               <ul className="text-white/35 text-sm space-y-2">
                 <li>✉️ Confirmation email with receipt</li>
-                <li>{HAS_LESSON_BOOKING ? '📅 Book your times with the buttons above' : '📞 We’ll call to finalize your schedule'}</li>
-                <li>👤 See your lessons left any time in the Parent Portal</li>
+                <li>📅 Book each lesson time in the Parent Portal → Lessons</li>
+                <li>👤 See your lessons left and upcoming times any time</li>
                 {POLICY_LINES.slice(0, 2).map(line => <li key={line}>📋 {line}</li>)}
               </ul>
             </div>
@@ -387,12 +383,12 @@ export default function PrivateLessonsContent() {
                 {trialOpen && (trialStatus === 'sent' || trialStatus === 'already') && (
                   <div className="card-minimal rounded-xl p-5 text-center mt-2">
                     <p className="text-white font-semibold mb-1">
-                      {trialStatus === 'sent' ? '✅ Trial requested!' : '✅ We already have a trial request for this student.'}
+                      {trialStatus === 'already'
+                        ? '✅ We already have a trial request for this student.'
+                        : trialBookedAt ? '✅ Your free trial is booked!' : '✅ Trial requested!'}
                     </p>
-                    {BOOKING_LINKS.trial ? (
-                      <a href={BOOKING_LINKS.trial} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-6 py-2.5 rounded-full text-sm font-semibold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
-                        Pick your free trial time →
-                      </a>
+                    {trialStatus === 'sent' && trialBookedAt ? (
+                      <p className="text-white/60 text-sm">{formatInstant(new Date(trialBookedAt))} (Pacific) at our studio inside Synergy Dance. A confirmation email is on its way.</p>
                     ) : (
                       <p className="text-white/40 text-sm">We&apos;ll contact you shortly to schedule it.</p>
                     )}
@@ -415,6 +411,15 @@ export default function PrivateLessonsContent() {
                       <input value={preferredTime} onChange={e => setPreferredTime(e.target.value)} placeholder="Preferred time (optional)" className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
                     </div>
                     <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Anything we should know? (optional)" rows={2} className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                    <div className="rounded-lg p-3 border border-white/10">
+                      <p className="text-white text-sm font-semibold mb-2">Pick your free trial time</p>
+                      <SlotPicker
+                        url="/api/trial-lesson"
+                        value={trialSlot}
+                        onChange={setTrialSlot}
+                        emptyText="No open times online right now — send your request and we’ll call you to schedule."
+                      />
+                    </div>
                     {trialStatus === 'error' && <p className="text-red-400 text-sm">{trialError}</p>}
                     <button
                       type="submit"
@@ -422,7 +427,7 @@ export default function PrivateLessonsContent() {
                       className="w-full py-3 rounded-full text-sm font-semibold transition disabled:opacity-50"
                       style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}
                     >
-                      {trialStatus === 'sending' ? 'Sending…' : 'Request My Free Trial'}
+                      {trialStatus === 'sending' ? 'Sending…' : trialSlot ? 'Book My Free Trial' : 'Request My Free Trial'}
                     </button>
                   </form>
                 )}
@@ -674,14 +679,9 @@ export default function PrivateLessonsContent() {
               <ul className="text-white/30 text-sm leading-relaxed list-disc ml-5 space-y-1">
                 {POLICY_LINES.map(line => <li key={line}>{line}</li>)}
               </ul>
-              {HAS_LESSON_BOOKING && (
-                <p className="text-white/40 text-sm mt-3">
-                  Already have lessons?{' '}
-                  {BOOKING_LINKS.min30 && <a href={BOOKING_LINKS.min30} target="_blank" rel="noopener noreferrer" className="underline text-[#c9a84c]">Book a 30-minute time</a>}
-                  {BOOKING_LINKS.min30 && BOOKING_LINKS.min60 && ' or '}
-                  {BOOKING_LINKS.min60 && <a href={BOOKING_LINKS.min60} target="_blank" rel="noopener noreferrer" className="underline text-[#c9a84c]">book a 1-hour time</a>}.
-                </p>
-              )}
+              <p className="text-white/40 text-sm mt-3">
+                Already have lessons? <a href={PORTAL_BOOKING_URL} className="underline text-[#c9a84c]">Sign in to book your times</a>.
+              </p>
             </div>
           </div>
 

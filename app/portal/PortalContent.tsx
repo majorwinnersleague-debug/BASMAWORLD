@@ -3,7 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { POLICY_LINES } from '@/lib/lesson-policy'
-import { bookingLinkFor } from '@/lib/booking'
+import SlotPicker from '@/components/SlotPicker'
+import { formatInstant } from '@/lib/tz'
+import { BOOKING_POLICY_LINES } from '@/lib/schedule-policy'
+
+/* Online bookings from /api/portal/bookings (Phase 3) */
+interface PortalBooking { id: number; studentId: number; kind: 'lesson' | 'trial'; minutes: number; startsAt: string; status: string; canCancelOnline: boolean }
 
 /* Lesson credits from /api/portal/credits (Phase 2) */
 interface LessonFamily {
@@ -69,6 +74,13 @@ export default function PortalContent() {
   const [payments, setPayments] = useState<Payment[]>([])
   const [activeTab, setActiveTab] = useState<'students' | 'lessons' | 'payments' | 'info'>('students')
   const [lessonFamily, setLessonFamily] = useState<LessonFamily | null>(null)
+  // Online booking (Phase 3)
+  const [bookings, setBookings] = useState<PortalBooking[]>([])
+  const [bookingFor, setBookingFor] = useState<{ studentId: number; minutes: number } | null>(null)
+  const [bookingSlot, setBookingSlot] = useState('')
+  const [bookingBusy, setBookingBusy] = useState(false)
+  const [bookingMsg, setBookingMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const [openTabAfterLogin, setOpenTabAfterLogin] = useState<'lessons' | null>(null)
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null)
 
   // Edit state
@@ -89,6 +101,8 @@ export default function PortalContent() {
 
   // Always require fresh login — clear any existing session first
   useEffect(() => {
+    // "Book My Lesson Times" links here with ?tab=lessons
+    if (new URLSearchParams(window.location.search).get('tab') === 'lessons') setOpenTabAfterLogin('lessons')
     fetch('/api/auth/logout', { method: 'POST' })
       .then(() => setAuthState('login'))
       .catch(() => setAuthState('login'))
@@ -96,17 +110,20 @@ export default function PortalContent() {
 
   const loadDashboard = useCallback(async () => {
     try {
-      const [studentsRes, paymentsRes, creditsRes] = await Promise.all([
+      const [studentsRes, paymentsRes, creditsRes, bookingsRes] = await Promise.all([
         fetch('/api/portal/students'),
         fetch('/api/portal/payments'),
-        fetch('/api/portal/credits'),
+        fetch('/api/portal/credits', { cache: 'no-store' }),
+        fetch('/api/portal/bookings', { cache: 'no-store' }),
       ])
       const studentsData = await studentsRes.json()
       const paymentsData = await paymentsRes.json()
       const creditsData = creditsRes.ok ? await creditsRes.json() : { family: null }
+      const bookingsData = bookingsRes.ok ? await bookingsRes.json() : { bookings: [] }
       if (studentsData.students) setPortalData(studentsData)
       if (paymentsData.payments) setPayments(paymentsData.payments)
       setLessonFamily(creditsData.family || null)
+      setBookings(Array.isArray(bookingsData.bookings) ? bookingsData.bookings : [])
     } catch { /* ignore */ }
   }, [])
 
@@ -144,6 +161,7 @@ export default function PortalContent() {
       const data = await res.json()
       if (data.success) {
         setAuthState('dashboard')
+        if (openTabAfterLogin) setActiveTab(openTabAfterLogin)
         loadDashboard()
       } else {
         setAuthError(data.error || 'Invalid code')
@@ -613,6 +631,9 @@ export default function PortalContent() {
             {/* ── Lessons Tab (credits, booking, history) ── */}
             {activeTab === 'lessons' && (
               <div className="space-y-4">
+                {bookingMsg && (
+                  <div className={`rounded-lg px-4 py-3 text-sm ${bookingMsg.ok ? 'bg-green-500/10 text-green-300' : 'bg-red-500/10 text-red-300'}`}>{bookingMsg.text}</div>
+                )}
                 {(!lessonFamily || lessonFamily.students.length === 0) ? (
                   <div style={cardCss} className="text-center">
                     <p className="text-white/50 text-sm mb-3">No lesson credits yet.</p>
@@ -630,14 +651,89 @@ export default function PortalContent() {
                             {c.nextExpiry && c.remaining > 0 && (
                               <div className="text-white/40 text-[11px] mt-1">Use by {new Date(c.nextExpiry).toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', month: 'short', day: 'numeric', year: 'numeric' })}</div>
                             )}
-                            {c.remaining > 0 && bookingLinkFor(c.minutes) && (
-                              <a href={bookingLinkFor(c.minutes)} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: gold, color: '#0D0118' }}>
-                                Book a {c.minutes === 60 ? '1-hour' : '30-min'} time →
-                              </a>
+                            {c.remaining > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => { setBookingFor({ studentId: s.id, minutes: c.minutes }); setBookingSlot(''); setBookingMsg(null) }}
+                                className="inline-block mt-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+                                style={{ background: gold, color: '#0D0118' }}
+                              >
+                                📅 Book a {c.minutes === 60 ? '1-hour' : '30-min'} time
+                              </button>
                             )}
                           </div>
                         ))}
                       </div>
+
+                      {/* Booking panel */}
+                      {bookingFor?.studentId === s.id && (
+                        <div className="rounded-lg p-3 mb-3" style={{ border: `1px solid ${gold}55` }}>
+                          <div className="flex justify-between items-center mb-2">
+                            <div className="text-white text-sm font-semibold">Book a {bookingFor.minutes === 60 ? '1-hour' : '30-minute'} lesson for {s.name}</div>
+                            <button type="button" className="text-white/40 text-xs" onClick={() => setBookingFor(null)}>Close</button>
+                          </div>
+                          <SlotPicker url={`/api/portal/bookings?slots=${bookingFor.minutes}`} value={bookingSlot} onChange={setBookingSlot} />
+                          <button
+                            type="button"
+                            disabled={!bookingSlot || bookingBusy}
+                            onClick={async () => {
+                              setBookingBusy(true); setBookingMsg(null)
+                              try {
+                                const res = await fetch('/api/portal/bookings', {
+                                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ action: 'book', studentId: s.id, minutes: bookingFor.minutes, startsAt: bookingSlot }),
+                                })
+                                const data = await res.json()
+                                if (res.ok && data.success) {
+                                  setBookingMsg({ ok: true, text: `Booked: ${formatInstant(new Date(bookingSlot))}. A confirmation email is on its way.` })
+                                  setBookingFor(null); setBookingSlot('')
+                                  await loadDashboard()
+                                } else {
+                                  setBookingMsg({ ok: false, text: data.error || 'Could not book that time. Please pick another.' })
+                                }
+                              } catch {
+                                setBookingMsg({ ok: false, text: 'Network problem. Please try again.' })
+                              } finally { setBookingBusy(false) }
+                            }}
+                            className="w-full mt-3 py-2.5 rounded-full text-sm font-semibold disabled:opacity-40"
+                            style={{ background: gold, color: '#0D0118' }}
+                          >
+                            {bookingBusy ? 'Booking…' : bookingSlot ? `Confirm ${formatInstant(new Date(bookingSlot))}` : 'Pick a time above'}
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Upcoming bookings */}
+                      {bookings.filter(b => b.studentId === s.id && b.status === 'booked').length > 0 && (
+                        <div className="space-y-2 mb-3">
+                          <div className="text-white/40 text-xs uppercase tracking-widest">Upcoming</div>
+                          {bookings.filter(b => b.studentId === s.id && b.status === 'booked').map(b => (
+                            <div key={b.id} className="flex justify-between items-center text-sm rounded-lg px-3 py-2" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                              <span className="text-white/80">{formatInstant(new Date(b.startsAt))} · {b.kind === 'trial' ? 'Free trial' : `${b.minutes} min`}</span>
+                              {b.canCancelOnline ? (
+                                <button
+                                  type="button"
+                                  className="text-xs text-red-300/80 hover:text-red-300"
+                                  onClick={async () => {
+                                    if (!confirm('Cancel this lesson? Your lesson credit will be returned.')) return
+                                    const res = await fetch('/api/portal/bookings', {
+                                      method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ action: 'cancel', bookingId: b.id }),
+                                    })
+                                    const data = await res.json()
+                                    setBookingMsg({ ok: res.ok && data.success, text: res.ok && data.success ? 'Cancelled — your lesson credit is back.' : data.error || 'Could not cancel.' })
+                                    await loadDashboard()
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                              ) : (
+                                <span className="text-white/30 text-[11px]">Call to change</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       {lessonFamily.lessons.filter(l => l.studentId === s.id).length > 0 && (
                         <div className="space-y-1">
                           <div className="text-white/40 text-xs uppercase tracking-widest mb-1">Recent lessons</div>
@@ -655,7 +751,7 @@ export default function PortalContent() {
                 <div style={cardCss}>
                   <div className="text-white/40 text-xs uppercase tracking-widest mb-2">Lesson rules</div>
                   <ul className="text-white/50 text-xs space-y-1 list-disc ml-4">
-                    {POLICY_LINES.map(line => <li key={line}>{line}</li>)}
+                    {[...BOOKING_POLICY_LINES, ...POLICY_LINES.slice(0, 1)].map(line => <li key={line}>{line}</li>)}
                   </ul>
                 </div>
               </div>

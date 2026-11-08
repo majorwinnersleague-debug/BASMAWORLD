@@ -930,6 +930,9 @@ export default function TeacherContent() {
         <Link href="/" className="text-lg font-bold tracking-wider" style={{ color: '#c9a84c', fontFamily: "'Playfair Display', serif" }}>BASMA</Link>
         <div className="flex items-center gap-4">
           <span className="text-sm text-white/40">Teacher Portal</span>
+          <Link href="/teacher/schedule" className="text-xs font-semibold border rounded-lg px-3 py-1" style={{ color: '#c9a84c', borderColor: 'rgba(201,168,76,0.4)' }}>
+            📅 Schedule
+          </Link>
           <Link href="/teacher/credits" className="text-xs font-semibold border rounded-lg px-3 py-1" style={{ color: '#c9a84c', borderColor: 'rgba(201,168,76,0.4)' }}>
             🎵 Lesson Credits
           </Link>
