@@ -27,6 +27,11 @@ const nextConfig = {
       { source: '/family', destination: '/', permanent: true },
       // Retired June-2026 camp confirmation page (Phase 0; its API is gone)
       { source: '/confirm', destination: '/', permanent: false },
+      // Marketing services retired (Nov 2026) → Artist Services. Only the
+      // public sales pages redirect; existing social-media subscribers keep
+      // /social-media/dashboard, /upload, /connect, /onboarding, /admin.
+      { source: '/marketing', destination: '/artist-services', permanent: false },
+      { source: '/social-media', destination: '/artist-services', permanent: false },
       { source: '/basma/academy', destination: '/basma', permanent: true },
       { source: '/basma/lessons', destination: '/basma', permanent: true },
       { source: '/basma/artist', destination: '/basma', permanent: true },

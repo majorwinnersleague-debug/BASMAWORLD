@@ -70,7 +70,7 @@ function sendAdsConversion(sessionId: string, valueUsd: number, currency: string
 }
 
 const INSTRUMENTS = [
-  'Piano', 'Voice / Singing', 'Guitar', 'Drums', 'Ukulele', 'Recording / Production', 'Other',
+  'Voice / Singing', 'Piano', 'Guitar', 'Bass', 'Violin', 'Drums', 'Ukulele', 'Saxophone', 'Recording / Production', 'Other',
 ]
 
 /* ═══════════════════════════════════════════════════════════════════════════

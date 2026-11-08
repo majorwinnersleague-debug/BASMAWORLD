@@ -7,13 +7,22 @@ import Footer from '@/components/Footer'
 import MWLContactForm from '@/components/MWLContactForm'
 import Link from 'next/link'
 
+const HIGHLIGHTS = [
+  { icon: '🎤', title: 'CES 2027', desc: 'Booked live singers and hosts for a tech company’s booth at CES 2027 — our first event-talent booking.' },
+  { icon: '📱', title: '260K+ on TikTok', desc: 'A community of about 260,000 followers at @basma_singer, sharing music and motivation.' },
+  { icon: '🩰', title: 'New studio at Synergy Dance', desc: 'Since October 2026 we teach inside Synergy Dance on W Flamingo Rd.' },
+  { icon: '🎹', title: '8 instruments, every age', desc: 'Voice, piano, guitar, bass, violin, drums, ukulele and saxophone — from 5 and under to adults.' },
+  { icon: '🎓', title: 'Real stages for students', desc: 'Recitals 2–4 times a year alongside Synergy’s dance recitals, with a certificate, spotlight flyer and performance video.' },
+  { icon: '🎶', title: 'Free community classes', desc: 'Ran free music classes for local families in summer 2026.' },
+]
+
 export const metadata: Metadata = {
-  title: 'Contact BasmaWorld | Marketing, Music & Community | Las Vegas',
-  description: 'Contact BasmaWorld. Book music lessons, get a marketing consultation, or connect with Major Winners League. Las Vegas, NV.',
-  keywords: ['contact basmaworld', 'book music lessons las vegas', 'social media marketing contact', 'basma awada contact'],
+  title: 'Contact BASMA | Music Lessons & Artist Services | Las Vegas',
+  description: 'Contact BASMA (Become A Singer Music Academy). Book private music lessons or a free trial, or request live singers and hosts for your event. Las Vegas, NV.',
+  keywords: ['contact basma', 'book music lessons las vegas', 'event singers las vegas', 'event host las vegas', 'basma awada contact'],
   openGraph: {
-    title: 'Contact BasmaWorld | Las Vegas',
-    description: 'Book lessons, get a marketing consultation, or just say hi.',
+    title: 'Contact BASMA | Las Vegas',
+    description: 'Book lessons, request event talent, or just say hi.',
     url: 'https://basmaworld.com/contact',
     siteName: 'BasmaWorld',
     type: 'website',
@@ -24,8 +33,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@basma_singer',
     creator: '@basma_singer',
-    title: 'Contact BasmaWorld',
-    description: 'Book lessons, marketing consultations & more. Las Vegas.',
+    title: 'Contact BASMA',
+    description: 'Book lessons or request event talent. Las Vegas.',
     images: ['/images/basma-about.jpg'],
   },
   alternates: { canonical: 'https://basmaworld.com/contact' },
@@ -45,7 +54,24 @@ export default function ContactPage() {
               Contact <span className="gradient-gold">BasmaWorld</span>
             </h1>
             <p className="text-white/30 max-w-md mx-auto text-sm">
-              Marketing help, music lessons, community partnerships — we&apos;d love to hear from you.
+              Music lessons, event talent, partnerships — we&apos;d love to hear from you.
+            </p>
+          </div>
+
+          {/* What we've done */}
+          <div className="mb-16">
+            <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-5 text-center">What we&apos;ve done</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {HIGHLIGHTS.map(h => (
+                <div key={h.title} className="card-minimal border border-white/[0.06] rounded-xl p-5">
+                  <div className="text-2xl mb-2">{h.icon}</div>
+                  <p className="font-medium text-white text-sm">{h.title}</p>
+                  <p className="text-white/35 text-xs mt-1 leading-relaxed">{h.desc}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-center text-white/30 text-sm mt-6 italic">
+              Our mission: help people believe they can achieve anything they set their minds to. 💜
             </p>
           </div>
 
@@ -55,44 +81,29 @@ export default function ContactPage() {
             <div className="space-y-3">
               <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-5">How Can We Help</h2>
 
-              {/* Marketing Consultation */}
+              {/* Private lessons */}
               <Link
-                href="/marketing"
+                href="/private-lessons"
                 className="flex items-center gap-4 card-minimal border border-[#c9a84c]/20 hover:border-[#c9a84c]/40 rounded-xl p-5 transition-all duration-200 group"
               >
                 <div className="flex-1">
-                  <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">Marketing Consultation</p>
-                  <p className="text-white/25 text-xs mt-0.5">Tell us about your marketing needs</p>
+                  <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">Private Lessons & Free Trial</p>
+                  <p className="text-white/25 text-xs mt-0.5">8 instruments · All ages · Free 15-minute trial lesson</p>
                 </div>
                 <span className="text-white/15 group-hover:text-white/40 transition-colors text-sm">→</span>
               </Link>
 
-              {/* Enroll in Music Camp */}
+              {/* Artist Services */}
               <Link
-                href="/enroll"
+                href="/artist-services"
                 className="flex items-center gap-4 card-minimal border border-white/[0.06] hover:border-white/15 rounded-xl p-5 transition-all duration-200 group"
               >
                 <div className="flex-1">
-                  <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">Enroll in BASMA Academy</p>
-                  <p className="text-white/25 text-xs mt-0.5">Music classes Mon–Thu · All ages · Scholarship available</p>
+                  <p className="font-medium text-white text-sm group-hover:text-[#c9a84c] transition-colors">Artist Services & Event Talent</p>
+                  <p className="text-white/25 text-xs mt-0.5">Live singers and hosts for your event · Artist coaching</p>
                 </div>
                 <span className="text-white/15 group-hover:text-white/40 transition-colors text-sm">→</span>
               </Link>
-
-              {/* Community Partnership — EVO Tickets */}
-              <div className="card-minimal border border-white/[0.06] rounded-xl p-5">
-                <p className="font-medium text-white text-sm">Community Partnership</p>
-                <p className="text-white/40 text-xs mt-1.5 leading-relaxed">
-                  🎮 We are proudly offering <span className="text-[#c9a84c] font-semibold">FREE EVO Convention tickets</span> to all of our students! A huge thank you to <span className="text-white/60 font-semibold">EVO Convention</span> for this amazing opportunity.
-                </p>
-                <p className="text-white/30 text-xs mt-2">
-                  Interested? Email us at{' '}
-                  <a href="mailto:becomeasingermusicacademy@gmail.com" className="text-[#c9a84c]/70 hover:text-[#c9a84c] transition-colors underline">
-                    becomeasingermusicacademy@gmail.com
-                  </a>{' '}
-                  for details.
-                </p>
-              </div>
 
               {/* Youth Resources — Coming Soon */}
               <div className="card-minimal border border-white/[0.06] rounded-xl p-5 opacity-60">

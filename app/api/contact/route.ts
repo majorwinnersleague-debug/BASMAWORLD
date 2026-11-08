@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
         headers: { 'Authorization': `Bearer ${slackToken}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           channel: slackChannel,
-          text: `🏆 *New MWL Lead!*\n*Name:* ${safeName}\n*Email:* ${safeEmail}\n*Company:* ${safeCompany || 'N/A'}\n*Message:* ${safeMessage}`
+          text: `📨 *New contact message (basmaworld.com/contact)*\n*Name:* ${safeName}\n*Email:* ${safeEmail}\n*Company:* ${safeCompany || 'N/A'}\n*Message:* ${safeMessage}`
         })
       })
     }

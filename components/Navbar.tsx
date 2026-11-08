@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/private-lessons', label: 'Private Lessons', highlight: true },
+  { href: '/artist-services', label: 'Artist Services' },
   { href: '/portal', label: 'Parent Portal' },
   { href: '/contact', label: 'Contact' },
 ]
@@ -92,7 +93,7 @@ export default function Navbar() {
             <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold mb-1 px-2">Lessons & Services</p>
             {[
               { href: '/private-lessons', label: '🎹 Private Lessons' },
-              { href: '/social-media', label: '📱 Marketing Services' },
+              { href: '/artist-services', label: '🎤 Artist Services' },
             ].map(link => (
               <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
                 className="block text-white/60 hover:text-white py-2 px-2 text-sm transition-colors rounded-lg hover:bg-white/5">

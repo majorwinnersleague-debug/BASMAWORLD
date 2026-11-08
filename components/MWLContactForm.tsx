@@ -33,16 +33,16 @@ export default function MWLContactForm() {
   return (
     <section className="max-w-2xl mx-auto px-4 pb-20" id="contact">
       <div className="bg-yellow-900/10 border border-yellow-700/40 rounded-2xl p-8">
-        <h2 className="text-2xl font-bold text-white mb-2">🏆 Work With MWL</h2>
+        <h2 className="text-2xl font-bold text-white mb-2">🎵 Get in touch</h2>
         <p className="text-gray-400 mb-6 text-sm">
-          Interested in partnering, sponsoring, or connecting with Major Winners League? We&apos;d love to hear from you.
+          Questions about lessons, booking singers or hosts for your event, or partnering with BASMA? We&apos;d love to hear from you.
         </p>
 
         {status === 'success' ? (
           <div className="bg-green-900/30 border border-green-600 rounded-xl p-6 text-center">
             <div className="text-4xl mb-3">✅</div>
             <h3 className="text-green-400 font-bold text-lg mb-1">Message received!</h3>
-            <p className="text-gray-300 text-sm">Thanks for reaching out. Basma or the MWL team will be in touch soon.</p>
+            <p className="text-gray-300 text-sm">Thanks for reaching out. Basma will be in touch soon.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
