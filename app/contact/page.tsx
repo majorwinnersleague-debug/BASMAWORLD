@@ -7,13 +7,14 @@ import Footer from '@/components/Footer'
 import MWLContactForm from '@/components/MWLContactForm'
 import Link from 'next/link'
 
+// Keep these short. Add CES photos/videos and new social links when ready.
 const HIGHLIGHTS = [
-  { icon: '🎤', title: 'CES 2027', desc: 'Booked live singers and hosts for a tech company’s booth at CES 2027 — our first event-talent booking.' },
-  { icon: '📱', title: '260K+ on TikTok', desc: 'A community of about 260,000 followers at @basma_singer, sharing music and motivation.' },
-  { icon: '🩰', title: 'New studio at Synergy Dance', desc: 'Since October 2026 we teach inside Synergy Dance on W Flamingo Rd.' },
-  { icon: '🎹', title: '8 instruments, every age', desc: 'Voice, piano, guitar, bass, violin, drums, ukulele and saxophone — from 5 and under to adults.' },
-  { icon: '🎓', title: 'Real stages for students', desc: 'Recitals 2–4 times a year alongside Synergy’s dance recitals, with a certificate, spotlight flyer and performance video.' },
-  { icon: '🎶', title: 'Free community classes', desc: 'Ran free music classes for local families in summer 2026.' },
+  { icon: '🎤', title: 'CES 2027', desc: 'We’ll be performing at the Ikarao booth at CES 2027. Photos and videos coming soon!' },
+  { icon: '🎮', title: 'EVO Convention', desc: 'We got free EVO Convention tickets for all of our students.' },
+  { icon: '🩰', title: 'Synergy Dance', desc: 'We work with Synergy Dance — our studio home in Las Vegas.' },
+  { icon: '🎶', title: 'Community classes', desc: 'We hosted free music classes for local families.' },
+  { icon: '🎓', title: 'Recitals', desc: 'Our students perform at recitals alongside Synergy’s dance shows.' },
+  { icon: '📱', title: 'Social media', desc: 'We share music and motivation with 260K+ followers. Follow along below!' },
 ]
 
 export const metadata: Metadata = {

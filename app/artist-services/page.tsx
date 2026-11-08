@@ -67,9 +67,9 @@ export default function ArtistServicesPage() {
         {/* Highlight */}
         <section className="max-w-3xl mx-auto px-6 pb-12">
           <div className="rounded-2xl p-6 text-center" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.10), rgba(201,168,76,0.02))', border: '1px solid rgba(201,168,76,0.2)' }}>
-            <p className="text-xs uppercase tracking-widest mb-2" style={{ color: gold }}>Now booking</p>
-            <p className="text-white text-lg font-semibold">Live performers for a tech company&apos;s booth at CES 2027</p>
-            <p className="text-white/40 text-sm mt-1">Las Vegas&apos; biggest trade show — singers and hosts selected, prepped and led by BASMA.</p>
+            <p className="text-xs uppercase tracking-widest mb-2" style={{ color: gold }}>Coming up</p>
+            <p className="text-white text-lg font-semibold">We&apos;ll be performing at the Ikarao booth at CES 2027</p>
+            <p className="text-white/40 text-sm mt-1">Photos and videos coming soon!</p>
           </div>
         </section>
 
