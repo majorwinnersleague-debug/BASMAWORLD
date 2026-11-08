@@ -85,7 +85,7 @@ export const STANDARD_PRICES: Readonly<Record<PackageId, number>> = {
  */
 export const SYNERGY_PRICES: Readonly<Record<PackageId, number>> = {
   'individual-30min': 35,
-  'individual-60min': 65,
+  'individual-60min': 60,
   'monthly-4x30min': 140,
   'monthly-4x60min': 240,
 }
