@@ -19,7 +19,7 @@ export default function BasmaContent() {
           BASMA <span className="gradient-gold">Private Lessons</span>
         </h1>
         <p className="text-white/40 text-base mb-2">One-on-one music instruction · All ages</p>
-        <p className="text-white/30 text-sm mb-8">📍 6787 W Tropicana Ave Suite 260, Las Vegas</p>
+        <p className="text-white/30 text-sm mb-8">📍 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147</p>
         <Link
           href="/private-lessons"
           className="inline-block px-10 py-4 rounded-full font-bold text-base transition hover:scale-105"
@@ -47,13 +47,13 @@ export default function BasmaContent() {
         </div>
         <div className="flex flex-wrap gap-4 mt-4 justify-center text-xs text-white/30">
           <span>🎵 Personalized instruction</span>
-          <span>📋 1 makeup lesson with monthly packages</span>
+          <span>📋 Lessons valid for 3 months · First missed lesson forgiven</span>
           <span>🌎 Online options available</span>
         </div>
       </section>
 
       <section className="max-w-3xl mx-auto px-6 pb-16 text-center">
-        <p className="text-white/25 text-sm">Studio: 6787 W Tropicana Ave Suite 260, Las Vegas NV 89103</p>
+        <p className="text-white/25 text-sm">Studio: 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147</p>
         <p className="text-white/25 text-sm mt-1">(702) 788-7369</p>
       </section>
     </main>

@@ -36,12 +36,12 @@ const faqs = [
   {
     question: 'What is included with a monthly package?',
     answer:
-      'Each monthly package includes four private lessons paid in advance. A 1 makeup lesson is included and must be used by the second week of the following month.',
+      'Each monthly package includes four private lessons paid in advance. Lessons must be booked and used within 3 months of purchase. If you book a time and don’t show up, that lesson is used — we forgive the first missed lesson per student, because emergencies happen.',
   },
   {
     question: 'Where are you located?',
     answer:
-      'Our private-lesson studio is at 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103. Call (702) 788-7369 or book through the private lessons page.',
+      'Our private-lesson studio is at 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147. Call (702) 788-7369 or book through the private lessons page.',
   },
 ]
 

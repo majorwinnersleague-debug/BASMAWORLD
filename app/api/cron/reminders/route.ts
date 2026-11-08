@@ -86,7 +86,7 @@ async function sendReminderEmail(to: string, firstName: string, students: string
       </p>
     </div>
     <div style="text-align:center;margin-top:22px;">
-      <p style="color:rgba(255,255,255,.25);font-size:11px;margin:0 0 8px;">BASMA Academy · 6787 W Tropicana Ave Suite 260 · Las Vegas, NV</p>
+      <p style="color:rgba(255,255,255,.25);font-size:11px;margin:0 0 8px;">BASMA Academy · 9512 W Flamingo Rd, Ste 100 · Las Vegas, NV 89147</p>
       <a href="${unsubscribeUrl}" style="color:rgba(255,255,255,.42);font-size:11px;">Unsubscribe or tell us why you're stepping away</a>
     </div>
   </div></body></html>`

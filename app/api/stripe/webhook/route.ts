@@ -6,6 +6,8 @@ import { getWebhookSecrets, verifyStripeEvent } from '@/lib/stripe-webhook'
 import { airtableString, escapeHtml } from '@/lib/escape'
 import { sendResendEmail } from '@/lib/auth-email'
 import { getPackage, getPrice, type LessonPackage } from '@/lib/pricing'
+import { recordStripePurchase, revokeCreditsForRefund } from '@/lib/credits'
+import { linkPaidFamilyInAirtable } from '@/lib/airtable-family'
 
 /**
  * Academy Stripe webhook (private lesson packages).
@@ -43,6 +45,24 @@ export async function POST(req: NextRequest) {
   if (!event) {
     console.error('[stripe-webhook] Signature verification failed')
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
+  }
+
+  // Full refund → remove the unused lesson credits of that payment (Phase 2).
+  // Partial refunds are left to staff. Idempotent: an already-refunded lot is skipped.
+  if (event.type === 'charge.refunded') {
+    const charge = event.data.object as Stripe.Charge
+    const paymentIntentId = typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id || ''
+    const fullyRefunded = charge.refunded === true || charge.amount_refunded >= charge.amount
+    if (!paymentIntentId || !fullyRefunded) return NextResponse.json({ received: true })
+    if (!sql) return NextResponse.json({ error: 'Database not configured' }, { status: 500 })
+    try {
+      const removed = await revokeCreditsForRefund(paymentIntentId)
+      console.log(`[stripe-webhook] Refund ${charge.id}: removed ${removed} unused credit(s)`)
+    } catch (error) {
+      console.error('[stripe-webhook] Refund credit update failed; asking Stripe to retry:', error)
+      return NextResponse.json({ error: 'Failed to update credits' }, { status: 500 })
+    }
+    return NextResponse.json({ received: true })
   }
 
   if (!HANDLED_EVENTS.has(event.type)) return NextResponse.json({ received: true })
@@ -91,6 +111,24 @@ export async function POST(req: NextRequest) {
 
   try {
     await recordPaymentInNeon(db, { session, meta, pkg, email, paymentIntentId, amountCents })
+    // Phase 2: guardian + student + credit lot (idempotent per Stripe session).
+    await recordStripePurchase({
+      email,
+      guardianName: meta.parentName,
+      phone: meta.phone,
+      studentName: meta.studentName || 'Student',
+      studentAge: meta.studentAge,
+      instrument: meta.instrument,
+      sessionId: session.id,
+      paymentIntentId,
+      lessonRequestId: /^\d+$/.test(meta.requestId || '') ? Number(meta.requestId) : null,
+      packageId: pkg.id,
+      packageName: pkg.name,
+      minutes: pkg.minutes,
+      lessons: pkg.sessions,
+      amountCents,
+      paidAt: new Date(),
+    })
   } catch (error) {
     console.error('[stripe-webhook] Neon operational update failed; asking Stripe to retry:', error)
     try {
@@ -101,6 +139,18 @@ export async function POST(req: NextRequest) {
 
   // Airtable is the marketing/history copy: best-effort, never blocks.
   await markAirtableRequestPaid({ sessionId: session.id, paymentIntentId, email, studentName: meta.studentName || '' })
+  // Parent-portal login row + returning-family link (create-only, best-effort).
+  await linkPaidFamilyInAirtable({
+    email,
+    parentName: meta.parentName,
+    phone: meta.phone,
+    studentName: meta.studentName || '',
+    studentAge: meta.studentAge,
+    instrument: meta.instrument,
+    packageName: pkg.name,
+    amountCents,
+    sessionId: session.id,
+  })
 
   try {
     await db`UPDATE stripe_events SET processed_at = NOW(), last_error = NULL WHERE event_id = ${event.id}`

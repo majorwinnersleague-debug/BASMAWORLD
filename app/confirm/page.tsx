@@ -291,7 +291,7 @@ export default function ConfirmPage() {
             📸 <a href="https://www.instagram.com/becomeasingermusicacademy?igsh=MWw1MGNtczNkOW5oaw==" style={{ color: '#c9a84c' }}>Follow us on Instagram @becomeasingermusicacademy</a>
           </p>
           <p style={{ margin: 0, fontSize: 12, color: '#666' }}>
-            🎵 Become A Singer Music Academy · 6787 W Tropicana Ave Suite 260, Las Vegas<br />
+            🎵 Become A Singer Music Academy · 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147<br />
             <a href="tel:7027887369" style={{ color: '#c9a84c', textDecoration: 'none' }}>(702) 788-7369</a> · <a href="https://basmaworld.com" style={{ color: '#c9a84c', textDecoration: 'none' }}>basmaworld.com</a>
           </p>
         </div>

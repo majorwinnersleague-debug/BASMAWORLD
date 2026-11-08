@@ -432,7 +432,7 @@ footer a:hover{color:var(--gold);}
 </head><body>
 
 <!-- TOP BAR -->
-<div class="top-bar" id="topBar">🎵 FREE June Classes! July: $25/class · August: per-class pricing + Buy 3 Get 1 Free! 📍 6787 W Tropicana Ave <a href="#signup">Register Now →</a></div>
+<div class="top-bar" id="topBar">🎵 FREE June Classes! July: $25/class · August: per-class pricing + Buy 3 Get 1 Free! 📍 9512 W Flamingo Rd <a href="#signup">Register Now →</a></div>
 
 <!-- NAV -->
 <nav id="navbar">
@@ -492,7 +492,7 @@ footer a:hover{color:var(--gold);}
 <div class="container section-center">
     <div class="section-label">📅 Summer 2026 Schedule</div>
     <div class="section-title" style="margin-bottom:8px;">Classes at a Glance</div>
-    <p style="color:rgba(255,255,255,0.6);margin-bottom:32px;font-size:15px;">📍 6787 W Tropicana Ave Suite 260, Las Vegas 89103 · Mon–Thu</p>
+    <p style="color:rgba(255,255,255,0.6);margin-bottom:32px;font-size:15px;">📍 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147 · Mon–Thu</p>
 
     <!-- June Discovery Camp -->
     <div style="max-width:800px;margin:0 auto 24px;background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15);border-radius:16px;padding:24px;text-align:left;">
@@ -669,7 +669,7 @@ footer a:hover{color:var(--gold);}
 <div class="boddee-float boddee-camp"><img src="/images/boddee-icon.png" alt="Boddee"></div>
 <div class="container section-center">
     <div class="section-label">Summer Camp 2026</div>
-    <div class="section-title">Summer Music Program · 6787 W Tropicana Ave</div>
+    <div class="section-title">Summer Music Program · 9512 W Flamingo Rd</div>
     <div class="section-divider"></div>
     <p class="section-desc">Not sure if your child will like it? <strong style="color:var(--gold);">June classes are completely free — no cost, no commitment.</strong> Love it? July: $25/class special. August: normal pricing + Buy 3 Get 1 Free!</p>
     <div class="camp-grid">
@@ -679,7 +679,7 @@ footer a:hover{color:var(--gold);}
             <div class="camp-body">
                 <span class="camp-badge free">🆓 FREE — June Classes</span>
                 <h3>Free June Discovery Classes</h3>
-                <p class="camp-address">📍 6787 W Tropicana Ave Suite 260, Las Vegas 89103</p>
+                <p class="camp-address">📍 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147</p>
                 <p class="desc">We promised free classes for the summer — and we delivered! Come explore piano, voice, performance & dance at <strong>no cost and no commitment</strong>.</p>
                 <ul class="schedule">
                     <li><span>🎵 Session 1</span><span class="time">10 AM – 12 PM</span></li>
@@ -696,7 +696,7 @@ footer a:hover{color:var(--gold);}
             <div class="camp-body">
                 <span class="camp-badge paid">⭐ July Special — ALL Classes $25!</span>
                 <h3>July $25/Class Special</h3>
-                <p class="camp-address">📍 6787 W Tropicana Ave Suite 260, Las Vegas 89103</p>
+                <p class="camp-address">📍 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147</p>
                 <p class="desc">Every class — just $25/class for the entire month of July. Pick your class below!</p>
                 <ul class="schedule">
                     <li><span>👶 Tiny Tots (ages 2–5)</span><span class="time">9:00 – 9:45 AM</span></li>
@@ -732,7 +732,7 @@ footer a:hover{color:var(--gold);}
             <div class="camp-body">
                 <span class="camp-badge paid">🎁 August — Buy 3 Get 1 Free!</span>
                 <h3>August Classes · Per-Class Pricing</h3>
-                <p class="camp-address">📍 6787 W Tropicana Ave Suite 260, Las Vegas 89103</p>
+                <p class="camp-address">📍 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147</p>
                 <p class="desc">Same great classes, normal pricing — buy Mon–Thu (4 classes/week) and the 4th class is FREE!</p>
                 <ul class="schedule">
                     <li><span>👶 Tiny Tots (ages 2–5)</span><span class="time">$25/class · 4 for $75</span></li>
@@ -1022,7 +1022,7 @@ footer a:hover{color:var(--gold);}
     </div>
     <div class="footer-bottom">
         <span>© 2026 BASMA LLC. All rights reserved.</span>
-        <span>📍 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103 · (702) 788-7369</span>
+        <span>📍 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147 · (702) 788-7369</span>
     </div>
 </div>
 </footer>
@@ -1032,7 +1032,7 @@ footer a:hover{color:var(--gold);}
 <div id="pay-modal">
     <button class="close-modal" onclick="closePay()">✕</button>
     <h2 style="margin-bottom:8px;">Choose Your Month</h2>
-    <p class="sub" style="margin-bottom:24px;">📍 6787 W Tropicana Ave · Mon–Thu</p>
+    <p class="sub" style="margin-bottom:24px;">📍 9512 W Flamingo Rd · Mon–Thu</p>
 
     <a class="step-btn step-btn-alt" href="/enroll" target="_blank" style="display:block;text-align:center;margin-bottom:14px;padding:18px 20px;font-size:16px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);">
         🎉 June — FREE Trial Classes<br>

@@ -32,10 +32,10 @@ const organizationSchema = {
   telephone: '+1-702-788-7369',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '6787 W Tropicana Ave Suite 260',
+    streetAddress: '9512 W Flamingo Rd, Ste 100',
     addressLocality: 'Las Vegas',
     addressRegion: 'NV',
-    postalCode: '89103',
+    postalCode: '89147',
     addressCountry: 'US',
   },
   sameAs: [

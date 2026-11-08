@@ -134,7 +134,7 @@ export default function Home() {
               </a>
             </div>
             <p className="text-white/30 text-sm">
-              📍 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103
+              📍 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147
             </p>
             <p className="text-white/20 text-xs mt-1">
               Private lessons available in person or online

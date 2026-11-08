@@ -31,7 +31,7 @@ export default function Footer() {
         <div className="rounded-xl p-4 mb-6 mx-auto max-w-md" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
           <p className="text-white/40 text-xs uppercase tracking-widest font-semibold mb-3">Our Locations</p>
           <div className="space-y-2 text-sm text-white/30">
-            <p>📍 <strong className="text-white/50">Main Office:</strong> 6787 W Tropicana Ave, Suite 260, Las Vegas, NV 89103</p>
+            <p>📍 <strong className="text-white/50">Main Office:</strong> 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147</p>
           </div>
         </div>
 

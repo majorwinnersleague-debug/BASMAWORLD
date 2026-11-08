@@ -119,7 +119,7 @@ async function sendCheckInEmail(parentEmail: string, rawParentName: string, rawS
             <strong>✅ Checked in at:</strong> ${timeStr} (Pacific)
           </p>
           <p style="margin: 4px 0 0; font-size: 14px; color: #166534;">
-            <strong>📍 Location:</strong> 6787 W Tropicana Ave Suite 260, Las Vegas
+            <strong>📍 Location:</strong> 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147
           </p>
         </div>
         ${incompleteSection}

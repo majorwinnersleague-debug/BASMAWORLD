@@ -21,7 +21,7 @@ const plans = [
     name: '4 × 30-Minute Monthly Package',
     price: formatUsd(getPrice('monthly-4x30min')),
     period: '/ month',
-    features: ['Four private 30-minute lessons', 'Paid in advance', '1 makeup lesson included'],
+    features: ['Four private 30-minute lessons', 'Paid in advance', 'Use within 3 months of purchase'],
     highlight: true,
     badge: 'Monthly Package',
   },
@@ -29,7 +29,7 @@ const plans = [
     name: '4 × 60-Minute Monthly Package',
     price: formatUsd(getPrice('monthly-4x60min')),
     period: '/ month',
-    features: ['Four private 60-minute lessons', 'Paid in advance', '1 makeup lesson included'],
+    features: ['Four private 60-minute lessons', 'Paid in advance', 'Use within 3 months of purchase'],
     highlight: false,
   },
 ]

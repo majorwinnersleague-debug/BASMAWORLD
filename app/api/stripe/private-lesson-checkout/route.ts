@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
             currency: 'usd',
             product_data: {
               name: `Private Lesson Package — ${packageName}`,
-              description: `${sessions} × ${duration} private lessons for ${studentName}. Instrument: ${instrument || 'TBD'}. Includes 1 makeup lesson (must be used by 2nd week of following month). Preferred: ${preferredDay || 'Flexible'} at ${preferredTime || 'Flexible'}.`,
+              description: `${sessions} × ${duration} private lessons for ${studentName}. Instrument: ${instrument || 'TBD'}. Lessons must be used within 3 months of purchase. A missed lesson without notice uses a credit (first one per student forgiven). Preferred: ${preferredDay || 'Flexible'} at ${preferredTime || 'Flexible'}.`,
             },
             unit_amount: Math.round(total * 100), // cents
           },

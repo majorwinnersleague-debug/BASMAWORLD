@@ -13,6 +13,8 @@ import {
   isHolidaySpecialActive,
   formatUsd,
 } from '@/lib/pricing'
+import { POLICY_LINES } from '@/lib/lesson-policy'
+import { BOOKING_LINKS, HAS_LESSON_BOOKING } from '@/lib/booking'
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PACKAGES
@@ -254,15 +256,30 @@ export default function PrivateLessonsContent() {
               Payment Successful!
             </h1>
             <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">
-              Your private lesson package has been purchased. We&apos;ll reach out to confirm your lesson schedule.
+              Your private lesson package has been purchased.{' '}
+              {HAS_LESSON_BOOKING ? 'Book your lesson times below.' : 'We’ll reach out to confirm your lesson schedule.'}
             </p>
+            {HAS_LESSON_BOOKING && (
+              <div className="flex flex-wrap justify-center gap-3 mb-8">
+                {BOOKING_LINKS.min30 && (
+                  <a href={BOOKING_LINKS.min30} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full text-sm font-semibold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
+                    Book a 30-minute time →
+                  </a>
+                )}
+                {BOOKING_LINKS.min60 && (
+                  <a href={BOOKING_LINKS.min60} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full text-sm font-semibold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
+                    Book a 1-hour time →
+                  </a>
+                )}
+              </div>
+            )}
             <div className="card-minimal rounded-xl p-5 text-left max-w-sm mx-auto">
               <p className="text-white/50 text-xs uppercase tracking-widest mb-3">What&apos;s Next</p>
               <ul className="text-white/35 text-sm space-y-2">
                 <li>✉️ Confirmation email with receipt</li>
-                <li>📞 We&apos;ll call to finalize your schedule</li>
-                <li>🎵 Attend your lessons weekly</li>
-                <li>📋 1 makeup lesson included — use by 2nd week of next month</li>
+                <li>{HAS_LESSON_BOOKING ? '📅 Book your times with the buttons above' : '📞 We’ll call to finalize your schedule'}</li>
+                <li>👤 See your lessons left any time in the Parent Portal</li>
+                {POLICY_LINES.slice(0, 2).map(line => <li key={line}>📋 {line}</li>)}
               </ul>
             </div>
             <a href="/private-lessons" className="inline-block mt-8 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
@@ -341,7 +358,7 @@ export default function PrivateLessonsContent() {
                 </button>
               </div>
 
-              <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included with monthly packages</p>
+              <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · Lessons valid for 3 months</p>
 
               {SPECIAL_ACTIVE && (
                 <p className="text-[#c9a84c] text-sm font-semibold mt-4">
@@ -372,7 +389,13 @@ export default function PrivateLessonsContent() {
                     <p className="text-white font-semibold mb-1">
                       {trialStatus === 'sent' ? '✅ Trial requested!' : '✅ We already have a trial request for this student.'}
                     </p>
-                    <p className="text-white/40 text-sm">We&apos;ll contact you shortly to schedule it.</p>
+                    {BOOKING_LINKS.trial ? (
+                      <a href={BOOKING_LINKS.trial} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-6 py-2.5 rounded-full text-sm font-semibold" style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}>
+                        Pick your free trial time →
+                      </a>
+                    ) : (
+                      <p className="text-white/40 text-sm">We&apos;ll contact you shortly to schedule it.</p>
+                    )}
                   </div>
                 )}
 
@@ -447,7 +470,7 @@ export default function PrivateLessonsContent() {
                 <li>✅ Any instrument — piano, guitar, voice, drums & more</li>
                 <li>✅ 30-minute or 60-minute sessions</li>
                 <li>✅ Flexible scheduling</li>
-                <li>✅ 1 makeup lesson included per package</li>
+                <li>✅ Valid for 3 months · first missed lesson forgiven</li>
               </ul>
               <a
                 href="tel:+17027887369"
@@ -467,7 +490,7 @@ export default function PrivateLessonsContent() {
             {[
               { step: '1', title: 'Pick & Pay', desc: 'Choose your lesson package above and pay instantly online.', emoji: '💳' },
               { step: '2', title: 'We Schedule You', desc: 'We\'ll call you within 24 hours to finalize your lesson day, time, and instructor.', emoji: '📞' },
-              { step: '3', title: 'Start Learning', desc: 'Attend your lessons weekly. Each package includes 1 makeup lesson (use by 2nd week of next month).', emoji: '🎹' },
+              { step: '3', title: 'Start Learning', desc: 'Book your times and attend your lessons. Use them within 3 months of purchase.', emoji: '🎹' },
             ].map(item => (
               <div key={item.step} className="card-minimal rounded-xl p-6 text-center">
                 <div className="text-3xl mb-3">{item.emoji}</div>
@@ -644,15 +667,21 @@ export default function PrivateLessonsContent() {
             ))}
           </div>
 
-          {/* ── Makeup Policy ── */}
+          {/* ── Lesson Policy (lib/lesson-policy.ts) ── */}
           <div className="max-w-3xl mx-auto mb-12">
             <div className="card-minimal rounded-xl p-5 border border-white/[0.06]">
-              <p className="text-white/40 text-xs uppercase tracking-widest mb-2">📋 Makeup Policy</p>
-              <p className="text-white/30 text-sm leading-relaxed">
-                Each 4-lesson package includes <strong className="text-white/60">1 makeup lesson</strong>.
-                The makeup must be used by the <strong className="text-white/60">second week of the following month</strong>.
-                Unused makeups expire after that date.
-              </p>
+              <p className="text-white/40 text-xs uppercase tracking-widest mb-2">📋 Lesson Policy</p>
+              <ul className="text-white/30 text-sm leading-relaxed list-disc ml-5 space-y-1">
+                {POLICY_LINES.map(line => <li key={line}>{line}</li>)}
+              </ul>
+              {HAS_LESSON_BOOKING && (
+                <p className="text-white/40 text-sm mt-3">
+                  Already have lessons?{' '}
+                  {BOOKING_LINKS.min30 && <a href={BOOKING_LINKS.min30} target="_blank" rel="noopener noreferrer" className="underline text-[#c9a84c]">Book a 30-minute time</a>}
+                  {BOOKING_LINKS.min30 && BOOKING_LINKS.min60 && ' or '}
+                  {BOOKING_LINKS.min60 && <a href={BOOKING_LINKS.min60} target="_blank" rel="noopener noreferrer" className="underline text-[#c9a84c]">book a 1-hour time</a>}.
+                </p>
+              )}
             </div>
           </div>
 
@@ -780,7 +809,7 @@ export default function PrivateLessonsContent() {
           {/* ── Location / Contact ── */}
           <div className="max-w-3xl mx-auto mt-12 text-center">
             <p className="text-white/20 text-xs uppercase tracking-widest mb-4">Questions?</p>
-            <p className="text-white/40 text-sm">📍 6787 W Tropicana Ave Suite 260, Las Vegas, NV 89103</p>
+            <p className="text-white/40 text-sm">📍 9512 W Flamingo Rd, Ste 100, Las Vegas, NV 89147</p>
             <p className="text-white/40 text-sm mt-1">
               📞 <a href="tel:+17027887369" className="text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">(702) 788-7369</a>
               {' · '}

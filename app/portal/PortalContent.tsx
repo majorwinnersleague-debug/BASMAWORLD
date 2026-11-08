@@ -2,6 +2,15 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import { POLICY_LINES } from '@/lib/lesson-policy'
+import { bookingLinkFor } from '@/lib/booking'
+
+/* Lesson credits from /api/portal/credits (Phase 2) */
+interface LessonFamily {
+  students: { id: number; name: string; firstNoShowForgiven: boolean; credits: { minutes: number; remaining: number; nextExpiry: string | null; expiredUnused: number }[] }[]
+  purchases: { id: number; studentId: number; packageName: string | null; minutes: number; lessonsTotal: number; lessonsUsed: number; amountCents: number | null; status: string; paidAt: string; expiresAt: string; active: boolean }[]
+  lessons: { id: number; studentId: number; minutes: number; lessonDate: string; status: string; creditRestored: boolean }[]
+}
 
 /* ═══ TYPES ═══ */
 interface Student {
@@ -58,7 +67,8 @@ export default function PortalContent() {
   // Dashboard state
   const [portalData, setPortalData] = useState<PortalData | null>(null)
   const [payments, setPayments] = useState<Payment[]>([])
-  const [activeTab, setActiveTab] = useState<'students' | 'payments' | 'info'>('students')
+  const [activeTab, setActiveTab] = useState<'students' | 'lessons' | 'payments' | 'info'>('students')
+  const [lessonFamily, setLessonFamily] = useState<LessonFamily | null>(null)
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null)
 
   // Edit state
@@ -86,14 +96,17 @@ export default function PortalContent() {
 
   const loadDashboard = useCallback(async () => {
     try {
-      const [studentsRes, paymentsRes] = await Promise.all([
+      const [studentsRes, paymentsRes, creditsRes] = await Promise.all([
         fetch('/api/portal/students'),
         fetch('/api/portal/payments'),
+        fetch('/api/portal/credits'),
       ])
       const studentsData = await studentsRes.json()
       const paymentsData = await paymentsRes.json()
+      const creditsData = creditsRes.ok ? await creditsRes.json() : { family: null }
       if (studentsData.students) setPortalData(studentsData)
       if (paymentsData.payments) setPayments(paymentsData.payments)
+      setLessonFamily(creditsData.family || null)
     } catch { /* ignore */ }
   }, [])
 
@@ -146,6 +159,7 @@ export default function PortalContent() {
     setAuthState('login')
     setPortalData(null)
     setPayments([])
+    setLessonFamily(null)
     setEmail('')
     setPhone('')
     setOtpCode('')
@@ -398,6 +412,7 @@ export default function PortalContent() {
             <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
               {[
                 { key: 'students' as const, label: '👶 Students' },
+                { key: 'lessons' as const, label: '🎵 Lessons' },
                 { key: 'payments' as const, label: '💳 Payments' },
                 { key: 'info' as const, label: '📋 Info' },
               ].map(tab => (
@@ -595,10 +610,80 @@ export default function PortalContent() {
               </div>
             )}
 
+            {/* ── Lessons Tab (credits, booking, history) ── */}
+            {activeTab === 'lessons' && (
+              <div className="space-y-4">
+                {(!lessonFamily || lessonFamily.students.length === 0) ? (
+                  <div style={cardCss} className="text-center">
+                    <p className="text-white/50 text-sm mb-3">No lesson credits yet.</p>
+                    <Link href="/private-lessons" className="inline-block px-5 py-2 rounded-full text-sm font-semibold" style={{ background: gold, color: '#0D0118' }}>See lesson packages</Link>
+                  </div>
+                ) : (
+                  lessonFamily.students.map(s => (
+                    <div key={s.id} style={cardCss}>
+                      <div className="font-semibold text-white mb-3">{s.name}</div>
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        {s.credits.map(c => (
+                          <div key={c.minutes} className="rounded-lg p-3 text-center" style={{ background: 'rgba(201,168,76,0.08)' }}>
+                            <div className="text-2xl font-bold" style={{ color: gold }}>{c.remaining}</div>
+                            <div className="text-white/50 text-xs">{c.minutes}-minute lesson{c.remaining === 1 ? '' : 's'} left</div>
+                            {c.nextExpiry && c.remaining > 0 && (
+                              <div className="text-white/40 text-[11px] mt-1">Use by {new Date(c.nextExpiry).toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                            )}
+                            {c.remaining > 0 && bookingLinkFor(c.minutes) && (
+                              <a href={bookingLinkFor(c.minutes)} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: gold, color: '#0D0118' }}>
+                                Book a {c.minutes === 60 ? '1-hour' : '30-min'} time →
+                              </a>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      {lessonFamily.lessons.filter(l => l.studentId === s.id).length > 0 && (
+                        <div className="space-y-1">
+                          <div className="text-white/40 text-xs uppercase tracking-widest mb-1">Recent lessons</div>
+                          {lessonFamily.lessons.filter(l => l.studentId === s.id).slice(0, 10).map(l => (
+                            <div key={l.id} className="flex justify-between text-xs text-white/50">
+                              <span>{new Date(l.lessonDate + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {l.minutes} min</span>
+                              <span>{l.status === 'attended' ? 'Attended' : l.status === 'no_show_forgiven' ? 'Missed (forgiven)' : 'Missed'}{l.creditRestored ? ' · credit returned' : ''}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+                <div style={cardCss}>
+                  <div className="text-white/40 text-xs uppercase tracking-widest mb-2">Lesson rules</div>
+                  <ul className="text-white/50 text-xs space-y-1 list-disc ml-4">
+                    {POLICY_LINES.map(line => <li key={line}>{line}</li>)}
+                  </ul>
+                </div>
+              </div>
+            )}
+
             {/* ── Payments Tab ── */}
             {activeTab === 'payments' && (
               <div className="space-y-3">
-                {payments.length === 0 ? (
+                {lessonFamily && lessonFamily.purchases.map(p => (
+                  <div key={`np-${p.id}`} style={cardCss}>
+                    <div className="flex justify-between items-start mb-1">
+                      <div>
+                        <div className="font-semibold text-white text-sm">{p.packageName || 'Lesson credits'}</div>
+                        <div className="text-white/30 text-xs">
+                          {lessonFamily.students.find(s => s.id === p.studentId)?.name} · {p.lessonsTotal - p.lessonsUsed} of {p.lessonsTotal} lesson{p.lessonsTotal === 1 ? '' : 's'} left
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        {p.amountCents !== null && <div className="font-bold" style={{ color: gold }}>${(p.amountCents / 100).toFixed(2)}</div>}
+                        <div className={`text-xs ${p.status === 'refunded' ? 'text-red-400' : 'text-green-400'}`}>{p.status === 'refunded' ? 'refunded' : 'paid'}</div>
+                      </div>
+                    </div>
+                    <div className="text-white/20 text-xs">
+                      {new Date(p.paidAt).toLocaleDateString()} · {p.active ? `use by ${new Date(p.expiresAt).toLocaleDateString()}` : p.status === 'refunded' ? 'refunded' : 'expired'}
+                    </div>
+                  </div>
+                ))}
+                {payments.length === 0 && !(lessonFamily && lessonFamily.purchases.length) ? (
                   <div className="text-center py-12">
                     <p className="text-white/30 text-sm">No payments yet.</p>
                   </div>

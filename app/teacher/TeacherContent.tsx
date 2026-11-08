@@ -930,6 +930,9 @@ export default function TeacherContent() {
         <Link href="/" className="text-lg font-bold tracking-wider" style={{ color: '#c9a84c', fontFamily: "'Playfair Display', serif" }}>BASMA</Link>
         <div className="flex items-center gap-4">
           <span className="text-sm text-white/40">Teacher Portal</span>
+          <Link href="/teacher/credits" className="text-xs font-semibold border rounded-lg px-3 py-1" style={{ color: '#c9a84c', borderColor: 'rgba(201,168,76,0.4)' }}>
+            🎵 Lesson Credits
+          </Link>
           <button onClick={handleLogout} className="text-xs text-white/40 hover:text-white/80 border border-white/10 rounded-lg px-3 py-1">
             Log out
           </button>
@@ -942,7 +945,7 @@ export default function TeacherContent() {
           <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
             Teacher <span style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Dashboard</span>
           </h1>
-          <p className="text-white/30 text-sm">Summer 2026 · 6787 W Tropicana Ave Suite 260 · Mon–Thu</p>
+          <p className="text-white/30 text-sm">Summer 2026 · 9512 W Flamingo Rd, Ste 100 · Mon–Thu</p>
         </div>
 
         {/* Stats — clickable to filter */}

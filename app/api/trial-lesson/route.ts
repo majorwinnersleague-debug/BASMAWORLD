@@ -3,6 +3,7 @@ import { sql } from '@/lib/db'
 import { checkRateLimit, getClientIp, isValidEmail, sanitizeString } from '@/lib/rate-limit'
 import { sendResendEmail } from '@/lib/auth-email'
 import { escapeHtml } from '@/lib/escape'
+import { BOOKING_LINKS } from '@/lib/booking'
 
 /**
  * POST /api/trial-lesson — free 15-minute trial lesson request (Phase 1).
@@ -129,7 +130,9 @@ export async function POST(req: NextRequest) {
       <div style="font-family: Arial, sans-serif; max-width: 560px;">
         <h2 style="color:#4a0e78;">Thanks, ${e(parentName)}!</h2>
         <p>We received your request for a <strong>free 15-minute trial lesson</strong> for ${e(studentName)}.</p>
-        <p>We'll contact you shortly to schedule it. Questions? Call (702) 788-7369.</p>
+        ${BOOKING_LINKS.trial
+          ? `<p><a href="${e(BOOKING_LINKS.trial)}" style="display:inline-block;background:#4a0e78;color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;">Pick your free trial time</a></p><p>Questions? Call (702) 788-7369.</p>`
+          : `<p>We'll contact you shortly to schedule it. Questions? Call (702) 788-7369.</p>`}
         <p style="color:#666;font-size:13px;">BASMA Music Academy</p>
       </div>
     `,
