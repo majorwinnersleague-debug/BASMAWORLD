@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
+import { priceLabel } from '@/lib/pricing'
 
 const REASONS=[
   ['Personal reasons','Personal reasons'],
@@ -49,7 +50,7 @@ export default function UnsubscribePage(){
         </> : <>
           <h2 className="text-xl font-bold mb-4">Before you cancel your BASMAWorld updates</h2>
           <p className="text-white/70 leading-7">If price is part of the reason, our monthly private-lesson packages are our best deal:</p>
-          <div className="my-5 rounded-xl p-5 bg-white/[.05] border border-[#c9a84c]/20"><p className="text-[#F0C850] font-bold">4 × 30-minute private lessons — $135/month</p><p className="text-[#F0C850] font-bold mt-2">4 × 60-minute private lessons — $200/month</p><p className="text-white/50 text-sm mt-2">Paid in advance. Private lessons only.</p></div>
+          <div className="my-5 rounded-xl p-5 bg-white/[.05] border border-[#c9a84c]/20"><p className="text-[#F0C850] font-bold">4 × 30-minute private lessons — {priceLabel('monthly-4x30min')}</p><p className="text-[#F0C850] font-bold mt-2">4 × 60-minute private lessons — {priceLabel('monthly-4x60min')}</p><p className="text-white/50 text-sm mt-2">Paid in advance. Private lessons only.</p></div>
           <p className="text-white/70 leading-7">We also occasionally share special BASMA opportunities and events with our community, including student experiences and event tickets when available.</p>
           <p className="text-white font-semibold mt-5">Are you sure you want to unsubscribe from events and information regarding BASMAWorld.com?</p>
           <div className="flex flex-col sm:flex-row gap-3 mt-6"><button disabled={loading} onClick={()=>setConfirming(false)} className="flex-1 py-3 rounded-xl border border-white/15 text-white/80">Keep me subscribed</button><button disabled={loading} onClick={()=>submit(true)} className="flex-1 py-3 rounded-xl font-bold border border-white/10" style={{background:'rgba(255,255,255,.08)'}}>Yes, unsubscribe</button></div>

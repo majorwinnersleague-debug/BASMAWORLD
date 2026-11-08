@@ -5,53 +5,67 @@ import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import {
+  PACKAGES as PRICED_PACKAGES,
+  STANDARD_PRICES,
+  HOLIDAY_SPECIAL,
+  getPrice,
+  isHolidaySpecialActive,
+  formatUsd,
+} from '@/lib/pricing'
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PACKAGES
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const PACKAGES = [
-  {
-    id: 'individual-30min',
-    name: 'Individual 30-Minute Lesson',
-    duration: '30 min',
-    sessions: 1,
-    pricePerSession: 45,
-    total: 45,
-    desc: 'A single personalized 30-minute private lesson.',
-    popular: false,
-  },
-  {
-    id: 'individual-60min',
-    name: 'Individual 60-Minute Lesson',
-    duration: '1 hour',
-    sessions: 1,
-    pricePerSession: 70,
-    total: 70,
-    desc: 'A single personalized 60-minute private lesson.',
-    popular: false,
-  },
-  {
-    id: 'monthly-4x30min',
-    name: 'Monthly 4 × 30-Minute Lessons',
-    duration: '30 min',
-    sessions: 4,
-    pricePerSession: 33.75,
-    total: 135,
-    desc: 'Four 30-minute private lessons paid in advance each month.',
-    popular: true,
-  },
-  {
-    id: 'monthly-4x60min',
-    name: 'Monthly 4 × 60-Minute Lessons',
-    duration: '1 hour',
-    sessions: 4,
-    pricePerSession: 50,
-    total: 200,
-    desc: 'Four 60-minute private lessons paid in advance each month.',
-    popular: false,
-  },
-]
+// Prices come from lib/pricing.ts (the single price list). The checkout route
+// re-prices on the server, so these are for display only.
+const PACKAGES = PRICED_PACKAGES.map(pkg => {
+  const total = getPrice(pkg.id)
+  return {
+    ...pkg,
+    total,
+    regularTotal: STANDARD_PRICES[pkg.id],
+    pricePerSession: Math.round((total / pkg.sessions) * 100) / 100,
+  }
+})
+const SPECIAL_ACTIVE = isHolidaySpecialActive()
+
+/* Google Ads purchase conversion: active only when both IDs are configured
+   in Vercel, and only for visitors who accepted cookies. */
+const ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || ''
+const ADS_LABEL = process.env.NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL || ''
+
+type GtagWindow = Window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void }
+
+function sendAdsConversion(sessionId: string, valueUsd: number, currency: string) {
+  if (!ADS_ID || !ADS_LABEL) return
+  try {
+    if (localStorage.getItem('basma_cookies_accepted') !== 'true') return
+    const key = `basma_ads_conv_${sessionId}`
+    if (localStorage.getItem(key)) return // already counted for this purchase
+    const w = window as GtagWindow
+    if (!w.gtag) {
+      const s = document.createElement('script')
+      s.async = true
+      s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ADS_ID)}`
+      document.head.appendChild(s)
+      w.dataLayer = w.dataLayer || []
+      w.gtag = function gtag() { w.dataLayer!.push(arguments) } // eslint-disable-line prefer-rest-params
+      w.gtag('js', new Date())
+      w.gtag('config', ADS_ID)
+    }
+    w.gtag('event', 'conversion', {
+      send_to: `${ADS_ID}/${ADS_LABEL}`,
+      value: valueUsd,
+      currency,
+      transaction_id: sessionId, // Google de-duplicates on this
+    })
+    localStorage.setItem(key, '1')
+  } catch {
+    // Tracking must never break the success page.
+  }
+}
 
 const INSTRUMENTS = [
   'Piano', 'Voice / Singing', 'Guitar', 'Drums', 'Ukulele', 'Recording / Production', 'Other',
@@ -91,16 +105,82 @@ export default function PrivateLessonsContent() {
 
   const [loading, setLoading] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
+  // After Stripe: 'checking' → 'paid' | 'pending' | 'unknown'
+  const [paymentCheck, setPaymentCheck] = useState<'none' | 'checking' | 'paid' | 'pending' | 'unknown'>('none')
   const [error, setError] = useState('')
+
+  // Free 15-minute trial request
+  const [trialOpen, setTrialOpen] = useState(false)
+  const [trialStatus, setTrialStatus] = useState<'idle' | 'sending' | 'sent' | 'already' | 'error'>('idle')
+  const [trialError, setTrialError] = useState('')
 
   const searchParams = useSearchParams()
 
-  // Check for Stripe redirect success
+  // After Stripe Checkout: confirm the payment with Stripe (server-side)
+  // before showing "Payment Successful" or recording a conversion.
   useEffect(() => {
-    if (searchParams.get('success') === 'true') {
-      setPaymentSuccess(true)
+    const sessionId = searchParams.get('session_id')
+    if (!sessionId) {
+      // Old links with only ?success=true can't be verified.
+      if (searchParams.get('success') === 'true') setPaymentCheck('unknown')
+      return
     }
+    let cancelled = false
+    setPaymentCheck('checking')
+    ;(async () => {
+      for (let attempt = 0; attempt < 4 && !cancelled; attempt++) {
+        try {
+          const res = await fetch(`/api/stripe/checkout-status?session_id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' })
+          if (res.ok) {
+            const data = await res.json()
+            if (data.paid) {
+              if (cancelled) return
+              setPaymentCheck('paid')
+              setPaymentSuccess(true)
+              if (typeof data.amountTotal === 'number') {
+                sendAdsConversion(sessionId, data.amountTotal / 100, data.currency || 'USD')
+              }
+              return
+            }
+          } else if (res.status === 400 || res.status === 404) {
+            break
+          }
+        } catch {
+          // network hiccup: retry
+        }
+        await new Promise(r => setTimeout(r, 2000))
+      }
+      if (!cancelled) setPaymentCheck('pending')
+    })()
+    return () => { cancelled = true }
   }, [searchParams])
+
+  // Submit the free trial request
+  async function handleTrialRequest(e: React.FormEvent) {
+    e.preventDefault()
+    setTrialStatus('sending')
+    setTrialError('')
+    try {
+      const res = await fetch('/api/trial-lesson', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          parentName, email, phone, studentName, studentAge,
+          instrument, preferredDay, preferredTime, notes,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setTrialStatus(data.alreadyRequested ? 'already' : 'sent')
+      } else {
+        setTrialStatus('error')
+        setTrialError(data.error || 'Something went wrong. Please call us at (702) 788-7369.')
+      }
+    } catch {
+      setTrialStatus('error')
+      setTrialError('Something went wrong. Please call us at (702) 788-7369.')
+    }
+  }
 
   // Handle package purchase via Stripe
   async function handlePackagePurchase(e: React.FormEvent) {
@@ -117,12 +197,8 @@ export default function PrivateLessonsContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          // Only the package id matters; the server sets the price.
           packageId: pkg.id,
-          packageName: pkg.name,
-          duration: pkg.duration,
-          sessions: pkg.sessions,
-          total: pkg.total,
-          pricePerSession: pkg.pricePerSession,
           parentName, email, phone, studentName, studentAge,
           instrument, preferredDay, preferredTime, notes,
         }),
@@ -138,6 +214,33 @@ export default function PrivateLessonsContent() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!paymentSuccess && paymentCheck !== 'none' && paymentCheck !== 'paid') {
+    const message =
+      paymentCheck === 'checking'
+        ? { icon: '⏳', title: 'Confirming your payment…', body: 'This only takes a moment.' }
+        : paymentCheck === 'pending'
+          ? { icon: '🕐', title: 'Payment not confirmed yet', body: "We haven't received confirmation of this payment from Stripe yet. If you completed checkout, you'll get a receipt email from Stripe shortly and we'll call you to schedule. Questions? Call (702) 788-7369." }
+          : { icon: '✉️', title: 'Thank you!', body: "If your payment went through, you'll get a receipt email from Stripe and we'll call you to schedule. Questions? Call (702) 788-7369." }
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen" style={{ paddingTop: '64px' }}>
+          <section className="max-w-2xl mx-auto px-6 pt-24 pb-20 text-center">
+            <div className="text-5xl mb-6">{message.icon}</div>
+            <h1 className="text-3xl font-semibold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {message.title}
+            </h1>
+            <p className="text-white/40 text-sm leading-relaxed max-w-md mx-auto mb-8">{message.body}</p>
+            {paymentCheck !== 'checking' && (
+              <a href="/private-lessons" className="inline-block mt-4 text-sm text-[#c9a84c]/60 hover:text-[#c9a84c] transition-colors">← Back to Private Lessons</a>
+            )}
+          </section>
+        </div>
+        <Footer />
+      </>
+    )
   }
 
   if (paymentSuccess) {
@@ -211,7 +314,7 @@ export default function PrivateLessonsContent() {
                 >
                   <p className="text-white/50 text-xs uppercase tracking-widest mb-2">30-Minute Individual Lesson</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-4xl font-bold text-white">$45</span>
+                    <span className="text-4xl font-bold text-white">{formatUsd(getPrice('individual-30min'))}</span>
                   </div>
                   <p className="text-white/30 text-xs mb-4">One private lesson</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
@@ -228,7 +331,7 @@ export default function PrivateLessonsContent() {
                 >
                   <p className="text-white/50 text-xs uppercase tracking-widest mb-2">60-Minute Individual Lesson</p>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-4xl font-bold text-white">$70</span>
+                    <span className="text-4xl font-bold text-white">{formatUsd(getPrice('individual-60min'))}</span>
                   </div>
                   <p className="text-white/30 text-xs mb-4">One private lesson</p>
                   <span className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition"
@@ -239,6 +342,68 @@ export default function PrivateLessonsContent() {
               </div>
 
               <p className="text-white/20 text-xs">Secure payment via Stripe · All major cards accepted · 1 makeup lesson included with monthly packages</p>
+
+              {SPECIAL_ACTIVE && (
+                <p className="text-[#c9a84c] text-sm font-semibold mt-4">
+                  🎁 {HOLIDAY_SPECIAL.label}: monthly packages {formatUsd(getPrice('monthly-4x30min'))} (4 × 30 min) and {formatUsd(getPrice('monthly-4x60min'))} (4 × 60 min), {HOLIDAY_SPECIAL.endsLabel}.
+                </p>
+              )}
+
+              {/* ── Free 15-minute trial ── */}
+              <div id="free-trial" className="mt-8 pt-6 text-left max-w-xl mx-auto" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div className="text-center">
+                  <p className="text-white/40 text-xs uppercase tracking-widest mb-2">New to BASMA?</p>
+                  <p className="text-white text-lg font-semibold mb-1">Free 15-Minute Trial Lesson</p>
+                  <p className="text-white/30 text-sm mb-4">One free trial per student. No payment needed. We&apos;ll call to schedule it.</p>
+                  {!trialOpen && (
+                    <button
+                      type="button"
+                      onClick={() => setTrialOpen(true)}
+                      className="inline-block px-8 py-3 rounded-full text-sm font-semibold transition hover:scale-[1.02]"
+                      style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.4)', color: '#c9a84c' }}
+                    >
+                      Request a Free Trial →
+                    </button>
+                  )}
+                </div>
+
+                {trialOpen && (trialStatus === 'sent' || trialStatus === 'already') && (
+                  <div className="card-minimal rounded-xl p-5 text-center mt-2">
+                    <p className="text-white font-semibold mb-1">
+                      {trialStatus === 'sent' ? '✅ Trial requested!' : '✅ We already have a trial request for this student.'}
+                    </p>
+                    <p className="text-white/40 text-sm">We&apos;ll contact you shortly to schedule it.</p>
+                  </div>
+                )}
+
+                {trialOpen && trialStatus !== 'sent' && trialStatus !== 'already' && (
+                  <form onSubmit={handleTrialRequest} className="space-y-3 mt-2">
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <input required value={parentName} onChange={e => setParentName(e.target.value)} placeholder="Parent / guardian name *" className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                      <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email *" className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                      <input required type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone *" className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                      <input required value={studentName} onChange={e => setStudentName(e.target.value)} placeholder="Student name *" className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                      <input value={studentAge} onChange={e => setStudentAge(e.target.value)} placeholder="Student age" className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                      <select value={instrument} onChange={e => setInstrument(e.target.value)} className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm">
+                        <option value="" className="bg-[#111]">Instrument (optional)</option>
+                        {INSTRUMENTS.map(i => <option key={i} value={i} className="bg-[#111]">{i}</option>)}
+                      </select>
+                      <input value={preferredDay} onChange={e => setPreferredDay(e.target.value)} placeholder="Preferred day (optional)" className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                      <input value={preferredTime} onChange={e => setPreferredTime(e.target.value)} placeholder="Preferred time (optional)" className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                    </div>
+                    <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Anything we should know? (optional)" rows={2} className="w-full rounded-lg px-4 py-3 bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30" />
+                    {trialStatus === 'error' && <p className="text-red-400 text-sm">{trialError}</p>}
+                    <button
+                      type="submit"
+                      disabled={trialStatus === 'sending'}
+                      className="w-full py-3 rounded-full text-sm font-semibold transition disabled:opacity-50"
+                      style={{ background: 'linear-gradient(135deg, #c9a84c, #e4cc7a)', color: '#0D0118' }}
+                    >
+                      {trialStatus === 'sending' ? 'Sending…' : 'Request My Free Trial'}
+                    </button>
+                  </form>
+                )}
+              </div>
 
               {/* Contact for questions */}
               <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
@@ -463,10 +628,18 @@ export default function PrivateLessonsContent() {
                 <h3 className="text-white font-semibold text-lg mb-1">{pkg.name}</h3>
                 <p className="text-white/30 text-sm mb-4">{pkg.desc}</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-white">${pkg.pricePerSession}</span>
+                  <span className="text-3xl font-bold text-white">{formatUsd(pkg.pricePerSession)}</span>
                   <span className="text-white/30 text-sm">/ session</span>
                 </div>
-                <p className="text-white/20 text-xs mt-1">${pkg.total} total for {pkg.sessions} × {pkg.duration} sessions</p>
+                <p className="text-white/20 text-xs mt-1">
+                  {pkg.total < pkg.regularTotal && (
+                    <span className="line-through mr-1">{formatUsd(pkg.regularTotal)}</span>
+                  )}
+                  {formatUsd(pkg.total)} total for {pkg.sessions} × {pkg.duration} sessions
+                </p>
+                {pkg.total < pkg.regularTotal && (
+                  <p className="text-[#c9a84c] text-xs mt-1 font-semibold">🎁 {HOLIDAY_SPECIAL.label} {HOLIDAY_SPECIAL.endsLabel}</p>
+                )}
               </div>
             ))}
           </div>

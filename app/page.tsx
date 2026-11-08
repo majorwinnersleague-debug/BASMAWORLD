@@ -3,6 +3,11 @@ import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import OnlineLessonsComingSoon from '@/components/OnlineLessonsComingSoon'
+import { PACKAGES as PRICED_PACKAGES, priceLabel } from '@/lib/pricing'
+
+// Re-render every 5 minutes so prices (e.g. the end of the holiday special)
+// update without a redeploy.
+export const revalidate = 300
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PHOTO GALLERY — real photos from BASMA
@@ -88,12 +93,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Private Music Lessons</h2>
             <p className="text-white/60 max-w-2xl mx-auto mb-10">Personalized instruction tailored to your goals in voice, piano, guitar, drums, violin and more.</p>
             <div className="grid md:grid-cols-4 gap-4">
-              {[
-                ['30-Minute Individual Lesson','$45'],
-                ['60-Minute Individual Lesson','$70'],
-                ['4 × 30-Minute Monthly Package','$135/month'],
-                ['4 × 60-Minute Monthly Package','$200/month'],
-              ].map(([name,price]) => (
+              {PRICED_PACKAGES.map(pkg => [pkg.shortName, priceLabel(pkg.id)]).map(([name,price]) => (
                 <Link key={name} href="/private-lessons" className="rounded-2xl p-6 text-left hover:scale-[1.02] transition" style={{border:'1px solid rgba(201,168,76,0.2)',background:'rgba(255,255,255,0.03)'}}>
                   <h3 className="font-bold text-white mb-3">{name}</h3><p className="text-2xl font-black" style={{color:'#c9a84c'}}>{price}</p>
                 </Link>

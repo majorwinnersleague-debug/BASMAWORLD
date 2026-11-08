@@ -1,12 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { priceLabel } from '@/lib/pricing'
 
+// Prices from lib/pricing.ts; app/basma/page.tsx re-renders every 5 minutes.
 const LESSONS = [
-  { emoji: '🎤', name: '30-Minute Individual Lesson', desc: 'One-on-one instruction tailored to your goals, level, and musical interests.', price: '$45' },
-  { emoji: '🎹', name: '60-Minute Individual Lesson', desc: 'More time for technique, repertoire, and focused musical development.', price: '$70' },
-  { emoji: '🎵', name: '4 × 30-Minute Monthly Package', desc: 'Four private 30-minute lessons paid in advance each month.', price: '$135/month' },
-  { emoji: '🎶', name: '4 × 60-Minute Monthly Package', desc: 'Four private 60-minute lessons paid in advance each month.', price: '$200/month' },
+  { emoji: '🎤', name: '30-Minute Individual Lesson', desc: 'One-on-one instruction tailored to your goals, level, and musical interests.', price: priceLabel('individual-30min') },
+  { emoji: '🎹', name: '60-Minute Individual Lesson', desc: 'More time for technique, repertoire, and focused musical development.', price: priceLabel('individual-60min') },
+  { emoji: '🎵', name: '4 × 30-Minute Monthly Package', desc: 'Four private 30-minute lessons paid in advance each month.', price: priceLabel('monthly-4x30min') },
+  { emoji: '🎶', name: '4 × 60-Minute Monthly Package', desc: 'Four private 60-minute lessons paid in advance each month.', price: priceLabel('monthly-4x60min') },
 ]
 
 export default function BasmaContent() {

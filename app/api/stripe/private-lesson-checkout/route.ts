@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { sql } from '@/lib/db'
+import { getPackage, getPrice, STANDARD_PRICES } from '@/lib/pricing'
 
 export async function POST(req: NextRequest) {
   // Rate limit: 5 checkout attempts per IP per 10 minutes
@@ -41,17 +42,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const packages: Record<string, { name: string; duration: string; sessions: number; total: number }> = {
-      'individual-30min': { name: 'Individual 30-Minute Lesson', duration: '30 min', sessions: 1, total: 45 },
-      'individual-60min': { name: 'Individual 60-Minute Lesson', duration: '1 hour', sessions: 1, total: 70 },
-      'monthly-4x30min': { name: 'Monthly 4 × 30-Minute Lessons', duration: '30 min', sessions: 4, total: 135 },
-      'monthly-4x60min': { name: 'Monthly 4 × 60-Minute Lessons', duration: '1 hour', sessions: 4, total: 200 },
-    }
-    const pkg = packages[packageId]
+    // Server-side pricing from lib/pricing.ts (the only price list). Any price
+    // sent by the browser is ignored.
+    const pkg = getPackage(packageId)
     if (!pkg) {
       return NextResponse.json({ error: 'Invalid lesson option' }, { status: 400 })
     }
-    const { name: packageName, duration, sessions, total } = pkg
+    const { name: packageName, duration, sessions } = pkg
+    const now = new Date()
+    let total: number
+    try {
+      total = getPrice(pkg.id, now)
+    } catch (error) {
+      console.error('[private-lesson-checkout] Pricing refused:', error)
+      return NextResponse.json({ error: 'This lesson option is temporarily unavailable. Please call us.' }, { status: 500 })
+    }
+    const regularTotal = STANDARD_PRICES[pkg.id]
 
     // Record the request in Neon when the operational database is available.
     // This is best-effort so Neon cannot take down the existing Stripe checkout flow.
@@ -90,8 +96,14 @@ export async function POST(req: NextRequest) {
       preferredDay: preferredDay || 'Flexible',
       preferredTime: preferredTime || 'Flexible',
       notes: notes || '',
+      priceUsd: String(total),
+      regularPriceUsd: String(regularTotal),
+      ...(total < regularTotal ? { discount: 'holiday-special' } : {}),
       ...(requestId ? { requestId } : {}),
     }
+
+    // Return to the site the parent started from (production or a preview).
+    const origin = new URL(req.url).origin
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -111,8 +123,10 @@ export async function POST(req: NextRequest) {
       mode: 'payment',
       customer_email: email || undefined,
       metadata,
-      success_url: `https://basmaworld.com/private-lessons?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: 'https://basmaworld.com/private-lessons',
+      // The success page confirms payment with Stripe using this session id
+      // before showing "Payment Successful" or recording a Google Ads conversion.
+      success_url: `${origin}/private-lessons?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/private-lessons`,
     })
 
     // Attach the Stripe session to the Neon request when it was recorded.

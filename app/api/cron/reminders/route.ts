@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { priceLabel } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
 
@@ -72,8 +73,8 @@ async function sendReminderEmail(to: string, firstName: string, students: string
       <div style="background:rgba(240,200,80,.08);border:1px solid rgba(240,200,80,.22);border-radius:12px;padding:20px;margin:22px 0;">
         <p style="color:#F0C850;font-size:17px;font-weight:700;margin:0 0 8px;">Our monthly deal</p>
         <p style="color:#fff;font-size:15px;line-height:1.6;margin:0;">
-          4 × 30-minute private lessons — <strong>$135/month</strong><br>
-          4 × 60-minute private lessons — <strong>$200/month</strong>
+          4 × 30-minute private lessons — <strong>${priceLabel('monthly-4x30min')}</strong><br>
+          4 × 60-minute private lessons — <strong>${priceLabel('monthly-4x60min')}</strong>
         </p>
         <p style="color:rgba(255,255,255,.55);font-size:13px;line-height:1.5;margin:10px 0 0;">Monthly packages are paid in advance and are our best value for families who want consistent lessons.</p>
       </div>

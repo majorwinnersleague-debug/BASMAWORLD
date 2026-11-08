@@ -2,6 +2,10 @@ import type { Metadata } from 'next'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import BasmaContent from './BasmaContent'
+import { getPrice, formatUsd, STANDARD_PRICES } from '@/lib/pricing'
+
+// Re-render every 5 minutes so prices update without a redeploy.
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'BASMA Music Academy — Singing, Piano & Guitar Lessons | Las Vegas',
@@ -38,7 +42,7 @@ const basmaJsonLd = [
     url: 'https://basmaworld.com/basma',
     telephone: '+1-702-788-7369',
     description: 'Professional singing, piano, guitar, and vocal coaching in Las Vegas. Gamified learning with XP. All ages.',
-    priceRange: '$25-$40',
+    priceRange: `${formatUsd(getPrice('individual-30min'))}-${formatUsd(STANDARD_PRICES['monthly-4x60min'])}`,
     address: {
       '@type': 'PostalAddress',
       streetAddress: '6787 W Tropicana Ave Suite 260',

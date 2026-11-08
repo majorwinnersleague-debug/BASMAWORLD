@@ -1,11 +1,12 @@
 'use client'
 import { useState } from 'react'
+import { getPrice, formatUsd } from '@/lib/pricing'
 
 const faqs = [
   {
     question: 'How much do private music lessons cost?',
     answer:
-      'Individual lessons are $45 for 30 minutes or $70 for 60 minutes. Monthly packages paid in advance are $135 for four 30-minute lessons or $200 for four 60-minute lessons.',
+      `Individual lessons are ${formatUsd(getPrice('individual-30min'))} for 30 minutes or ${formatUsd(getPrice('individual-60min'))} for 60 minutes. Monthly packages paid in advance are ${formatUsd(getPrice('monthly-4x30min'))} for four 30-minute lessons or ${formatUsd(getPrice('monthly-4x60min'))} for four 60-minute lessons. A free 15-minute trial lesson is available for every new student.`,
   },
   {
     question: 'What ages do you teach?',

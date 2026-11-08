@@ -5,6 +5,7 @@ import { ensurePhase0Tables } from '@/lib/phase0-schema'
 import { getWebhookSecrets, verifyStripeEvent } from '@/lib/stripe-webhook'
 import { airtableString, escapeHtml } from '@/lib/escape'
 import { sendResendEmail } from '@/lib/auth-email'
+import { getPackage, getPrice, type LessonPackage } from '@/lib/pricing'
 
 /**
  * Academy Stripe webhook (private lesson packages).
@@ -20,18 +21,10 @@ import { sendResendEmail } from '@/lib/auth-email'
 
 const ACADEMY_INBOX = 'becomeasingermusicacademy@gmail.com'
 
-// NOTE: prices are duplicated in the checkout route and page; Phase 1 moves
-// them to one lib/pricing.ts.
-const PACKAGES: Record<string, { name: string; duration: string; sessions: number; total: number }> = {
-  'individual-30min': { name: 'Individual 30-Minute Lesson', duration: '30 min', sessions: 1, total: 45 },
-  'individual-60min': { name: 'Individual 60-Minute Lesson', duration: '1 hour', sessions: 1, total: 70 },
-  'monthly-4x30min': { name: 'Monthly 4 × 30-Minute Lessons', duration: '30 min', sessions: 4, total: 135 },
-  'monthly-4x60min': { name: 'Monthly 4 × 60-Minute Lessons', duration: '1 hour', sessions: 4, total: 200 },
-}
-
 const HANDLED_EVENTS = new Set(['checkout.session.completed', 'checkout.session.async_payment_succeeded'])
 
-type Pkg = (typeof PACKAGES)[string]
+// Package details come from lib/pricing.ts, the single price list.
+type Pkg = LessonPackage
 type Db = NonNullable<typeof sql>
 
 export async function POST(req: NextRequest) {
@@ -58,7 +51,7 @@ export async function POST(req: NextRequest) {
   const meta = session.metadata || {}
   if (meta.type !== 'private_lesson_package') return NextResponse.json({ received: true })
 
-  const pkg = PACKAGES[meta.packageId || '']
+  const pkg = getPackage(meta.packageId)
   if (!pkg) {
     console.error(`[stripe-webhook] Unknown packageId "${meta.packageId}" on paid session ${session.id}; not recorded`)
     return NextResponse.json({ received: true })
@@ -90,7 +83,11 @@ export async function POST(req: NextRequest) {
 
   const email = meta.email || session.customer_details?.email || ''
   const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id || ''
-  const amountCents = typeof session.amount_total === 'number' ? session.amount_total : Math.round(pkg.total * 100)
+  // Stripe's amount is the truth for money; the price list at the time the
+  // session was created is only a fallback if Stripe omits it.
+  const amountCents = typeof session.amount_total === 'number'
+    ? session.amount_total
+    : Math.round(getPrice(pkg.id, new Date((session.created || Date.now() / 1000) * 1000)) * 100)
 
   try {
     await recordPaymentInNeon(db, { session, meta, pkg, email, paymentIntentId, amountCents })

@@ -1,23 +1,25 @@
 'use client'
 
+import { getPrice, formatUsd } from '@/lib/pricing'
+
 const plans = [
   {
     name: '30-Minute Individual Lesson',
-    price: '$45',
+    price: formatUsd(getPrice('individual-30min')),
     period: '/ lesson',
     features: ['One-on-one private instruction', 'Personalized goals and repertoire', 'In-person or online options'],
     highlight: false,
   },
   {
     name: '60-Minute Individual Lesson',
-    price: '$70',
+    price: formatUsd(getPrice('individual-60min')),
     period: '/ lesson',
     features: ['One-on-one private instruction', 'More time for technique and repertoire', 'In-person or online options'],
     highlight: false,
   },
   {
     name: '4 × 30-Minute Monthly Package',
-    price: '$135',
+    price: formatUsd(getPrice('monthly-4x30min')),
     period: '/ month',
     features: ['Four private 30-minute lessons', 'Paid in advance', '1 makeup lesson included'],
     highlight: true,
@@ -25,7 +27,7 @@ const plans = [
   },
   {
     name: '4 × 60-Minute Monthly Package',
-    price: '$200',
+    price: formatUsd(getPrice('monthly-4x60min')),
     period: '/ month',
     features: ['Four private 60-minute lessons', 'Paid in advance', '1 makeup lesson included'],
     highlight: false,
