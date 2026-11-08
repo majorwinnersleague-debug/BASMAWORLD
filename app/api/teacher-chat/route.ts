@@ -32,6 +32,8 @@ async function airtablePatch(table: string, recordId: string, fields: Record<str
     headers: { Authorization: `Bearer ${AIRTABLE_PAT}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ fields }),
   })
+  // Previously a rejected update was still reported as "Updated successfully".
+  if (!res.ok) throw new Error(`Airtable update failed (HTTP ${res.status})`)
   return res.json()
 }
 
@@ -49,10 +51,12 @@ async function airtableGet(table: string, formula: string) {
 /* ─── Build student summary for LLM context ─── */
 
 function buildStudentSummary(leadRecords: any[], summerRecords: any[]): string {
+  // Historical Summer data is matched by student name AND parent email.
   const summerByName: Record<string, any> = {}
   for (const r of summerRecords) {
-    const name = (r.fields['Student Name'] || '').toLowerCase().trim()
-    if (name) summerByName[name] = r.fields
+    const name = String(r.fields['Student Name'] || '').toLowerCase().trim()
+    const parentEmail = String(r.fields['Parent Email'] || '').toLowerCase().trim()
+    if (name && parentEmail) summerByName[`${name}|${parentEmail}`] = r.fields
   }
 
   const students: string[] = []
@@ -66,13 +70,14 @@ function buildStudentSummary(leadRecords: any[], summerRecords: any[]): string {
     if (seen.has(key)) continue
     seen.add(key)
 
-    const summer = summerByName[studentName.toLowerCase()] || {}
+    const summer = summerByName[`${studentName.toLowerCase()}|${String(f.Email || '').toLowerCase().trim()}`] || {}
     students.push(
       `- Record ID: ${r.id} | Student: ${studentName} | Age: ${f['Student Age'] || '?'} | ` +
       `Parent: ${f['Full Name'] || '?'} | Email: ${f.Email || '?'} | Phone: ${f.Phone || '?'} | ` +
       `Interests: ${f.Interests || '?'} | Source: ${f.Source || '?'} | ` +
-      `Allergies: ${summer.Allergies || '?'} | Medical: ${summer['Medical Conditions'] || '?'} | ` +
-      `Emergency: ${summer['Emergency Contact Name'] || '?'} / ${summer['Emergency Contact Phone'] || '?'}`
+      // Leads first (current data); Summer uses its own field names and only fills gaps.
+      `Allergies: ${f.Allergies || summer.Allergies || '?'} | Medical: ${f['Medical Conditions'] || summer['Medical Conditions'] || '?'} | ` +
+      `Emergency: ${f['Emergency Contact Name'] || summer['Emergency Contact'] || '?'} / ${f['Emergency Contact Phone'] || summer['Emergency Phone'] || '?'}`
     )
   }
 
@@ -93,7 +98,7 @@ IMPORTANT RULES:
 - When the user asks to change/update info, identify the student and field, confirm the change, then output an ACTION tag
 - When you identify a match and are ready to make a change, output EXACTLY this format:
   [ACTION: UPDATE record_id=XXXXX field=FIELD_NAME value=NEW_VALUE table=leads_or_summer]
-- Valid fields for the master leads table: Student Name, Student Age, Full Name (parent), Email, Phone, Interests, Status, Lesson Type, Online Interest
+- Valid fields for the master leads table: {ALLOWED_FIELDS}
 - Historical summer health/safety fields are read-only enrichment; do not use the AI to write to the summer table.
 - All student/parent identity and current roster edits must use table=leads.
 - If multiple students match, list them and ask which one
@@ -129,7 +134,16 @@ export async function POST(req: NextRequest) {
     ])
 
     const studentSummary = buildStudentSummary(leadRecords, summerRecords)
-    const systemPrompt = SYSTEM_PROMPT.replace('{STUDENT_DATA}', studentSummary)
+    // Fields the AI may update. Only fields that exist in BASMA Marketing Leads.
+    // Email and Phone (parent-portal login details) are admin-only.
+    const allowedFields = new Set(['Student Name', 'Student Age', 'Full Name', 'Interests', 'Status'])
+    if (staff.role === 'admin') {
+      allowedFields.add('Email')
+      allowedFields.add('Phone')
+    }
+    const systemPrompt = SYSTEM_PROMPT
+      .replace('{ALLOWED_FIELDS}', Array.from(allowedFields).join(', '))
+      .replace('{STUDENT_DATA}', studentSummary)
 
     // Validate and sanitize messages
     const validatedMessages = messages
@@ -168,7 +182,6 @@ export async function POST(req: NextRequest) {
     // Process ACTION tags — only the master leads table is writable by AI.
     const actionRegex = /\[ACTION: UPDATE record_id=(\S+) field=(.+?) value=(.+?) table=(\w+)\]/g
     const updates: { success: boolean; field: string; value: string }[] = []
-    const allowedFields = new Set(['Student Name','Student Age','Full Name','Email','Phone','Interests','Status','Lesson Type','Online Interest'])
     let match
     while ((match = actionRegex.exec(reply)) !== null) {
       const [, recordId, field, value, table] = match

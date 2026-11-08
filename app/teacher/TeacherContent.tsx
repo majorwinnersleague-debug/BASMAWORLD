@@ -172,6 +172,18 @@ interface EditFields {
   interests: string
 }
 
+// Fields staff may deliberately empty on the edit screen. Must match the
+// server's CLEARABLE list in app/api/family/route.ts. Parent email, phone,
+// parent name and student name are intentionally not here.
+const CLEARABLE_FIELDS: Partial<Record<keyof EditFields, string>> = {
+  studentAge: 'Student Age',
+  interests: 'Interests',
+  allergies: 'Allergies',
+  medicalConditions: 'Medical Conditions',
+  emergencyContactName: 'Emergency Contact Name',
+  emergencyContactPhone: 'Emergency Contact Phone',
+}
+
 export default function TeacherContent() {
   // Staff sign-in (email + one-time code → signed 12-hour session cookie)
   const [authenticated, setAuthenticated] = useState(false)
@@ -586,6 +598,11 @@ export default function TeacherContent() {
     if (!editFields) return
     setEditSaving(true)
     try {
+      // A field is sent for clearing only if it had a value when editing
+      // started and staff emptied it. Untouched fields are never listed.
+      // The server re-checks every request against the stored record.
+      const clearFields = (Object.keys(CLEARABLE_FIELDS) as (keyof EditFields)[])
+        .filter(k => safe(student[k]).trim() !== '' && editFields[k].trim() === '')
       const res = await fetch('/api/family', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -601,43 +618,45 @@ export default function TeacherContent() {
           medicalConditions: editFields.medicalConditions,
           emergencyContactName: editFields.emergencyContactName,
           emergencyContactPhone: editFields.emergencyContactPhone,
+          clearFields,
         }),
       })
       const data = await res.json()
       if (data.success) {
         setEditSuccess(true)
+        // Show what the server actually stored: a blank field shows as empty
+        // only if the server confirmed it was cleared; otherwise the previous
+        // value is kept on screen (the server left it unchanged).
+        const cleared: string[] = Array.isArray(data.clearedFields) ? data.clearedFields : []
+        const shown = (k: keyof EditFields): string => {
+          if (editFields[k].trim() !== '') return editFields[k]
+          const field = CLEARABLE_FIELDS[k]
+          return field && cleared.includes(field) ? '' : safe(student[k])
+        }
+        const saved = {
+          studentName: shown('studentName'),
+          studentAge: shown('studentAge'),
+          parentName: shown('parentName'),
+          email: shown('email'),
+          phone: shown('phone'),
+          interests: shown('interests'),
+          allergies: shown('allergies'),
+          medicalConditions: shown('medicalConditions'),
+          emergencyContactName: shown('emergencyContactName'),
+          emergencyContactPhone: shown('emergencyContactPhone'),
+        }
         // Update local state
-        setRegistrations(prev => prev.map(r => r.id === student.id ? {
-          ...r,
-          studentName: editFields.studentName,
-          studentAge: editFields.studentAge,
-          parentName: editFields.parentName,
-          email: editFields.email,
-          phone: editFields.phone,
-          interests: editFields.interests,
-          allergies: editFields.allergies,
-          medicalConditions: editFields.medicalConditions,
-          emergencyContactName: editFields.emergencyContactName,
-          emergencyContactPhone: editFields.emergencyContactPhone,
-        } : r))
+        setRegistrations(prev => prev.map(r => r.id === student.id ? { ...r, ...saved } : r))
         // Update the selected student too
-        setSelectedStudent(prev => prev && prev.id === student.id ? {
-          ...prev,
-          studentName: editFields.studentName,
-          studentAge: editFields.studentAge,
-          parentName: editFields.parentName,
-          email: editFields.email,
-          phone: editFields.phone,
-          interests: editFields.interests,
-          allergies: editFields.allergies,
-          medicalConditions: editFields.medicalConditions,
-          emergencyContactName: editFields.emergencyContactName,
-          emergencyContactPhone: editFields.emergencyContactPhone,
-        } : prev)
+        setSelectedStudent(prev => prev && prev.id === student.id ? { ...prev, ...saved } : prev)
         setTimeout(() => {
           setEditMode(false)
           setEditSuccess(false)
         }, 1500)
+      } else {
+        // Previously a refused save showed nothing. Show the server's message
+        // (e.g. "Only an admin can change a parent email or phone").
+        alert(data.error || 'Failed to save. Please try again.')
       }
     } catch (err) {
       console.error('Save edit error:', err)

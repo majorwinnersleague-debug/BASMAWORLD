@@ -35,40 +35,75 @@ export async function POST(req: Request) {
     const [leadRecords, ...historicalTables] = await Promise.all([fetchAllRecords(LEADS_TABLE), ...TABLES.map(fetchAllRecords)])
     const historical = [leadRecords, ...historicalTables]
     const pd = phone(p)
-    const returning = historical.some((records, i) => records.some(r => {
-      const f=r.fields || {}
-      const re=email(String(i===1 ? (f.Email||f.email||'') : i===2 ? (f['Parent Email']||'') : i===3 ? (f['Parent Email']||'') : (f.Email||'')))
-      const rp=phone(String(i===2 ? (f['Parent Phone']||'') : i===3 ? (f['Parent Phone']||'') : (f.Phone||'')))
-      return re===e || (!!pd && pd===rp)
-    }))
+    // Email/phone field names per table, from the verified Airtable schema.
+    // (The old index-based lookup read fields that do not exist in Stripe
+    // Payments and Check-In Log, so some returning families were missed.)
+    const tableIds = [LEADS_TABLE, ...TABLES]
+    const CONTACT_FIELDS: Record<string, { email: string; phone: string }> = {
+      tbl1diIEhM9MtKViE: { email: 'Email', phone: 'Phone' },               // BASMA Marketing Leads
+      tblelNWN2hed8OclX: { email: 'Email', phone: 'Phone' },               // Enrollments
+      tblfTQQEciBFqovYU: { email: 'Email', phone: 'Phone' },               // Stripe Payments
+      tblfOnRDkfgZoCF9X: { email: 'Parent Email', phone: 'Parent Phone' }, // Summer 2026 Registrations
+      tbl7vzQgS5o67kDYv: { email: 'Parent Email', phone: 'Parent Phone' }, // Check-In Log
+    }
+    const returning = historical.some((records, i) => {
+      const cf = CONTACT_FIELDS[tableIds[i]]
+      return records.some(r => {
+        const f = r.fields || {}
+        const re = email(String(f[cf.email] || ''))
+        const rp = phone(String(f[cf.phone] || ''))
+        return re === e || (!!pd && pd === rp)
+      })
+    })
 
     const status = returning ? 'Returning' : 'New'
+    const note = `Online Lessons Interest | Status: ${status}`
 
-    // Reuse an existing master-list record when the person is already in BASMA Marketing Leads.
-    // This keeps the master list clean instead of creating duplicate people.
-    const existing = leadRecords.find(r => {
-      const f = r.fields || {}
-      const existingEmail = email(String(f.Email || ''))
-      const existingPhone = phone(String(f.Phone || ''))
-      return existingEmail === e || (!!pd && pd === existingPhone)
-    })
+    // Reuse an existing master-list record only when its stored Email matches
+    // this email. A phone-only match is not treated as the same family.
+    const existing = leadRecords.find(r => email(String(r.fields?.Email || '')) === e)
 
-    const fields: Record<string, any> = {
-      'Full Name': name || String(existing?.fields?.['Full Name'] || ''),
-      Email: e,
-      Phone: p || String(existing?.fields?.Phone || ''),
-      Source: existing?.fields?.Source || 'Online Lessons Interest',
-      Status: status,
-      'Lesson Type': existing?.fields?.['Lesson Type'] || 'Private',
-      'Online Interest': true,
-      Message: existing?.fields?.Message || `Online Lessons Interest | Status: ${status}`,
+    let res: Response | null = null
+    if (existing) {
+      // Never replace existing values: only fill fields that are currently empty.
+      // Status and Email of an existing record are never changed here.
+      // ("Lesson Type" and "Online Interest" are not Airtable fields; sending
+      // them made every save fail.)
+      const current = existing.fields || {}
+      const candidates: Record<string, string> = {
+        'Full Name': name,
+        Phone: p,
+        Source: 'Online Lessons Interest',
+        Message: note,
+      }
+      const fields: Record<string, string> = {}
+      for (const [k, v] of Object.entries(candidates)) {
+        if (v && !String(current[k] ?? '').trim()) fields[k] = v
+      }
+      if (Object.keys(fields).length > 0) {
+        res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}/${existing.id}`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${AIRTABLE_PAT}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fields }),
+        })
+      }
+    } else {
+      // New person: one new record with verified Leads fields only.
+      const fields: Record<string, string> = {
+        Email: e,
+        Source: 'Online Lessons Interest',
+        Status: status,
+        Message: note,
+      }
+      if (name) fields['Full Name'] = name
+      if (p) fields['Phone'] = p
+      res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${AIRTABLE_PAT}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ records: [{ fields }] }),
+      })
     }
-    const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${LEADS_TABLE}${existing ? `/${existing.id}` : ''}`, {
-      method: existing ? 'PATCH' : 'POST',
-      headers:{ Authorization:`Bearer ${AIRTABLE_PAT}`, 'Content-Type':'application/json' },
-      body: JSON.stringify(existing ? { fields } : { records: [{ fields }] }),
-    })
-    if (!res.ok) { console.error('Airtable online interest create failed:', await res.text()); return NextResponse.json({ error:'We could not save your request. Please try again.' }, { status:500 }) }
+    if (res && !res.ok) { console.error('Airtable online interest save failed: HTTP', res.status); return NextResponse.json({ error:'We could not save your request. Please try again.' }, { status:500 }) }
     return NextResponse.json({ success:true })
   } catch (error) {
     console.error('Online lesson interest error:', error)

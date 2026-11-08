@@ -15,7 +15,9 @@ export async function GET() {
   try {
     // Get payments for this parent by email
     const formula = encodeURIComponent(`LOWER({Email}) = ${airtableString(user.email.toLowerCase().trim())}`)
-    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${PAYMENTS_TABLE}?filterByFormula=${formula}&maxRecords=100&sort[0][field]=Created&sort[0][direction]=desc`
+    // "Stripe Payments" has no "Created" field (sorting by it made every request
+    // fail, so parents always saw "No payments yet"). Sort by its Payment Date.
+    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${PAYMENTS_TABLE}?filterByFormula=${formula}&maxRecords=100&sort[0][field]=${encodeURIComponent('Payment Date')}&sort[0][direction]=desc`
 
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${AIRTABLE_PAT}` },
@@ -29,16 +31,19 @@ export async function GET() {
 
     const data = await res.json()
 
-    const payments = (data.records || []).map((r: { id: string; fields: Record<string, unknown> }) => ({
+    // Field names below follow the verified "Stripe Payments" schema
+    // (Amount, Status: Succeeded/Pending/Failed/Refunded, Product, Payment Date).
+    const payments = (data.records || []).map((r: { id: string; fields: Record<string, unknown>; createdTime?: string }) => ({
       id: r.id,
       amount: r.fields['Amount'] || r.fields['amount'] || 0,
-      status: r.fields['Status'] || r.fields['status'] || '',
-      description: r.fields['Description'] || r.fields['description'] || '',
+      // The portal shows "paid" in green; Stripe's word for that is "Succeeded".
+      status: String(r.fields['Status'] || r.fields['status'] || '').toLowerCase().replace('succeeded', 'paid'),
+      description: r.fields['Product'] || r.fields['Description'] || r.fields['description'] || '',
       studentName: r.fields['Student Name'] || r.fields['studentName'] || '',
       className: r.fields['Class Name'] || r.fields['className'] || '',
       days: r.fields['Days'] || r.fields['days'] || '',
       stripeSessionId: r.fields['Stripe Session ID'] || '',
-      createdAt: r.fields['Created'] || r.fields['createdAt'] || '',
+      createdAt: r.fields['Payment Date'] || r.fields['Created'] || r.fields['createdAt'] || r.createdTime || '',
     }))
 
     return NextResponse.json({ payments })

@@ -266,6 +266,14 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'recordId required' }, { status: 400 })
     }
 
+    // Email and Phone are the parent-portal login details: only admins may change them.
+    if (staff.role !== 'admin' && (rest.email || rest.phone)) {
+      return NextResponse.json(
+        { success: false, error: 'Only an admin can change a parent email or phone. Nothing was changed.' },
+        { status: 403 }
+      )
+    }
+
     const fields: Record<string, string> = {}
     if (rest.name) fields['Full Name'] = rest.name
     if (rest.phone) fields['Phone'] = rest.phone

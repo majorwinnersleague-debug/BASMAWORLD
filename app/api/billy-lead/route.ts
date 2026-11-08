@@ -41,7 +41,9 @@ async function saveLeadToAirtable(name: string, email: string, source: string) {
   }
 
   try {
-    const res = await fetch(`https://api.airtable.com/v0/${base}/Leads`, {
+    // The base has no "Leads" table (every save failed). Chatbot leads belong in
+    // the existing "Billy Chat Leads" table, using only its verified fields.
+    const res = await fetch(`https://api.airtable.com/v0/${base}/${encodeURIComponent('Billy Chat Leads')}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -50,10 +52,8 @@ async function saveLeadToAirtable(name: string, email: string, source: string) {
       body: JSON.stringify({
         records: [{
           fields: {
-            'Name': name,
+            'Parent Name': name,
             'Email': email,
-            'Source': source,
-            'Date': new Date().toISOString().split('T')[0],
           },
         }],
       }),

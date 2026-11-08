@@ -209,7 +209,8 @@ export async function POST(request: NextRequest) {
           'Check-In Date': isoDate,
           'Check-In Time': timeStr,
           'Class': interests || '',
-          'Age': studentAge || '',
+          // Check-In Log "Age" is a text field (verified); numbers are sent as text.
+          'Age': studentAge === undefined || studentAge === null ? '' : String(studentAge),
           'Allergies': allergies || '',
           'Medical Conditions': medicalConditions || '',
           'Emergency Contact': emergencyContactName || '',

@@ -32,3 +32,4 @@ tsconfig.tsbuildinfo
 *.tsbuildinfo
 bun.lock
 .vercel
+.env*

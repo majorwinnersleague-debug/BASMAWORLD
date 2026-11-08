@@ -34,15 +34,18 @@ export async function GET() {
     const leadsData = await leadsRes.json()
     const summerData = summerRes.ok ? await summerRes.json() : { records: [] }
 
-    // Build a lookup from student name → summer record
+    // Build a lookup from student name → summer record. Historical Summer data
+    // is used only when the record's own Parent Email matches this parent.
+    const parentEmail = user.email.toLowerCase().trim()
     const summerByStudent = new Map<string, Record<string, unknown>>()
     for (const r of summerData.records || []) {
-      const name = ((r.fields?.['Student Name'] || '') as string).toLowerCase().trim()
+      if (String(r.fields?.['Parent Email'] || '').toLowerCase().trim() !== parentEmail) continue
+      const name = String(r.fields?.['Student Name'] || '').toLowerCase().trim()
       if (name) summerByStudent.set(name, r.fields)
     }
 
     // Map to student records — each record is one student
-    const students = (leadsData.records || []).map((r: { id: string; fields: Record<string, unknown> }) => {
+    const students = (leadsData.records || []).map((r: { id: string; fields: Record<string, unknown>; createdTime?: string }) => {
       const sName = (r.fields['Student Name'] || r.fields['studentName'] || '') as string
       const summer = summerByStudent.get(sName.toLowerCase().trim()) || {}
 
@@ -55,15 +58,17 @@ export async function GET() {
         enrolledClass: r.fields['Enrolled Class'] || r.fields['enrolledClass'] || summer['Class'] || '',
         timeSlot: r.fields['Time Slot'] || r.fields['timeSlot'] || '',
         discoveryWeek: r.fields['Discovery Week'] || r.fields['discoveryWeek'] || '',
-        allergies: summer['Allergies'] || r.fields['Allergies'] || r.fields['allergies'] || 'None',
-        medicalConditions: summer['Medical Conditions'] || 'None',
-        emergencyContactName: summer['Emergency Contact'] || r.fields['Emergency Contact Name'] || '',
-        emergencyContactPhone: summer['Emergency Phone'] || r.fields['Emergency Contact Phone'] || '',
+        // Leads (where parent edits are saved) first; historical Summer only fills gaps.
+        allergies: r.fields['Allergies'] || r.fields['allergies'] || summer['Allergies'] || 'None',
+        medicalConditions: r.fields['Medical Conditions'] || summer['Medical Conditions'] || 'None',
+        emergencyContactName: r.fields['Emergency Contact Name'] || summer['Emergency Contact'] || '',
+        emergencyContactPhone: r.fields['Emergency Contact Phone'] || summer['Emergency Phone'] || '',
         paymentStatus: r.fields['Payment Status'] || r.fields['paymentStatus'] || summer['Payment Status'] || '',
-        createdAt: r.fields['Created'] || r.fields['createdAt'] || '',
+        // Leads has no "Created" field; use Airtable's built-in record creation time.
+        createdAt: r.fields['Created'] || r.fields['createdAt'] || r.createdTime || '',
         source: r.fields['Source'] || r.fields['source'] || '',
         photoUrl: r.fields['Student Photo'] || summer['Student Photo'] || '',
-        liabilityAgreed: (summer['Liability Agreed'] === 'Yes') || (r.fields['Waiver Form'] === 'Complete'),
+        liabilityAgreed: (r.fields['Liability Agreed'] === 'Yes') || (r.fields['Waiver Form'] === 'Complete') || (summer['Liability Agreed'] === 'Yes'),
       }
     })
 
